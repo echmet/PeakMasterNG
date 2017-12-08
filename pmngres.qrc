@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>res/cimectransp3.png</file>
+        <file>res/ECHMET_logo_velke.png</file>
+    </qresource>
+</RCC>
