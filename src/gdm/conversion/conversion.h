@@ -8,7 +8,7 @@
 
 namespace conversion {
 
-std::unique_ptr<ECHMET::SysComp::InConstituentVec, void(*)(const ECHMET::SysComp::InConstituentVec*)>
+std::unique_ptr<ECHMET::SysComp::InConstituentVec, void(ECHMET_CC *)(const ECHMET::SysComp::InConstituentVec*)>
     makeECHMETInConstituentVec(const gdm::GDM& doc);
 
 std::unique_ptr<ECHMET::RealVec, void(*)(const ECHMET::RealVec*)>

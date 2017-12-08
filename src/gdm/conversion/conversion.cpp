@@ -13,12 +13,12 @@
     std::unique_ptr<ECHMET::RealVec, void(*)(const ECHMET::RealVec*)> makeECHMETRealVec(const std::vector<double>& input = {});
 } // unnamed namespace
 
-std::unique_ptr<ECHMET::SysComp::InConstituentVec, void(*)(const ECHMET::SysComp::InConstituentVec*)>
+std::unique_ptr<ECHMET::SysComp::InConstituentVec, void(ECHMET_CC *)(const ECHMET::SysComp::InConstituentVec*)>
     conversion::makeECHMETInConstituentVec(const gdm::GDM& doc)
 {   
     auto ptr = ECHMET::SysComp::createInConstituentVec(doc.size());
     if(ptr == nullptr) throw std::bad_alloc{};
-    std::unique_ptr<ECHMET::SysComp::InConstituentVec, void(*)(const ECHMET::SysComp::InConstituentVec*)>
+    std::unique_ptr<ECHMET::SysComp::InConstituentVec, void(ECHMET_CC *)(const ECHMET::SysComp::InConstituentVec*)>
             ret{ptr, ECHMET::SysComp::releaseInputData};
 
     for(auto it = doc.begin(); it != doc.end(); ++it) {

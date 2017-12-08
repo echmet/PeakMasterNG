@@ -5,7 +5,7 @@
 
 namespace gdm {
 
-class LogicError : public virtual std::logic_error
+class LogicError : public std::logic_error
 {
 public:
     using std::logic_error::logic_error;

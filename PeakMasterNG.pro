@@ -188,7 +188,13 @@ FORMS += \
     src/ui/aboutdialog.ui \
     src/ui/eigenzonedetailsdialog.ui
 
-QMAKE_CXXFLAGS += "-Wall -Wextra -pedantic"
+unix {
+    QMAKE_CXXFLAGS += "-Wall -Wextra -pedantic"
+}
+
+win32 {
+    LIBS += -ldbghelp
+}
 
 include($$PWD/PeakMasterNG.pri)
 
