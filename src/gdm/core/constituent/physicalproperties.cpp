@@ -134,7 +134,7 @@ gdm::ChargeNumber gdm::PhysicalProperties::popHighCharge()
     return _charges.high() + 1;
 }
 
-void gdm::PhysicalProperties::setMobility(ChargeNumber charge, Mobility mobility) noexcept
+void gdm::PhysicalProperties::setMobility(ChargeNumber charge, Mobility mobility)
 {
     if(!contains(_charges, charge)) throw InvalidArgument{"charge is not present"};
     if(charge == 0) {
@@ -147,7 +147,7 @@ void gdm::PhysicalProperties::setMobility(ChargeNumber charge, Mobility mobility
     _mobilities[mobilityIndex(charge)] = mobility;
 }
 
-void gdm::PhysicalProperties::setPKa(ChargeNumber targetCharge, double pKa) noexcept
+void gdm::PhysicalProperties::setPKa(ChargeNumber targetCharge, double pKa)
 {
     if(targetCharge == 0
             || !contains(_charges, targetCharge)

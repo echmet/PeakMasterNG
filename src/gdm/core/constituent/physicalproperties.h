@@ -25,8 +25,8 @@ public:
     ChargeNumber popLowCharge(); //Object must have at least two charges; returns the charge removed
     ChargeNumber popHighCharge(); //Object must have at least two charges; returns the charge removed
 
-    void setPKa(ChargeNumber targetCharge, double pKa) noexcept;
-    void setMobility(ChargeNumber charge, Mobility mobility) noexcept;  //mobility must be zero if charge added is zero, positive otherwise
+    void setPKa(ChargeNumber targetCharge, double pKa);
+    void setMobility(ChargeNumber charge, Mobility mobility);  //mobility must be zero if charge added is zero, positive otherwise
 
     const std::vector<Mobility>& mobilities() const noexcept;
     const std::vector<double>& pKas() const noexcept;
