@@ -60,6 +60,9 @@ SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMPro
 
   ui->qtbv_backgroudConstituents->setItemDelegateForColumn(0, m_ccDelegateBGE);
   ui->qtbv_analytes->setItemDelegateForColumn(0, m_ccDelegateAnalytes);
+
+  ui->qtbv_backgroudConstituents->setMinimumHeight(100);
+  ui->qtbv_analytes->setMinimumHeight(100);
 }
 
 SystemCompositionWidget::~SystemCompositionWidget()

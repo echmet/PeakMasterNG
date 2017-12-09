@@ -35,6 +35,9 @@ SignalPlotWidget::SignalPlotWidget(QWidget *parent) :
 
   this->layout()->addWidget(m_plot);
   m_plot->setAxisTitle(QwtPlot::Axis::xBottom, "time (min)");
+
+  m_plot->setMinimumHeight(50);
+  this->setMinimumHeight(50);
 }
 
 SignalPlotWidget::~SignalPlotWidget()
