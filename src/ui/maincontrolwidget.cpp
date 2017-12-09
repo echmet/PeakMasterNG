@@ -18,6 +18,7 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
   initBackgroundPropsModel(resultsModels.backgroundMapperModel());
   initRunSetupModel();
   ui->qtbv_systemEigenzones->setModel(resultsModels.systemEigenzonesModel());
+  ui->qtbv_systemEigenzones->resizeColumnsToContents();
 
   connect(&m_runSetupMapperModel, &FloatMapperModel<double>::dataChanged, this, &MainControlWidget::onRunSetupChanged);
   connect(ui->qcbox_polarity, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainControlWidget::onRunSetupChanged);

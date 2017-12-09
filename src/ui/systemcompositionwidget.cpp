@@ -63,6 +63,9 @@ SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMPro
 
   ui->qtbv_backgroudConstituents->setMinimumHeight(100);
   ui->qtbv_analytes->setMinimumHeight(100);
+
+  ui->qtbv_backgroudConstituents->resizeColumnsToContents();
+  ui->qtbv_analytes->resizeColumnsToContents();
 }
 
 SystemCompositionWidget::~SystemCompositionWidget()
@@ -184,6 +187,9 @@ void SystemCompositionWidget::onBGEDoubleClicked(const QModelIndex &idx)
 
 void SystemCompositionWidget::onCompositionChanged()
 {
+  ui->qtbv_backgroudConstituents->resizeColumnToContents(2);
+  ui->qtbv_analytes->resizeColumnToContents(2);
+
   emit compositionChanged();
 }
 

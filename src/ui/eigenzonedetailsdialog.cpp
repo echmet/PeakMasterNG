@@ -10,6 +10,7 @@ EigenzoneDetailsDialog::EigenzoneDetailsDialog(QAbstractTableModel *model, QWidg
   ui->setupUi(this);
 
   ui->qtbv_ezProps->setModel(model);
+  ui->qtbv_ezProps->resizeColumnsToContents();
 }
 
 EigenzoneDetailsDialog::~EigenzoneDetailsDialog()
