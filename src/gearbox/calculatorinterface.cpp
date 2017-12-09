@@ -4,6 +4,7 @@
 #include "../gdm/conversion/conversion.h"
 
 #include <cassert>
+#include <limits>
 #include <lemng.h>
 #include <memory>
 #include <QPointF>
@@ -43,6 +44,92 @@ double EOFMobilityFromInput(const double EOFValue, const CalculatorInterface::EO
   if (EOFvt == CalculatorInterface::EOFValueType::MOBILITY)
     return EOFValue;
   return mobilityFromTime(EOFValue, totalLength, detectorPosition, drivingVoltage) * 1.0e9;
+}
+
+void fillBackgroundIonicComposition(ResultsData &rData, const ECHMET::LEMNG::RConstituentMap *composition)
+{
+  QVector<QString> constituents{};
+  QVector<QString> complexForms{};
+  QVector<IonicCompositionModel::ConstituentConcentrations> concentrations{};
+
+  /* Fill constituent names and all complex forms first */
+  auto it = composition->begin();
+  if (it == nullptr)
+    return;
+  while (it->hasNext()) {
+    constituents.push_back(it->key());
+    auto fit = it->value().forms->begin();
+    if (fit == nullptr) {
+      it->destroy();
+      return;
+    }
+
+    /* Walk through all complex forms of this constituent */
+    while (fit->hasNext()) {
+      const auto &cForm = fit->value();
+
+      assert(cForm.ions->size() > 0);
+
+      if (cForm.ions->size() > 1) {
+        const QString formName{fit->key()};
+        if (!complexForms.contains(formName))
+          complexForms.append(formName);
+      }
+
+      fit->next();
+    }
+    fit->destroy();
+    it->next();
+  }
+
+  /* Okay, we know of all constituents and complex forms */
+  it->rewind();
+
+  int totalLowest = std::numeric_limits<int>::max();
+  int totalHighest = std::numeric_limits<int>::min();
+  while (it->hasNext()) {
+    int lowest = std::numeric_limits<int>::max();
+    int highest = std::numeric_limits<int>::min();
+    QMap<int, double> plain{};
+    QMap<QString, double> complex{};
+
+    const auto &ctuent = it->value();
+    auto fit = ctuent.forms->begin();
+    if (fit == nullptr) {
+      it->destroy();
+      return;
+    }
+    while (fit->hasNext()) {
+      const auto &cForm = fit->value();
+
+      assert(cForm.ions->size() > 0);
+
+      if (cForm.ions->size() == 1) {
+        const int charge = cForm.totalCharge;
+        assert(!plain.contains(charge));
+        plain.insert(charge, cForm.concentration);
+        if (lowest > charge) lowest = charge;
+        if (highest < charge) highest = charge;
+      } else {
+        assert(!complex.contains(it->key()));
+        complex.insert(fit->key(), cForm.concentration);
+      }
+      fit->next();
+    }
+    fit->destroy();
+
+    assert(lowest <= highest);
+    assert(plain.count() == highest - lowest + 1);
+
+    if (totalLowest > lowest) totalLowest = lowest;
+    if (totalHighest < highest) totalHighest = highest;
+
+    concentrations.append(IonicCompositionModel::ConstituentConcentrations{lowest, highest, std::move(plain), std::move(complex)});
+    it->next();
+  }
+  it->destroy();
+
+  rData.backgroundCompositionRefresh(totalLowest, totalHighest, std::move(constituents), std::move(complexForms), std::move(concentrations));
 }
 
 CalculatorInterface::CalculatorInterface(gdm::GDM &backgroundGDM, gdm::GDM &sampleGDM, ResultsData resultsData) :
@@ -151,9 +238,9 @@ void CalculatorInterface::calculate(double totalLength, double detectorPosition,
   if (tRet != ECHMET::LEMNG::RetCode::OK)
     throw CalculatorInterfaceException{czeSystem->lastErrorString()};
 
-  mapResults(totalLength, detectorPosition, drivingVoltage, EOFMobility);
-
   m_ctx.makeValid();
+
+  mapResults(totalLength, detectorPosition, drivingVoltage, EOFMobility);
 }
 
 void CalculatorInterface::fillAnalytesList()
@@ -186,6 +273,9 @@ void CalculatorInterface::mapResults(const double totalLength, const double dete
 
   /* Update eigenzone details */
   recalculateEigenzoneDetails(totalLength, detectorPosition, drivingVoltage, EOFMobility);
+
+  /* Fill background ionic composition */
+  fillBackgroundIonicComposition(m_resultsData, m_ctx.results->BGEProperties.composition);
 }
 
 double CalculatorInterface::mobilityToTime(const double totalLength, const double detectorPosition, const double drivingVoltage, const double EOFMobility, const double u)
@@ -341,7 +431,7 @@ void CalculatorInterface::recalculateEigenzoneDetails(const double totalLength, 
 
     auto _it = ez.solutionProperties.composition->begin();
     while (_it->hasNext()) {
-      const auto &props = it->value();
+      const auto &props = _it->value();
       concentrations.append(props.concentration);
       _it->next();
     }

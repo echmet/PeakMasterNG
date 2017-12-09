@@ -99,7 +99,9 @@ SOURCES += \
     src/pmngcrashhandler.cpp \
     src/ui/aboutdialog.cpp \
     src/ui/eigenzonedetailsdialog.cpp \
-    src/gearbox/results_models/eigenzonedetailsmodel.cpp
+    src/gearbox/results_models/eigenzonedetailsmodel.cpp \
+    src/gearbox/results_models/ioniccompositionmodel.cpp \
+    src/ui/ioniccompositiondialog.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -174,7 +176,9 @@ HEADERS += \
     src/globals.h \
     src/ui/aboutdialog.h \
     src/ui/eigenzonedetailsdialog.h \
-    src/gearbox/results_models/eigenzonedetailsmodel.h
+    src/gearbox/results_models/eigenzonedetailsmodel.h \
+    src/gearbox/results_models/ioniccompositionmodel.h \
+    src/ui/ioniccompositiondialog.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \
@@ -186,7 +190,8 @@ FORMS += \
     src/ui/editcomplexationdialog.ui \
     src/ui/crashhandlerdialog.ui \
     src/ui/aboutdialog.ui \
-    src/ui/eigenzonedetailsdialog.ui
+    src/ui/eigenzonedetailsdialog.ui \
+    src/ui/ioniccompositiondialog.ui
 
 unix {
     QMAKE_CXXFLAGS += "-Wall -Wextra -pedantic"

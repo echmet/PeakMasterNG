@@ -67,11 +67,13 @@ private:
 
   QDataWidgetMapper *m_backgroundPropsMapper;
 
+  QAbstractTableModel *m_bgeIonicCompositionModel;
   EigenzoneDetailsModel *m_eigenzoneDetailsModel;
 
   FloatingValueDelegate m_fltDelegate;
 
 private slots:
+  void onBGEIonicCompositionClicked();
   void onEOFCurrentIndexChanged(const int idx);
   void onIonicStrengthToggled();
   void onRunSetupChanged();

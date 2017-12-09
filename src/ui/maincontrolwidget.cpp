@@ -2,6 +2,7 @@
 #include "ui_maincontrolwidget.h"
 
 #include "eigenzonedetailsdialog.h"
+#include "ioniccompositiondialog.h"
 
 #include <QDataWidgetMapper>
 
@@ -9,6 +10,7 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
   QWidget{parent},
   ui{new Ui::MainControlWidget},
   m_runSetupMapperModel{this},
+  m_bgeIonicCompositionModel{resultsModels.bgeIonicCompositionModel()},
   m_eigenzoneDetailsModel{resultsModels.eigenzoneDetailsModel()}
 {
   ui->setupUi(this);
@@ -21,6 +23,7 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
   connect(ui->qcbox_polarity, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainControlWidget::onRunSetupChanged);
   connect(ui->qcb_correctForIS, &QCheckBox::stateChanged, this, &MainControlWidget::onRunSetupChangedInvalidate);
   connect(ui->qpb_details, &QPushButton::clicked, this, &MainControlWidget::onShowEigenzoneDetailsClicked);
+  connect(ui->qpb_bgeIonicComposition, &QPushButton::clicked, this, &MainControlWidget::onBGEIonicCompositionClicked);
 }
 
 MainControlWidget::~MainControlWidget()
@@ -89,6 +92,14 @@ MainControlWidget::EOF_Type MainControlWidget::EOFInputType() const
 double MainControlWidget::EOFValue() const
 {
   return m_runSetupMappedData.at(m_runSetupMapperModel.indexFromItem(RunSetupItems::EOF_VALUE));
+}
+
+void MainControlWidget::onBGEIonicCompositionClicked()
+{
+  IonicCompositionDialog dlg{m_bgeIonicCompositionModel, this};
+  dlg.setWindowTitle(tr("BGE ionic composition"));
+
+  dlg.exec();
 }
 
 void MainControlWidget::onEOFCurrentIndexChanged(const int idx)

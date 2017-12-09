@@ -3,6 +3,7 @@
 
 #include "backgroundpropertiesmodel.h"
 #include "eigenzonedetailsmodel.h"
+#include "ioniccompositionmodel.h"
 #include "systemeigenzonestablemodel.h"
 
 #include <memory>
@@ -15,6 +16,7 @@ public:
 
   std::unique_ptr<BackgroundPropertiesMapping::MapperModel> m_backgroundPropsModel;
   std::unique_ptr<EigenzoneDetailsModel> m_eigenzoneDetailsModel;
+  std::unique_ptr<IonicCompositionModel> m_bgeIonicComposition;
   std::unique_ptr<SystemEigenzonesTableModel> m_systemEigenzonesTableModel;
 
   QVector<double> m_backgroundPropsData;

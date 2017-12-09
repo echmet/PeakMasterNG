@@ -76,8 +76,6 @@ private:
   const gdm::GDM &m_sampleGDM;
   ResultsData m_resultsData;
   CalculatorContext m_ctx;
-
-
 };
 
 Q_DECLARE_METATYPE(CalculatorInterface::Signal)

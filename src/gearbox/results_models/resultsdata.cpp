@@ -7,6 +7,14 @@ ResultsData::ResultsData(ResultsContainer &container) :
 {
 }
 
+void ResultsData::backgroundCompositionRefresh(const int lowestCharge, const int highestCharge,
+                                               QVector<QString> &&constituents,
+                                               QVector<QString> &&complex,
+                                               QVector<IonicCompositionModel::ConstituentConcentrations> &&concentrations) noexcept
+{
+  return m_container.m_bgeIonicComposition->refreshData(lowestCharge, highestCharge, std::move(constituents), std::move(complex), std::move(concentrations));
+}
+
 QVector<double> & ResultsData::backgroundPropsData()
 {
   return m_container.m_backgroundPropsData;

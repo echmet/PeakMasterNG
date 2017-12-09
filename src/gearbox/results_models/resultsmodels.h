@@ -13,6 +13,7 @@ public:
   ResultsModels() = delete;
   ResultsModels(ResultsContainer &container);
   BackgroundPropertiesMapping::MapperModel * backgroundMapperModel();
+  QAbstractTableModel * bgeIonicCompositionModel();
   EigenzoneDetailsModel * eigenzoneDetailsModel();
   SystemEigenzonesTableModel * systemEigenzonesModel();
 

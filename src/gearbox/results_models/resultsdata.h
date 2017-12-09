@@ -3,6 +3,7 @@
 
 #include "backgroundpropertiesmodel.h"
 #include "eigenzonedetailsmodel.h"
+#include "ioniccompositionmodel.h"
 #include "systemeigenzonestablemodel.h"
 
 #include <QVector>
@@ -14,6 +15,11 @@ class ResultsData
 public:
   ResultsData() = delete;
   ResultsData(ResultsContainer &container);
+
+  void backgroundCompositionRefresh(const int lowestCharge, const int highestCharge,
+                                    QVector<QString> &&constituents,
+                                    QVector<QString> &&complex,
+                                    QVector<IonicCompositionModel::ConstituentConcentrations> &&concentrations) noexcept;
 
   QVector<double> & backgroundPropsData();
   int backgroundPropsIndex(const BackgroundPropertiesMapping::Items item) const;

@@ -6,6 +6,8 @@ ResultsContainer::ResultsContainer()
   m_backgroundPropsData.resize(m_backgroundPropsModel->indexFromItem(BackgroundPropertiesMapping::Items::LAST_INDEX));
   m_backgroundPropsModel->setUnderlyingData(&m_backgroundPropsData);
 
+  m_bgeIonicComposition = std::make_unique<IonicCompositionModel>();
+
   m_eigenzoneDetailsModel = std::make_unique<EigenzoneDetailsModel>();
 
   m_systemEigenzonesTableModel = std::make_unique<SystemEigenzonesTableModel>();
