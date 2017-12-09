@@ -68,7 +68,7 @@ private:
   QDataWidgetMapper *m_backgroundPropsMapper;
 
   QAbstractTableModel *m_bgeIonicCompositionModel;
-  EigenzoneDetailsModel *m_eigenzoneDetailsModel;
+  QAbstractTableModel *m_eigenzoneDetailsModel;
 
   FloatingValueDelegate m_fltDelegate;
 

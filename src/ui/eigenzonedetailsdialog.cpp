@@ -1,9 +1,9 @@
 #include "eigenzonedetailsdialog.h"
 #include "ui_eigenzonedetailsdialog.h"
 
-#include "../gearbox/results_models/eigenzonedetailsmodel.h"
+#include <QAbstractTableModel>
 
-EigenzoneDetailsDialog::EigenzoneDetailsDialog(EigenzoneDetailsModel *model, QWidget *parent) :
+EigenzoneDetailsDialog::EigenzoneDetailsDialog(QAbstractTableModel *model, QWidget *parent) :
   QDialog{parent},
   ui{new Ui::EigenzoneDetailsDialog}
 {

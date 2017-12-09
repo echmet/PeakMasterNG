@@ -17,7 +17,7 @@ QAbstractTableModel * ResultsModels::bgeIonicCompositionModel()
   return m_container.m_bgeIonicComposition.get();
 }
 
-EigenzoneDetailsModel * ResultsModels::eigenzoneDetailsModel()
+QAbstractTableModel * ResultsModels::eigenzoneDetailsModel()
 {
   return m_container.m_eigenzoneDetailsModel.get();
 }

@@ -2,7 +2,6 @@
 #define RESULTSMODELS_H
 
 #include "backgroundpropertiesmodel.h"
-#include "eigenzonedetailsmodel.h"
 #include "systemeigenzonestablemodel.h"
 
 class ResultsContainer;
@@ -14,7 +13,7 @@ public:
   ResultsModels(ResultsContainer &container);
   BackgroundPropertiesMapping::MapperModel * backgroundMapperModel();
   QAbstractTableModel * bgeIonicCompositionModel();
-  EigenzoneDetailsModel * eigenzoneDetailsModel();
+  QAbstractTableModel * eigenzoneDetailsModel();
   SystemEigenzonesTableModel * systemEigenzonesModel();
 
 private:

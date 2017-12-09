@@ -7,14 +7,14 @@ namespace Ui {
   class EigenzoneDetailsDialog;
 }
 
-class EigenzoneDetailsModel;
+class QAbstractTableModel;
 
 class EigenzoneDetailsDialog : public QDialog
 {
   Q_OBJECT
 
 public:
-  explicit EigenzoneDetailsDialog(EigenzoneDetailsModel *model, QWidget *parent = nullptr);
+  explicit EigenzoneDetailsDialog(QAbstractTableModel *model, QWidget *parent = nullptr);
   ~EigenzoneDetailsDialog();
 
 private:
