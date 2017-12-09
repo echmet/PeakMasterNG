@@ -174,6 +174,7 @@ void SystemCompositionWidget::onAnalytesDoubleClicked(const QModelIndex &idx)
 
   const QVariant v = m_analytesModel->data(m_analytesModel->index(idx.row(), 0), Qt::UserRole);
   handleDoubleClick(idx.column(), v, h_sampleGDM, m_analytesModel);
+  ui->qtbv_analytes->resizeColumnToContents(2);
 }
 
 void SystemCompositionWidget::onBGEDoubleClicked(const QModelIndex &idx)
@@ -183,6 +184,7 @@ void SystemCompositionWidget::onBGEDoubleClicked(const QModelIndex &idx)
 
   const QVariant v = m_backgroundConstituentsModel->data(m_backgroundConstituentsModel->index(idx.row(), 0), Qt::UserRole);
   handleDoubleClick(idx.column(), v, h_backgroundGDM, m_backgroundConstituentsModel);
+  ui->qtbv_backgroudConstituents->resizeColumnToContents(2);
 }
 
 void SystemCompositionWidget::onCompositionChanged()

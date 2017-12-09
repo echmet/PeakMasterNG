@@ -10,6 +10,7 @@ IonicCompositionDialog::IonicCompositionDialog(QAbstractTableModel *model, QWidg
   ui->setupUi(this);
 
   ui->qtvb_ionicComposition->setModel(model);
+  ui->qtvb_ionicComposition->resizeColumnsToContents();
 }
 
 IonicCompositionDialog::~IonicCompositionDialog()
