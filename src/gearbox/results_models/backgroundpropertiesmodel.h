@@ -19,6 +19,6 @@ namespace BackgroundPropertiesMapping {
   public:
     using FloatMapperModel<Items>::FloatMapperModel;
   };
-};
+}
 
 #endif // BACKGROUNDPROPERTIESMAPPERMAPPING_H
