@@ -7,6 +7,7 @@
 #include "../gearbox/constituentmanipulator.h"
 #include "../gearbox/complexationmanager.h"
 #include "complexationcolorizerdelegate.h"
+#include "../gearbox/floatingvaluedelegate.h"
 
 #include <QMessageBox>
 
@@ -32,11 +33,13 @@ SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMPro
   ui->qtbv_backgroudConstituents->setModel(m_backgroundConstituentsModel);
   enableDragDrop(ui->qtbv_backgroudConstituents);
   m_ccDelegateBGE = new ComplexationColorizerDelegate{m_backgroundConstituentsModel, this};
+  m_fltDelegateBGE = new FloatingValueDelegate{this};
 
   m_analytesModel = new ConstituentsModelImpl<1>{{ "Sample" }, sampleGDM, cpxMgr, this};
   ui->qtbv_analytes->setModel(m_analytesModel);
   enableDragDrop(ui->qtbv_analytes);
   m_ccDelegateAnalytes = new ComplexationColorizerDelegate{m_analytesModel, this};
+  m_fltDelegateAnalytes = new FloatingValueDelegate{this};
 
   connect(ui->qpb_addAnalyte, &QPushButton::clicked, this, &SystemCompositionWidget::onAddAnalyte);
   connect(ui->qpb_addBGE, &QPushButton::clicked, this, &SystemCompositionWidget::onAddBGE);
@@ -59,7 +62,10 @@ SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMPro
   connect(m_analytesModel, &AbstractConstituentsModelBase::rowsRemoved, this, &SystemCompositionWidget::onCompositionChanged);
 
   ui->qtbv_backgroudConstituents->setItemDelegateForColumn(0, m_ccDelegateBGE);
+  ui->qtbv_backgroudConstituents->setItemDelegateForColumn(3, m_fltDelegateBGE);
+  ui->qtbv_backgroudConstituents->setItemDelegateForColumn(4, m_fltDelegateBGE);
   ui->qtbv_analytes->setItemDelegateForColumn(0, m_ccDelegateAnalytes);
+  ui->qtbv_analytes->setItemDelegateForColumn(3, m_fltDelegateAnalytes);
 
   ui->qtbv_backgroudConstituents->setMinimumHeight(100);
   ui->qtbv_analytes->setMinimumHeight(100);

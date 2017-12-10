@@ -12,6 +12,7 @@ class AbstractConstituentsModelBase;
 class ComplexationColorizerDelegate;
 class ComplexationManager;
 class GDMProxy;
+class FloatingValueDelegate;
 
 class SystemCompositionWidget : public QWidget
 {
@@ -39,6 +40,8 @@ private:
 
   ComplexationColorizerDelegate *m_ccDelegateAnalytes;
   ComplexationColorizerDelegate *m_ccDelegateBGE;
+  FloatingValueDelegate *m_fltDelegateAnalytes;
+  FloatingValueDelegate *m_fltDelegateBGE;
 
 private slots:
   void onAddAnalyte();

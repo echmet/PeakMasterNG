@@ -12,6 +12,7 @@ namespace gdm {
   class PhysicalProperties;
 }
 
+class FloatingValueDelegate;
 class ModifyConstituentChargePushButton;
 
 class EditConstituentDialog : public QDialog
@@ -50,6 +51,8 @@ private:
   ModifyConstituentChargePushButton *m_qpb_removeHigh;
 
   ConstituentChargesModel m_chargesModel;
+
+  FloatingValueDelegate *m_fltDelegate;
 
 private slots:
   void onAccepted();

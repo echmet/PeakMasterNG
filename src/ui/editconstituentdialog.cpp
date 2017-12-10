@@ -3,19 +3,23 @@
 
 #include "elementaries/modifyconstituentchargepushbutton.h"
 #include "../gdm/core/constituent/physicalproperties.h"
+#include "../gearbox/floatingvaluedelegate.h"
 
 EditConstituentDialog::EditConstituentDialog(QWidget *parent) :
   QDialog{parent},
-  ui{new Ui::EditConstituentDialog}
+  ui{new Ui::EditConstituentDialog},
+  m_fltDelegate{new FloatingValueDelegate{this}}
 {
   setupWidget();
   updateChargeModifiers();
+  ui->qtblView_charges->setItemDelegate(m_fltDelegate);
 }
 
 EditConstituentDialog::EditConstituentDialog(const QString &name, const EditConstituentDialog::ConstituentType type, const gdm::PhysicalProperties &props,
                                              const bool allowTypeChange, QWidget *parent) :
   QDialog{parent},
-  ui{new Ui::EditConstituentDialog}
+  ui{new Ui::EditConstituentDialog},
+  m_fltDelegate{new FloatingValueDelegate{this}}
 {
   setupWidget();
 
@@ -45,6 +49,7 @@ EditConstituentDialog::EditConstituentDialog(const QString &name, const EditCons
   ui->qcbox_type->setEnabled(allowTypeChange);
 
   updateChargeModifiers();
+  ui->qtblView_charges->setItemDelegate(m_fltDelegate);
 }
 
 EditConstituentDialog::~EditConstituentDialog()
