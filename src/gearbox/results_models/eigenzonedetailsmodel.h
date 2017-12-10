@@ -13,6 +13,7 @@ public:
   public:
     bool tainted;
     bool isAnalyte;
+    double mobility;
     double time;
     double pH;
     double uEMD;
@@ -38,6 +39,12 @@ private:
 
   QVector<QString> m_constituents;
   QVector<EigenzoneProps> m_eigenzones;
+
+  static const QString s_typeStr;
+  static const QString s_mobilityStr;
+  static const QString s_timeStr;
+  static const QString s_uEMDStr;
+  static const QString s_pHStr;
 };
 
 #endif // EIGENZONEDETAILSMODEL_H

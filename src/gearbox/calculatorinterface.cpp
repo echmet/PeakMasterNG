@@ -440,6 +440,7 @@ void CalculatorInterface::recalculateEigenzoneDetails(const double totalLength, 
     EigenzoneDetailsModel::EigenzoneProps ezProps{
       ez.tainted,
       ez.ztype == ECHMET::LEMNG::EigenzoneType::ANALYTE,
+      ez.mobility,
       t,
       ez.solutionProperties.pH,
       ez.uEMD,

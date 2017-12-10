@@ -3,6 +3,12 @@
 #include <cassert>
 #include <QPalette>
 
+const QString EigenzoneDetailsModel::s_typeStr{tr("Type")};
+const QString EigenzoneDetailsModel::s_mobilityStr{tr("Mobility (\xe2\x8b\x85 1e-9)")};
+const QString EigenzoneDetailsModel::s_timeStr{tr("Time (min)")};
+const QString EigenzoneDetailsModel::s_uEMDStr{tr("\xce\xbc EMD (\xe2\x8b\x85 1e-9)")};
+const QString EigenzoneDetailsModel::s_pHStr{"pH"};
+
 EigenzoneDetailsModel::EigenzoneDetailsModel(QObject *parent)
   : QAbstractTableModel(parent)
 {
@@ -36,15 +42,17 @@ QVariant EigenzoneDetailsModel::headerData(int section, Qt::Orientation orientat
   if (orientation == Qt::Vertical) {
     switch (section) {
     case 0:
-      return "Type";
+      return s_typeStr;
     case 1:
-      return "Time (min)";
+      return s_mobilityStr;
     case 2:
-      return "\xce\xbc EMD (.1e-9)";
+      return s_timeStr;
     case 3:
-      return "pH";
+      return s_uEMDStr;
+    case 4:
+      return s_pHStr;
     default:
-      return constituentsHeader(section - 4);
+      return constituentsHeader(section - 5);
     }
   }
 
@@ -55,7 +63,7 @@ int EigenzoneDetailsModel::rowCount(const QModelIndex &parent) const
 {
   Q_UNUSED(parent);
 
-  return m_constituents.size() + 4;
+  return m_constituents.size() + 5;
 }
 
 int EigenzoneDetailsModel::columnCount(const QModelIndex &parent) const
@@ -95,13 +103,15 @@ QVariant EigenzoneDetailsModel::data(const QModelIndex &index, int role) const
   case 0:
     return (zone.isAnalyte) ? "Analyte" : "System";
   case 1:
-    return (zone.time > 0.0) ? QVariant{zone.time} : QVariant{"-"};
+    return zone.mobility;
   case 2:
-    return zone.uEMD;
+    return (zone.time > 0.0) ? QVariant{zone.time} : QVariant{"-"};
   case 3:
+    return zone.uEMD;
+  case 4:
     return zone.pH;
   default:
-    return constituentsConcentrations(zone, row - 4);
+    return constituentsConcentrations(zone, row - 5);
   }
 }
 
