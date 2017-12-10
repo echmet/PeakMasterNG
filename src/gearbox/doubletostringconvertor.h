@@ -10,7 +10,7 @@ class DoubleToStringConvertor : public QObject
 {
 public:
   virtual ~DoubleToStringConvertor();
-  static double back(QString value, bool *ok);
+  static double back(const QString &value, bool *ok);
   static QString convert(const double d);
   static QString convert(const double d, const int digits);
   static int digits();
@@ -32,9 +32,6 @@ private:
   QVector<INumberFormatChangeable *> m_listeners;
 
   static DoubleToStringConvertor *s_me;
-
-  static const QChar decDot;
-  static const QChar decComma;
 };
 
 #endif // DOUBLETOSTRINGCONVERTOR_H

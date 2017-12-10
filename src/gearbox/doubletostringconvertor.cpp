@@ -3,8 +3,6 @@
 
 DoubleToStringConvertor *DoubleToStringConvertor::s_me{nullptr};
 
-const QChar DoubleToStringConvertor::decDot{'.'};
-const QChar DoubleToStringConvertor::decComma{','};
 
 DoubleToStringConvertor::DoubleToStringConvertor() :
   QObject{nullptr},
@@ -18,14 +16,8 @@ DoubleToStringConvertor::~DoubleToStringConvertor()
 {
 }
 
-double DoubleToStringConvertor::back(QString value, bool *ok)
+double DoubleToStringConvertor::back(const QString &value, bool *ok)
 {
-  const QChar decSep = s_me->m_locale.decimalPoint();
-  if (decSep == decDot)
-    value.replace(decComma, decDot);
-  else
-    value.replace(decDot, decComma);
-
   return s_me->m_locale.toDouble(value, ok);
 }
 
