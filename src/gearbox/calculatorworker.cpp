@@ -1,10 +1,10 @@
 #include "calculatorworker.h"
 
-CalculatorWorker::CalculatorWorker(CalculatorInterface &calcIface, const MainControlWidget::RunSetup &rs,
-                                   bool &calcOk, QString &errorMsg) :
-  QObject{nullptr},
+CalculatorWorker::CalculatorWorker(CalculatorInterface &calcIface, const bool ionicStrengthCorrection, bool &calcOk, QString &errorMsg,
+                                   QObject *parent) :
+  QObject{parent},
   m_calcIface{calcIface},
-  m_rs{rs},
+  m_ionicStrengthCorrection{ionicStrengthCorrection},
   m_calcOk(calcOk),
   m_errorMsg{errorMsg}
 {
@@ -13,9 +13,7 @@ CalculatorWorker::CalculatorWorker(CalculatorInterface &calcIface, const MainCon
 void CalculatorWorker::process()
 {
   try {
-    m_calcIface.calculate(m_rs.totalLength, m_rs.detectorPosition,
-                          m_rs.drivingVoltage,
-                          m_rs.positiveVoltage, m_rs.ionicStrengthCorrection);
+    m_calcIface.calculate(m_ionicStrengthCorrection);
     m_calcOk = true;
   } catch (CalculatorInterfaceException &ex) {
     m_calcOk = false;

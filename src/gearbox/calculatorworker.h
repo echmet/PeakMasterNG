@@ -9,14 +9,13 @@ class CalculatorWorker : public QObject
   Q_OBJECT
 
 public:
-  CalculatorWorker(CalculatorInterface &calcIface, const MainControlWidget::RunSetup &rs,
-                   bool &calcOk, QString &errorMsg);
+  CalculatorWorker(CalculatorInterface &calcIface, const bool ionicStrengthCorrection, bool &calcOk, QString &errorMsg, QObject *parent = nullptr);
 public slots:
   void process();
 
 private:
   CalculatorInterface &m_calcIface;
-  const MainControlWidget::RunSetup &m_rs;
+  const bool m_ionicStrengthCorrection;
   bool &m_calcOk;
   QString &m_errorMsg;
 

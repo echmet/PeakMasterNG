@@ -188,25 +188,11 @@ QVector<QString> CalculatorInterface::analytes() const
   return _analytes;
 }
 
-void CalculatorInterface::calculate(double totalLength, double detectorPosition, double drivingVoltage,
-                                    bool positiveVoltage, bool ionicStrengthCorrection)
+void CalculatorInterface::calculate(bool ionicStrengthCorrection)
 {
   ECHMET::LEMNG::CZESystem *czeSystemRaw;
   ECHMET::LEMNG::InAnalyticalConcentrationsMap *backgroundMapRaw;
   ECHMET::LEMNG::InAnalyticalConcentrationsMap *sampleMapRaw;
-
-  if (totalLength <= 0)
-    throw CalculatorInterfaceException{"Invalid value of \"total length\""};
-  if (detectorPosition > totalLength)
-    throw CalculatorInterfaceException{"Invalid value of \"detector position\""};
-  if (drivingVoltage <= 0)
-    throw CalculatorInterfaceException{"Invalid value of \"driving voltage\""};
-
-  if (!positiveVoltage)
-    drivingVoltage *= -1;
-
-  totalLength /= 100.0;
-  detectorPosition /= 100.0;
 
   m_ctx.invalidate();
 

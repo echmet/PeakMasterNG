@@ -133,6 +133,9 @@ std::unique_ptr<ECHMET::SysComp::InConstituentVec, void(ECHMET_CC *)(const ECHME
     auto retcode = makeComposition(sys, props, ret.get());
     assert(retcode == ECHMET::RetCode::OK);
 
+    ECHMET::SysComp::releaseChemicalSystem(sys);
+    ECHMET::SysComp::releaseCalculatedProperties(props);
+
     return ret;
 }
 

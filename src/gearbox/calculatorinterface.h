@@ -48,8 +48,7 @@ public:
   ~CalculatorInterface() noexcept;
   QVector<QString> allConstituents() const;
   QVector<QString> analytes() const;
-  void calculate(double totalLength, double detectorPosition, double drivingVoltage,
-                 bool positiveVoltage, bool ionicStrengthCorrection);
+  void calculate(bool ionicStrengthCorrection);
   QVector<QPointF> plotElectrophoregram(double totalLength, double detectorPosition,
                                         double drivingVoltage, const bool positiveVoltage,
                                         double EOFValue, const EOFValueType EOFvt,
