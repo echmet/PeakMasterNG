@@ -76,7 +76,7 @@ QVariant EigenzoneDetailsModel::data(const QModelIndex &index, int role) const
 
   const auto &zone = m_eigenzones.at(col);
 
-  if (role == Qt::TextColorRole) {
+  if (role == Qt::ForegroundRole) {
     const QPalette p{};
 
     if (zone.tainted)
