@@ -101,7 +101,8 @@ SOURCES += \
     src/ui/eigenzonedetailsdialog.cpp \
     src/gearbox/results_models/eigenzonedetailsmodel.cpp \
     src/gearbox/results_models/ioniccompositionmodel.cpp \
-    src/ui/ioniccompositiondialog.cpp
+    src/ui/ioniccompositiondialog.cpp \
+    src/gearbox/calculatorworker.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -178,7 +179,8 @@ HEADERS += \
     src/ui/eigenzonedetailsdialog.h \
     src/gearbox/results_models/eigenzonedetailsmodel.h \
     src/gearbox/results_models/ioniccompositionmodel.h \
-    src/ui/ioniccompositiondialog.h
+    src/ui/ioniccompositiondialog.h \
+    src/gearbox/calculatorworker.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \

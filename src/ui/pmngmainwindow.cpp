@@ -7,6 +7,7 @@
 #include "systemcompositionwidget.h"
 #include "aboutdialog.h"
 #include "../globals.h"
+#include "../gearbox/calculatorworker.h"
 
 #include <QDataWidgetMapper>
 #include <QHBoxLayout>
@@ -14,6 +15,7 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QStandardItemModel>
+#include <QThread>
 
 #include <signal.h>
 
@@ -158,20 +160,36 @@ void PMNGMainWindow::onCalculate()
   CalculatorInterface::EOFValueType EOFvt;
   inputToEOFValueType(EOFValue, EOFvt, m_mainCtrlWidget->EOFValue(), m_mainCtrlWidget->EOFInputType());
 
-  try {
-    const MainControlWidget::RunSetup rs = m_mainCtrlWidget->runSetup();
-    m_calcIface.calculate(rs.totalLength, rs.detectorPosition,
-                          rs.drivingVoltage,
-                          EOFValue, EOFvt,
-                          rs.positiveVoltage, rs.ionicStrengthCorrection);
+  const MainControlWidget::RunSetup rs = m_mainCtrlWidget->runSetup();
 
+  bool calcOk;
+  QString errorMsg;
+  CalculatorWorker *worker = new CalculatorWorker{m_calcIface, rs, EOFValue, EOFvt, calcOk, errorMsg};
+  QThread *thread = new QThread{};
+  worker->moveToThread(thread);
+
+  QMessageBox mbox(QMessageBox::Information, tr("Processing.."), tr("Hang in there, this can take a little while..."));
+  mbox.setStandardButtons(0);
+  connect(thread, &QThread::started, worker, &CalculatorWorker::process);
+  connect(worker, &CalculatorWorker::finished, thread, &QThread::quit);
+  connect(thread, &QThread::finished, &mbox, &QMessageBox::accept);
+  thread->start();
+
+  mbox.exec();
+
+  thread->wait();
+
+  if (calcOk) {
+    m_calcIface.publishResults(rs.totalLength, rs.detectorPosition, rs.drivingVoltage, EOFValue, EOFvt, rs.positiveVoltage);
     addConstituentsSignals(m_calcIface.allConstituents());
-
     plotElectrophoregram();
-  } catch (CalculatorInterfaceException &ex) {
-    QMessageBox mbox{QMessageBox::Critical, tr("Calculation failed"), ex.what()};
+  } else {
+    QMessageBox mbox{QMessageBox::Critical, tr("Calculation failed"), errorMsg};
     mbox.exec();
   }
+
+  worker->deleteLater();
+  thread->deleteLater();
 }
 
 void PMNGMainWindow::onCompositionChanged()

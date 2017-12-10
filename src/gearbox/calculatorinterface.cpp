@@ -209,8 +209,6 @@ void CalculatorInterface::calculate(double totalLength, double detectorPosition,
   totalLength /= 100.0;
   detectorPosition /= 100.0;
 
-  const double EOFMobility = EOFMobilityFromInput(EOFValue, EOFvt, totalLength, detectorPosition, drivingVoltage);
-
   m_ctx.invalidate();
 
   fillAnalytesList();
@@ -239,8 +237,6 @@ void CalculatorInterface::calculate(double totalLength, double detectorPosition,
     throw CalculatorInterfaceException{czeSystem->lastErrorString()};
 
   m_ctx.makeValid();
-
-  mapResults(totalLength, detectorPosition, drivingVoltage, EOFMobility);
 }
 
 void CalculatorInterface::fillAnalytesList()
@@ -334,6 +330,31 @@ QVector<QPointF> CalculatorInterface::plotAllAnalytes(const double totalLength, 
   }
 
   return plot;
+}
+
+void CalculatorInterface::publishResults(double totalLength, double detectorPosition, double drivingVoltage,
+                                         const double EOFValue, const EOFValueType EOFvt,
+                                         bool positiveVoltage)
+{
+  if (!m_ctx.isValid())
+    return;
+
+  if (totalLength <= 0)
+    throw CalculatorInterfaceException{"Invalid value of \"total length\""};
+  if (detectorPosition > totalLength)
+    throw CalculatorInterfaceException{"Invalid value of \"detector position\""};
+  if (drivingVoltage <= 0)
+    throw CalculatorInterfaceException{"Invalid value of \"driving voltage\""};
+
+  if (!positiveVoltage)
+    drivingVoltage *= -1;
+
+  totalLength /= 100.0;
+  detectorPosition /= 100.0;
+
+  const double EOFMobility = EOFMobilityFromInput(EOFValue, EOFvt, totalLength, detectorPosition, drivingVoltage);
+
+  mapResults(totalLength, detectorPosition, drivingVoltage, EOFMobility);
 }
 
 QVector<QPointF> CalculatorInterface::plotElectrophoregram(double totalLength, double detectorPosition,

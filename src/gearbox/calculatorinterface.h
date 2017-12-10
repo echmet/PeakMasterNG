@@ -56,6 +56,9 @@ public:
                                         double EOFValue, const EOFValueType EOFvt,
                                         double injectionZoneLength, double plotToTime,
                                         const Signal &signal);
+  void publishResults(double totalLength, double detectorPosition, double drivingVoltage,
+                      const double EOFValue, const EOFValueType EOFvt,
+                      bool positiveVoltage);
   void recalculateTimes(double totalLength, double detectorPosition, double drivingVoltage,
                         const double EOFValue, const EOFValueType EOFvt, bool positiveVoltage);
   bool resultsAvailable() const;
