@@ -10,7 +10,6 @@ class CalculatorWorker : public QObject
 
 public:
   CalculatorWorker(CalculatorInterface &calcIface, const MainControlWidget::RunSetup &rs,
-                   const double EOFValue, const CalculatorInterface::EOFValueType EOFvt,
                    bool &calcOk, QString &errorMsg);
 public slots:
   void process();
@@ -18,8 +17,6 @@ public slots:
 private:
   CalculatorInterface &m_calcIface;
   const MainControlWidget::RunSetup &m_rs;
-  const double m_EOFValue;
-  const CalculatorInterface::EOFValueType m_EOFvt;
   bool &m_calcOk;
   QString &m_errorMsg;
 

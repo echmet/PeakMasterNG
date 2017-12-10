@@ -164,7 +164,7 @@ void PMNGMainWindow::onCalculate()
 
   bool calcOk;
   QString errorMsg;
-  CalculatorWorker *worker = new CalculatorWorker{m_calcIface, rs, EOFValue, EOFvt, calcOk, errorMsg};
+  CalculatorWorker *worker = new CalculatorWorker{m_calcIface, rs, calcOk, errorMsg};
   QThread *thread = new QThread{};
   worker->moveToThread(thread);
 

@@ -189,7 +189,6 @@ QVector<QString> CalculatorInterface::analytes() const
 }
 
 void CalculatorInterface::calculate(double totalLength, double detectorPosition, double drivingVoltage,
-                                    const double EOFValue, const EOFValueType EOFvt,
                                     bool positiveVoltage, bool ionicStrengthCorrection)
 {
   ECHMET::LEMNG::CZESystem *czeSystemRaw;
