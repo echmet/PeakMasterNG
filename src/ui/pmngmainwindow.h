@@ -10,6 +10,10 @@ namespace Ui {
   class PMNGMainWindow;
 }
 
+namespace persistence {
+  class Persistence;
+}
+
 class CalculatorInterface;
 class MainControlWidget;
 class ResultsModels;
@@ -31,7 +35,9 @@ public:
   };
 
   explicit PMNGMainWindow(SystemCompositionWidget *scompWidget,
-                          CalculatorInterface &&calcIface, ResultsModels resultsModels, QWidget *parent = nullptr);
+                          CalculatorInterface &&calcIface, ResultsModels resultsModels,
+                          persistence::Persistence &persistence,
+                          QWidget *parent = nullptr);
   ~PMNGMainWindow();
 
 private:
@@ -59,6 +65,8 @@ private:
   FloatMapperModel<PlotParamsItems> m_plotParamsModel;
   QVector<double> m_plotParamsData;
 
+  persistence::Persistence &m_persistence;
+
   QStandardItemModel *m_signalTypesModel;
 
   Ui::PMNGMainWindow *ui;
@@ -71,9 +79,11 @@ private slots:
   void onCalculate();
   void onCompositionChanged();
   void __onCrash();
+  void onLoad();
   void onExit();
   void onPlotElectrophoregram();
   void onRunSetupChanged(const bool invalidate);
+  void onSave();
 };
 
 #endif // PMNGMAINWINDOW_H

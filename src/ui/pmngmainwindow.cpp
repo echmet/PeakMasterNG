@@ -8,8 +8,10 @@
 #include "aboutdialog.h"
 #include "../globals.h"
 #include "../gearbox/calculatorworker.h"
+#include "../persistence/persistence.h"
 
 #include <QDataWidgetMapper>
+#include <QFileDialog>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QMessageBox>
@@ -55,12 +57,14 @@ QVector<PMNGMainWindow::SignalItem> PMNGMainWindow::s_defaultSignalItems{
 
 PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
                                CalculatorInterface &&calcIface, ResultsModels resultsModels,
+                               persistence::Persistence &persistence,
                                QWidget *parent) :
   QMainWindow{parent},
   m_calcIface{calcIface},
   m_signalPlotWidget{new SignalPlotWidget{this}},
   h_scompWidget{scompWidget},
   m_plotParamsModel{this},
+  m_persistence{persistence},
   ui{new Ui::PMNGMainWindow}
 {
   ui->setupUi(this);
@@ -88,6 +92,8 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   connect(ui->actionExit, &QAction::triggered, this, &PMNGMainWindow::onExit);
   connect(ui->actionCRASH, &QAction::triggered, this, &PMNGMainWindow::__onCrash);
   connect(ui->actionAbout, &QAction::triggered, this, &PMNGMainWindow::onAbout);
+  connect(ui->actionLoad, &QAction::triggered, this, &PMNGMainWindow::onLoad);
+  connect(ui->actionSave, &QAction::triggered, this, &PMNGMainWindow::onSave);
 
   ui->mainToolBar->addWidget(m_qpb_calculate);
 
@@ -203,6 +209,26 @@ void PMNGMainWindow::onExit()
   close();
 }
 
+void PMNGMainWindow::onLoad()
+{
+  QFileDialog dlg{};
+  dlg.setAcceptMode(QFileDialog::AcceptOpen);
+  if (dlg.exec() != QDialog::Accepted)
+    return;
+
+  const auto &files = dlg.selectedFiles();
+  if (files.size() < 1)
+    return;
+
+  persistence::System system{};
+  try {
+    m_persistence.deserialize(files.at(0), system);
+  } catch (persistence::DeserializationException &ex) {
+    QMessageBox mbox{QMessageBox::Warning, tr("Unable to load system"), ex.what()};
+    mbox.exec();
+  }
+}
+
 void PMNGMainWindow::onPlotElectrophoregram()
 {
   try {
@@ -228,6 +254,49 @@ void PMNGMainWindow::onRunSetupChanged(const bool invalidate)
                                  EOFValue, EOFvt,
                                  rs.positiveVoltage);
     plotElectrophoregram();
+  }
+}
+
+void PMNGMainWindow::onSave()
+{
+  QFileDialog dlg{};
+  dlg.setAcceptMode(QFileDialog::AcceptSave);
+  dlg.setWindowTitle(tr("Save composition"));
+  if (dlg.exec() != QDialog::Accepted)
+    return;
+
+  const auto &files = dlg.selectedFiles();
+  if (files.size() < 1)
+    return;
+
+  const MainControlWidget::RunSetup rs = m_mainCtrlWidget->runSetup();
+  const QString et = [](MainControlWidget::EOF_Type t) {
+      switch (t) {
+      case MainControlWidget::EOF_NONE:
+        return "N";
+      case MainControlWidget::EOF_MOBILITY:
+        return "U";
+      case MainControlWidget::EOF_MARKER_TIME:
+          return "T";
+       return "";
+      }
+    }(m_mainCtrlWidget->EOFInputType());
+
+  persistence::System sys{
+    rs.totalLength,
+    rs.detectorPosition,
+    rs.drivingVoltage,
+    rs.positiveVoltage,
+    et,
+    m_mainCtrlWidget->EOFValue(),
+    rs.ionicStrengthCorrection
+  };
+
+  try {
+    m_persistence.serialize(files.at(0), sys);
+  } catch (persistence::SerializationException &ex) {
+    QMessageBox mbox{QMessageBox::Warning, tr("Unable to save system"), ex.what()};
+    mbox.exec();
   }
 }
 

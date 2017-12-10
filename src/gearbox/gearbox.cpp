@@ -2,9 +2,11 @@
 
 #include "backgroundgdmproxy.h"
 #include "samplegdmproxy.h"
+#include "../persistence/persistence.h"
 
 Gearbox::Gearbox() :
   m_complexMgr{m_backgroundGDM, m_sampleGDM},
+  m_persistence{m_backgroundGDM, m_sampleGDM},
   m_backgroundGDMProxy{std::make_unique<BackgroundGDMProxy>(m_backgroundGDM, m_sampleGDM)},
   m_sampleGDMProxy{std::make_unique<SampleGDMProxy>(m_sampleGDM)}
 {
@@ -33,6 +35,11 @@ ResultsData Gearbox::resultsData()
 ResultsModels Gearbox::resultsModels()
 {
   return ResultsModels{m_resultsContainer};
+}
+
+persistence::Persistence & Gearbox::persistence()
+{
+  return m_persistence;
 }
 
 GDMProxy & Gearbox::sampleGDMProxy()

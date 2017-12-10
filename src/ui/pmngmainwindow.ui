@@ -112,6 +112,8 @@
     <property name="title">
      <string>F&amp;ile</string>
     </property>
+    <addaction name="actionLoad"/>
+    <addaction name="actionSave"/>
     <addaction name="actionExit"/>
     <addaction name="actionCRASH"/>
    </widget>
@@ -146,6 +148,16 @@
   <action name="actionCRASH">
    <property name="text">
     <string>&amp;CRASH</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionLoad">
+   <property name="text">
+    <string>Load</string>
    </property>
   </action>
  </widget>

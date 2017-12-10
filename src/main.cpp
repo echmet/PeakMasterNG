@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 
   SystemCompositionWidget *scompWidget = new SystemCompositionWidget{gbox.backgroundGDMProxy(), gbox.sampleGDMProxy(), gbox.complexationManager()};
 
-  PMNGMainWindow *w = new PMNGMainWindow{scompWidget, gbox.calculatorInterface(), gbox.resultsModels()};
+  PMNGMainWindow *w = new PMNGMainWindow{scompWidget, gbox.calculatorInterface(), gbox.resultsModels(), gbox.persistence()};
 
   PMNGCrashHandler::checkForCrash();
 
