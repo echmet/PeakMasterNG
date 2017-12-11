@@ -230,6 +230,7 @@ void PMNGMainWindow::onLoad()
 {
   QFileDialog dlg{};
   dlg.setAcceptMode(QFileDialog::AcceptOpen);
+  dlg.setNameFilter("JSON file (*.json)");
   if (dlg.exec() != QDialog::Accepted)
     return;
 
