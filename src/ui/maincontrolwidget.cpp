@@ -163,7 +163,7 @@ MainControlWidget::RunSetup MainControlWidget::runSetup() const
 
 void MainControlWidget::setRunSetup(const RunSetup &rs, const QVariant &eofType, const double EOFValue)
 {
-  constexpr static const auto getPolarity = [](const bool positive) {
+  static const auto getPolarity = [](const bool positive) {
     if (positive)
       return POLARITY_POSITIVE;
     return POLARITY_POSITIVE;
