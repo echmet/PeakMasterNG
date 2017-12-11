@@ -297,6 +297,7 @@ void PMNGMainWindow::onSave()
 {
   QFileDialog dlg{};
   dlg.setAcceptMode(QFileDialog::AcceptSave);
+  dlg.setNameFilter("JSON file (*.json)");
   dlg.setWindowTitle(tr("Save composition"));
   if (dlg.exec() != QDialog::Accepted)
     return;
