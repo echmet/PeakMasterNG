@@ -105,9 +105,9 @@ QJsonObject serializeComposition(const gdm::GDM gdm)
   return QJsonObject{{"constituents", constituents}};
 }
 
-QJsonArray serializeConcentrations(const gdm::GDM &gdm)
+QJsonObject serializeConcentrations(const gdm::GDM &gdm)
 {
-  QJsonArray concentrations;
+  QJsonObject concentrations;
 
   for (auto it = gdm.cbegin(); it != gdm.cend(); it++) {
     auto sampleConcs = gdm.concentrations(it);
@@ -118,7 +118,7 @@ QJsonArray serializeConcentrations(const gdm::GDM &gdm)
     for (auto d : sampleConcs)
       _concs.append(d);
 
-    concentrations.append(QJsonObject{{name, _concs}});
+    concentrations.insert(name, _concs);
   }
 
   return concentrations;
@@ -137,7 +137,8 @@ QJsonObject serializeSystem(const System &system)
     {"drivingVoltage", system.drivingVoltage},
     {"positiveVoltage", system.positiveVoltage},
     {"eofType", system.eofType},
-    {"eofValue", system.eofValue}
+    {"eofValue", system.eofValue},
+    {"ionicStrengthCorrection", system.ionicStrengthCorrection}
   };
 
   return sys;
@@ -155,8 +156,8 @@ void Serializer::serialize(const QString &filepath, const gdm::GDM &gdmBGE, cons
 
   QJsonObject compositionBGE = serializeComposition(gdmBGE);
   QJsonObject compositionSample = serializeComposition(gdmSample);
-  QJsonArray concentrationsBGE = serializeConcentrations(gdmBGE);
-  QJsonArray concentrationsSample = serializeConcentrations(gdmSample);
+  QJsonObject concentrationsBGE = serializeConcentrations(gdmBGE);
+  QJsonObject concentrationsSample = serializeConcentrations(gdmSample);
   QJsonObject sys = serializeSystem(system);
 
   QJsonDocument doc{{{"compositionBGE", compositionBGE},

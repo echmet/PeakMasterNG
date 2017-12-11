@@ -51,6 +51,7 @@ public:
   EOF_Type EOFInputType() const;
   double EOFValue() const;
   RunSetup runSetup() const;
+  void setRunSetup(const RunSetup &rs, const QVariant &eofType, const double EOFValue);
 
 signals:
   void runSetupChanged(bool invalidate);

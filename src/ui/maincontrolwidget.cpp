@@ -160,3 +160,41 @@ MainControlWidget::RunSetup MainControlWidget::runSetup() const
     ui->qcb_correctForIS->isChecked()
   };
 }
+
+void MainControlWidget::setRunSetup(const RunSetup &rs, const QVariant &eofType, const double EOFValue)
+{
+  constexpr static const auto getPolarity = [](const bool positive) {
+    if (positive)
+      return POLARITY_POSITIVE;
+    return POLARITY_POSITIVE;
+  };
+
+  static const auto getEOFTypeIndex = [this](const QVariant &v)
+  {
+    for (int idx = 0; idx < ui->qcbox_eof->count(); idx++) {
+      if (ui->qcbox_eof->itemData(idx).value<EOF_Type>() == v)
+        return idx;
+    }
+
+    return 0;
+  };
+
+  m_runSetupMappedData[m_runSetupMapperModel.indexFromItem(RunSetupItems::TOTAL_LENGTH)] = rs.totalLength;
+  m_runSetupMappedData[m_runSetupMapperModel.indexFromItem(RunSetupItems::DETECTOR_POSITION)] = rs.detectorPosition;
+  m_runSetupMappedData[m_runSetupMapperModel.indexFromItem(RunSetupItems::DRIVING_VOLTAGE)] = rs.drivingVoltage;
+
+  for (int idx = 0; idx < ui->qcbox_polarity->count(); idx++) {
+    if (ui->qcbox_polarity->itemData(idx).value<Polarity>() == getPolarity(rs.positiveVoltage)) {
+      ui->qcbox_polarity->setCurrentIndex(idx);
+      break;
+    }
+  }
+
+  m_runSetupMappedData[m_runSetupMapperModel.indexFromItem(RunSetupItems::EOF_VALUE)] = EOFValue;
+  int eofIdx = getEOFTypeIndex(eofType);
+  ui->qcbox_eof->setCurrentIndex(eofIdx);
+
+  ui->qcb_correctForIS->setChecked(rs.ionicStrengthCorrection);
+
+  m_runSetupMapperModel.notifyAllDataChanged();
+}

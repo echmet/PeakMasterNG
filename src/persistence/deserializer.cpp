@@ -66,8 +66,6 @@ std::map<std::string, gdm::Complexation> deserializeNucleusComplexForms(const QJ
       size_t maxCount;
       checkIfContains("maxCount", lig);
       maxCount = lig["maxCount"].toInt();
-      if (maxCount < 1)
-        throw MalformedJSONException{"Invalid \"maxCount\" value"};
 
       /* Read pBs */
       std::vector<double> pBs{};
@@ -180,8 +178,7 @@ std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>
 
 void deserializeComposition(gdm::GDM &gdm, const QJsonObject &obj)
 {
-  if (!obj.contains("constituents"))
-    throw MalformedJSONException{"No \"constituents\" array"};
+  checkIfContains("constituents", obj);
   try {
     const auto constituents = deserializeConstituents(obj["constituents"].toArray());
 
@@ -215,6 +212,51 @@ void deserializeComposition(gdm::GDM &gdm, const QJsonObject &obj)
   }
 }
 
+void deserializeConcentrations(gdm::GDM &gdm, const QJsonObject &obj)
+{
+  for (auto ctuentIt = gdm.begin(); ctuentIt != gdm.end(); ctuentIt++) {
+    const QString name = QString::fromStdString(ctuentIt->name());
+    checkIfContains(name, obj);
+
+    QJsonArray arr = obj[name].toArray();
+    if (arr.size() != 1)
+      throw MalformedJSONException{"Invalid concentrations array size"};
+
+    gdm.setConcentrations(ctuentIt, { arr.first().toDouble() });
+  }
+
+}
+
+void deserializeSystem(System &system, const QJsonObject &obj)
+{
+  const auto readDouble = [&](const QString &name, double &v, bool check = true) {
+    checkIfContains(name, obj);
+    v = obj[name].toDouble();
+    if (v <= 0 && check)
+      throw MalformedJSONException{QString{"Invalid %1 value"}.arg(name).toStdString()};
+  };
+
+  readDouble("totalLength", system.totalLength);
+  readDouble("detectorPosition", system.detectorPosition);
+  readDouble("drivingVoltage", system.drivingVoltage);
+  readDouble("eofValue", system.eofValue, false);
+
+  /* Read EOF type */
+  checkIfContains("eofType", obj);
+  QString t = obj["eofType"].toString();
+  if (!(t == "N" || t == "U" || t == "T"))
+    throw MalformedJSONException{"Invalid \"eofType\" value"};
+  system.eofType = t;
+
+  /* Read positive voltage */
+  checkIfContains("positiveVoltage", obj);
+  system.positiveVoltage = obj["positiveVoltage"].toBool();
+
+  /* Read ionic strength */
+  checkIfContains("ionicStrengthCorrection", obj);
+  system.ionicStrengthCorrection = obj["ionicStrengthCorrection"].toBool();
+}
+
 void Deserializer::deserialize(const QString &filepath, gdm::GDM &gdmBGE, gdm::GDM &gdmSample,
                                System &system)
 {
@@ -232,13 +274,20 @@ void Deserializer::deserialize(const QString &filepath, gdm::GDM &gdmBGE, gdm::G
   if (obj.isEmpty())
     throw MalformedJSONException{"Bad root object"};
 
-  if (!obj.contains("compositionBGE"))
-    throw MalformedJSONException{"No \"compositionBGE\" entry"};
+  checkIfContains("compositionBGE", obj);
   deserializeComposition(gdmBGE, obj["compositionBGE"].toObject());
 
-  if (!obj.contains("compositionSample"))
-    throw MalformedJSONException{"No \"compositionSample\" entry"};
+  checkIfContains("compositionSample", obj);
   deserializeComposition(gdmSample, obj["compositionSample"].toObject());
+
+  checkIfContains("concentrationsBGE", obj);
+  deserializeConcentrations(gdmBGE, obj["concentrationsBGE"].toObject());
+
+  checkIfContains("concentrationsSample", obj);
+  deserializeConcentrations(gdmSample, obj["concentrationsSample"].toObject());
+
+  checkIfContains("system", obj);
+  deserializeSystem(system, obj["system"].toObject());
 }
 
 } // namespace persistence

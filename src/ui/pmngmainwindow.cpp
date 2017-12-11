@@ -223,6 +223,26 @@ void PMNGMainWindow::onLoad()
   persistence::System system{};
   try {
     m_persistence.deserialize(files.at(0), system);
+
+    QVariant eofType{};
+    if (system.eofType == "N")
+      eofType = QVariant::fromValue<MainControlWidget::EOF_Type>(MainControlWidget::EOF_NONE);
+    else if (system.eofType == "U")
+      eofType = QVariant::fromValue<MainControlWidget::EOF_Type>(MainControlWidget::EOF_MOBILITY);
+    else if (system.eofType == "T")
+      eofType = QVariant::fromValue<MainControlWidget::EOF_Type>(MainControlWidget::EOF_MARKER_TIME);
+    else
+       return; /* TODO: Display error here */
+
+    MainControlWidget::RunSetup rs{
+      system.totalLength,
+      system.detectorPosition,
+      system.drivingVoltage,
+      system.positiveVoltage,
+      system.ionicStrengthCorrection
+    };
+
+    m_mainCtrlWidget->setRunSetup(rs, eofType, system.eofValue);
   } catch (persistence::DeserializationException &ex) {
     QMessageBox mbox{QMessageBox::Warning, tr("Unable to load system"), ex.what()};
     mbox.exec();
