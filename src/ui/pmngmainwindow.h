@@ -50,7 +50,7 @@ private:
   void addConstituentsSignals(const QVector<QString> &analytes);
   void initPlotParams();
   void initSignalItems();
-  void plotElectrophoregram();
+  void plotElectrophoregram(const bool exportToFile);
   void resetSignalItems();
   void setMenuIcons();
 
@@ -83,6 +83,7 @@ private slots:
   void __onCrash();
   void onLoad();
   void onExit();
+  void onExportElectrophoregram();
   void onPlotElectrophoregram();
   void onRunSetupChanged(const bool invalidate);
   void onSave();

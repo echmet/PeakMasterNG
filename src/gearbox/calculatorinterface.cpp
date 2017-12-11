@@ -7,7 +7,10 @@
 #include <limits>
 #include <lemng.h>
 #include <memory>
+#include <QFile>
 #include <QPointF>
+#include <QTextCodec>
+#include <QTextStream>
 
 void destroyCZESystem(ECHMET::LEMNG::CZESystem *czeSystem)
 {
@@ -229,6 +232,29 @@ void CalculatorInterface::calculate(bool ionicStrengthCorrection)
   m_ctx.makeValid();
 }
 
+void CalculatorInterface::exportElectrophoregram(double totalLength, double detectorPosition, double drivingVoltage, const bool positiveVoltage,
+                                                 double EOFValue, const EOFValueType EOFvt,
+                                                 double injectionZoneLength, double plotToTime,
+                                                 const Signal &signal,
+                                                 const QString &filepath)
+{
+  const auto data = plotElectrophoregramInternal(totalLength, detectorPosition, drivingVoltage, positiveVoltage,
+                                                 EOFValue, EOFvt, injectionZoneLength, plotToTime, signal);
+
+  QFile output{filepath};
+  if (!output.open(QIODevice::WriteOnly | QIODevice::Text))
+    throw CalculatorInterfaceException{"Cannot open output file"};
+
+  QTextStream ostr;
+  ostr.setCodec(QTextCodec::codecForName("UTF-8"));
+  ostr.setDevice(&output);
+
+  for (const auto &pt : data)
+    ostr << pt.x() << "\t" << pt.y() << "\n";
+
+  output.flush();
+}
+
 void CalculatorInterface::fillAnalytesList()
 {
   for (const auto &it : m_sampleGDM) {
@@ -347,11 +373,22 @@ void CalculatorInterface::publishResults(double totalLength, double detectorPosi
   mapResults(totalLength, detectorPosition, drivingVoltage, EOFMobility);
 }
 
+
 QVector<QPointF> CalculatorInterface::plotElectrophoregram(double totalLength, double detectorPosition,
                                                            double drivingVoltage, const bool positiveVoltage,
                                                            double EOFValue, const EOFValueType EOFvt,
                                                            double injectionZoneLength, double plotToTime,
                                                            const Signal &signal)
+{
+  return plotElectrophoregramInternal(totalLength, detectorPosition, drivingVoltage, positiveVoltage,
+                                      EOFValue, EOFvt, injectionZoneLength, plotToTime, signal);
+}
+
+QVector<QPointF> CalculatorInterface::plotElectrophoregramInternal(double totalLength, double detectorPosition,
+                                                                   double drivingVoltage, const bool positiveVoltage,
+                                                                   double EOFValue, const EOFValueType EOFvt,
+                                                                   double injectionZoneLength, double plotToTime,
+                                                                   const Signal &signal)
 {
   QVector<QPointF> plot{};
 

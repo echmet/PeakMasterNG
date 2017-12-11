@@ -92,6 +92,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   connect(h_scompWidget, &SystemCompositionWidget::compositionChanged, this, &PMNGMainWindow::onCompositionChanged);
   connect(m_mainCtrlWidget, &MainControlWidget::runSetupChanged, this, &PMNGMainWindow::onRunSetupChanged);
   connect(ui->qpb_replotEFG, &QPushButton::clicked, this, &PMNGMainWindow::onPlotElectrophoregram);
+  connect(ui->qpb_exportEFG, &QPushButton::clicked, this, &PMNGMainWindow::onExportElectrophoregram);
 
   connect(ui->actionExit, &QAction::triggered, this, &PMNGMainWindow::onExit);
   connect(ui->actionCRASH, &QAction::triggered, this, &PMNGMainWindow::__onCrash);
@@ -194,7 +195,7 @@ void PMNGMainWindow::onCalculate()
   if (calcOk) {
     m_calcIface.publishResults(rs.totalLength, rs.detectorPosition, rs.drivingVoltage, EOFValue, EOFvt, rs.positiveVoltage);
     addConstituentsSignals(m_calcIface.allConstituents());
-    plotElectrophoregram();
+    plotElectrophoregram(false);
   } else {
     QMessageBox mbox{QMessageBox::Critical, tr("Calculation failed"), errorMsg};
     mbox.exec();
@@ -202,6 +203,16 @@ void PMNGMainWindow::onCalculate()
 
   worker->deleteLater();
   thread->deleteLater();
+}
+
+void PMNGMainWindow::onExportElectrophoregram()
+{
+  try {
+    plotElectrophoregram(true);
+  } catch (CalculatorInterfaceException &ex) {
+    QMessageBox mbox{QMessageBox::Critical, tr("Failed to export electrophoregram"), ex.what()};
+    mbox.exec();
+  }
 }
 
 void PMNGMainWindow::onCompositionChanged()
@@ -262,7 +273,7 @@ void PMNGMainWindow::onLoad()
 void PMNGMainWindow::onPlotElectrophoregram()
 {
   try {
-    plotElectrophoregram();
+    plotElectrophoregram(false);
   } catch (CalculatorInterfaceException &ex) {
     QMessageBox mbox{QMessageBox::Critical, tr("Failed to plot electrophoregram"), ex.what()};
     mbox.exec();
@@ -283,7 +294,7 @@ void PMNGMainWindow::onRunSetupChanged(const bool invalidate)
                                  rs.drivingVoltage,
                                  EOFValue, EOFvt,
                                  rs.positiveVoltage);
-    plotElectrophoregram();
+    plotElectrophoregram(false);
   }
 }
 
@@ -330,7 +341,7 @@ void PMNGMainWindow::onSave()
   }
 }
 
-void PMNGMainWindow::plotElectrophoregram()
+void PMNGMainWindow::plotElectrophoregram(const bool exportToFile)
 {
   if (!m_calcIface.resultsAvailable())
     return;
@@ -357,11 +368,29 @@ void PMNGMainWindow::plotElectrophoregram()
   CalculatorInterface::EOFValueType EOFvt;
   inputToEOFValueType(EOFValue, EOFvt, m_mainCtrlWidget->EOFValue(), m_mainCtrlWidget->EOFInputType());
 
-  const auto signalTrace = m_calcIface.plotElectrophoregram(rs.totalLength, rs.detectorPosition,
-                                                            rs.drivingVoltage, rs.positiveVoltage,
-                                                            EOFValue, EOFvt, izLen, plotCutoff,
-                                                            signal);
-  m_signalPlotWidget->setSignal(signalTrace, plotSignalStyle(signal.type), signal.plotCaption);
+  if (!exportToFile) {
+    const auto signalTrace = m_calcIface.plotElectrophoregram(rs.totalLength, rs.detectorPosition,
+                                                              rs.drivingVoltage, rs.positiveVoltage,
+                                                              EOFValue, EOFvt, izLen, plotCutoff,
+                                                              signal);
+    m_signalPlotWidget->setSignal(signalTrace, plotSignalStyle(signal.type), signal.plotCaption);
+  } else {
+    QFileDialog dlg{};
+    dlg.setAcceptMode(QFileDialog::AcceptSave);
+    dlg.setNameFilter("CSV file (*.csv)");
+    if (dlg.exec() != QDialog::Accepted)
+      return;
+
+    const auto &files = dlg.selectedFiles();
+    if (files.size() < 1)
+      return;
+
+    m_calcIface.exportElectrophoregram(rs.totalLength, rs.detectorPosition,
+                                       rs.drivingVoltage, rs.positiveVoltage,
+                                       EOFValue, EOFvt, izLen, plotCutoff,
+                                       signal,
+                                       files.first());
+  }
 }
 
 void PMNGMainWindow::resetSignalItems()

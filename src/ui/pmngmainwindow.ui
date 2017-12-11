@@ -91,6 +91,13 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QPushButton" name="qpb_exportEFG">
+            <property name="text">
+             <string>Export</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
        </layout>
@@ -152,12 +159,12 @@
   </action>
   <action name="actionSave">
    <property name="text">
-    <string>Save</string>
+    <string>&amp;Save</string>
    </property>
   </action>
   <action name="actionLoad">
    <property name="text">
-    <string>Load</string>
+    <string>&amp;Load</string>
    </property>
   </action>
  </widget>

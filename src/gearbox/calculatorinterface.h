@@ -49,6 +49,12 @@ public:
   QVector<QString> allConstituents() const;
   QVector<QString> analytes() const;
   void calculate(bool ionicStrengthCorrection);
+  void exportElectrophoregram(double totalLength, double detectorPosition,
+                              double drivingVoltage, const bool positiveVoltage,
+                              double EOFValue, const EOFValueType EOFvt,
+                              double injectionZoneLength, double plotToTime,
+                              const Signal &signal,
+                              const QString &filepath);
   QVector<QPointF> plotElectrophoregram(double totalLength, double detectorPosition,
                                         double drivingVoltage, const bool positiveVoltage,
                                         double EOFValue, const EOFValueType EOFvt,
@@ -70,6 +76,11 @@ private:
   double mobilityToTime(const double totalLength, const double detectorPosition, const double drivingVoltage, const double EOFMobility, const double u);
   QVector<QPointF> plotAllAnalytes(const double totalLength, const double detectorPosition, const double drivingVoltage,
                                    const double EOFMobility, const double injectionZoneLength, const double plotToTime);
+  QVector<QPointF> plotElectrophoregramInternal(double totalLength, double detectorPosition,
+                                                double drivingVoltage, const bool positiveVoltage,
+                                                double EOFValue, const EOFValueType EOFvt,
+                                                double injectionZoneLength, double plotToTime,
+                                                const Signal &signal);
   void recalculateEigenzoneDetails(const double totalLength, const double detectorPosition, const double drivingVoltage, const double EOFMobility);
   void recalculateTimesInternal(const double totalLength, const double detectorPosition, const double drivingVoltage, const double EOFMobility);
 
