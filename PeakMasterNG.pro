@@ -105,7 +105,8 @@ SOURCES += \
     src/gearbox/calculatorworker.cpp \
     src/persistence/serializer.cpp \
     src/persistence/persistence.cpp \
-    src/persistence/deserializer.cpp
+    src/persistence/deserializer.cpp \
+    src/ui/operationinprogressdialog.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -186,7 +187,8 @@ HEADERS += \
     src/gearbox/calculatorworker.h \
     src/persistence/serializer.h \
     src/persistence/persistence.h \
-    src/persistence/deserializer.h
+    src/persistence/deserializer.h \
+    src/ui/operationinprogressdialog.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \
@@ -199,7 +201,8 @@ FORMS += \
     src/ui/crashhandlerdialog.ui \
     src/ui/aboutdialog.ui \
     src/ui/eigenzonedetailsdialog.ui \
-    src/ui/ioniccompositiondialog.ui
+    src/ui/ioniccompositiondialog.ui \
+    src/ui/operationinprogressdialog.ui
 
 unix {
     QMAKE_CXXFLAGS += "-Wall -Wextra -pedantic"

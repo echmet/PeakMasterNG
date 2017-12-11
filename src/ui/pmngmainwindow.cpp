@@ -9,6 +9,7 @@
 #include "../globals.h"
 #include "../gearbox/calculatorworker.h"
 #include "../persistence/persistence.h"
+#include "operationinprogressdialog.h"
 
 #include <QDataWidgetMapper>
 #include <QFileDialog>
@@ -172,37 +173,30 @@ void PMNGMainWindow::onCalculate()
   double EOFValue;
   CalculatorInterface::EOFValueType EOFvt;
   inputToEOFValueType(EOFValue, EOFvt, m_mainCtrlWidget->EOFValue(), m_mainCtrlWidget->EOFInputType());
-
   const MainControlWidget::RunSetup rs = m_mainCtrlWidget->runSetup();
 
-  bool calcOk;
-  QString errorMsg;
-  CalculatorWorker *worker = new CalculatorWorker{m_calcIface, rs.ionicStrengthCorrection, calcOk, errorMsg, this};
-  QThread *thread = new QThread{this};
-  worker->moveToThread(thread);
+  OperationInProgressDialog inProgDlg{"Calculating..."};
 
-  QMessageBox mbox(QMessageBox::Information, tr("Processing.."), tr("Hang in there, this can take a little while..."));
-  mbox.setStandardButtons(0);
-  connect(thread, &QThread::started, worker, &CalculatorWorker::process);
-  connect(worker, &CalculatorWorker::finished, thread, &QThread::quit);
-  connect(thread, &QThread::finished, &mbox, &QMessageBox::accept);
-  thread->start();
+  CalculatorWorker worker{m_calcIface, rs.ionicStrengthCorrection};
+  QThread thread{};
+  worker.moveToThread(&thread);
 
-  mbox.exec();
+  connect(&thread, &QThread::started, &worker, &CalculatorWorker::process);
+  connect(&worker, &CalculatorWorker::finished, &thread, &QThread::quit);
+  connect(&worker, &CalculatorWorker::finished, &inProgDlg, &OperationInProgressDialog::onOperationCompleted);
 
-  thread->wait();
+  thread.start();
+  inProgDlg.exec();
+  thread.wait();
 
-  if (calcOk) {
+  if (worker.calcOk()) {
     m_calcIface.publishResults(rs.totalLength, rs.detectorPosition, rs.drivingVoltage, EOFValue, EOFvt, rs.positiveVoltage);
     addConstituentsSignals(m_calcIface.allConstituents());
     plotElectrophoregram(false);
   } else {
-    QMessageBox mbox{QMessageBox::Critical, tr("Calculation failed"), errorMsg};
-    mbox.exec();
+    QMessageBox errmbox{QMessageBox::Critical, tr("Calculation failed"), worker.errorMsg()};
+    errmbox.exec();
   }
-
-  worker->deleteLater();
-  thread->deleteLater();
 }
 
 void PMNGMainWindow::onExportElectrophoregram()

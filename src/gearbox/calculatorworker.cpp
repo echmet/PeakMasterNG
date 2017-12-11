@@ -1,13 +1,19 @@
 #include "calculatorworker.h"
 
-CalculatorWorker::CalculatorWorker(CalculatorInterface &calcIface, const bool ionicStrengthCorrection, bool &calcOk, QString &errorMsg,
-                                   QObject *parent) :
-  QObject{parent},
+CalculatorWorker::CalculatorWorker(CalculatorInterface &calcIface, const bool ionicStrengthCorrection) :
   m_calcIface{calcIface},
-  m_ionicStrengthCorrection{ionicStrengthCorrection},
-  m_calcOk(calcOk),
-  m_errorMsg{errorMsg}
+  m_ionicStrengthCorrection{ionicStrengthCorrection}
 {
+}
+
+bool CalculatorWorker::calcOk() const
+{
+  return m_calcOk;
+}
+
+const QString & CalculatorWorker::errorMsg() const
+{
+  return m_errorMsg;
 }
 
 void CalculatorWorker::process()
@@ -20,5 +26,5 @@ void CalculatorWorker::process()
     m_errorMsg = ex.what();
   }
 
-  emit finished();
+  emit finished(this);
 }
