@@ -11,15 +11,19 @@
 #include "../persistence/persistence.h"
 
 #include <memory>
+#include <QObject>
 
 namespace persistence {
   class Persistence;
 }
 
-class Gearbox
-{
+class AbstractConstituentsModelBase;
+
+class Gearbox : public QObject {
+  Q_OBJECT
+
 public:
-  Gearbox();
+  explicit Gearbox();
   GDMProxy & backgroundGDMProxy();
   CalculatorInterface calculatorInterface();
   ComplexationManager & complexationManager();
@@ -27,6 +31,7 @@ public:
   ResultsData resultsData();
   ResultsModels resultsModels();
   persistence::Persistence & persistence();
+  void setUICompositionModels(AbstractConstituentsModelBase *analytesUIModel, AbstractConstituentsModelBase *backgroundUIModel);
 
 private:
   gdm::GDM m_backgroundGDM;
@@ -37,6 +42,12 @@ private:
 
   std::unique_ptr<GDMProxy> m_backgroundGDMProxy;
   std::unique_ptr<GDMProxy> m_sampleGDMProxy;
+
+  AbstractConstituentsModelBase *m_analytesUIModel;
+  AbstractConstituentsModelBase *m_backgroundUIModel;
+
+private slots:
+  void onDeserialized();
 };
 
 #endif // GEARBOX_H

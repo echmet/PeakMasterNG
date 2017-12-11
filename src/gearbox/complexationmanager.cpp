@@ -323,3 +323,12 @@ void ComplexationManager::updateComplexationStatus()
   m_complexationStatus = std::move(map);
   emit complexationStatusChanged();
 }
+
+void ComplexationManager::refreshAll()
+{
+  m_complexationStatus.clear();
+  m_complexingNuclei.clear();
+
+  updateComplexingNuclei();
+  updateComplexationStatus();
+}

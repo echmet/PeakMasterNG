@@ -245,6 +245,7 @@ void PMNGMainWindow::onLoad()
       system.ionicStrengthCorrection
     };
 
+    onCompositionChanged();
     m_mainCtrlWidget->setRunSetup(rs, eofType, system.eofValue);
   } catch (persistence::DeserializationException &ex) {
     QMessageBox mbox{QMessageBox::Warning, tr("Unable to load system"), ex.what()};

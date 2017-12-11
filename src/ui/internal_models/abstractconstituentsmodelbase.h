@@ -17,6 +17,7 @@ public:
   virtual QStringList mimeTypes() const override;
   QString removeConstituent(const int row);
   virtual int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+  void refreshAll(QVector<QString> &&constituents) noexcept;
   virtual void updateName(const QString &oldName, const QString &newName);
 
 public slots:

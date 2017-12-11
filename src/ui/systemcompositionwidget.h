@@ -21,6 +21,8 @@ class SystemCompositionWidget : public QWidget
 public:
   explicit SystemCompositionWidget(GDMProxy &backgroundGDM, GDMProxy &sampleGDM, ComplexationManager &cpxMgr, QWidget *parent = nullptr);
   ~SystemCompositionWidget();
+  AbstractConstituentsModelBase * analytesModel() noexcept;
+  AbstractConstituentsModelBase * backgroundModel() noexcept;
 
 private:
   void addConstituent(GDMProxy &proxy, AbstractConstituentsModelBase *model);

@@ -95,6 +95,16 @@ void SystemCompositionWidget::addConstituent(GDMProxy &proxy, AbstractConstituen
   }
 }
 
+AbstractConstituentsModelBase * SystemCompositionWidget::analytesModel() noexcept
+{
+  return m_analytesModel;
+}
+
+AbstractConstituentsModelBase * SystemCompositionWidget::backgroundModel() noexcept
+{
+  return m_backgroundConstituentsModel;
+}
+
 void SystemCompositionWidget::editComplexation(const QString &name)
 {
   if (!h_cpxMgr.complexes(name.toStdString()))

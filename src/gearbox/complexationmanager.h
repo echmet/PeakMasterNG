@@ -27,6 +27,7 @@ public:
   void handleUserInput(EditComplexationDialog *dlg, const std::string &nucleusName, const std::string &ligandName);
   void makeComplexation(const std::string &first, const std::string &second);
   void notifyConstituentRemoved();
+  void refreshAll();
 
 private:
   typedef std::map<std::string, std::vector<int>> ComplexationStatusMap;

@@ -106,6 +106,15 @@ QStringList AbstractConstituentsModelBase::mimeTypes() const
   return { MIME_FORMAT };
 }
 
+void AbstractConstituentsModelBase::refreshAll(QVector<QString> &&constituents) noexcept
+{
+  beginResetModel();
+
+  m_constituentNames = std::move(constituents);
+
+  endResetModel();
+}
+
 int AbstractConstituentsModelBase::rowCount(const QModelIndex &parent) const
 {
   Q_UNUSED(parent);

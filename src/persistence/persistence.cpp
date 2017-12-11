@@ -19,6 +19,11 @@ void Persistence::deserialize(const QString &filepath, System &system)
   gdm::GDM sampleGDM;
 
   Deserializer::deserialize(filepath, bgeGDM, sampleGDM, system);
+
+  m_bgeGDM = bgeGDM;
+  m_sampleGDM = sampleGDM;
+
+  emit deserialized();
 }
 
 void Persistence::serialize(const QString &filepath, const System &system)

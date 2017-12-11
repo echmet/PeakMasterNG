@@ -2,6 +2,7 @@
 #define PERSISTENCE_H
 
 #include <stdexcept>
+#include <QObject>
 #include <QString>
 
 namespace gdm {
@@ -38,7 +39,9 @@ public:
   bool ionicStrengthCorrection;
 };
 
-class Persistence {
+class Persistence : public QObject {
+  Q_OBJECT
+
 public:
   Persistence(gdm::GDM &bgeGDM, gdm::GDM &sampleGDM);
   void deserialize(const QString &filepath, System &system);
@@ -47,6 +50,9 @@ public:
 private:
   gdm::GDM &m_bgeGDM;
   gdm::GDM &m_sampleGDM;
+
+signals:
+  void deserialized();
 };
 
 } // namespace persistence
