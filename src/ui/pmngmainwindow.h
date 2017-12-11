@@ -54,6 +54,8 @@ private:
   void resetSignalItems();
   void setMenuIcons();
 
+  QPushButton *m_qpb_load;
+  QPushButton *m_qpb_save;
   QPushButton *m_qpb_calculate;
 
   CalculatorInterface m_calcIface;

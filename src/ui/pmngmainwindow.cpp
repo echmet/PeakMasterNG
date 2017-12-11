@@ -82,6 +82,10 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   connect(ui->qcb_autoPlotCutoff, &QCheckBox::stateChanged, this, &PMNGMainWindow::onAutoPlotCutoffStateChanged);
   connect(ui->qcbox_signal, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &PMNGMainWindow::onPlotElectrophoregram);
 
+  m_qpb_load = new QPushButton{tr("Load"), this};
+  connect(m_qpb_load, &QPushButton::clicked, ui->actionLoad, &QAction::trigger);
+  m_qpb_save = new QPushButton{tr("Save"), this};
+  connect(m_qpb_save, &QPushButton::clicked, ui->actionSave, &QAction::trigger);
   m_qpb_calculate = new QPushButton{tr("Calculate!"), this};
   connect(m_qpb_calculate, &QPushButton::clicked, this, &PMNGMainWindow::onCalculate);
 
@@ -95,6 +99,8 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   connect(ui->actionLoad, &QAction::triggered, this, &PMNGMainWindow::onLoad);
   connect(ui->actionSave, &QAction::triggered, this, &PMNGMainWindow::onSave);
 
+  ui->mainToolBar->addWidget(m_qpb_load);
+  ui->mainToolBar->addWidget(m_qpb_save);
   ui->mainToolBar->addWidget(m_qpb_calculate);
 
   onAutoPlotCutoffStateChanged(Qt::Checked);
@@ -372,9 +378,17 @@ void PMNGMainWindow::resetSignalItems()
 void PMNGMainWindow::setMenuIcons()
 {
 #ifdef Q_OS_LINUX
+  ui->actionLoad->setIcon(QIcon::fromTheme("document-open"));
+  m_qpb_load->setIcon(QIcon::fromTheme("document-open"));
+  ui->actionSave->setIcon(QIcon::fromTheme("document-save"));
+  m_qpb_save->setIcon(QIcon::fromTheme("document-save"));
   ui->actionExit->setIcon(QIcon::fromTheme("application-exit"));
   ui->actionAbout->setIcon(QIcon::fromTheme("help-about"));
 #else
+  ui->actionLoad->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
+  m_qpb_load->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
+  ui->actionSave->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
+  m_qpb_save->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
   ui->actionExit->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
   ui->actionAbout->setIcon(style()->standardIcon(QStyle::SP_DialogHelpButton));
 #endif // Q_OS
