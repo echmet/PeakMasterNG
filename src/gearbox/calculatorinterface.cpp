@@ -129,6 +129,11 @@ void fillBackgroundIonicComposition(ResultsData &rData, const ECHMET::LEMNG::RCo
   }
   it->destroy();
 
+  if (constituents.size() < 1) {
+    totalHighest = 0;
+    totalLowest = 0;
+  }
+
   rData.backgroundCompositionRefresh(totalLowest, totalHighest, std::move(constituents), std::move(complexForms), std::move(concentrations));
 }
 
