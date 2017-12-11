@@ -231,8 +231,11 @@ void PMNGMainWindow::onLoad()
       eofType = QVariant::fromValue<MainControlWidget::EOF_Type>(MainControlWidget::EOF_MOBILITY);
     else if (system.eofType == "T")
       eofType = QVariant::fromValue<MainControlWidget::EOF_Type>(MainControlWidget::EOF_MARKER_TIME);
-    else
-       return; /* TODO: Display error here */
+    else {
+      QMessageBox mbox{QMessageBox::Warning, tr("Loading error"), tr("Invalid value of EOF type")};
+      mbox.exec();
+      return;
+    }
 
     MainControlWidget::RunSetup rs{
       system.totalLength,
@@ -297,8 +300,8 @@ void PMNGMainWindow::onSave()
       case MainControlWidget::EOF_MOBILITY:
         return "U";
       case MainControlWidget::EOF_MARKER_TIME:
-          return "T";
-       return "";
+        return "T";
+      return "";
       }
     }(m_mainCtrlWidget->EOFInputType());
 
