@@ -87,7 +87,7 @@ public:
     if (!idx.isValid())
       return Qt::NoItemFlags;
 
-    if (idx.column() == 2)
+    if (idx.column() < 3)
       return defaultFlags | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
     else if (idx.column() >= 3 && idx.column() < 3 + N)
       return defaultFlags | Qt::ItemIsEditable;
