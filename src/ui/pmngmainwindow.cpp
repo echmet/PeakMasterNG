@@ -67,6 +67,8 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   h_scompWidget{scompWidget},
   m_plotParamsModel{this},
   m_persistence{persistence},
+  m_lastLoadPath{""},
+  m_lastSavePath{""},
   ui{new Ui::PMNGMainWindow}
 {
   ui->setupUi(this);
@@ -240,6 +242,10 @@ void PMNGMainWindow::onLoad()
   QFileDialog dlg{};
   dlg.setAcceptMode(QFileDialog::AcceptOpen);
   dlg.setNameFilter("JSON file (*.json)");
+
+  if (m_lastLoadPath.length() > 0)
+    dlg.setDirectory(m_lastLoadPath);
+
   if (dlg.exec() != QDialog::Accepted)
     return;
 
@@ -274,6 +280,8 @@ void PMNGMainWindow::onLoad()
 
     onCompositionChanged();
     m_mainCtrlWidget->setRunSetup(rs, eofType, system.eofValue);
+
+    m_lastLoadPath = QFileInfo(files.at(0)).absolutePath();
   } catch (persistence::DeserializationException &ex) {
     QMessageBox mbox{QMessageBox::Warning, tr("Unable to load system"), ex.what()};
     mbox.exec();
@@ -326,6 +334,10 @@ void PMNGMainWindow::onSave()
   dlg.setAcceptMode(QFileDialog::AcceptSave);
   dlg.setNameFilter("JSON file (*.json)");
   dlg.setWindowTitle(tr("Save composition"));
+
+  if (m_lastSavePath.length() > 0)
+    dlg.setDirectory(m_lastSavePath);
+
   if (dlg.exec() != QDialog::Accepted)
     return;
 
@@ -358,6 +370,7 @@ void PMNGMainWindow::onSave()
 
   try {
     m_persistence.serialize(files.at(0), sys);
+    m_lastSavePath = QFileInfo(files.at(0)).absolutePath();
   } catch (persistence::SerializationException &ex) {
     QMessageBox mbox{QMessageBox::Warning, tr("Unable to save system"), ex.what()};
     mbox.exec();

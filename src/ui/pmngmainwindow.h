@@ -72,6 +72,9 @@ private:
 
   QStandardItemModel *m_signalTypesModel;
 
+  QString m_lastLoadPath;
+  QString m_lastSavePath;
+
   Ui::PMNGMainWindow *ui;
 
   static QVector<SignalItem> s_defaultSignalItems;
