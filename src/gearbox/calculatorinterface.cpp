@@ -275,16 +275,19 @@ void CalculatorInterface::fillAnalytesList()
 void CalculatorInterface::mapResultsBGE(const double totalLength, const double detectorPosition, const double drivingVoltage,
                                         const double EOFMobility)
 {
-    auto &data = m_resultsData.backgroundPropsData();
+  auto &data = m_resultsData.backgroundPropsData();
 
-    data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::BUFFER_CAPACITY)] = m_ctx.results->BGEProperties.bufferCapacity;
-    data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::CONDUCTIVITY)] = m_ctx.results->BGEProperties.conductivity;
-    data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::RESISTIVITY)] = 1.0 / m_ctx.results->BGEProperties.conductivity;
-    data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::IONIC_STRENGTH)] = m_ctx.results->BGEProperties.ionicStrength * 1000.0;
-    data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::PH)] = m_ctx.results->BGEProperties.pH;
-    data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::EOF_MOBILITY)] = EOFMobility;
-    data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::EOF_MARKER_TIME)] = detectorPosition / (EOFMobility * 1.0e-9 * drivingVoltage / totalLength) / 60.0;
-    m_resultsData.backgroundPropsRefresh();
+  data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::BUFFER_CAPACITY)] = m_ctx.results->BGEProperties.bufferCapacity;
+  data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::CONDUCTIVITY)] = m_ctx.results->BGEProperties.conductivity;
+  data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::RESISTIVITY)] = 1.0 / m_ctx.results->BGEProperties.conductivity;
+  data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::IONIC_STRENGTH)] = m_ctx.results->BGEProperties.ionicStrength * 1000.0;
+  data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::PH)] = m_ctx.results->BGEProperties.pH;
+  data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::EOF_MOBILITY)] = EOFMobility;
+  data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::EOF_MARKER_TIME)] = detectorPosition / (EOFMobility * 1.0e-9 * drivingVoltage / totalLength) / 60.0;
+  m_resultsData.backgroundPropsRefresh();
+
+  /* Fill background ionic composition */
+  fillBackgroundIonicComposition(m_resultsData, m_ctx.results->BGEProperties.composition);
 }
 
 void CalculatorInterface::mapResults(const double totalLength, const double detectorPosition, const double drivingVoltage,
@@ -297,9 +300,6 @@ void CalculatorInterface::mapResults(const double totalLength, const double dete
 
   /* Update eigenzone details */
   recalculateEigenzoneDetails(totalLength, detectorPosition, drivingVoltage, EOFMobility);
-
-  /* Fill background ionic composition */
-  fillBackgroundIonicComposition(m_resultsData, m_ctx.results->BGEProperties.composition);
 }
 
 double CalculatorInterface::minimumConcentration() noexcept
