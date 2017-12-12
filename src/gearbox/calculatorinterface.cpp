@@ -331,6 +331,8 @@ void CalculatorInterface::onInvalidate()
   m_resultsData.systemEigenzonesRefresh({});
 
   m_resultsData.eigenzoneDetailsRefresh({}, {});
+
+  m_resultsData.backgroundCompositionRefresh(0, 0, {}, {}, {});
 }
 
 QVector<QPointF> CalculatorInterface::plotAllAnalytes(const double totalLength, const double detectorPosition, const double drivingVoltage,
