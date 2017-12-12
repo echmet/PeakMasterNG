@@ -18,13 +18,16 @@ public:
   CalculatorContext(CalculatorContext &&other) noexcept;
   ~CalculatorContext() noexcept;
   void invalidate();
+  bool isBGEValid() const;
   bool isValid() const;
+  void makeBGEValid();
   void makeValid();
 
   std::vector<std::string> analytes;
   ECHMET::LEMNG::Results *results;
 
 private:
+  bool m_isBGEValid;
   bool m_isValid;
 };
 

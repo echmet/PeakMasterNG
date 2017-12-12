@@ -13,7 +13,9 @@ namespace gdm {
 
 class CalculatorInterfaceException : public std::runtime_error {
 public:
-  using std::runtime_error::runtime_error;
+  explicit CalculatorInterfaceException(const char *message, const bool isBGEValid = false);
+
+  const bool isBGEValid;
 };
 
 class CalculatorInterface : public QObject
@@ -73,6 +75,7 @@ public slots:
 
 private:
   void fillAnalytesList();
+  void mapResultsBGE(const double totalLength, const double detectorPosition, const double drivingVoltage, const double EOFMobility);
   void mapResults(const double totalLength, const double detectorPosition, const double drivingVoltage, const double EOFMobility);
   double mobilityToTime(const double totalLength, const double detectorPosition, const double drivingVoltage, const double EOFMobility, const double u);
   QVector<QPointF> plotAllAnalytes(const double totalLength, const double detectorPosition, const double drivingVoltage,

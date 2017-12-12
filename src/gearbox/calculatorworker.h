@@ -9,16 +9,22 @@ class CalculatorWorker : public QObject
   Q_OBJECT
 
 public:
+  enum class CalculationResult {
+    INVALID,
+    PARTIAL,
+    OK,
+  };
+
   CalculatorWorker(CalculatorInterface &calcIface, const bool ionicStrengthCorrection);
-public slots:
-  bool calcOk() const;
+  CalculationResult calcStatus() const;
   const QString &errorMsg() const;
+public slots:
   void process();
 
 private:
   CalculatorInterface &m_calcIface;
   const bool m_ionicStrengthCorrection;
-  bool m_calcOk;
+  CalculationResult m_calcStatus;
   QString m_errorMsg;
 
 signals:

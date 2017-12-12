@@ -6,9 +6,9 @@ CalculatorWorker::CalculatorWorker(CalculatorInterface &calcIface, const bool io
 {
 }
 
-bool CalculatorWorker::calcOk() const
+CalculatorWorker::CalculationResult CalculatorWorker::calcStatus() const
 {
-  return m_calcOk;
+  return m_calcStatus;
 }
 
 const QString & CalculatorWorker::errorMsg() const
@@ -20,9 +20,9 @@ void CalculatorWorker::process()
 {
   try {
     m_calcIface.calculate(m_ionicStrengthCorrection);
-    m_calcOk = true;
+    m_calcStatus = CalculationResult::OK;
   } catch (CalculatorInterfaceException &ex) {
-    m_calcOk = false;
+    m_calcStatus = ex.isBGEValid ? CalculationResult::PARTIAL : CalculationResult::INVALID;
     m_errorMsg = ex.what();
   }
 

@@ -140,6 +140,12 @@ void fillBackgroundIonicComposition(ResultsData &rData, const ECHMET::LEMNG::RCo
   rData.backgroundCompositionRefresh(totalLowest, totalHighest, std::move(constituents), std::move(complexForms), std::move(concentrations));
 }
 
+CalculatorInterfaceException::CalculatorInterfaceException(const char *message, const bool isBGEValid) :
+  std::runtime_error{message},
+  isBGEValid{isBGEValid}
+{
+}
+
 CalculatorInterface::CalculatorInterface(gdm::GDM &backgroundGDM, gdm::GDM &sampleGDM, ResultsData resultsData) :
   QObject{nullptr},
   m_backgroundGDM{backgroundGDM},
@@ -226,8 +232,11 @@ void CalculatorInterface::calculate(bool ionicStrengthCorrection)
   applyAnalyticalConcentrations(m_sampleGDM, sampleMapRaw);
 
   tRet = czeSystem->evaluate(backgroundMapRaw, sampleMapRaw, ionicStrengthCorrection, *m_ctx.results);
-  if (tRet != ECHMET::LEMNG::RetCode::OK)
-    throw CalculatorInterfaceException{czeSystem->lastErrorString()};
+  if (tRet != ECHMET::LEMNG::RetCode::OK) {
+    if (m_ctx.results->isBGEValid)
+      m_ctx.makeBGEValid();
+    throw CalculatorInterfaceException{czeSystem->lastErrorString(), m_ctx.results->isBGEValid};
+  }
 
   m_ctx.makeValid();
 }
@@ -263,11 +272,9 @@ void CalculatorInterface::fillAnalytesList()
   }
 }
 
-void CalculatorInterface::mapResults(const double totalLength, const double detectorPosition, const double drivingVoltage,
-                                     const double EOFMobility)
+void CalculatorInterface::mapResultsBGE(const double totalLength, const double detectorPosition, const double drivingVoltage,
+                                        const double EOFMobility)
 {
-  /* Map BGE properties */
-  {
     auto &data = m_resultsData.backgroundPropsData();
 
     data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::BUFFER_CAPACITY)] = m_ctx.results->BGEProperties.bufferCapacity;
@@ -278,7 +285,12 @@ void CalculatorInterface::mapResults(const double totalLength, const double dete
     data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::EOF_MOBILITY)] = EOFMobility;
     data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::EOF_MARKER_TIME)] = detectorPosition / (EOFMobility * 1.0e-9 * drivingVoltage / totalLength) / 60.0;
     m_resultsData.backgroundPropsRefresh();
-  }
+}
+
+void CalculatorInterface::mapResults(const double totalLength, const double detectorPosition, const double drivingVoltage,
+                                     const double EOFMobility)
+{
+  mapResultsBGE(totalLength, detectorPosition, drivingVoltage, EOFMobility);
 
   /* Map system eigenzones */
   recalculateTimesInternal(totalLength, detectorPosition, drivingVoltage, EOFMobility);
@@ -357,9 +369,6 @@ void CalculatorInterface::publishResults(double totalLength, double detectorPosi
                                          const double EOFValue, const EOFValueType EOFvt,
                                          bool positiveVoltage)
 {
-  if (!m_ctx.isValid())
-    return;
-
   if (totalLength <= 0)
     throw CalculatorInterfaceException{"Invalid value of \"total length\""};
   if (detectorPosition > totalLength)
@@ -375,7 +384,13 @@ void CalculatorInterface::publishResults(double totalLength, double detectorPosi
 
   const double EOFMobility = EOFMobilityFromInput(EOFValue, EOFvt, totalLength, detectorPosition, drivingVoltage);
 
-  mapResults(totalLength, detectorPosition, drivingVoltage, EOFMobility);
+  if (m_ctx.isValid()) {
+    mapResults(totalLength, detectorPosition, drivingVoltage, EOFMobility);
+    return;
+  }
+
+  if (m_ctx.isBGEValid())
+    mapResultsBGE(totalLength, detectorPosition, drivingVoltage, EOFMobility);
 }
 
 

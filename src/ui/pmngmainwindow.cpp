@@ -194,10 +194,20 @@ void PMNGMainWindow::onCalculate()
   inProgDlg.exec();
   thread.wait();
 
-  if (worker.calcOk()) {
+  const auto calcStatus = worker.calcStatus();
+  if (calcStatus != CalculatorWorker::CalculationResult::INVALID) {
     m_calcIface.publishResults(rs.totalLength, rs.detectorPosition, rs.drivingVoltage, EOFValue, EOFvt, rs.positiveVoltage);
-    addConstituentsSignals(m_calcIface.allConstituents());
-    plotElectrophoregram(false);
+    if (calcStatus == CalculatorWorker::CalculationResult::OK) {
+      addConstituentsSignals(m_calcIface.allConstituents());
+      plotElectrophoregram(false);
+    } else {
+      QMessageBox errmbox{QMessageBox::Warning, tr("Calculation incomplete"),
+                          QString{tr("Solver was unable to calculate electromigration properties of the system. "
+                                     "Properties of background electrolyte, however, are available.\n\n"
+                                     "Error reported by the sovler:\n"
+                                     "%1")}.arg(worker.errorMsg())};
+      errmbox.exec();
+    }
   } else {
     QMessageBox errmbox{QMessageBox::Critical, tr("Calculation failed"), worker.errorMsg()};
     errmbox.exec();
