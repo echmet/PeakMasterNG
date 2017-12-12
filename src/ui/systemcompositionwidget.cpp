@@ -235,6 +235,12 @@ void SystemCompositionWidget::setControlsIcons()
 
   ui->qpb_removeAnalyte->setIcon(QIcon::fromTheme("list-remove"));
   ui->qpb_removeBGE->setIcon(QIcon::fromTheme("list-remove"));
+#else
+  ui->qpb_addAnalyte->setIcon(style()->standardIcon(QStyle::SP_DialogOkButton));
+  ui->qpb_addBGE->setIcon(style()->standardIcon(QStyle::SP_DialogOkButton));
+
+  ui->qpb_removeAnalyte->setIcon(style()->standardIcon(QStyle::SP_DialogCancelButton));
+  ui->qpb_removeBGE->setIcon(style()->standardIcon(QStyle::SP_DialogCancelButton));
 #endif // Q_OS_
 }
 

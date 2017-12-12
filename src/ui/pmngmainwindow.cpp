@@ -414,11 +414,15 @@ void PMNGMainWindow::setControlsIcons()
   m_qpb_save->setIcon(QIcon::fromTheme("document-save"));
   m_qpb_calculate->setIcon(QIcon::fromTheme("media-playback-start"));
 #else
+  /* Menu bar */
   ui->actionLoad->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
-  m_qpb_load->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
   ui->actionSave->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
-  m_qpb_save->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
   ui->actionExit->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
   ui->actionAbout->setIcon(style()->standardIcon(QStyle::SP_DialogHelpButton));
-#endif // Q_OS
+
+  /* Button bar */
+  m_qpb_load->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
+  m_qpb_save->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
+  m_qpb_calculate->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+#endif // Q_OS_
 }
