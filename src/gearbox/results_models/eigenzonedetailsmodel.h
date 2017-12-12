@@ -15,6 +15,7 @@ public:
     bool isAnalyte;
     double mobility;
     double time;
+    double conductivity;
     double pH;
     double uEMD;
     QVector<double> concentrations;
@@ -44,6 +45,7 @@ private:
   static const QString s_mobilityStr;
   static const QString s_timeStr;
   static const QString s_uEMDStr;
+  static const QString s_conductivityStr;
   static const QString s_pHStr;
 };
 

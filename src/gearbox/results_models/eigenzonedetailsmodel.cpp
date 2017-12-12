@@ -7,6 +7,7 @@ const QString EigenzoneDetailsModel::s_typeStr{tr("Type")};
 const QString EigenzoneDetailsModel::s_mobilityStr{tr("Mobility (\xe2\x8b\x85 1e-9)")};
 const QString EigenzoneDetailsModel::s_timeStr{tr("Time (min)")};
 const QString EigenzoneDetailsModel::s_uEMDStr{tr("\xce\xbc EMD (\xe2\x8b\x85 1e-9)")};
+const QString EigenzoneDetailsModel::s_conductivityStr{tr("Conductivity (S/m)")};
 const QString EigenzoneDetailsModel::s_pHStr{"pH"};
 
 EigenzoneDetailsModel::EigenzoneDetailsModel(QObject *parent)
@@ -50,9 +51,11 @@ QVariant EigenzoneDetailsModel::headerData(int section, Qt::Orientation orientat
     case 3:
       return s_uEMDStr;
     case 4:
+      return s_conductivityStr;
+    case 5:
       return s_pHStr;
     default:
-      return constituentsHeader(section - 5);
+      return constituentsHeader(section - 6);
     }
   }
 
@@ -63,7 +66,7 @@ int EigenzoneDetailsModel::rowCount(const QModelIndex &parent) const
 {
   Q_UNUSED(parent);
 
-  return m_constituents.size() + 5;
+  return m_constituents.size() + 6;
 }
 
 int EigenzoneDetailsModel::columnCount(const QModelIndex &parent) const
@@ -109,9 +112,11 @@ QVariant EigenzoneDetailsModel::data(const QModelIndex &index, int role) const
   case 3:
     return zone.uEMD;
   case 4:
+    return zone.conductivity;
+  case 5:
     return zone.pH;
   default:
-    return constituentsConcentrations(zone, row - 5);
+    return constituentsConcentrations(zone, row - 6);
   }
 }
 

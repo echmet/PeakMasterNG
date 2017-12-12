@@ -495,6 +495,7 @@ void CalculatorInterface::recalculateEigenzoneDetails(const double totalLength, 
       ez.ztype == ECHMET::LEMNG::EigenzoneType::ANALYTE,
       ez.mobility,
       t,
+      ez.solutionProperties.conductivity,
       ez.solutionProperties.pH,
       ez.uEMD,
       std::move(concentrations)
@@ -527,6 +528,11 @@ void CalculatorInterface::recalculateTimes(double totalLength, double detectorPo
   detectorPosition /= 100.0;
 
   const double EOFMobility = EOFMobilityFromInput(EOFValue, EOFvt, totalLength, detectorPosition, drivingVoltage);
+
+  auto &data = m_resultsData.backgroundPropsData();
+  data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::EOF_MOBILITY)] = EOFMobility;
+  data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::EOF_MARKER_TIME)] = detectorPosition / (EOFMobility * 1.0e-9 * drivingVoltage / totalLength) / 60.0;
+  m_resultsData.backgroundPropsRefresh();
 
   recalculateTimesInternal(totalLength, detectorPosition, drivingVoltage, EOFMobility);
   recalculateEigenzoneDetails(totalLength, detectorPosition, drivingVoltage, EOFMobility);
