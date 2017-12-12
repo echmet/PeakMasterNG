@@ -11,6 +11,7 @@
 #include "../persistence/persistence.h"
 #include "operationinprogressdialog.h"
 
+#include <QDialogButtonBox>
 #include <QDataWidgetMapper>
 #include <QFileDialog>
 #include <QHBoxLayout>
@@ -83,6 +84,8 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   connect(ui->qcb_autoPlotCutoff, &QCheckBox::stateChanged, this, &PMNGMainWindow::onAutoPlotCutoffStateChanged);
   connect(ui->qcbox_signal, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &PMNGMainWindow::onPlotElectrophoregram);
 
+  m_qpb_new = new QPushButton{tr("New"), this};
+  connect(m_qpb_new, &QPushButton::clicked, ui->actionNew, &QAction::trigger);
   m_qpb_load = new QPushButton{tr("Load"), this};
   connect(m_qpb_load, &QPushButton::clicked, ui->actionLoad, &QAction::trigger);
   m_qpb_save = new QPushButton{tr("Save"), this};
@@ -98,9 +101,11 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   connect(ui->actionExit, &QAction::triggered, this, &PMNGMainWindow::onExit);
   connect(ui->actionCRASH, &QAction::triggered, this, &PMNGMainWindow::__onCrash);
   connect(ui->actionAbout, &QAction::triggered, this, &PMNGMainWindow::onAbout);
+  connect(ui->actionNew, &QAction::triggered, this, &PMNGMainWindow::onNew);
   connect(ui->actionLoad, &QAction::triggered, this, &PMNGMainWindow::onLoad);
   connect(ui->actionSave, &QAction::triggered, this, &PMNGMainWindow::onSave);
 
+  ui->mainToolBar->addWidget(m_qpb_new);
   ui->mainToolBar->addWidget(m_qpb_load);
   ui->mainToolBar->addWidget(m_qpb_save);
   ui->mainToolBar->addWidget(m_qpb_calculate);
@@ -265,6 +270,18 @@ void PMNGMainWindow::onLoad()
   }
 }
 
+void PMNGMainWindow::onNew()
+{
+  QMessageBox mbox{};
+  mbox.setIcon(QMessageBox::Question);
+  mbox.setText(tr("Create new system"));
+  mbox.setInformativeText(tr("Are you sure you want to discard the current system and create a new one?"));
+  mbox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+  mbox.setDefaultButton(QMessageBox::No);
+  if (mbox.exec() == QMessageBox::Yes)
+    emit clearAll();
+}
+
 void PMNGMainWindow::onPlotElectrophoregram()
 {
   try {
@@ -415,12 +432,14 @@ void PMNGMainWindow::setControlsIcons()
   m_qpb_calculate->setIcon(QIcon::fromTheme("media-playback-start"));
 #else
   /* Menu bar */
+  ui->actionNew->setIcon(style()->standardIcon(QStyle::SP_FileDialogNewFolder));
   ui->actionLoad->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
   ui->actionSave->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
   ui->actionExit->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
   ui->actionAbout->setIcon(style()->standardIcon(QStyle::SP_DialogHelpButton));
 
   /* Button bar */
+  m_qpb_new->setIcon(style()->standardIcon(QStyle::SP_FileDialogNewFolder));
   m_qpb_load->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
   m_qpb_save->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
   m_qpb_calculate->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));

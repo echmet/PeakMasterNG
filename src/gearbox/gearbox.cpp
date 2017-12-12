@@ -29,6 +29,15 @@ ComplexationManager & Gearbox::complexationManager()
   return m_complexMgr;
 }
 
+void Gearbox::onClearAll()
+{
+    m_backgroundGDM.clear();
+    m_sampleGDM.clear();
+    m_backgroundUIModel->refreshAll({});
+    m_analytesUIModel->refreshAll({});
+    m_complexMgr.refreshAll();
+}
+
 void Gearbox::onDeserialized()
 {
   /* We need to figure out which constituents are analytes and BGE components */

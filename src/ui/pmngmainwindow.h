@@ -54,6 +54,7 @@ private:
   void resetSignalItems();
   void setControlsIcons();
 
+  QPushButton *m_qpb_new;
   QPushButton *m_qpb_load;
   QPushButton *m_qpb_save;
   QPushButton *m_qpb_calculate;
@@ -82,11 +83,15 @@ private slots:
   void onCompositionChanged();
   void __onCrash();
   void onLoad();
+  void onNew();
   void onExit();
   void onExportElectrophoregram();
   void onPlotElectrophoregram();
   void onRunSetupChanged(const bool invalidate);
   void onSave();
+
+signals:
+  void clearAll();
 };
 
 #endif // PMNGMAINWINDOW_H

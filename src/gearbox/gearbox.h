@@ -33,6 +33,9 @@ public:
   persistence::Persistence & persistence();
   void setUICompositionModels(AbstractConstituentsModelBase *analytesUIModel, AbstractConstituentsModelBase *backgroundUIModel);
 
+public slots:
+  void onClearAll();
+
 private:
   gdm::GDM m_backgroundGDM;
   gdm::GDM m_sampleGDM;
