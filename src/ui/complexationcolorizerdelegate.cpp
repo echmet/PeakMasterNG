@@ -14,7 +14,14 @@ void paintLigand(QPainter *painter, const QStyleOptionViewItem &option, const QL
   int fromX = option.rect.x();
   for (const auto &clr : colors) {
     QBrush br{clr};
-    painter->fillRect(fromX, fromY, step, h, br);
+    const int _step = [&]() {
+      const int end = fromX + step;
+      if (end > w)
+        return step - (end - w);
+      return step;
+    }();
+
+    painter->fillRect(fromX, fromY, _step, h, br);
     fromX += step;
   }
 }
