@@ -107,7 +107,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
 
   onAutoPlotCutoffStateChanged(Qt::Checked);
 
-  setMenuIcons();
+  setControlsIcons();
 }
 
 PMNGMainWindow::~PMNGMainWindow()
@@ -400,15 +400,19 @@ void PMNGMainWindow::resetSignalItems()
   }
 }
 
-void PMNGMainWindow::setMenuIcons()
+void PMNGMainWindow::setControlsIcons()
 {
 #ifdef Q_OS_LINUX
+  /* Menu bar */
   ui->actionLoad->setIcon(QIcon::fromTheme("document-open"));
-  m_qpb_load->setIcon(QIcon::fromTheme("document-open"));
   ui->actionSave->setIcon(QIcon::fromTheme("document-save"));
-  m_qpb_save->setIcon(QIcon::fromTheme("document-save"));
   ui->actionExit->setIcon(QIcon::fromTheme("application-exit"));
   ui->actionAbout->setIcon(QIcon::fromTheme("help-about"));
+
+  /* Button bar */
+  m_qpb_load->setIcon(QIcon::fromTheme("document-open"));
+  m_qpb_save->setIcon(QIcon::fromTheme("document-save"));
+  m_qpb_calculate->setIcon(QIcon::fromTheme("media-playback-start"));
 #else
   ui->actionLoad->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
   m_qpb_load->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));

@@ -52,7 +52,7 @@ private:
   void initSignalItems();
   void plotElectrophoregram(const bool exportToFile);
   void resetSignalItems();
-  void setMenuIcons();
+  void setControlsIcons();
 
   QPushButton *m_qpb_load;
   QPushButton *m_qpb_save;
