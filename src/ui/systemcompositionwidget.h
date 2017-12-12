@@ -30,6 +30,7 @@ private:
   void editConstituent(const QString &name, GDMProxy &proxy, AbstractConstituentsModelBase *model);
   void handleDoubleClick(const int column, const QVariant &v, GDMProxy &GDM, AbstractConstituentsModelBase *model);
   void removeConstituent(const QModelIndexList &indexes, GDMProxy &proxy, AbstractConstituentsModelBase *model);
+  void setControlsIcons();
 
   Ui::SystemCompositionWidget *ui;
 

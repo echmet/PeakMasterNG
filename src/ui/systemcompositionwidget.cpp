@@ -72,6 +72,8 @@ SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMPro
 
   ui->qtbv_backgroudConstituents->resizeColumnsToContents();
   ui->qtbv_analytes->resizeColumnsToContents();
+
+  setControlsIcons();
 }
 
 SystemCompositionWidget::~SystemCompositionWidget()
@@ -223,5 +225,16 @@ void SystemCompositionWidget::onRemoveBGE()
   const auto indexes = ui->qtbv_backgroudConstituents->selectionModel()->selectedIndexes();
 
   removeConstituent(indexes, h_backgroundGDM, m_backgroundConstituentsModel);
+}
+
+void SystemCompositionWidget::setControlsIcons()
+{
+#ifdef Q_OS_LINUX
+  ui->qpb_addAnalyte->setIcon(QIcon::fromTheme("list-add"));
+  ui->qpb_addBGE->setIcon(QIcon::fromTheme("list-add"));
+
+  ui->qpb_removeAnalyte->setIcon(QIcon::fromTheme("list-remove"));
+  ui->qpb_removeBGE->setIcon(QIcon::fromTheme("list-remove"));
+#endif // Q_OS_
 }
 
