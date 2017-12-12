@@ -5,7 +5,8 @@
 
 #include <cassert>
 
-SampleGDMProxy::SampleGDMProxy(gdm::GDM &sampleGDM) :
+SampleGDMProxy::SampleGDMProxy(gdm::GDM &sampleGDM, const double minimumConcentration) :
+  GDMProxy{minimumConcentration},
   h_sampleGDM{sampleGDM}
 {
 }
@@ -86,12 +87,18 @@ bool SampleGDMProxy::isNucleus(const std::string &name) const noexcept
 
 void SampleGDMProxy::setConcentrations(const std::string &name, const std::vector<double> &concentrations) noexcept
 {
+  const auto C = [this](const double d) {
+    if (d >= m_minimumConcentration)
+      return d;
+    return m_minimumConcentration;
+  };
+
   assert(h_sampleGDM.find(name) != h_sampleGDM.cend());
   assert(concentrations.size() == 1);
 
   auto sampleIt = h_sampleGDM.find(name);
 
-  h_sampleGDM.setConcentrations(sampleIt, concentrations);
+  h_sampleGDM.setConcentrations(sampleIt, { C(concentrations.at(0)) } );
 }
 
 bool SampleGDMProxy::update(const std::string &name, const gdm::Constituent &ctuent)

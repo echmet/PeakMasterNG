@@ -290,6 +290,11 @@ void CalculatorInterface::mapResults(const double totalLength, const double dete
   fillBackgroundIonicComposition(m_resultsData, m_ctx.results->BGEProperties.composition);
 }
 
+double CalculatorInterface::minimumConcentration() noexcept
+{
+  return ECHMET::LEMNG::minimumSafeConcentration();
+}
+
 double CalculatorInterface::mobilityToTime(const double totalLength, const double detectorPosition, const double drivingVoltage, const double EOFMobility, const double u)
 {
   const double E = drivingVoltage / totalLength;

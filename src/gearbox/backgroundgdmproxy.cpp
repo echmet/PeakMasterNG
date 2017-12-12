@@ -5,7 +5,8 @@
 
 #include <cassert>
 
-BackgroundGDMProxy::BackgroundGDMProxy(gdm::GDM &backgroundGDM, gdm::GDM &sampleGDM) :
+BackgroundGDMProxy::BackgroundGDMProxy(gdm::GDM &backgroundGDM, gdm::GDM &sampleGDM, const double minimumConcentration) :
+  GDMProxy{minimumConcentration},
   h_backgroundGDM{backgroundGDM},
   h_sampleGDM{sampleGDM}
 {
@@ -100,6 +101,12 @@ bool BackgroundGDMProxy::isNucleus(const std::string &name) const noexcept
 
 void BackgroundGDMProxy::setConcentrations(const std::string &name, const std::vector<double> &concentrations) noexcept
 {
+  const auto C = [this](const double d) {
+    if (d >= m_minimumConcentration)
+      return d;
+    return m_minimumConcentration;
+  };
+
   assert(h_backgroundGDM.find(name) != h_backgroundGDM.cend());
   assert(h_sampleGDM.find(name) != h_sampleGDM.cend());
   assert(concentrations.size() == 2);
@@ -107,8 +114,8 @@ void BackgroundGDMProxy::setConcentrations(const std::string &name, const std::v
   auto backgroundIt = h_backgroundGDM.find(name);
   auto sampleIt = h_sampleGDM.find(name);
 
-  h_backgroundGDM.setConcentrations(backgroundIt, {concentrations.at(0)});
-  h_sampleGDM.setConcentrations(sampleIt, {concentrations.at(1)});
+  h_backgroundGDM.setConcentrations(backgroundIt, {C(concentrations.at(0))});
+  h_sampleGDM.setConcentrations(sampleIt, {C(concentrations.at(1))});
 }
 
 bool BackgroundGDMProxy::update(const std::string &name, const gdm::Constituent &ctuent)

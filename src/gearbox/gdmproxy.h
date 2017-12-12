@@ -18,6 +18,7 @@ public:
 class GDMProxy
 {
 public:
+  GDMProxy(const double minimumConcentration);
   virtual ~GDMProxy() = 0;
   virtual std::vector<double> concentrations(const std::string &name) const noexcept = 0;
   virtual bool complexes(const std::string &name) const noexcept = 0;
@@ -28,6 +29,9 @@ public:
   virtual bool isNucleus(const std::string &name) const noexcept = 0;
   virtual void setConcentrations(const std::string &name, const std::vector<double> &concentrations) noexcept = 0;
   virtual bool update(const std::string &name, const gdm::Constituent &ctuent) = 0;
+
+protected:
+  const double m_minimumConcentration;
 };
 
 #endif // GDMPROXY_H

@@ -55,6 +55,7 @@ public:
                               double injectionZoneLength, double plotToTime,
                               const Signal &signal,
                               const QString &filepath);
+  static double minimumConcentration() noexcept;
   QVector<QPointF> plotElectrophoregram(double totalLength, double detectorPosition,
                                         double drivingVoltage, const bool positiveVoltage,
                                         double EOFValue, const EOFValueType EOFvt,

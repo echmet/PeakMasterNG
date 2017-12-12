@@ -10,7 +10,7 @@ namespace gdm {
 class SampleGDMProxy : public GDMProxy
 {
 public:
-  SampleGDMProxy(gdm::GDM &sampleGDM);
+  SampleGDMProxy(gdm::GDM &sampleGDM, const double minimumConcentration);
   virtual ~SampleGDMProxy() override;
   virtual std::vector<double> concentrations(const std::string &name) const noexcept override;
   virtual bool complexes(const std::string &name) const noexcept override;
