@@ -444,12 +444,14 @@ void PMNGMainWindow::setControlsIcons()
 {
 #ifdef Q_OS_LINUX
   /* Menu bar */
+  ui->actionNew->setIcon(QIcon::fromTheme("document-new"));
   ui->actionLoad->setIcon(QIcon::fromTheme("document-open"));
   ui->actionSave->setIcon(QIcon::fromTheme("document-save"));
   ui->actionExit->setIcon(QIcon::fromTheme("application-exit"));
   ui->actionAbout->setIcon(QIcon::fromTheme("help-about"));
 
   /* Button bar */
+  m_qpb_new->setIcon(QIcon::fromTheme("document-new"));
   m_qpb_load->setIcon(QIcon::fromTheme("document-open"));
   m_qpb_save->setIcon(QIcon::fromTheme("document-save"));
   m_qpb_calculate->setIcon(QIcon::fromTheme("media-playback-start"));
