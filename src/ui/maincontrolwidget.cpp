@@ -22,6 +22,7 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
 
   connect(&m_runSetupMapperModel, &FloatMapperModel<double>::dataChanged, this, &MainControlWidget::onRunSetupChanged);
   connect(ui->qcbox_polarity, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainControlWidget::onRunSetupChanged);
+  connect(ui->qcbox_eof, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainControlWidget::onRunSetupChanged);
   connect(ui->qcb_correctForIS, &QCheckBox::stateChanged, this, &MainControlWidget::onRunSetupChangedInvalidate);
   connect(ui->qpb_details, &QPushButton::clicked, this, &MainControlWidget::onShowEigenzoneDetailsClicked);
   connect(ui->qpb_bgeIonicComposition, &QPushButton::clicked, this, &MainControlWidget::onBGEIonicCompositionClicked);
