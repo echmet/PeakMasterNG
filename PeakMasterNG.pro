@@ -106,7 +106,10 @@ SOURCES += \
     src/persistence/serializer.cpp \
     src/persistence/persistence.cpp \
     src/persistence/deserializer.cpp \
-    src/ui/operationinprogressdialog.cpp
+    src/ui/operationinprogressdialog.cpp \
+    src/database/db_constituent.cpp \
+    src/database/db_constituentsdatabase.cpp \
+    src/gearbox/databaseproxy.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -188,7 +191,11 @@ HEADERS += \
     src/persistence/serializer.h \
     src/persistence/persistence.h \
     src/persistence/deserializer.h \
-    src/ui/operationinprogressdialog.h
+    src/ui/operationinprogressdialog.h \
+    src/database/db_constituent.h \
+    src/database/db_constituent.h \
+    src/database/db_constituentsdatabase.h \
+    src/gearbox/databaseproxy.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \
@@ -207,6 +214,8 @@ FORMS += \
 unix {
     QMAKE_CXXFLAGS += "-Wall -Wextra -pedantic"
 }
+
+LIBS += -lsqlite3
 
 win32 {
     LIBS += -ldbghelp

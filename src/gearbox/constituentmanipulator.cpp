@@ -59,7 +59,7 @@ gdm::Constituent ConstituentManipulator::makeConstituent(const EditConstituentDi
   return gdm::Constituent{type, name, std::move(physProps)};
 }
 
-EditConstituentDialog * ConstituentManipulator::makeEditDialog(const std::string &name, GDMProxy &proxy)
+EditConstituentDialog * ConstituentManipulator::makeEditDialog(const std::string &name, GDMProxy &proxy, DatabaseProxy &dbProxy)
 {
   assert(proxy.contains(name));
 
@@ -75,7 +75,7 @@ EditConstituentDialog * ConstituentManipulator::makeEditDialog(const std::string
 
   const bool allowTypeChange = !proxy.complexes(name);
 
-  return new EditConstituentDialog{QString::fromStdString(name), type, ctuent.physicalProperties(), allowTypeChange};
+  return new EditConstituentDialog{dbProxy, QString::fromStdString(name), type, ctuent.physicalProperties(), allowTypeChange};
 }
 
 void ConstituentManipulator::onValidateConstituentInput(const EditConstituentDialog *dlg, bool *ok)

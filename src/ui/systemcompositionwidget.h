@@ -11,6 +11,7 @@ namespace Ui {
 class AbstractConstituentsModelBase;
 class ComplexationColorizerDelegate;
 class ComplexationManager;
+class DatabaseProxy;
 class GDMProxy;
 class FloatingValueDelegate;
 
@@ -19,7 +20,8 @@ class SystemCompositionWidget : public QWidget
   Q_OBJECT
 
 public:
-  explicit SystemCompositionWidget(GDMProxy &backgroundGDM, GDMProxy &sampleGDM, ComplexationManager &cpxMgr, QWidget *parent = nullptr);
+  explicit SystemCompositionWidget(GDMProxy &backgroundGDM, GDMProxy &sampleGDM, ComplexationManager &cpxMgr, DatabaseProxy &dbProxy,
+                                   QWidget *parent = nullptr);
   ~SystemCompositionWidget();
   AbstractConstituentsModelBase * analytesModel() noexcept;
   AbstractConstituentsModelBase * backgroundModel() noexcept;
@@ -37,6 +39,7 @@ private:
   GDMProxy &h_backgroundGDM;
   GDMProxy &h_sampleGDM;
   ComplexationManager &h_cpxMgr;
+  DatabaseProxy &h_dbProxy;
 
   AbstractConstituentsModelBase *m_analytesModel;
   AbstractConstituentsModelBase *m_backgroundConstituentsModel;

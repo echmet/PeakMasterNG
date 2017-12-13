@@ -8,6 +8,7 @@
 #include "../gearbox/complexationmanager.h"
 #include "complexationcolorizerdelegate.h"
 #include "../gearbox/floatingvaluedelegate.h"
+#include "../gearbox/databaseproxy.h"
 
 #include <QMessageBox>
 
@@ -20,12 +21,14 @@ void enableDragDrop(QTableView *v)
  v->setAcceptDrops(true);
 }
 
-SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMProxy &sampleGDM, ComplexationManager &cpxMgr, QWidget *parent) :
+SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMProxy &sampleGDM, ComplexationManager &cpxMgr, DatabaseProxy &dbProxy,
+                                                 QWidget *parent) :
   QWidget{parent},
   ui{new Ui::SystemCompositionWidget},
   h_backgroundGDM{backgroundGDM},
   h_sampleGDM{sampleGDM},
-  h_cpxMgr{cpxMgr}
+  h_cpxMgr{cpxMgr},
+  h_dbProxy{dbProxy}
 {
   ui->setupUi(this);
 
@@ -83,7 +86,7 @@ SystemCompositionWidget::~SystemCompositionWidget()
 
 void SystemCompositionWidget::addConstituent(GDMProxy &proxy, AbstractConstituentsModelBase *model)
 {
-  EditConstituentDialog dlg{this};
+  EditConstituentDialog dlg{h_dbProxy, this};
   ConstituentManipulator manipulator{proxy};
 
   connect(&dlg, &EditConstituentDialog::validateInput, &manipulator, &ConstituentManipulator::onValidateConstituentInput);
@@ -119,7 +122,7 @@ void SystemCompositionWidget::editConstituent(const QString &name, GDMProxy &pro
 {
   ConstituentManipulator manipulator{proxy};
 
-  EditConstituentDialog *dlg = manipulator.makeEditDialog(name.toStdString(), proxy);
+  EditConstituentDialog *dlg = manipulator.makeEditDialog(name.toStdString(), proxy, h_dbProxy);
   if (dlg == nullptr)
     return;
 

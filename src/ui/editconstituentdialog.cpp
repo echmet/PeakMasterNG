@@ -4,21 +4,26 @@
 #include "elementaries/modifyconstituentchargepushbutton.h"
 #include "../gdm/core/constituent/physicalproperties.h"
 #include "../gearbox/floatingvaluedelegate.h"
+#include "../gearbox/databaseproxy.h"
 
-EditConstituentDialog::EditConstituentDialog(QWidget *parent) :
+EditConstituentDialog::EditConstituentDialog(DatabaseProxy &dbProxy, QWidget *parent) :
   QDialog{parent},
   ui{new Ui::EditConstituentDialog},
+  h_dbProxy{dbProxy},
   m_fltDelegate{new FloatingValueDelegate{this}}
 {
   setupWidget();
   updateChargeModifiers();
   ui->qtblView_charges->setItemDelegate(m_fltDelegate);
+  connect(ui->qpb_pickFromDB, &QPushButton::clicked, this, &EditConstituentDialog::onPickFromDatabase);
 }
 
-EditConstituentDialog::EditConstituentDialog(const QString &name, const EditConstituentDialog::ConstituentType type, const gdm::PhysicalProperties &props,
+EditConstituentDialog::EditConstituentDialog(DatabaseProxy &dbProxy,
+                                             const QString &name, const EditConstituentDialog::ConstituentType type, const gdm::PhysicalProperties &props,
                                              const bool allowTypeChange, QWidget *parent) :
   QDialog{parent},
   ui{new Ui::EditConstituentDialog},
+  h_dbProxy{dbProxy},
   m_fltDelegate{new FloatingValueDelegate{this}}
 {
   setupWidget();
@@ -50,6 +55,7 @@ EditConstituentDialog::EditConstituentDialog(const QString &name, const EditCons
 
   updateChargeModifiers();
   ui->qtblView_charges->setItemDelegate(m_fltDelegate);
+  connect(ui->qpb_pickFromDB, &QPushButton::clicked, this, &EditConstituentDialog::onPickFromDatabase);
 }
 
 EditConstituentDialog::~EditConstituentDialog()
@@ -103,6 +109,11 @@ void EditConstituentDialog::onAddChargeHigh()
 {
   if (m_chargesModel.insertRows(m_chargesModel.rowCount(), 1))
     updateChargeHigh();
+}
+
+void EditConstituentDialog::onPickFromDatabase()
+{
+
 }
 
 void EditConstituentDialog::onRejected()

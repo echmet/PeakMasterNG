@@ -12,6 +12,7 @@ namespace gdm {
   class PhysicalProperties;
 }
 
+class DatabaseProxy;
 class FloatingValueDelegate;
 class ModifyConstituentChargePushButton;
 
@@ -26,8 +27,9 @@ public:
   };
   Q_ENUM(ConstituentType)
 
-  explicit EditConstituentDialog(QWidget *parent = nullptr);
-  explicit EditConstituentDialog(const QString &name, const EditConstituentDialog::ConstituentType type, const gdm::PhysicalProperties &props, const bool allowTypeChange, QWidget *parent = nullptr);
+  explicit EditConstituentDialog(DatabaseProxy &dbProxy, QWidget *parent = nullptr);
+  explicit EditConstituentDialog(DatabaseProxy &dbProxy, const QString &name, const EditConstituentDialog::ConstituentType type,
+                                 const gdm::PhysicalProperties &props, const bool allowTypeChange, QWidget *parent = nullptr);
   ~EditConstituentDialog();
   int chargeHigh() const;
   int chargeLow() const;
@@ -50,6 +52,8 @@ private:
   ModifyConstituentChargePushButton *m_qpb_addHigh;
   ModifyConstituentChargePushButton *m_qpb_removeHigh;
 
+  DatabaseProxy &h_dbProxy;
+
   ConstituentChargesModel m_chargesModel;
 
   FloatingValueDelegate *m_fltDelegate;
@@ -58,6 +62,7 @@ private slots:
   void onAccepted();
   void onAddChargeLow();
   void onAddChargeHigh();
+  void onPickFromDatabase();
   void onRejected();
   void onRemoveChargeLow();
   void onRemoveChargeHigh();

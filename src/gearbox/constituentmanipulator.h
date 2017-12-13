@@ -5,6 +5,7 @@
 
 #include <QObject>
 
+class DatabaseProxy;
 class EditConstituentDialog;
 class GDMProxy;
 
@@ -15,7 +16,7 @@ class ConstituentManipulator : public QObject
 public:
   explicit ConstituentManipulator(const GDMProxy &proxy);
   gdm::Constituent makeConstituent(const EditConstituentDialog *dlg);
-  EditConstituentDialog * makeEditDialog(const std::string &name, GDMProxy &proxy);
+  EditConstituentDialog * makeEditDialog(const std::string &name, GDMProxy &proxy, DatabaseProxy &dbProxy);
 
 public slots:
   void onValidateConstituentInput(const EditConstituentDialog *dlg, bool *ok);

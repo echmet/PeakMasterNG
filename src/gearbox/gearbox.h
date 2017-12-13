@@ -9,6 +9,7 @@
 #include "results_models/resultsdata.h"
 #include "results_models/resultscontainer.h"
 #include "../persistence/persistence.h"
+#include "databaseproxy.h"
 
 #include <memory>
 #include <QObject>
@@ -27,6 +28,7 @@ public:
   GDMProxy & backgroundGDMProxy();
   CalculatorInterface calculatorInterface();
   ComplexationManager & complexationManager();
+  DatabaseProxy & databaseProxy();
   GDMProxy & sampleGDMProxy();
   ResultsData resultsData();
   ResultsModels resultsModels();
@@ -45,6 +47,7 @@ private:
 
   std::unique_ptr<GDMProxy> m_backgroundGDMProxy;
   std::unique_ptr<GDMProxy> m_sampleGDMProxy;
+  std::unique_ptr<DatabaseProxy> m_dbProxy;
 
   AbstractConstituentsModelBase *m_analytesUIModel;
   AbstractConstituentsModelBase *m_backgroundUIModel;
