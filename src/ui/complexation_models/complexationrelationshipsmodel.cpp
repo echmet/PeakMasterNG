@@ -343,11 +343,11 @@ bool ComplexationRelationshipsModel::setData(const QModelIndex &index, const QVa
       if (!ok)
         return false;
 
-        _temp.push_back(d);
-      }
+      _temp.push_back(d);
+    }
 
-      vec = _temp;
-      return true;
+    vec = _temp;
+    return true;
   };
 
   if (role != Qt::EditRole)
