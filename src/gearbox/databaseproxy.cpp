@@ -2,6 +2,7 @@
 
 #include "../database/db_constituentsdatabase.h"
 
+#include <algorithm>
 #include <cassert>
 
 const char *DatabaseProxy::DATABASE_PATH = "pmng_db.sql";
@@ -41,13 +42,26 @@ bool DatabaseProxy::isAvailable() const
   return m_db != nullptr;
 }
 
-std::vector<DatabaseConstituent> DatabaseProxy::search(const std::string &name)
+std::vector<DatabaseConstituent> DatabaseProxy::search(std::string name)
 {
   database::SearchResults _results{};
   std::vector<DatabaseConstituent> results{};
 
-  if (m_db->searchByName(name.c_str(), database::ConstituentsDatabase::MatchType::BEGINS_WITH, _results) != database::ConstituentsDatabase::RetCode::OK)
-    throw DatabaseException{"Database lookup failed"};
+  std::transform(name.begin(), name.end(), name.begin(), ::toupper);
+
+  database::ConstituentsDatabase::RetCode tRet;
+  tRet = m_db->searchByName(name.c_str(), database::ConstituentsDatabase::MatchType::BEGINS_WITH, _results);
+  switch (tRet) {
+  case database::ConstituentsDatabase::RetCode::OK:
+    break; /* Fall through */
+  case database::ConstituentsDatabase::RetCode::E_DB_NO_RECORD:
+    return {};
+  default:
+    {
+    std::string err{"Database lookup failed: " + m_db->lastDBErrorMessage()};
+    throw DatabaseException{err};
+    }
+  }
 
   results.reserve(_results.size());
 

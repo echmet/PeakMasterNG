@@ -5,6 +5,7 @@
 #include "../gdm/core/constituent/physicalproperties.h"
 #include "../gearbox/floatingvaluedelegate.h"
 #include "../gearbox/databaseproxy.h"
+#include "pickconstituentfromdbdialog.h"
 
 EditConstituentDialog::EditConstituentDialog(DatabaseProxy &dbProxy, QWidget *parent) :
   QDialog{parent},
@@ -15,7 +16,6 @@ EditConstituentDialog::EditConstituentDialog(DatabaseProxy &dbProxy, QWidget *pa
   setupWidget();
   updateChargeModifiers();
   ui->qtblView_charges->setItemDelegate(m_fltDelegate);
-  connect(ui->qpb_pickFromDB, &QPushButton::clicked, this, &EditConstituentDialog::onPickFromDatabase);
 }
 
 EditConstituentDialog::EditConstituentDialog(DatabaseProxy &dbProxy,
@@ -55,7 +55,6 @@ EditConstituentDialog::EditConstituentDialog(DatabaseProxy &dbProxy,
 
   updateChargeModifiers();
   ui->qtblView_charges->setItemDelegate(m_fltDelegate);
-  connect(ui->qpb_pickFromDB, &QPushButton::clicked, this, &EditConstituentDialog::onPickFromDatabase);
 }
 
 EditConstituentDialog::~EditConstituentDialog()
@@ -113,7 +112,8 @@ void EditConstituentDialog::onAddChargeHigh()
 
 void EditConstituentDialog::onPickFromDatabase()
 {
-
+  PickConstituentFromDBDialog dlg{h_dbProxy};
+  dlg.exec();
 }
 
 void EditConstituentDialog::onRejected()
@@ -184,6 +184,12 @@ void EditConstituentDialog::setupWidget()
 
   ui->qcbox_type->addItem("Nucleus", QVariant::fromValue<ConstituentType>(ConstituentType::NUCLEUS));
   ui->qcbox_type->addItem("Ligand", QVariant::fromValue<ConstituentType>(ConstituentType::LIGAND));
+
+  if (h_dbProxy.isAvailable()) {
+    connect(ui->qpb_pickFromDB, &QPushButton::clicked, this, &EditConstituentDialog::onPickFromDatabase);
+    ui->qpb_pickFromDB->setEnabled(true);
+  } else
+    ui->qpb_pickFromDB->setEnabled(false);
 }
 
 EditConstituentDialog::ConstituentType EditConstituentDialog::type() const

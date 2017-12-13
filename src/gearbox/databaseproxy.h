@@ -26,7 +26,7 @@ public:
   DatabaseProxy();
   ~DatabaseProxy() noexcept;
   bool isAvailable() const;
-  std::vector<DatabaseConstituent> search(const std::string &name);
+  std::vector<DatabaseConstituent> search(std::string name);
 
 private:
   database::ConstituentsDatabase *m_db;

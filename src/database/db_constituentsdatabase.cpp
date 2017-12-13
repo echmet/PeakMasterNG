@@ -14,7 +14,7 @@ const char *ConstituentsDatabase::PKAS_TABLE_NAME = "constituent_pkas";
 const char *ConstituentsDatabase::MOBILITIES_TABLE_NAME = "constituent_mobilities";
 
 const char *ConstituentsDatabase::TBC_COL_ID = "id";
-const char *ConstituentsDatabase::TBC_COL_ID_TYPE = "BIGINT";
+const char *ConstituentsDatabase::TBC_COL_ID_TYPE = "INTEGER";
 const char *ConstituentsDatabase::TBC_COL_NAME = "name";
 const char *ConstituentsDatabase::TBC_COL_NAME_TYPE = "VARCHAR(256)";
 const char *ConstituentsDatabase::TBC_COL_CHARGE_LOW = "charge_low";
@@ -23,9 +23,9 @@ const char *ConstituentsDatabase::TBC_COL_CHARGE_HIGH = "charge_high";
 const char *ConstituentsDatabase::TBC_COL_CHARGE_HIGH_TYPE = "INTEGER";
 
 const char *ConstituentsDatabase::TBP_COL_ID = "id";
-const char *ConstituentsDatabase::TBP_COL_ID_TYPE = "BIGINT";
+const char *ConstituentsDatabase::TBP_COL_ID_TYPE = "INTEGER";
 const char *ConstituentsDatabase::TBP_COL_CID = "constituent_id";
-const char *ConstituentsDatabase::TBP_COL_CID_TYPE = "BIGINT";
+const char *ConstituentsDatabase::TBP_COL_CID_TYPE = "INTEGER";
 const char *ConstituentsDatabase::TBP_COL_CHARGE = "charge";
 const char *ConstituentsDatabase::TBP_COL_CHARGE_TYPE = "INTEGER";
 const char *ConstituentsDatabase::TBP_COL_TRANSITION = "transition";
@@ -80,6 +80,9 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::addConstituent(const char *n
   int64_t constituentId;
   RetCode tRet;
 
+  if (properties.size() != chargeHigh - chargeLow + 1)
+    return RetCode::E_DB_INV_ARG;
+
   if (m_dbh == nullptr)
     return RetCode::E_DB_NOT_OPEN;
 
@@ -91,10 +94,10 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::addConstituent(const char *n
     goto out;
   }
 
-  ret = sqlite3_bind_text(m_insertConstituent(), 1, name , -1, SQLITE_STATIC);
+  ret = sqlite3_bind_text(m_insertConstituent(), 1, name, -1, SQLITE_STATIC);
   if (ret != SQLITE_OK) {
     m_lastDBError = std::string(sqlite3_errmsg(m_dbh()));
-    tRet =  RetCode::E_DB_QUERY;
+    tRet = RetCode::E_DB_QUERY;
     goto out;
   }
 
@@ -141,6 +144,7 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::addConstituent(const char *n
   if (ret != SQLITE_DONE) {
     m_lastDBError = std::string(sqlite3_errmsg(m_dbh()));
 
+    tRet = RetCode::E_DB_QUERY;
     goto rollback;
   }
 
@@ -154,6 +158,7 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::addConstituent(const char *n
     m_lastDBError = std::string(errmsg);
     sqlite3_free(errmsg);
 
+    tRet = RetCode::E_DB_QUERY;
     goto rollback;
   }
   /* Everthing went fine */
@@ -167,8 +172,8 @@ rollback:
     sqlite3_free(errmsg);
 
     tRet = RetCode::E_DB_ROLLBACK;
-  } else
-    tRet = RetCode::E_DB_QUERY;
+  }
+  tRet = RetCode::E_DB_QUERY;
 
 out:
   sqlite3_reset(m_constituentExists());
@@ -729,6 +734,14 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::insertConstituentMobility(co
     goto out;
   }
 
+  ret = sqlite3_step(m_insertMobility());
+  if (ret != SQLITE_DONE) {
+    m_lastDBError = std::string(sqlite3_errmsg(m_dbh()));
+
+    tRet = RetCode::E_DB_QUERY;
+    goto out;
+  }
+
   tRet = RetCode::OK;
 
 out:
@@ -767,6 +780,14 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::insertConstituentPKa(const i
     goto out;
   }
 
+  ret = sqlite3_step(m_insertPKa());
+  if (ret != SQLITE_DONE) {
+    m_lastDBError = std::string(sqlite3_errmsg(m_dbh()));
+
+    tRet = RetCode::E_DB_QUERY;
+    goto out;
+  }
+
   tRet = RetCode::OK;
 
 out:
@@ -794,8 +815,6 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::insertConstituentProperties(
     if (tRet != RetCode::OK)
       return tRet;
   }
-
-  tRet = insertConstituentMobility(id, 0, 0.0);
 
   return tRet;
 }
@@ -902,7 +921,7 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::searchByName(const char *nam
 
   while ((ret = sqlite3_step(m_searchByName())) == SQLITE_ROW) {
     int iret;
-    int64_t id = sqlite3_column_int64(m_searchByName(), 0);
+    int64_t id;
     int chargeLow;
     int chargeHigh;
     Constituent c;
@@ -917,7 +936,7 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::searchByName(const char *nam
       if (pName == nullptr)
         continue;
 
-      const int64_t id = sqlite3_column_int64(m_searchByName(), 0);
+      id = sqlite3_column_int64(m_searchByName(), 0);
       chargeLow = sqlite3_column_int(m_searchByName(), 1);
       chargeHigh = sqlite3_column_int(m_searchByName(), 2);
 
@@ -944,9 +963,9 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::searchByName(const char *nam
 
     while ((iret = sqlite3_step(m_fetchMobility())) == SQLITE_ROW) {
       const int charge = sqlite3_column_int(m_fetchMobility(), 0);
-      const double pKa = sqlite3_column_double(m_fetchMobility(), 1);
+      const double mobility = sqlite3_column_double(m_fetchMobility(), 1);
 
-      mobilities.emplace_back(charge, pKa);
+      mobilities.emplace_back(charge, mobility);
     }
 
     if (pKas.size() +1 != mobilities.size()) {
@@ -960,10 +979,10 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::searchByName(const char *nam
         c.addState(0, std::get<1>(mobility), 0); /* pKa value is ignored for zero charge */
       else {
         const auto &pKa = pKas.at(charge - chargeLow - (charge > 0));
-	if (std::get<0>(pKa) != std::get<0>(mobility)) {
-	  tRet = RetCode::E_DB_DATA;
-	  goto out;
-	}
+        if (std::get<0>(pKa) != std::get<0>(mobility)) {
+          tRet = RetCode::E_DB_DATA;
+          goto out;
+        }
 
         if (!c.addState(charge, std::get<1>(pKa), std::get<1>(mobility))) {
           tRet = RetCode::E_DB_DATA;

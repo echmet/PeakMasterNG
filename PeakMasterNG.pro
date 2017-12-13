@@ -109,7 +109,8 @@ SOURCES += \
     src/ui/operationinprogressdialog.cpp \
     src/database/db_constituent.cpp \
     src/database/db_constituentsdatabase.cpp \
-    src/gearbox/databaseproxy.cpp
+    src/gearbox/databaseproxy.cpp \
+    src/ui/pickconstituentfromdbdialog.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -195,7 +196,8 @@ HEADERS += \
     src/database/db_constituent.h \
     src/database/db_constituent.h \
     src/database/db_constituentsdatabase.h \
-    src/gearbox/databaseproxy.h
+    src/gearbox/databaseproxy.h \
+    src/ui/pickconstituentfromdbdialog.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \
@@ -209,7 +211,8 @@ FORMS += \
     src/ui/aboutdialog.ui \
     src/ui/eigenzonedetailsdialog.ui \
     src/ui/ioniccompositiondialog.ui \
-    src/ui/operationinprogressdialog.ui
+    src/ui/operationinprogressdialog.ui \
+    src/ui/pickconstituentfromdbdialog.ui
 
 unix {
     QMAKE_CXXFLAGS += "-Wall -Wextra -pedantic"
