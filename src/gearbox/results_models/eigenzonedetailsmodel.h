@@ -16,14 +16,16 @@ public:
     double mobility;
     double time;
     double conductivity;
+    double conductivityDelta;
     double pH;
+    double pHDelta;
     double uEMD;
     QVector<double> concentrations;
     QVector<double> cDeltas;
   };
 
   explicit EigenzoneDetailsModel(QObject *parent = nullptr);
-  bool displayConcentrationDeltasState() const;
+  bool displayDeltasState() const;
 
   // Header:
   QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
@@ -37,7 +39,7 @@ public:
   void refreshData(QVector<QString> &&constituents, QVector<EigenzoneProps> &&eigenzones) noexcept;
 
 public slots:
-  void displayConcentrationDeltas(const bool status);
+  void displayDeltas(const bool status);
 
 private:
   double constituentsConcentrations(const EigenzoneProps &zone, const int idx) const;
@@ -45,7 +47,7 @@ private:
 
   QVector<QString> m_constituents;
   QVector<EigenzoneProps> m_eigenzones;
-  bool m_displayCDeltas;
+  bool m_displayDeltas;
 
   static const QString s_typeStr;
   static const QString s_mobilityStr;

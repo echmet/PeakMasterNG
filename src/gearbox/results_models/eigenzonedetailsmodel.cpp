@@ -19,7 +19,7 @@ double EigenzoneDetailsModel::constituentsConcentrations(const EigenzoneProps &z
 {
   if (idx >= zone.concentrations.size())
     return {};
-  if (m_displayCDeltas)
+  if (m_displayDeltas)
     return zone.cDeltas.at(idx);
   return zone.concentrations.at(idx);
 }
@@ -31,17 +31,17 @@ QString EigenzoneDetailsModel::constituentsHeader(const int idx) const
   return m_constituents.at(idx);
 }
 
-void EigenzoneDetailsModel::displayConcentrationDeltas(const bool status)
+void EigenzoneDetailsModel::displayDeltas(const bool status)
 {
-  m_displayCDeltas = status;
+  m_displayDeltas = status;
 
   if (m_eigenzones.size() > 0)
     emit dataChanged(index(6, 0), index(rowCount(), columnCount()));
 }
 
-bool EigenzoneDetailsModel::displayConcentrationDeltasState() const
+bool EigenzoneDetailsModel::displayDeltasState() const
 {
-  return m_displayCDeltas;
+  return m_displayDeltas;
 }
 
 QVariant EigenzoneDetailsModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -127,9 +127,9 @@ QVariant EigenzoneDetailsModel::data(const QModelIndex &index, int role) const
   case 3:
     return zone.uEMD;
   case 4:
-    return zone.conductivity;
+    return m_displayDeltas ? zone.conductivityDelta : zone.conductivity;
   case 5:
-    return zone.pH;
+    return m_displayDeltas ? zone.pHDelta : zone.pH;
   default:
     return constituentsConcentrations(zone, row - 6);
   }

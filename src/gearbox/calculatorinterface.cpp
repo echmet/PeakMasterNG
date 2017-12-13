@@ -473,6 +473,8 @@ void CalculatorInterface::recalculateEigenzoneDetails(const double totalLength, 
   QVector<QString> constituents{};
   QVector<EigenzoneDetailsModel::EigenzoneProps> ezPropsVec{};
   QMap<QString, double> BGEConcs{};
+  double BGEpH;
+  double BGEconductivity;
 
   if (m_ctx.results->eigenzones->size() < 1)
     return;
@@ -485,6 +487,10 @@ void CalculatorInterface::recalculateEigenzoneDetails(const double totalLength, 
   {
     const auto &ez = m_ctx.results->eigenzones->at(0);
     const auto &BGEComp = m_ctx.results->BGEProperties.composition;
+
+    BGEconductivity = m_ctx.results->BGEProperties.conductivity;
+    BGEpH = m_ctx.results->BGEProperties.pH;
+
     auto it = ez.solutionProperties.composition->begin();
     if (it == nullptr)
       return;
@@ -527,7 +533,9 @@ void CalculatorInterface::recalculateEigenzoneDetails(const double totalLength, 
       ez.mobility,
       t,
       ez.solutionProperties.conductivity,
+      ez.solutionProperties.conductivity - BGEconductivity,
       ez.solutionProperties.pH,
+      ez.solutionProperties.pH - BGEpH,
       ez.uEMD,
       std::move(concentrations),
       std::move(cDeltas)

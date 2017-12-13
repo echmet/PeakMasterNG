@@ -10,6 +10,12 @@
     <height>300</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>Eigenzone details</string>
   </property>
@@ -22,14 +28,21 @@
     </widget>
    </item>
    <item>
-    <widget class="QTableView" name="qtbv_ezProps"/>
+    <widget class="QTableView" name="qtbv_ezProps">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QCheckBox" name="qcbox_dispalyCDeltas">
+      <widget class="QCheckBox" name="qcbox_dispalyDeltas">
        <property name="text">
-        <string>Display concentration deltas</string>
+        <string>Display deltas</string>
        </property>
       </widget>
      </item>

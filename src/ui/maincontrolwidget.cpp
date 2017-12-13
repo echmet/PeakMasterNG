@@ -150,8 +150,8 @@ void MainControlWidget::onShowEigenzoneDetailsClicked()
   if (ezdModel == nullptr)
     return;
 
-  EigenzoneDetailsDialog dlg{m_eigenzoneDetailsModel, ezdModel->displayConcentrationDeltasState(), this};
-  connect(&dlg, &EigenzoneDetailsDialog::displayDeltasChanged, ezdModel, &EigenzoneDetailsModel::displayConcentrationDeltas);
+  EigenzoneDetailsDialog dlg{m_eigenzoneDetailsModel, ezdModel->displayDeltasState(), this};
+  connect(&dlg, &EigenzoneDetailsDialog::displayDeltasChanged, ezdModel, &EigenzoneDetailsModel::displayDeltas);
 
   dlg.exec();
 }

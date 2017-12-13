@@ -11,9 +11,9 @@ EigenzoneDetailsDialog::EigenzoneDetailsDialog(QAbstractTableModel *model, const
 
   ui->qtbv_ezProps->setModel(model);
   ui->qtbv_ezProps->resizeColumnsToContents();
-  ui->qcbox_dispalyCDeltas->setChecked(displayDeltas);
+  ui->qcbox_dispalyDeltas->setChecked(displayDeltas);
 
-  connect(ui->qcbox_dispalyCDeltas, &QCheckBox::stateChanged, this, &EigenzoneDetailsDialog::onDisplayDeltasChanged);
+  connect(ui->qcbox_dispalyDeltas, &QCheckBox::stateChanged, this, &EigenzoneDetailsDialog::onDisplayDeltasChanged);
 }
 
 EigenzoneDetailsDialog::~EigenzoneDetailsDialog()
