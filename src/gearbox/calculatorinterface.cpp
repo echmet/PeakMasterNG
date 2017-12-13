@@ -470,39 +470,53 @@ QVector<QPointF> CalculatorInterface::plotElectrophoregramInternal(double totalL
 
 void CalculatorInterface::recalculateEigenzoneDetails(const double totalLength, const double detectorPosition, const double drivingVoltage, const double EOFMobility)
 {
-  /* TODO: Calculate eigenzone times elsewhere and just once!!! */
   QVector<QString> constituents{};
   QVector<EigenzoneDetailsModel::EigenzoneProps> ezPropsVec{};
+  QMap<QString, double> BGEConcs{};
 
   if (m_ctx.results->eigenzones->size() < 1)
     return;
 
-  constituents.reserve(m_ctx.results->eigenzones->size());
-  ezPropsVec.reserve(m_ctx.results->eigenzones->size());
+  const int N = m_ctx.results->eigenzones->size();
 
-  const auto &ez = m_ctx.results->eigenzones->at(0);
-  auto it = ez.solutionProperties.composition->begin();
-  if (it == nullptr)
-    return;
+  constituents.reserve(N);
+  ezPropsVec.reserve(N);
 
-  while (it->hasNext()) {
-    const auto &ctuentName = it->key();
-    constituents.append(QString::fromUtf8(ctuentName));
-    it->next();
+  {
+    const auto &ez = m_ctx.results->eigenzones->at(0);
+    const auto &BGEComp = m_ctx.results->BGEProperties.composition;
+    auto it = ez.solutionProperties.composition->begin();
+    if (it == nullptr)
+      return;
+
+    while (it->hasNext()) {
+      const auto &ctuentName = it->key();
+      constituents.append(QString::fromUtf8(ctuentName));
+      const auto qmapKey = QString{it->key()};
+      if (BGEComp->contains(it->key()))
+        BGEConcs.insert(qmapKey, BGEComp->operator[](ctuentName).concentration);
+      else
+        BGEConcs.insert(qmapKey, 0.0);
+      it->next();
+    }
+    it->destroy();
   }
-  it->destroy();
-
 
   for (size_t idx = 0; idx < m_ctx.results->eigenzones->size(); idx++) {
     const auto &ez = m_ctx.results->eigenzones->at(idx);
 
     const double t = mobilityToTime(totalLength, detectorPosition, drivingVoltage, EOFMobility, ez.mobility);
     QVector<double> concentrations{};
+    QVector<double> cDeltas{};
+
+    concentrations.reserve(N);
+    cDeltas.reserve(N);
 
     auto _it = ez.solutionProperties.composition->begin();
     while (_it->hasNext()) {
       const auto &props = _it->value();
       concentrations.append(props.concentration);
+      cDeltas.append(props.concentration - BGEConcs[QString{_it->key()}]);
       _it->next();
     }
     _it->destroy();
@@ -515,7 +529,8 @@ void CalculatorInterface::recalculateEigenzoneDetails(const double totalLength, 
       ez.solutionProperties.conductivity,
       ez.solutionProperties.pH,
       ez.uEMD,
-      std::move(concentrations)
+      std::move(concentrations),
+      std::move(cDeltas)
     };
 
     ezPropsVec.append(std::move(ezProps));

@@ -19,9 +19,11 @@ public:
     double pH;
     double uEMD;
     QVector<double> concentrations;
+    QVector<double> cDeltas;
   };
 
   explicit EigenzoneDetailsModel(QObject *parent = nullptr);
+  bool displayConcentrationDeltasState() const;
 
   // Header:
   QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
@@ -34,12 +36,16 @@ public:
 
   void refreshData(QVector<QString> &&constituents, QVector<EigenzoneProps> &&eigenzones) noexcept;
 
+public slots:
+  void displayConcentrationDeltas(const bool status);
+
 private:
   double constituentsConcentrations(const EigenzoneProps &zone, const int idx) const;
   QString constituentsHeader(const int idx) const;
 
   QVector<QString> m_constituents;
   QVector<EigenzoneProps> m_eigenzones;
+  bool m_displayCDeltas;
 
   static const QString s_typeStr;
   static const QString s_mobilityStr;

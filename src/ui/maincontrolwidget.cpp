@@ -4,6 +4,8 @@
 #include "eigenzonedetailsdialog.h"
 #include "ioniccompositiondialog.h"
 
+#include "../gearbox/results_models/eigenzonedetailsmodel.h"
+
 #include <QDataWidgetMapper>
 
 MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *parent) :
@@ -144,7 +146,12 @@ void MainControlWidget::onRunSetupChangedInvalidate()
 
 void MainControlWidget::onShowEigenzoneDetailsClicked()
 {
-  EigenzoneDetailsDialog dlg{m_eigenzoneDetailsModel, this};
+  EigenzoneDetailsModel *ezdModel = qobject_cast<EigenzoneDetailsModel *>(m_eigenzoneDetailsModel);
+  if (ezdModel == nullptr)
+    return;
+
+  EigenzoneDetailsDialog dlg{m_eigenzoneDetailsModel, ezdModel->displayConcentrationDeltasState(), this};
+  connect(&dlg, &EigenzoneDetailsDialog::displayDeltasChanged, ezdModel, &EigenzoneDetailsModel::displayConcentrationDeltas);
 
   dlg.exec();
 }

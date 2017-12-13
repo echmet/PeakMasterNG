@@ -3,7 +3,7 @@
 
 #include <QAbstractTableModel>
 
-EigenzoneDetailsDialog::EigenzoneDetailsDialog(QAbstractTableModel *model, QWidget *parent) :
+EigenzoneDetailsDialog::EigenzoneDetailsDialog(QAbstractTableModel *model, const bool displayDeltas, QWidget *parent) :
   QDialog{parent},
   ui{new Ui::EigenzoneDetailsDialog}
 {
@@ -11,9 +11,17 @@ EigenzoneDetailsDialog::EigenzoneDetailsDialog(QAbstractTableModel *model, QWidg
 
   ui->qtbv_ezProps->setModel(model);
   ui->qtbv_ezProps->resizeColumnsToContents();
+  ui->qcbox_dispalyCDeltas->setChecked(displayDeltas);
+
+  connect(ui->qcbox_dispalyCDeltas, &QCheckBox::stateChanged, this, &EigenzoneDetailsDialog::onDisplayDeltasChanged);
 }
 
 EigenzoneDetailsDialog::~EigenzoneDetailsDialog()
 {
   delete ui;
+}
+
+void EigenzoneDetailsDialog::onDisplayDeltasChanged(const int state)
+{
+  emit displayDeltasChanged(state == Qt::Checked);
 }

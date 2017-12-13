@@ -19,6 +19,8 @@ double EigenzoneDetailsModel::constituentsConcentrations(const EigenzoneProps &z
 {
   if (idx >= zone.concentrations.size())
     return {};
+  if (m_displayCDeltas)
+    return zone.cDeltas.at(idx);
   return zone.concentrations.at(idx);
 }
 
@@ -27,6 +29,19 @@ QString EigenzoneDetailsModel::constituentsHeader(const int idx) const
   if (idx >= m_constituents.size())
     return {};
   return m_constituents.at(idx);
+}
+
+void EigenzoneDetailsModel::displayConcentrationDeltas(const bool status)
+{
+  m_displayCDeltas = status;
+
+  if (m_eigenzones.size() > 0)
+    emit dataChanged(index(6, 0), index(rowCount(), columnCount()));
+}
+
+bool EigenzoneDetailsModel::displayConcentrationDeltasState() const
+{
+  return m_displayCDeltas;
 }
 
 QVariant EigenzoneDetailsModel::headerData(int section, Qt::Orientation orientation, int role) const
