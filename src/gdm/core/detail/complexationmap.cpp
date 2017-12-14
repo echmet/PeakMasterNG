@@ -45,6 +45,7 @@ void gdm::detail::clampAll(ComplexationMap& obj, ConstituentType constituentType
     for(auto& entry : obj) {
         auto& complexation = entry.second;
         if(name(entry.first, constituentType) == constituentName) clamp(complexation, constituentType, interval);
+        if (entry.second.size() == 0) obj.erase(entry.first);
     }
 
     assert(contains(interval, chargeSpan(obj, constituentType, constituentName)));
