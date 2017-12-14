@@ -409,7 +409,9 @@ void PMNGMainWindow::plotElectrophoregram(const bool exportToFile)
                                                               rs.drivingVoltage, rs.positiveVoltage,
                                                               EOFValue, EOFvt, izLen, plotCutoff,
                                                               signal);
-    m_signalPlotWidget->setSignal(signalTrace, plotSignalStyle(signal.type), signal.plotCaption);
+    auto zoneInfo = m_calcIface.spatialZoneInformation(rs.totalLength, rs.detectorPosition, rs.drivingVoltage,
+                                                       EOFValue, EOFvt, rs.positiveVoltage);
+    m_signalPlotWidget->setSignal(signalTrace, plotSignalStyle(signal.type), signal.plotCaption, std::move(zoneInfo));
   } else {
     QFileDialog dlg{};
     dlg.setAcceptMode(QFileDialog::AcceptSave);

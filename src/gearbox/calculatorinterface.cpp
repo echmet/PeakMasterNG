@@ -307,7 +307,7 @@ double CalculatorInterface::minimumConcentration() noexcept
   return ECHMET::LEMNG::minimumSafeConcentration();
 }
 
-double CalculatorInterface::mobilityToTime(const double totalLength, const double detectorPosition, const double drivingVoltage, const double EOFMobility, const double u)
+double CalculatorInterface::mobilityToTime(const double totalLength, const double detectorPosition, const double drivingVoltage, const double EOFMobility, const double u) const
 {
   const double E = drivingVoltage / totalLength;
 
@@ -599,4 +599,56 @@ void CalculatorInterface::recalculateTimesInternal(const double totalLength, con
 bool CalculatorInterface::resultsAvailable() const
 {
   return m_ctx.isValid();
+}
+
+std::vector<CalculatorInterface::SpatialZoneInformation> CalculatorInterface::spatialZoneInformation(double totalLength, double detectorPosition, double drivingVoltage,
+                                                                                                     const double EOFValue, const EOFValueType EOFvt, bool positiveVoltage) const
+{
+  if (!m_ctx.isValid())
+    return {};
+
+  if (totalLength <= 0)
+    throw CalculatorInterfaceException{"Invalid value of \"total length\""};
+  if (detectorPosition > totalLength)
+    throw CalculatorInterfaceException{"Invalid value of \"detector position\""};
+  if (drivingVoltage <= 0)
+    throw CalculatorInterfaceException{"Invalid value of \"driving voltage\""};
+
+  if (!positiveVoltage)
+    drivingVoltage *= -1;
+
+  totalLength /= 100.0;
+  detectorPosition /= 100.0;
+
+  const double EOFMobility = EOFMobilityFromInput(EOFValue, EOFvt, totalLength, detectorPosition, drivingVoltage);
+
+  std::vector<SpatialZoneInformation> zinfo{};
+  const auto _analytes = analytes();
+
+  for (size_t idx = 0; idx < m_ctx.results->eigenzones->size(); idx++) {
+    const auto &ez = m_ctx.results->eigenzones->at(idx);
+
+    QString zoneName{};
+    if (ez.ztype == ECHMET::LEMNG::EigenzoneType::ANALYTE) {
+      auto it = ez.solutionProperties.composition->begin();
+      if (it == nullptr)
+        continue;
+      while (it->hasNext()) {
+        const auto c = it->value();
+        if (c.concentration >= ECHMET::LEMNG::minimumSafeConcentration() && _analytes.contains(it->key())) {
+          zoneName = QString{it->key()};
+          break;
+        }
+        it->next();
+      }
+      it->destroy();
+    } else
+      zoneName = "System";
+
+    zinfo.emplace_back(mobilityToTime(totalLength, detectorPosition, drivingVoltage, EOFMobility, ez.mobility),
+                       1.0/6.0, /* Empirical, to be improved later */
+                       std::move(zoneName));
+  }
+
+  return zinfo;
 }

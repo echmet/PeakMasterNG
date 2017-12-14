@@ -11,6 +11,34 @@
 
 #include <QVBoxLayout>
 
+#include <QDebug>
+
+size_t findClosestIdx(const std::vector<QPointF> &data, const double currentX)
+{
+  const double firstX = data.front().x();
+  const double lastX = data.back().x();
+
+  qDebug() << "Current X" << currentX;
+
+  if (currentX < firstX)
+    return 0;
+  if (currentX > lastX)
+    return data.size() - 1;
+
+  const double span = lastX - firstX;
+  const double region = (currentX - firstX) / span;
+  const size_t regionIdx = static_cast<size_t>(std::floor(region * data.size()));
+  if (regionIdx >= data.size()) /* Safety net */
+    return static_cast<size_t>(data.size()) - 1;
+
+  for (size_t idx = regionIdx; idx < data.size(); idx++) {
+    if (data.at(idx).x() <= currentX)
+      return idx;
+  }
+
+  return regionIdx;
+}
+
 SignalPlotWidget::SignalPlotWidget(QWidget *parent) :
   QWidget(parent),
   ui(new Ui::SignalPlotWidget)
@@ -61,16 +89,27 @@ void SignalPlotWidget::clear()
   m_plot->replot();
 }
 
-void SignalPlotWidget::onPointHovered(const QPoint &)
+void SignalPlotWidget::onPointHovered(const QPoint &pos)
 {
   if (m_plotCurve->dataSize() < 1)
     return;
 
-  const int cpIdx = m_plotCurve->closestPoint(m_plotPicker->trackerPosition());
-  const QPointF &cp = m_plotCurve->sample(cpIdx);
+  const double tx = m_plot->canvasMap(QwtPlot::Axis::xBottom).invTransform(pos.x());
+
+  const size_t cpIdx = findClosestIdx(m_signal, tx);
+  const QPointF &cp = m_signal.at(cpIdx);
 
   ui->ql_xVal->setText(DoubleToStringConvertor::convert(cp.x()));
   ui->ql_yVal->setText(DoubleToStringConvertor::convert(cp.y()));
+
+  const double x = cp.x();
+  QString zoneName{};
+  for (const auto &z : m_zinfo) {
+    const double wHalf = z.width / 2.0;
+    if (x >= z.time - wHalf && x <= z.time + wHalf)
+      zoneName += z.name + " ";
+  }
+  ui->ql_zoneVal->setText(zoneName);
 }
 
 void SignalPlotWidget::setBrush(const SignalStyle style)
@@ -92,10 +131,14 @@ void SignalPlotWidget::setBrush(const SignalStyle style)
     break;
   }
 }
-void SignalPlotWidget::setSignal(const QVector<QPointF> &signal, const SignalStyle style, const QString &yAxisText)
+void SignalPlotWidget::setSignal(const QVector<QPointF> &signal, const SignalStyle style, const QString &yAxisText,
+                                 std::vector<CalculatorInterface::SpatialZoneInformation> &&zinfo)
 {
   m_plotCurve->setSamples(signal);
   setBrush(style);
+  m_signal = signal.toStdVector();
+
+  m_zinfo = std::move(zinfo);
 
   m_plot->setAxisTitle(QwtPlot::Axis::yLeft, yAxisText);
 

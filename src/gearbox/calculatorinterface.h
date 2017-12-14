@@ -18,8 +18,7 @@ public:
   const bool isBGEValid;
 };
 
-class CalculatorInterface : public QObject
-{
+class CalculatorInterface : public QObject {
   Q_OBJECT
 
 public:
@@ -42,6 +41,34 @@ public:
     SignalTypes type;
     QString constituentName;
     QString plotCaption;
+  };
+
+  class SpatialZoneInformation {
+  public:
+    SpatialZoneInformation() :
+      time{0},
+      width{0},
+      name{}
+    {}
+    SpatialZoneInformation(const double time, const double width, QString &&name) :
+      time{time},
+      width{width},
+      name{name}
+    {}
+    SpatialZoneInformation(const SpatialZoneInformation &other) :
+      time{other.time},
+      width{other.width},
+      name{other.name}
+    {}
+    SpatialZoneInformation(SpatialZoneInformation &&other) noexcept :
+      time{other.time},
+      width{other.width},
+      name{std::move(other.name)}
+    {}
+
+    const double time;
+    const double width;
+    const QString name;
   };
 
   CalculatorInterface(gdm::GDM &backgroundGDM, gdm::GDM &sampleGDM, ResultsData resultsData);
@@ -69,6 +96,8 @@ public:
   void recalculateTimes(double totalLength, double detectorPosition, double drivingVoltage,
                         const double EOFValue, const EOFValueType EOFvt, bool positiveVoltage);
   bool resultsAvailable() const;
+  std::vector<SpatialZoneInformation> spatialZoneInformation(double totalLength, double detectorPosition, double drivingVoltage,
+                                                             const double EOFValue, const EOFValueType EOFvt, bool positiveVoltage) const;
 
 public slots:
   void onInvalidate();
@@ -77,7 +106,7 @@ private:
   void fillAnalytesList();
   void mapResultsBGE(const double totalLength, const double detectorPosition, const double drivingVoltage, const double EOFMobility);
   void mapResults(const double totalLength, const double detectorPosition, const double drivingVoltage, const double EOFMobility);
-  double mobilityToTime(const double totalLength, const double detectorPosition, const double drivingVoltage, const double EOFMobility, const double u);
+  double mobilityToTime(const double totalLength, const double detectorPosition, const double drivingVoltage, const double EOFMobility, const double u) const;
   QVector<QPointF> plotAllAnalytes(const double totalLength, const double detectorPosition, const double drivingVoltage,
                                    const double EOFMobility, const double injectionZoneLength, const double plotToTime);
   QVector<QPointF> plotElectrophoregramInternal(double totalLength, double detectorPosition,
