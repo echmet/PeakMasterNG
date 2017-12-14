@@ -135,8 +135,10 @@ void SystemCompositionWidget::editConstituent(const QString &name, GDMProxy &pro
       if (!proxy.update(name.toStdString(), updatedCtuent)) {
         QMessageBox mbox{QMessageBox::Warning, tr("Operation failed"), tr("Failed to update the constituent properties")};
         mbox.exec();
-      } else
+      } else {
         model->updateName(name, dlg->name());
+        h_cpxMgr.refreshAll();
+      }
     } catch (GDMProxyException &ex) {
       QMessageBox mbox{QMessageBox::Warning, tr("Operation failed"), ex.what()};
       mbox.exec();
