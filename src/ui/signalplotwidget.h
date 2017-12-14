@@ -40,6 +40,10 @@ private:
   QwtPlotCurve *m_plotCurve;
   QwtPlotPicker *m_plotPicker;
   QwtPlotZoomer *m_plotZoomer;
+
+private slots:
+  void onPointHovered(const QPoint &pos);
+
 };
 
 #endif // SIGNALPLOTWIDGET_H

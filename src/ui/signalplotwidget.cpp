@@ -6,6 +6,8 @@
 #include "qwt_plot_picker.h"
 #include "qwt_picker_machine.h"
 #include "doubleclickableqwtplotzoomer.h"
+#include "ploteventfilter.h"
+#include "../gearbox/doubletostringconvertor.h"
 
 #include <QVBoxLayout>
 
@@ -33,7 +35,15 @@ SignalPlotWidget::SignalPlotWidget(QWidget *parent) :
   m_plotPicker->setStateMachine(new QwtPickerClickPointMachine{}); /* Come blow my ClickPoint machine! */
   m_plotPicker->setMousePattern(QwtEventPattern::MouseSelect1, Qt::RightButton);
 
-  this->layout()->addWidget(m_plot);
+  auto filter = new PlotEventFilter{this};
+  m_plot->canvas()->installEventFilter(filter);
+  connect(filter, &PlotEventFilter::mouseMoved, this, &SignalPlotWidget::onPointHovered);
+
+  {
+    QVBoxLayout *lay = qobject_cast<QVBoxLayout *>(this->layout());
+    if (lay != nullptr)
+      lay->insertWidget(0, m_plot);
+  }
   m_plot->setAxisTitle(QwtPlot::Axis::xBottom, "time (min)");
 
   m_plot->setMinimumHeight(50);
@@ -49,6 +59,18 @@ void SignalPlotWidget::clear()
 {
   m_plotCurve->setSamples(QVector<QPointF>{});
   m_plot->replot();
+}
+
+void SignalPlotWidget::onPointHovered(const QPoint &)
+{
+  if (m_plotCurve->dataSize() < 1)
+    return;
+
+  const int cpIdx = m_plotCurve->closestPoint(m_plotPicker->trackerPosition());
+  const QPointF &cp = m_plotCurve->sample(cpIdx);
+
+  ui->ql_xVal->setText(DoubleToStringConvertor::convert(cp.x()));
+  ui->ql_yVal->setText(DoubleToStringConvertor::convert(cp.y()));
 }
 
 void SignalPlotWidget::setBrush(const SignalStyle style)

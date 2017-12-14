@@ -111,7 +111,8 @@ SOURCES += \
     src/database/db_constituentsdatabase.cpp \
     src/gearbox/databaseproxy.cpp \
     src/ui/pickconstituentfromdbdialog.cpp \
-    src/ui/internal_models/databaseconstituentsphyspropstablemodel.cpp
+    src/ui/internal_models/databaseconstituentsphyspropstablemodel.cpp \
+    src/ui/ploteventfilter.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -199,7 +200,8 @@ HEADERS += \
     src/database/db_constituentsdatabase.h \
     src/gearbox/databaseproxy.h \
     src/ui/pickconstituentfromdbdialog.h \
-    src/ui/internal_models/databaseconstituentsphyspropstablemodel.h
+    src/ui/internal_models/databaseconstituentsphyspropstablemodel.h \
+    src/ui/ploteventfilter.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \
