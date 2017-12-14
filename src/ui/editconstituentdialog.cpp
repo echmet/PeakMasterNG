@@ -129,6 +129,7 @@ void EditConstituentDialog::onPickFromDatabase()
     ui->qle_name->setText(ctuent.name);
     m_chargesModel.refreshData(ctuent.pKas, ctuent.mobilities, ctuent.chargeLow, ctuent.chargeHigh);
     updateChargeModifiers();
+    ui->bbox_dlgCtrls->setFocus();
   } catch (const std::out_of_range &) {
     return; /* Nothing to actually handle */
   }
