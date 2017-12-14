@@ -211,6 +211,26 @@ bool ConstituentChargesModel::removeRows(int row, int count, const QModelIndex &
   return true;
 }
 
+void ConstituentChargesModel::refreshData(const std::map<int, double> &pKas, const std::map<int, double> &mobilities,
+                                          const int chargeLow, const int chargeHigh)
+{
+  assert(pKas.size() == mobilities.size());
+  assert(pKas.size() == static_cast<size_t>(chargeHigh - chargeLow + 1));
+
+  beginResetModel();
+
+  m_charges.clear();
+
+  for (int charge = chargeLow; charge <= chargeHigh; charge++) {
+    const auto &pKa = pKas.at(charge);
+    const auto &mobility = mobilities.at(charge);
+
+    m_charges.emplace_back(charge, mobility, pKa);
+  }
+
+  endResetModel();
+}
+
 bool ConstituentChargesModel::removeColumns(int column, int count, const QModelIndex &parent)
 {
   Q_UNUSED(column); Q_UNUSED(count); Q_UNUSED(parent);

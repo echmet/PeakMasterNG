@@ -43,6 +43,8 @@ public:
   bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
   bool removeColumns(int column, int count, const QModelIndex &parent = QModelIndex()) override;
 
+  void refreshData(const std::map<int, double> &pKas, const std::map<int, double> &mobilities, const int chargeLow, const int chargeHigh);
+
 private:
   std::vector<ChargeBlock> m_charges;
 };
