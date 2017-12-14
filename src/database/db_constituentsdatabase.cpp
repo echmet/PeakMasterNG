@@ -7,6 +7,9 @@
 #include <tuple>
 #include <cassert>
 
+#define _STRINGIFY(input) #input
+#define ERROR_CODE_CASE(erCase) case RetCode::erCase: return _STRINGIFY(erCase)
+
 namespace database {
 
 const char *ConstituentsDatabase::CONSTITUENTS_TABLE_NAME = "constituents";
@@ -880,6 +883,29 @@ void ConstituentsDatabase::prepareStatements()
                                       CONSTITUENTS_TABLE_NAME,
                                       TBC_COL_NAME, TBC_COL_CHARGE_LOW, TBC_COL_CHARGE_HIGH,
                                       TBC_COL_ID);
+}
+
+std::string ConstituentsDatabase::retCodeToString(const RetCode tRet) const
+{
+  switch (tRet) {
+  ERROR_CODE_CASE(OK);
+  ERROR_CODE_CASE(E_DB_CANTCREATE);
+  ERROR_CODE_CASE(E_DB_CANTOPEN);
+  ERROR_CODE_CASE(E_DB_DATA);
+  ERROR_CODE_CASE(E_DB_FILE);
+  ERROR_CODE_CASE(E_DB_FORMAT);
+  ERROR_CODE_CASE(E_DB_INV_ARG);
+  ERROR_CODE_CASE(E_DB_NO_RECORD);
+  ERROR_CODE_CASE(E_DB_NOT_OPEN);
+  ERROR_CODE_CASE(E_DB_QUERY);
+  ERROR_CODE_CASE(E_DB_PREP_STMTS);
+  ERROR_CODE_CASE(E_DB_RECORD_EXISTS);
+  ERROR_CODE_CASE(E_DB_ROLLBACK);
+  ERROR_CODE_CASE(E_DB_UNSPECIFIED);
+  ERROR_CODE_CASE(E_NOMEM);
+  }
+
+  return "Unknown";
 }
 
 ConstituentsDatabase::RetCode ConstituentsDatabase::searchByName(const char *name, const MatchType match, SearchResults &results)

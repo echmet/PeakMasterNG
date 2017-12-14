@@ -53,6 +53,7 @@ public:
   RetCode editConstituent(const int64_t id, const char *name, const int chargeLow, const int chargeHigh, const std::vector<std::tuple<int, double, double>> &properties);
   RetCode deleteConstituent(const int64_t id);
   std::string lastDBErrorMessage() const;
+  std::string retCodeToString(const RetCode tRet) const;
   RetCode searchByName(const char *name, const MatchType match, SearchResults &results);
 
 private:

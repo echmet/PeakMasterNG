@@ -59,7 +59,7 @@ std::vector<DatabaseConstituent> DatabaseProxy::search(std::string name)
     return {};
   default:
     {
-    std::string err{"Database lookup failed: " + m_db->lastDBErrorMessage()};
+    std::string err{"Database lookup failed: " + m_db->lastDBErrorMessage() + " " + m_db->retCodeToString(tRet)};
     throw DatabaseException{err};
     }
   }
