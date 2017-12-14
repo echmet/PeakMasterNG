@@ -3,6 +3,7 @@
 
 #include <map>
 #include <stdexcept>
+#include <QString>
 #include <vector>
 
 namespace database {
@@ -11,9 +12,11 @@ namespace database {
 
 class DatabaseConstituent {
 public:
-  const std::string name;
+  const QString name;
   const std::map<int, double> pKas;
   const std::map<int, double> mobilities;
+  const int chargeLow;
+  const int chargeHigh;
 };
 
 class DatabaseException : public std::runtime_error

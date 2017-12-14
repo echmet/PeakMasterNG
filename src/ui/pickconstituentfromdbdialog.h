@@ -8,22 +8,30 @@ namespace Ui {
 }
 
 class DatabaseProxy;
+class DatabaseConstituentsPhysPropsTableModel;
 
 class PickConstituentFromDBDialog : public QDialog
 {
   Q_OBJECT
 
 public:
-  explicit PickConstituentFromDBDialog(DatabaseProxy &dbProxy, QWidget *parent = nullptr);
+  explicit PickConstituentFromDBDialog(DatabaseConstituentsPhysPropsTableModel &model, DatabaseProxy &dbProxy, QWidget *parent = nullptr);
   ~PickConstituentFromDBDialog();
+  int selectedIndex() const;
 
 private:
   Ui::PickConstituentFromDBDialog *ui;
 
   DatabaseProxy &h_dbProxy;
+  DatabaseConstituentsPhysPropsTableModel &m_model;
+
+  int m_selectedIndex;
 
 private slots:
+  void onAccepted();
+  void onConstituentListDoubleClicked(const QModelIndex &midx);
   void onConstituentNameChanged(const QString &name);
+  void onRejected();
 };
 
 #endif // PICKCONSTITUENTFROMDBDIALOG_H

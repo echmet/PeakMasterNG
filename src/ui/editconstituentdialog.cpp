@@ -6,6 +6,7 @@
 #include "../gearbox/floatingvaluedelegate.h"
 #include "../gearbox/databaseproxy.h"
 #include "pickconstituentfromdbdialog.h"
+#include "internal_models/databaseconstituentsphyspropstablemodel.h"
 
 EditConstituentDialog::EditConstituentDialog(DatabaseProxy &dbProxy, QWidget *parent) :
   QDialog{parent},
@@ -112,8 +113,21 @@ void EditConstituentDialog::onAddChargeHigh()
 
 void EditConstituentDialog::onPickFromDatabase()
 {
-  PickConstituentFromDBDialog dlg{h_dbProxy};
-  dlg.exec();
+  DatabaseConstituentsPhysPropsTableModel model{};
+  PickConstituentFromDBDialog dlg{model, h_dbProxy};
+
+  if (dlg.exec() != QDialog::Accepted)
+    return;
+
+  const int idx = dlg.selectedIndex();
+  if (idx < 0)
+    return;
+
+  try {
+    const auto &ctuent = model.constituentAt(idx);
+  } catch (const std::out_of_range &) {
+    return; /* Nothing to actually handle */
+  }
 }
 
 void EditConstituentDialog::onRejected()

@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <QString>
 
 const char *DatabaseProxy::DATABASE_PATH = "pmng_db.sql";
 
@@ -19,7 +20,7 @@ DatabaseConstituent makeDatabaseConstituent(const database::Constituent &c)
     mobilities.emplace(charge, c.mobility(charge));
   }
 
-  return DatabaseConstituent{c.name(), std::move(pKas), std::move(mobilities)};
+  return DatabaseConstituent{QString::fromStdString(c.name()), std::move(pKas), std::move(mobilities), c.n(), c.p()};
 }
 
 DatabaseProxy::DatabaseProxy()

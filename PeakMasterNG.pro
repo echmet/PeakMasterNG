@@ -110,7 +110,8 @@ SOURCES += \
     src/database/db_constituent.cpp \
     src/database/db_constituentsdatabase.cpp \
     src/gearbox/databaseproxy.cpp \
-    src/ui/pickconstituentfromdbdialog.cpp
+    src/ui/pickconstituentfromdbdialog.cpp \
+    src/ui/internal_models/databaseconstituentsphyspropstablemodel.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -197,7 +198,8 @@ HEADERS += \
     src/database/db_constituent.h \
     src/database/db_constituentsdatabase.h \
     src/gearbox/databaseproxy.h \
-    src/ui/pickconstituentfromdbdialog.h
+    src/ui/pickconstituentfromdbdialog.h \
+    src/ui/internal_models/databaseconstituentsphyspropstablemodel.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \
