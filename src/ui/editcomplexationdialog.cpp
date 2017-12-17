@@ -37,6 +37,7 @@ void EditComplexationDialog::addRelationship(const ComplexationRelationship &rel
   _relationships.insert(relationship.ligand()->name, QPair<std::shared_ptr<ComplexationRelationshipsModel::RootTreeItem>, ComplexationRelationship>(root, relationship));
 
   ui->qcbox_ligands->addItem(relationship.ligand()->name, relationship.ligand()->name);
+  ui->qcbox_ligands->setCurrentIndex(ui->qcbox_ligands->count() - 1);
   ui->qcbox_ligands->activated(ui->qcbox_ligands->count() - 1);
 }
 
