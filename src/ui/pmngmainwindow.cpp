@@ -201,7 +201,12 @@ void PMNGMainWindow::onCalculate()
     m_calcIface.publishResults(rs.totalLength, rs.detectorPosition, rs.drivingVoltage, EOFValue, EOFvt, rs.positiveVoltage);
     if (calcStatus == CalculatorWorker::CalculationResult::OK) {
       addConstituentsSignals(m_calcIface.allConstituents());
-      plotElectrophoregram(false);
+      try {
+        plotElectrophoregram(false);
+      } catch (const CalculatorInterfaceException &ex) {
+        QMessageBox mbox{QMessageBox::Critical, tr("Failed to plot electrophoregram"), ex.what()};
+        mbox.exec();
+      }
     } else {
       QMessageBox errmbox{QMessageBox::Warning, tr("Calculation incomplete"),
                           QString{tr("Solver was unable to calculate electromigration properties of the system. "
@@ -324,7 +329,12 @@ void PMNGMainWindow::onRunSetupChanged(const bool invalidate)
                                  rs.drivingVoltage,
                                  EOFValue, EOFvt,
                                  rs.positiveVoltage);
-    plotElectrophoregram(false);
+    try {
+      plotElectrophoregram(false);
+    } catch (const CalculatorInterfaceException &ex) {
+      QMessageBox mbox{QMessageBox::Critical, tr("Failed to plot electrophoregram"), ex.what()};
+      mbox.exec();
+    }
   }
 }
 
