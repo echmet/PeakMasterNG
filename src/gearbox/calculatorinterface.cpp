@@ -422,10 +422,10 @@ QVector<QPointF> CalculatorInterface::plotElectrophoregramInternal(double totalL
   injectionZoneLength /= 1000.0;
   plotToTime *= 60.0;
 
-  const double EOFMobility = EOFMobilityFromInput(EOFValue, EOFvt, totalLength, detectorPosition, drivingVoltage);
-
   if (!positiveVoltage)
     drivingVoltage *= -1.0;
+
+  const double EOFMobility = EOFMobilityFromInput(EOFValue, EOFvt, totalLength, detectorPosition, drivingVoltage);
 
   if (signal.type == SignalTypes::ALL_ANALYTES)
     return plotAllAnalytes(totalLength, detectorPosition, drivingVoltage, EOFMobility, injectionZoneLength, plotToTime);
