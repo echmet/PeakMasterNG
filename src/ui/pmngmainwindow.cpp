@@ -125,7 +125,7 @@ PMNGMainWindow::~PMNGMainWindow()
 void PMNGMainWindow::addConstituentsSignals(const QVector<QString> &constituents)
 {
   for (const auto &a : constituents) {
-    QStandardItem *si = new QStandardItem{QString{tr("Concentration (%1)")}.arg(a)};
+    QStandardItem *si = new QStandardItem{QString{tr("c (%1)")}.arg(a)};
     QString plotCaption = QString{"c %1 (mM)"}.arg(a);
     si->setData(QVariant::fromValue<CalculatorInterface::Signal>({ CalculatorInterface::SignalTypes::CONCENTRATION, a, plotCaption }));
     m_signalTypesModel->appendRow(si);
