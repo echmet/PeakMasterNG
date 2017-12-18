@@ -11,14 +11,10 @@
 
 #include <QVBoxLayout>
 
-#include <QDebug>
-
 size_t findClosestIdx(const std::vector<QPointF> &data, const double currentX)
 {
   const double firstX = data.front().x();
   const double lastX = data.back().x();
-
-  qDebug() << "Current X" << currentX;
 
   if (currentX < firstX)
     return 0;
