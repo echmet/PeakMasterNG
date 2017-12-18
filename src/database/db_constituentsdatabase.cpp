@@ -2,10 +2,39 @@
 
 #include <iostream>
 #include <sqlite3.h>
-#include <unistd.h>
 #include <cstring>
 #include <tuple>
 #include <cassert>
+#include <QtGlobal>
+
+#if defined (Q_OS_WIN32)
+int vasprintf(char **PTR, const char *TEMPLATE, va_list AP)
+{
+  int res;
+  char *buf = new char[16384];
+  res = vsnprintf(buf, 16000, TEMPLATE, AP);
+  if (res > 0) {
+    *PTR = (char*)malloc(res + 1);
+    res = vsnprintf(*PTR, res + 1, TEMPLATE, AP);
+  }
+  delete[] buf;
+  return res;
+}
+
+int asprintf(char **PTR, const char *TEMPLATE, ...)
+{
+  int res;
+  va_list AP;
+  va_start(AP, TEMPLATE);
+  res = vasprintf(PTR, TEMPLATE, AP);
+  va_end(AP);
+  return res;
+}
+#elif defined(Q_OS_UNIX)
+#include <unistd.h>
+#else
+#error "Unknown platform"
+#endif // Q_OS_
 
 #define _STRINGIFY(input) #input
 #define ERROR_CODE_CASE(erCase) case RetCode::erCase: return _STRINGIFY(erCase)
