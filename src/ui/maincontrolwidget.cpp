@@ -22,12 +22,19 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
   ui->qtbv_systemEigenzones->setModel(resultsModels.systemEigenzonesModel());
   ui->qtbv_systemEigenzones->resizeColumnsToContents();
 
+  m_ezDetailsDlg = new EigenzoneDetailsDialog{m_eigenzoneDetailsModel, false, this};
+
   connect(&m_runSetupMapperModel, &FloatMapperModel<double>::dataChanged, this, &MainControlWidget::onRunSetupChanged);
   connect(ui->qcbox_polarity, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainControlWidget::onRunSetupChanged);
   connect(ui->qcbox_eof, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainControlWidget::onRunSetupChanged);
   connect(ui->qcb_correctForIS, &QCheckBox::stateChanged, this, &MainControlWidget::onRunSetupChangedInvalidate);
   connect(ui->qpb_details, &QPushButton::clicked, this, &MainControlWidget::onShowEigenzoneDetailsClicked);
   connect(ui->qpb_bgeIonicComposition, &QPushButton::clicked, this, &MainControlWidget::onBGEIonicCompositionClicked);
+
+  EigenzoneDetailsModel *ezdModel = qobject_cast<EigenzoneDetailsModel *>(m_eigenzoneDetailsModel);
+  if (ezdModel == nullptr)
+    return;
+  connect(m_ezDetailsDlg, &EigenzoneDetailsDialog::displayDeltasChanged, ezdModel, &EigenzoneDetailsModel::displayDeltas);
 }
 
 MainControlWidget::~MainControlWidget()
@@ -146,14 +153,7 @@ void MainControlWidget::onRunSetupChangedInvalidate()
 
 void MainControlWidget::onShowEigenzoneDetailsClicked()
 {
-  EigenzoneDetailsModel *ezdModel = qobject_cast<EigenzoneDetailsModel *>(m_eigenzoneDetailsModel);
-  if (ezdModel == nullptr)
-    return;
-
-  EigenzoneDetailsDialog dlg{m_eigenzoneDetailsModel, ezdModel->displayDeltasState(), this};
-  connect(&dlg, &EigenzoneDetailsDialog::displayDeltasChanged, ezdModel, &EigenzoneDetailsModel::displayDeltas);
-
-  dlg.exec();
+  m_ezDetailsDlg->exec();
 }
 
 MainControlWidget::RunSetup MainControlWidget::runSetup() const

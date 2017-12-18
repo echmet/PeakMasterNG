@@ -11,6 +11,7 @@ namespace Ui {
   class MainControlWidget;
 }
 
+class EigenzoneDetailsDialog;
 class QDataWidgetMapper;
 
 class MainControlWidget : public QWidget
@@ -70,6 +71,8 @@ private:
 
   QAbstractTableModel *m_bgeIonicCompositionModel;
   QAbstractTableModel *m_eigenzoneDetailsModel;
+
+  EigenzoneDetailsDialog *m_ezDetailsDlg;
 
   FloatingValueDelegate m_fltDelegate;
 
