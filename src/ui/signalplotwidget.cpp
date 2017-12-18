@@ -40,7 +40,6 @@ SignalPlotWidget::SignalPlotWidget(QWidget *parent) :
   ui(new Ui::SignalPlotWidget)
 {
   ui->setupUi(this);
-  this->setLayout(new QVBoxLayout{});
 
   m_plot = new QwtPlot{this};
   m_plot->setCanvasBackground(QBrush(Qt::white));
