@@ -23,6 +23,8 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
   ui->qtbv_systemEigenzones->resizeColumnsToContents();
 
   m_ezDetailsDlg = new EigenzoneDetailsDialog{m_eigenzoneDetailsModel, false, this};
+  m_bgeIonicCompDlg = new IonicCompositionDialog{m_bgeIonicCompositionModel, this};
+  m_bgeIonicCompDlg->setWindowTitle(tr("BGE ionic composition"));
 
   connect(&m_runSetupMapperModel, &FloatMapperModel<double>::dataChanged, this, &MainControlWidget::onRunSetupChanged);
   connect(ui->qcbox_polarity, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainControlWidget::onRunSetupChanged);
@@ -107,10 +109,7 @@ double MainControlWidget::EOFValue() const
 
 void MainControlWidget::onBGEIonicCompositionClicked()
 {
-  IonicCompositionDialog dlg{m_bgeIonicCompositionModel, this};
-  dlg.setWindowTitle(tr("BGE ionic composition"));
-
-  dlg.exec();
+  m_bgeIonicCompDlg->exec();
 }
 
 void MainControlWidget::onEOFCurrentIndexChanged(const int idx)
