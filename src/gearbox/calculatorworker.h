@@ -15,7 +15,7 @@ public:
     OK,
   };
 
-  CalculatorWorker(CalculatorInterface &calcIface, const bool ionicStrengthCorrection);
+  CalculatorWorker(CalculatorInterface &calcIface, const bool correctForDebyeHuckel, const bool correctForOnsagerFuoss, const bool correctForViscosity);
   CalculationResult calcStatus() const;
   const QString &errorMsg() const;
 public slots:
@@ -23,7 +23,9 @@ public slots:
 
 private:
   CalculatorInterface &m_calcIface;
-  const bool m_ionicStrengthCorrection;
+  const bool m_correctForDebyeHuckel;
+  const bool m_correctForOnsagerFuoss;
+  const bool m_correctForViscosity;
   CalculationResult m_calcStatus;
   QString m_errorMsg;
 

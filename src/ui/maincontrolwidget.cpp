@@ -3,6 +3,7 @@
 
 #include "eigenzonedetailsdialog.h"
 #include "ioniccompositiondialog.h"
+#include "nonidealitycorrectionsdialog.h"
 
 #include "../gearbox/results_models/eigenzonedetailsmodel.h"
 
@@ -25,11 +26,12 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
   m_ezDetailsDlg = new EigenzoneDetailsDialog{m_eigenzoneDetailsModel, false, this};
   m_bgeIonicCompDlg = new IonicCompositionDialog{m_bgeIonicCompositionModel, this};
   m_bgeIonicCompDlg->setWindowTitle(tr("BGE ionic composition"));
+  m_nonidealityCorrectionsDlg = new NonidealityCorrectionsDialog{this};
+  connect(ui->qpb_nonidealityCorrections, &QPushButton::clicked, this, &MainControlWidget::onNonidealityCorrectionsClicked);
 
   connect(&m_runSetupMapperModel, &FloatMapperModel<double>::dataChanged, this, &MainControlWidget::onRunSetupChanged);
   connect(ui->qcbox_polarity, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainControlWidget::onRunSetupChanged);
   connect(ui->qcbox_eof, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainControlWidget::onRunSetupChanged);
-  connect(ui->qcb_correctForIS, &QCheckBox::stateChanged, this, &MainControlWidget::onRunSetupChangedInvalidate);
   connect(ui->qpb_details, &QPushButton::clicked, this, &MainControlWidget::onShowEigenzoneDetailsClicked);
   connect(ui->qpb_bgeIonicComposition, &QPushButton::clicked, this, &MainControlWidget::onBGEIonicCompositionClicked);
 
@@ -135,9 +137,10 @@ void MainControlWidget::onEOFCurrentIndexChanged(const int idx)
   emit runSetupChanged(false);
 }
 
-void MainControlWidget::onIonicStrengthToggled()
+void MainControlWidget::onNonidealityCorrectionsClicked()
 {
-  emit runSetupChanged(true);
+  if (m_nonidealityCorrectionsDlg->exec() == QDialog::Accepted)
+    emit runSetupChanged(true);
 }
 
 void MainControlWidget::onRunSetupChanged()
@@ -158,13 +161,16 @@ void MainControlWidget::onShowEigenzoneDetailsClicked()
 MainControlWidget::RunSetup MainControlWidget::runSetup() const
 {
   bool positiveVoltage = (ui->qcbox_polarity->currentData().value<Polarity>() == POLARITY_POSITIVE);
+  const auto corrections = m_nonidealityCorrectionsDlg->state();
 
   return RunSetup{
     m_runSetupMappedData.at(m_runSetupMapperModel.indexFromItem(RunSetupItems::TOTAL_LENGTH)),
     m_runSetupMappedData.at(m_runSetupMapperModel.indexFromItem(RunSetupItems::DETECTOR_POSITION)),
     m_runSetupMappedData.at(m_runSetupMapperModel.indexFromItem(RunSetupItems::DRIVING_VOLTAGE)),
     positiveVoltage,
-    ui->qcb_correctForIS->isChecked()
+    corrections.debyeHuckel,
+    corrections.onsagerFuoss,
+    corrections.viscosity
   };
 }
 
@@ -201,7 +207,7 @@ void MainControlWidget::setRunSetup(const RunSetup &rs, const QVariant &eofType,
   int eofIdx = getEOFTypeIndex(eofType);
   ui->qcbox_eof->setCurrentIndex(eofIdx);
 
-  ui->qcb_correctForIS->setChecked(rs.ionicStrengthCorrection);
+  m_nonidealityCorrectionsDlg->setState(rs.correctForDebyeHuckel, rs.correctForOnsagerFuoss, rs.correctForViscosity);
 
   m_runSetupMapperModel.notifyAllDataChanged();
 }

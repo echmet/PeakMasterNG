@@ -36,7 +36,9 @@ public:
   bool positiveVoltage;
   QString eofType;
   double eofValue;
-  bool ionicStrengthCorrection;
+  bool correctForDebyeHuckel;
+  bool correctForOnsagerFuoss;
+  bool correctForViscosity;
 };
 
 class Persistence : public QObject {

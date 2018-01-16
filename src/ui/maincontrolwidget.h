@@ -13,6 +13,7 @@ namespace Ui {
 
 class EigenzoneDetailsDialog;
 class IonicCompositionDialog;
+class NonidealityCorrectionsDialog;
 class QDataWidgetMapper;
 
 class MainControlWidget : public QWidget
@@ -45,7 +46,9 @@ public:
     double detectorPosition;
     double drivingVoltage;
     bool positiveVoltage;
-    bool ionicStrengthCorrection;
+    bool correctForDebyeHuckel;
+    bool correctForOnsagerFuoss;
+    bool correctForViscosity;
   };
 
   explicit MainControlWidget(ResultsModels &resultsModels, QWidget *parent = nullptr);
@@ -75,13 +78,14 @@ private:
 
   EigenzoneDetailsDialog *m_ezDetailsDlg;
   IonicCompositionDialog *m_bgeIonicCompDlg;
+  NonidealityCorrectionsDialog *m_nonidealityCorrectionsDlg;
 
   FloatingValueDelegate m_fltDelegate;
 
 private slots:
   void onBGEIonicCompositionClicked();
   void onEOFCurrentIndexChanged(const int idx);
-  void onIonicStrengthToggled();
+  void onNonidealityCorrectionsClicked();
   void onRunSetupChanged();
   void onRunSetupChangedInvalidate();
   void onShowEigenzoneDetailsClicked();

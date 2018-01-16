@@ -112,7 +112,8 @@ SOURCES += \
     src/gearbox/databaseproxy.cpp \
     src/ui/pickconstituentfromdbdialog.cpp \
     src/ui/internal_models/databaseconstituentsphyspropstablemodel.cpp \
-    src/ui/ploteventfilter.cpp
+    src/ui/ploteventfilter.cpp \
+    src/ui/nonidealitycorrectionsdialog.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -201,7 +202,8 @@ HEADERS += \
     src/gearbox/databaseproxy.h \
     src/ui/pickconstituentfromdbdialog.h \
     src/ui/internal_models/databaseconstituentsphyspropstablemodel.h \
-    src/ui/ploteventfilter.h
+    src/ui/ploteventfilter.h \
+    src/ui/nonidealitycorrectionsdialog.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \
@@ -216,7 +218,8 @@ FORMS += \
     src/ui/eigenzonedetailsdialog.ui \
     src/ui/ioniccompositiondialog.ui \
     src/ui/operationinprogressdialog.ui \
-    src/ui/pickconstituentfromdbdialog.ui
+    src/ui/pickconstituentfromdbdialog.ui \
+    src/ui/nonidealitycorrectionsdialog.ui
 
 unix {
     QMAKE_CXXFLAGS += "-Wall -Wextra -pedantic"

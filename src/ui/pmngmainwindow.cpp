@@ -184,7 +184,7 @@ void PMNGMainWindow::onCalculate()
 
   OperationInProgressDialog inProgDlg{"Calculating..."};
 
-  CalculatorWorker worker{m_calcIface, rs.ionicStrengthCorrection};
+  CalculatorWorker worker{m_calcIface, rs.correctForDebyeHuckel, rs.correctForOnsagerFuoss, rs.correctForViscosity};
   QThread thread{};
   worker.moveToThread(&thread);
 
@@ -280,7 +280,9 @@ void PMNGMainWindow::onLoad()
       system.detectorPosition,
       system.drivingVoltage,
       system.positiveVoltage,
-      system.ionicStrengthCorrection
+      system.correctForDebyeHuckel,
+      system.correctForOnsagerFuoss,
+      system.correctForViscosity
     };
 
     onCompositionChanged();
@@ -375,7 +377,9 @@ void PMNGMainWindow::onSave()
     rs.positiveVoltage,
     et,
     m_mainCtrlWidget->EOFValue(),
-    rs.ionicStrengthCorrection
+    rs.correctForDebyeHuckel,
+    rs.correctForOnsagerFuoss,
+    rs.correctForViscosity
   };
 
   try {

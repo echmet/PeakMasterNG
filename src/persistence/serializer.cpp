@@ -138,7 +138,9 @@ QJsonObject serializeSystem(const System &system)
     {"positiveVoltage", system.positiveVoltage},
     {"eofType", system.eofType},
     {"eofValue", system.eofValue},
-    {"ionicStrengthCorrection", system.ionicStrengthCorrection}
+    {"correctForDebyeHuckel", system.correctForDebyeHuckel},
+    {"correctForOnsagerFuoss", system.correctForOnsagerFuoss},
+    {"correctForViscosity", system.correctForViscosity},
   };
 
   return sys;

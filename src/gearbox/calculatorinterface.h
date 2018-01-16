@@ -77,7 +77,7 @@ public:
   ~CalculatorInterface() noexcept;
   QVector<QString> allConstituents() const;
   QVector<QString> analytes() const;
-  void calculate(bool ionicStrengthCorrection);
+  void calculate(const bool correctForDebyeHuckel, const bool correctForOnsagerFuoss, const bool correctForViscosity);
   void exportElectrophoregram(double totalLength, double detectorPosition,
                               double drivingVoltage, const bool positiveVoltage,
                               double EOFValue, const EOFValueType EOFvt,

@@ -252,9 +252,13 @@ void deserializeSystem(System &system, const QJsonObject &obj)
   checkIfContains("positiveVoltage", obj);
   system.positiveVoltage = obj["positiveVoltage"].toBool();
 
-  /* Read ionic strength */
-  checkIfContains("ionicStrengthCorrection", obj);
-  system.ionicStrengthCorrection = obj["ionicStrengthCorrection"].toBool();
+  /* Read nonideality corrections */
+  checkIfContains("correctForDebyeHuckel", obj);
+  system.correctForDebyeHuckel = obj["correctForDebyeHuckel"].toBool();
+  checkIfContains("correctForOnsagerFuoss", obj);
+  system.correctForOnsagerFuoss = obj["correctForOnsagerFuoss"].toBool();
+  checkIfContains("correctForViscosity", obj);
+  system.correctForViscosity = obj["correctForViscosity"].toBool();
 }
 
 void Deserializer::deserialize(const QString &filepath, gdm::GDM &gdmBGE, gdm::GDM &gdmSample,

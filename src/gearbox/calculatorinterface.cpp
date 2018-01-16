@@ -35,6 +35,20 @@ void applyAnalyticalConcentrations(const gdm::GDM &gdm, ECHMET::LEMNG::InAnalyti
   }
 }
 
+ECHMET::NonidealityCorrections makeNonidealityCorrections(const bool correctForDebyeHuckel, const bool correctForOnsagerFuoss, const bool correctForViscosity)
+{
+  ECHMET::NonidealityCorrections corrs;
+
+  if (correctForDebyeHuckel)
+    corrs |= ECHMET::NonidealityCorrections::CORR_DEBYE_HUCKEL;
+  if (correctForOnsagerFuoss)
+    corrs |= ECHMET::NonidealityCorrections::CORR_ONSAGER_FUOSS;
+  if (correctForViscosity)
+    corrs |= ECHMET::NonidealityCorrections::CORR_VISCOSITY;
+
+  return corrs;
+}
+
 double mobilityFromTime(const double t, const double totalLength, const double detectorPosition, const double drivingVoltage)
 {
   const double E = drivingVoltage / totalLength;
@@ -202,11 +216,12 @@ QVector<QString> CalculatorInterface::analytes() const
   return _analytes;
 }
 
-void CalculatorInterface::calculate(bool ionicStrengthCorrection)
+void CalculatorInterface::calculate(const bool correctForDebyeHuckel, const bool correctForOnsagerFuoss, const bool correctForViscosity)
 {
   ECHMET::LEMNG::CZESystem *czeSystemRaw;
   ECHMET::LEMNG::InAnalyticalConcentrationsMap *backgroundMapRaw;
   ECHMET::LEMNG::InAnalyticalConcentrationsMap *sampleMapRaw;
+  ECHMET::NonidealityCorrections corrections = makeNonidealityCorrections(correctForDebyeHuckel, correctForOnsagerFuoss, correctForViscosity);
 
   m_ctx.invalidate();
 
@@ -231,7 +246,7 @@ void CalculatorInterface::calculate(bool ionicStrengthCorrection)
   applyAnalyticalConcentrations(m_backgroundGDM, backgroundMapRaw);
   applyAnalyticalConcentrations(m_sampleGDM, sampleMapRaw);
 
-  tRet = czeSystem->evaluate(backgroundMapRaw, sampleMapRaw, ionicStrengthCorrection, *m_ctx.results);
+  tRet = czeSystem->evaluate(backgroundMapRaw, sampleMapRaw, corrections, *m_ctx.results);
   if (tRet != ECHMET::LEMNG::RetCode::OK) {
     if (m_ctx.results->isBGEValid)
       m_ctx.makeBGEValid();

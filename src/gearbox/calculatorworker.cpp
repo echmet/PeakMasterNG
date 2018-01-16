@@ -1,8 +1,10 @@
 #include "calculatorworker.h"
 
-CalculatorWorker::CalculatorWorker(CalculatorInterface &calcIface, const bool ionicStrengthCorrection) :
+CalculatorWorker::CalculatorWorker(CalculatorInterface &calcIface, const bool correctForDeybeHuckel, const bool correctForOnsagerFuoss, const bool correctForViscosity) :
   m_calcIface{calcIface},
-  m_ionicStrengthCorrection{ionicStrengthCorrection}
+  m_correctForDebyeHuckel{correctForDeybeHuckel},
+  m_correctForOnsagerFuoss{correctForOnsagerFuoss},
+  m_correctForViscosity{correctForViscosity}
 {
 }
 
@@ -19,7 +21,7 @@ const QString & CalculatorWorker::errorMsg() const
 void CalculatorWorker::process()
 {
   try {
-    m_calcIface.calculate(m_ionicStrengthCorrection);
+    m_calcIface.calculate(m_correctForDebyeHuckel, m_correctForOnsagerFuoss, m_correctForViscosity);
     m_calcStatus = CalculationResult::OK;
   } catch (CalculatorInterfaceException &ex) {
     m_calcStatus = ex.isBGEValid ? CalculationResult::PARTIAL : CalculationResult::INVALID;
