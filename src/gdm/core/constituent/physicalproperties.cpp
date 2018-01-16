@@ -7,15 +7,18 @@
 #include "../common/gdmexcept.h"
 
 gdm::PhysicalProperties::PhysicalProperties(ChargeInterval charges,
-                                                 std::vector<double> pKas,
-                                                 std::vector<Mobility> mobilities)
+                                            std::vector<double> pKas,
+                                            std::vector<Mobility> mobilities,
+                                            double viscosityCoefficient)
     : _charges{charges},
       _pKas{std::move(pKas)},
-      _mobilities{std::move(mobilities)}
+      _mobilities{std::move(mobilities)},
+      _viscosityCoefficient{viscosityCoefficient}
 {
     if(charges.empty()) throw InvalidArgument{"charges must not be empty"};
     if(_pKas.size() != size(_charges) - 1) throw InvalidArgument{"There must be as many pKas as the number of charges minus one"};
     if(_mobilities.size() != size(_charges)) throw InvalidArgument{"There must be as many mobilities as charges"};
+    if(_viscosityCoefficient < 0.0) throw InvalidArgument{"Viscosity coefficient must not be negative"};
     for(auto c = _charges.low(); c <= _charges.high(); ++c) {
         if(c == 0 && _mobilities[mobilityIndex(c)] != 0.0) throw InvalidArgument{"Mobility for charge zero must be zero"};
         if(c != 0 && _mobilities[mobilityIndex(c)] <= 0.0) throw InvalidArgument{"Mobilities for charges other than zero must be positive"};
@@ -169,9 +172,14 @@ const std::vector<double>& gdm::PhysicalProperties::pKas() const noexcept
     return _pKas;
 }
 
-void gdm::PhysicalProperties::assign(ChargeInterval charges, const std::vector<double>& pKas, const std::vector<double>& mobilities)
+double gdm::PhysicalProperties::viscosityCoefficient() const noexcept
 {
-    *this = PhysicalProperties{charges, pKas, mobilities};
+  return _viscosityCoefficient;
+}
+
+void gdm::PhysicalProperties::assign(ChargeInterval charges, const std::vector<double>& pKas, const std::vector<double>& mobilities, double viscosityCoefficient)
+{
+    *this = PhysicalProperties{charges, pKas, mobilities, viscosityCoefficient};
 }
 
 std::vector<gdm::Mobility>::size_type gdm::PhysicalProperties::mobilityIndex(ChargeNumber charge) const noexcept
@@ -204,7 +212,8 @@ bool gdm::operator==(const PhysicalProperties& a, const PhysicalProperties& b) n
 {
    return a.charges() == b.charges()
            && a.pKas() == b.pKas()
-           && a.mobilities() == b.mobilities();
+           && a.mobilities() == b.mobilities()
+           && a.viscosityCoefficient() == b.viscosityCoefficient();
 }
 
 bool gdm::operator!=(const PhysicalProperties& a, const PhysicalProperties& b) noexcept

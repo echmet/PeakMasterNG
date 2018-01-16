@@ -113,7 +113,7 @@ gdm::PhysicalProperties parsePhysicalProperties(const json& src)
     const auto& pKas = src.at("pKas");
     const auto& mobilities = src.at("mobilities");
 
-    return gdm::PhysicalProperties{charges, pKas, mobilities};
+    return gdm::PhysicalProperties{charges, pKas, mobilities, 0};
 }
 
 std::map<std::string, gdm::Complexation> parseNucleusComplexForms(const json& src)

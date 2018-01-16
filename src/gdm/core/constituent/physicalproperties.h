@@ -12,9 +12,9 @@ class PhysicalProperties
 {
 public:
     /*implicit*/ PhysicalProperties() = default; //Constructs an object with just charge zero
-    explicit PhysicalProperties(ChargeInterval charges, std::vector<double> pKas, std::vector<double> mobilities); //mobilities must have same size as charges; pKas one less
+    explicit PhysicalProperties(ChargeInterval charges, std::vector<double> pKas, std::vector<double> mobilities, double viscosityCoefficient); //mobilities must have same size as charges; pKas one less
 
-    void assign(ChargeInterval charges, const std::vector<double>& pKas, const std::vector<double>& mobilities); //mobilities must have same size as charges; pKas one less
+    void assign(ChargeInterval charges, const std::vector<double>& pKas, const std::vector<double>& mobilities, double viscosityCoefficient); //mobilities must have same size as charges; pKas one less
 
     ChargeInterval charges() const noexcept;
     double pKa(ChargeNumber targetCharge) const noexcept;
@@ -30,6 +30,7 @@ public:
 
     const std::vector<Mobility>& mobilities() const noexcept;
     const std::vector<double>& pKas() const noexcept;
+    double viscosityCoefficient() const noexcept;
 
 private:
     std::vector<double>::size_type pKaIndex(ChargeNumber targetCharge) const noexcept; //Returns the index in the _pKas vector that corresponds to a given charge
@@ -38,6 +39,7 @@ private:
     ChargeInterval _charges = {0};
     std::vector<double> _pKas = {};
     std::vector<Mobility> _mobilities = {0.0};
+    double _viscosityCoefficient = 0.0;
 };
 
 bool operator==(const PhysicalProperties& a, const PhysicalProperties& b) noexcept;

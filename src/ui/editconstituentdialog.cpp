@@ -5,8 +5,13 @@
 #include "../gdm/core/constituent/physicalproperties.h"
 #include "../gearbox/floatingvaluedelegate.h"
 #include "../gearbox/databaseproxy.h"
+#include "../gearbox/doubletostringconvertor.h"
 #include "pickconstituentfromdbdialog.h"
 #include "internal_models/databaseconstituentsphyspropstablemodel.h"
+
+const double EditConstituentDialog::VISCOSITY_COEFF_VERY_SMALL{0.0};
+const double EditConstituentDialog::VISCOSITY_COEFF_SMALL{1.0e-4};
+const double EditConstituentDialog::VISCOSITY_COEFF_LARGE{3.0e-3};
 
 EditConstituentDialog::EditConstituentDialog(DatabaseProxy &dbProxy, QWidget *parent) :
   QDialog{parent},
@@ -51,6 +56,7 @@ EditConstituentDialog::EditConstituentDialog(DatabaseProxy &dbProxy,
   }
 
   setConstituentType(type);
+  setViscosityElements(props.viscosityCoefficient());
 
   ui->qcbox_type->setEnabled(allowTypeChange);
 
@@ -152,6 +158,19 @@ void EditConstituentDialog::onRemoveChargeLow()
     updateChargeLow();
 }
 
+void EditConstituentDialog::onViscosityCoefficientIndexChanged(const int idx)
+{
+  const QVariant v = ui->qcbox_viscosityCoefficient->itemData(idx);
+  const double k = v.toDouble();
+
+  if (k < 0.0)
+    ui->qle_customCoefficient->setReadOnly(false);
+  else {
+    ui->qle_customCoefficient->setReadOnly(true);
+    ui->qle_customCoefficient->setText(DoubleToStringConvertor::convert(k));
+  }
+}
+
 std::vector<double> EditConstituentDialog::pKas() const
 {
   std::vector<double> pKas{};
@@ -181,10 +200,36 @@ void EditConstituentDialog::setConstituentType(const ConstituentType type)
   }
 }
 
+void EditConstituentDialog::setViscosityElements(const double viscosityCoefficient)
+{
+  const int lastIdx = ui->qcbox_viscosityCoefficient->count() - 1;
+  for (int idx = 0; idx <= lastIdx; idx++) {
+    const QVariant v = ui->qcbox_viscosityCoefficient->itemData(idx);
+    const double k = v.toDouble();
+
+    if (k == viscosityCoefficient) {
+      ui->qcbox_viscosityCoefficient->setCurrentIndex(idx);
+      onViscosityCoefficientIndexChanged(idx);
+      return;
+    }
+  }
+
+  ui->qcbox_viscosityCoefficient->setCurrentIndex(lastIdx);
+  onViscosityCoefficientIndexChanged(lastIdx);
+  ui->qle_customCoefficient->setText(DoubleToStringConvertor::convert(viscosityCoefficient));
+}
+
 void EditConstituentDialog::setupWidget()
 {
   ui->setupUi(this);
   ui->qtblView_charges->setModel(&m_chargesModel);
+
+  ui->qcbox_viscosityCoefficient->addItem(QString{"Very small compound (k = %1)"}.arg(VISCOSITY_COEFF_VERY_SMALL), VISCOSITY_COEFF_VERY_SMALL);
+  ui->qcbox_viscosityCoefficient->addItem(QString{"Small compound (k = %1)"}.arg(VISCOSITY_COEFF_SMALL), VISCOSITY_COEFF_SMALL);
+  ui->qcbox_viscosityCoefficient->addItem(QString{"Large compound (k = %1)"}.arg(VISCOSITY_COEFF_LARGE), VISCOSITY_COEFF_LARGE);
+  ui->qcbox_viscosityCoefficient->addItem(QString{"Custom compound"}, -1);
+  connect(ui->qcbox_viscosityCoefficient, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &EditConstituentDialog::onViscosityCoefficientIndexChanged);
+  onViscosityCoefficientIndexChanged(0);
 
   m_qpb_addLow = new ModifyConstituentChargePushButton{ModifyConstituentChargePushButton::ChargeOperation::ADD, this};
   m_qpb_removeLow = new ModifyConstituentChargePushButton{ModifyConstituentChargePushButton::ChargeOperation::REMOVE, this};
@@ -214,6 +259,16 @@ void EditConstituentDialog::setupWidget()
 EditConstituentDialog::ConstituentType EditConstituentDialog::type() const
 {
   return ui->qcbox_type->currentData().value<ConstituentType>();
+}
+
+double EditConstituentDialog::viscosityCoefficient() const
+{
+  bool ok;
+  const double d = DoubleToStringConvertor::back(ui->qle_customCoefficient->text(), &ok);
+  if (!ok)
+    return -1.0;
+
+  return d;
 }
 
 void EditConstituentDialog::updateChargeHigh()

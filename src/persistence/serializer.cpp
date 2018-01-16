@@ -57,6 +57,7 @@ QJsonObject serializeComposition(const gdm::GDM gdm)
 
      constituent["pKas"] = generateFromDoubles(it->physicalProperties().pKas());
      constituent["mobilities"] = generateFromDoubles(it->physicalProperties().mobilities());
+     constituent["viscosityCoefficient"] = it->physicalProperties().viscosityCoefficient();
 
      //complexForms
      if (it->type() == gdm::ConstituentType::Nucleus) {

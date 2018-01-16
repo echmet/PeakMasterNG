@@ -45,6 +45,7 @@ std::unique_ptr<ECHMET::SysComp::InConstituentVec, void(ECHMET_CC *)(const ECHME
 
         back.chargeLow = it->physicalProperties().charges().low();
         back.chargeHigh = it->physicalProperties().charges().high();
+        back.viscosityCoefficient = it->physicalProperties().viscosityCoefficient();
 
         back.pKas = makeECHMETRealVec(it->physicalProperties().pKas()).release();
         assert(back.pKas->size() == static_cast<std::size_t>(back.chargeHigh - back.chargeLow));

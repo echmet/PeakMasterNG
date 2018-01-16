@@ -15,6 +15,7 @@ bool validateConstituentProperties(const EditConstituentDialog *dlg)
   const auto mobilities = dlg->mobilities();
   const int chargeLow = dlg->chargeLow();
   const int chargeHigh = dlg->chargeHigh();
+  const double viscosityCoefficient = dlg->viscosityCoefficient();
 
   if (name.length() < 1) {
     QMessageBox mbox{QMessageBox::Warning, QObject::tr("Invalid constituent properties"), QObject::tr("Constituent must have a name")};
@@ -24,7 +25,7 @@ bool validateConstituentProperties(const EditConstituentDialog *dlg)
 
   /* Try to create a physical properties of constituent */
   try {
-    gdm::PhysicalProperties props{gdm::ChargeInterval{chargeLow, chargeHigh}, pKas, mobilities};
+    gdm::PhysicalProperties props{gdm::ChargeInterval{chargeLow, chargeHigh}, pKas, mobilities, viscosityCoefficient};
   } catch (gdm::InvalidArgument &ex) {
     QMessageBox mbox{QMessageBox::Warning, QObject::tr("Invalid constituent properties"), ex.what()};
     mbox.exec();
@@ -54,7 +55,8 @@ gdm::Constituent ConstituentManipulator::makeConstituent(const EditConstituentDi
   auto pKas = dlg->pKas();
   const int chargeLow = dlg->chargeLow();
   const int chargeHigh = dlg->chargeHigh();
-  gdm::PhysicalProperties physProps{gdm::ChargeInterval{chargeLow, chargeHigh}, pKas, mobilities};
+  const double viscosityCoefficient = dlg->viscosityCoefficient();
+  gdm::PhysicalProperties physProps{gdm::ChargeInterval{chargeLow, chargeHigh}, pKas, mobilities, viscosityCoefficient};
 
   return gdm::Constituent{type, name, std::move(physProps)};
 }

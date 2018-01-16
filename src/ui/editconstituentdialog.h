@@ -37,9 +37,11 @@ public:
   QString name() const;
   std::vector<double> pKas() const;
   ConstituentType type() const;
+  double viscosityCoefficient() const;
 
 private:
   void setConstituentType(const EditConstituentDialog::ConstituentType type);
+  void setViscosityElements(const double viscosityCoefficient);
   void setupWidget();
   void updateChargeHigh();
   void updateChargeLow();
@@ -58,6 +60,10 @@ private:
 
   FloatingValueDelegate *m_fltDelegate;
 
+  static const double VISCOSITY_COEFF_VERY_SMALL;
+  static const double VISCOSITY_COEFF_SMALL;
+  static const double VISCOSITY_COEFF_LARGE;
+
 private slots:
   void onAccepted();
   void onAddChargeLow();
@@ -66,6 +72,7 @@ private slots:
   void onRejected();
   void onRemoveChargeLow();
   void onRemoveChargeHigh();
+  void onViscosityCoefficientIndexChanged(const int idx);
 
 signals:
   void validateInput(const EditConstituentDialog *me, bool *ok);

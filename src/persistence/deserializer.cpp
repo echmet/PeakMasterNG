@@ -138,6 +138,11 @@ std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>
     checkIfContains("chargeHigh", ctuent);
     chargeHigh = ctuent["chargeHigh"].toInt();
 
+    /* Read viscosityCoefficient */
+    double viscosityCoefficient;
+    checkIfContains("viscosityCoefficient", ctuent);
+    viscosityCoefficient = ctuent["viscosityCoefficient"].toDouble();
+
     if (chargeLow > chargeHigh)
       throw MalformedJSONException{"Invalid charge values"};
 
@@ -160,7 +165,7 @@ std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>
       mobilities.emplace_back(u.toDouble());
 
     gdm::ChargeInterval charges{chargeLow, chargeHigh};
-    gdm::PhysicalProperties physProps{charges, pKas, mobilities};
+    gdm::PhysicalProperties physProps{charges, pKas, mobilities, viscosityCoefficient};
 
     if (type == gdm::ConstituentType::Nucleus) {
       auto complexForms = deserializeNucleusComplexForms(ctuent);
