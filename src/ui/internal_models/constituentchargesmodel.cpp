@@ -117,7 +117,7 @@ bool ConstituentChargesModel::setData(const QModelIndex &index, const QVariant &
       return false;
     }
 
-    emit dataChanged(index, index, QVector<int>{} << role);
+    emit dataChanged(index, index, { role });
     return true;
   }
   return false;
