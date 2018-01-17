@@ -14,7 +14,7 @@ QWidget *FloatingValueDelegate::createEditor(QWidget *parent, const QStyleOption
 
   QLineEdit *lineEdit = new QLineEdit(parent);
 
-  connect(lineEdit, SIGNAL(textChanged(QString)), this, SLOT(onTextChanged(QString)));
+  connect(lineEdit, &QLineEdit::textChanged, this, &FloatingValueDelegate::onTextChanged);
 
   return lineEdit;
 }
