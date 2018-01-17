@@ -37,14 +37,14 @@ void applyAnalyticalConcentrations(const gdm::GDM &gdm, ECHMET::LEMNG::InAnalyti
 
 ECHMET::NonidealityCorrections makeNonidealityCorrections(const bool correctForDebyeHuckel, const bool correctForOnsagerFuoss, const bool correctForViscosity)
 {
-  ECHMET::NonidealityCorrections corrs;
+  ECHMET::NonidealityCorrections corrs = 0;
 
   if (correctForDebyeHuckel)
-    corrs |= ECHMET::NonidealityCorrections::CORR_DEBYE_HUCKEL;
+    ECHMET::nonidealityCorrectionSet(corrs, ECHMET::NonidealityCorrectionsItems::CORR_DEBYE_HUCKEL);
   if (correctForOnsagerFuoss)
-    corrs |= ECHMET::NonidealityCorrections::CORR_ONSAGER_FUOSS;
+    ECHMET::nonidealityCorrectionSet(corrs, ECHMET::NonidealityCorrectionsItems::CORR_ONSAGER_FUOSS);
   if (correctForViscosity)
-    corrs |= ECHMET::NonidealityCorrections::CORR_VISCOSITY;
+    ECHMET::nonidealityCorrectionSet(corrs, ECHMET::NonidealityCorrectionsItems::CORR_VISCOSITY);
 
   return corrs;
 }
