@@ -73,7 +73,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
 {
   ui->setupUi(this);
 
-  setWindowTitle(QString{"%1 %2.%3%4"}.arg(Globals::SOFTWARE_NAME).arg(Globals::VERSION_MAJ).arg(Globals::VERSION_MIN).arg(Globals::VERSION_REV));
+  setWindowTitle(Globals::VERSION_STRING());
 
   ui->qvlay_compositionEFG->insertWidget(0, h_scompWidget);
   ui->qvlay_compositionEFG->addWidget(m_signalPlotWidget);
