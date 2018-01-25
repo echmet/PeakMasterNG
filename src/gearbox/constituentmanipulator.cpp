@@ -35,8 +35,15 @@ bool validateConstituentProperties(const EditConstituentDialog *dlg)
   return true;
 }
 
-ConstituentManipulator::ConstituentManipulator(const GDMProxy &proxy) :
-  h_proxy{proxy}
+ConstituentManipulator::ConstituentManipulator(const GDMProxy &proxy, const bool viscosityCorrectionEnabled) :
+  h_proxy{proxy},
+  m_viscosityCorrectionEnabled{viscosityCorrectionEnabled}
+{
+}
+
+ConstituentManipulator::ConstituentManipulator(const ConstituentManipulator &other) :
+  h_proxy{other.h_proxy},
+  m_viscosityCorrectionEnabled{other.m_viscosityCorrectionEnabled}
 {
 }
 
@@ -77,7 +84,7 @@ EditConstituentDialog * ConstituentManipulator::makeEditDialog(const std::string
 
   const bool allowTypeChange = !proxy.complexes(name);
 
-  return new EditConstituentDialog{dbProxy, QString::fromStdString(name), type, ctuent.physicalProperties(), allowTypeChange};
+  return new EditConstituentDialog{dbProxy, QString::fromStdString(name), type, ctuent.physicalProperties(), allowTypeChange, m_viscosityCorrectionEnabled};
 }
 
 void ConstituentManipulator::onValidateConstituentInput(const EditConstituentDialog *dlg, bool *ok)

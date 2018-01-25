@@ -115,6 +115,8 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   onAutoPlotCutoffStateChanged(Qt::Checked);
 
   setControlsIcons();
+
+  h_scompWidget->setViscosityCorrectionEnabled(m_mainCtrlWidget->runSetup().correctForViscosity);
 }
 
 PMNGMainWindow::~PMNGMainWindow()
@@ -319,6 +321,8 @@ void PMNGMainWindow::onPlotElectrophoregram()
 
 void PMNGMainWindow::onRunSetupChanged(const bool invalidate)
 {
+  h_scompWidget->setViscosityCorrectionEnabled(m_mainCtrlWidget->runSetup().correctForViscosity);
+
   if (invalidate)
     onCompositionChanged();
   else {

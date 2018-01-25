@@ -25,6 +25,7 @@ public:
   ~SystemCompositionWidget();
   AbstractConstituentsModelBase * analytesModel() noexcept;
   AbstractConstituentsModelBase * backgroundModel() noexcept;
+  void setViscosityCorrectionEnabled(const bool enabled);
 
 private:
   void addConstituent(GDMProxy &proxy, AbstractConstituentsModelBase *model);
@@ -48,6 +49,8 @@ private:
   ComplexationColorizerDelegate *m_ccDelegateBGE;
   FloatingValueDelegate *m_fltDelegateAnalytes;
   FloatingValueDelegate *m_fltDelegateBGE;
+
+  bool m_viscosityCorrectionEnabled;
 
 private slots:
   void onAddAnalyte();

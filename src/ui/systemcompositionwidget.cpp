@@ -28,7 +28,8 @@ SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMPro
   h_backgroundGDM{backgroundGDM},
   h_sampleGDM{sampleGDM},
   h_cpxMgr{cpxMgr},
-  h_dbProxy{dbProxy}
+  h_dbProxy{dbProxy},
+  m_viscosityCorrectionEnabled{false}
 {
   ui->setupUi(this);
 
@@ -86,8 +87,8 @@ SystemCompositionWidget::~SystemCompositionWidget()
 
 void SystemCompositionWidget::addConstituent(GDMProxy &proxy, AbstractConstituentsModelBase *model)
 {
-  EditConstituentDialog dlg{h_dbProxy, this};
-  ConstituentManipulator manipulator{proxy};
+  EditConstituentDialog dlg{h_dbProxy, m_viscosityCorrectionEnabled, this};
+  ConstituentManipulator manipulator{proxy, m_viscosityCorrectionEnabled};
 
   connect(&dlg, &EditConstituentDialog::validateInput, &manipulator, &ConstituentManipulator::onValidateConstituentInput);
 
@@ -120,7 +121,7 @@ void SystemCompositionWidget::editComplexation(const QString &name)
 
 void SystemCompositionWidget::editConstituent(const QString &name, GDMProxy &proxy, AbstractConstituentsModelBase *model)
 {
-  ConstituentManipulator manipulator{proxy};
+  ConstituentManipulator manipulator{proxy, m_viscosityCorrectionEnabled};
 
   EditConstituentDialog *dlg = manipulator.makeEditDialog(name.toStdString(), proxy, h_dbProxy);
   if (dlg == nullptr)
@@ -249,3 +250,7 @@ void SystemCompositionWidget::setControlsIcons()
 #endif // Q_OS_
 }
 
+void SystemCompositionWidget::setViscosityCorrectionEnabled(const bool enabled)
+{
+  m_viscosityCorrectionEnabled = enabled;
+}

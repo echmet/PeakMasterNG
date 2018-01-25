@@ -27,9 +27,10 @@ public:
   };
   Q_ENUM(ConstituentType)
 
-  explicit EditConstituentDialog(DatabaseProxy &dbProxy, QWidget *parent = nullptr);
+  explicit EditConstituentDialog(DatabaseProxy &dbProxy, const bool viscosityCorrectionEnabled, QWidget *parent = nullptr);
   explicit EditConstituentDialog(DatabaseProxy &dbProxy, const QString &name, const EditConstituentDialog::ConstituentType type,
-                                 const gdm::PhysicalProperties &props, const bool allowTypeChange, QWidget *parent = nullptr);
+                                 const gdm::PhysicalProperties &props, const bool allowTypeChange, const bool viscosityCorrectionEnabled,
+                                 QWidget *parent = nullptr);
   ~EditConstituentDialog();
   int chargeHigh() const;
   int chargeLow() const;

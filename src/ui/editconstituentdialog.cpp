@@ -13,7 +13,7 @@ const double EditConstituentDialog::VISCOSITY_COEFF_VERY_SMALL{0.0};
 const double EditConstituentDialog::VISCOSITY_COEFF_SMALL{1.0e-4};
 const double EditConstituentDialog::VISCOSITY_COEFF_LARGE{3.0e-3};
 
-EditConstituentDialog::EditConstituentDialog(DatabaseProxy &dbProxy, QWidget *parent) :
+EditConstituentDialog::EditConstituentDialog(DatabaseProxy &dbProxy, const bool viscosityCorrectionEnabled, QWidget *parent) :
   QDialog{parent},
   ui{new Ui::EditConstituentDialog},
   h_dbProxy{dbProxy},
@@ -22,11 +22,15 @@ EditConstituentDialog::EditConstituentDialog(DatabaseProxy &dbProxy, QWidget *pa
   setupWidget();
   updateChargeModifiers();
   ui->qtblView_charges->setItemDelegate(m_fltDelegate);
+
+  ui->qgbox_viscosity->setVisible(viscosityCorrectionEnabled);
 }
 
 EditConstituentDialog::EditConstituentDialog(DatabaseProxy &dbProxy,
                                              const QString &name, const EditConstituentDialog::ConstituentType type, const gdm::PhysicalProperties &props,
-                                             const bool allowTypeChange, QWidget *parent) :
+                                             const bool allowTypeChange,
+                                             const bool viscosityCorrectionEnabled,
+                                             QWidget *parent) :
   QDialog{parent},
   ui{new Ui::EditConstituentDialog},
   h_dbProxy{dbProxy},
@@ -57,6 +61,7 @@ EditConstituentDialog::EditConstituentDialog(DatabaseProxy &dbProxy,
 
   setConstituentType(type);
   setViscosityElements(props.viscosityCoefficient());
+  ui->qgbox_viscosity->setVisible(viscosityCorrectionEnabled);
 
   ui->qcbox_type->setEnabled(allowTypeChange);
 
