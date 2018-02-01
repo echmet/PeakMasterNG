@@ -272,6 +272,8 @@ void CalculatorInterface::exportElectrophoregram(double totalLength, double dete
   QTextStream ostr;
   ostr.setCodec(QTextCodec::codecForName("UTF-8"));
   ostr.setDevice(&output);
+  ostr.setRealNumberNotation(QTextStream::ScientificNotation);
+  ostr.setRealNumberPrecision(17);
 
   for (const auto &pt : data)
     ostr << pt.x() << "\t" << pt.y() << "\n";
