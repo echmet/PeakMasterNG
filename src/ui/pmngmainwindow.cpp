@@ -331,11 +331,11 @@ void PMNGMainWindow::onRunSetupChanged(const bool invalidate)
     inputToEOFValueType(EOFValue, EOFvt, m_mainCtrlWidget->EOFValue(), m_mainCtrlWidget->EOFInputType());
 
     const MainControlWidget::RunSetup rs = m_mainCtrlWidget->runSetup();
-    m_calcIface.recalculateTimes(rs.totalLength, rs.detectorPosition,
-                                 rs.drivingVoltage,
-                                 EOFValue, EOFvt,
-                                 rs.positiveVoltage);
     try {
+      m_calcIface.recalculateTimes(rs.totalLength, rs.detectorPosition,
+                                   rs.drivingVoltage,
+                                   EOFValue, EOFvt,
+                                   rs.positiveVoltage);
       plotElectrophoregram(false);
     } catch (const CalculatorInterfaceException &ex) {
       QMessageBox mbox{QMessageBox::Critical, tr("Failed to plot electrophoregram"), ex.what()};
