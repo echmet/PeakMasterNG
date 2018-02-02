@@ -199,16 +199,17 @@ void PMNGMainWindow::onCalculate()
   thread.wait();
 
   const auto calcStatus = worker.calcStatus();
-  if (calcStatus != CalculatorWorker::CalculationResult::INVALID) {
+  if (calcStatus == CalculatorWorker::CalculationResult::INVALID) {
+    QMessageBox errmbox{QMessageBox::Critical, tr("Calculation failed"), worker.errorMsg()};
+    errmbox.exec();
+    return;
+  }
+
+  try {
     m_calcIface.publishResults(rs.totalLength, rs.detectorPosition, rs.drivingVoltage, EOFValue, EOFvt, rs.positiveVoltage);
     if (calcStatus == CalculatorWorker::CalculationResult::OK) {
       addConstituentsSignals(m_calcIface.allConstituents());
-      try {
-        plotElectrophoregram(false);
-      } catch (const CalculatorInterfaceException &ex) {
-        QMessageBox mbox{QMessageBox::Critical, tr("Failed to plot electrophoregram"), ex.what()};
-        mbox.exec();
-      }
+      plotElectrophoregram(false);
     } else {
       QMessageBox errmbox{QMessageBox::Warning, tr("Calculation incomplete"),
                           QString{tr("Solver was unable to calculate electromigration properties of the system. "
@@ -217,8 +218,8 @@ void PMNGMainWindow::onCalculate()
                                      "%1")}.arg(worker.errorMsg())};
       errmbox.exec();
     }
-  } else {
-    QMessageBox errmbox{QMessageBox::Critical, tr("Calculation failed"), worker.errorMsg()};
+  } catch (const CalculatorInterfaceException &ex) {
+    QMessageBox errmbox{QMessageBox::Critical, tr("Cannot display results"), ex.what()};
     errmbox.exec();
   }
 }

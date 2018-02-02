@@ -390,7 +390,7 @@ void CalculatorInterface::publishResults(double totalLength, double detectorPosi
 {
   if (totalLength <= 0)
     throw CalculatorInterfaceException{"Invalid value of \"total length\""};
-  if (detectorPosition > totalLength)
+  if (detectorPosition > totalLength || detectorPosition <= 0)
     throw CalculatorInterfaceException{"Invalid value of \"detector position\""};
   if (drivingVoltage <= 0)
     throw CalculatorInterfaceException{"Invalid value of \"driving voltage\""};
@@ -573,7 +573,7 @@ void CalculatorInterface::recalculateTimes(double totalLength, double detectorPo
 
   if (totalLength <= 0)
     throw CalculatorInterfaceException{"Invalid value of \"total length\""};
-  if (detectorPosition > totalLength)
+  if (detectorPosition > totalLength || detectorPosition <= 0)
     throw CalculatorInterfaceException{"Invalid value of \"detector position\""};
   if (drivingVoltage <= 0)
     throw CalculatorInterfaceException{"Invalid value of \"driving voltage\""};
