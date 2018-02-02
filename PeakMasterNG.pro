@@ -32,6 +32,9 @@ linux {
 
 CONFIG(release, debug|release) {
     DEFINES += USE_CRASHHANDLER
+
+    QMAKE_CXXFLAGS_RELEASE = $$QMAKE_CXXFLAGS_RELEASE_WITH_DEBUGINFO
+    QMAKE_LFLAGS_RELEASE = $$QMAKE_LFLAGS_RELEASE_WITH_DEBUGINFO
 }
 CONFIG(debug, debug|release) {
     # Configuration specific for "debug" build
