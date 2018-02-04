@@ -23,7 +23,6 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
   ui->qtbv_systemEigenzones->setModel(resultsModels.systemEigenzonesModel());
   ui->qtbv_systemEigenzones->resizeColumnsToContents();
 
-  m_ezDetailsDlg = new EigenzoneDetailsDialog{m_eigenzoneDetailsModel, false, this};
   m_bgeIonicCompDlg = new IonicCompositionDialog{m_bgeIonicCompositionModel, this};
   m_bgeIonicCompDlg->setWindowTitle(tr("BGE ionic composition"));
   m_nonidealityCorrectionsDlg = new NonidealityCorrectionsDialog{this};
@@ -38,6 +37,8 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
   EigenzoneDetailsModel *ezdModel = qobject_cast<EigenzoneDetailsModel *>(m_eigenzoneDetailsModel);
   if (ezdModel == nullptr)
     return;
+  ezdModel->displayDeltas(false);
+  m_ezDetailsDlg = new EigenzoneDetailsDialog{m_eigenzoneDetailsModel, false, this};
   connect(m_ezDetailsDlg, &EigenzoneDetailsDialog::displayDeltasChanged, ezdModel, &EigenzoneDetailsModel::displayDeltas);
 }
 
