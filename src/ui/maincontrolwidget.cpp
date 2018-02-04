@@ -71,7 +71,7 @@ void MainControlWidget::initRunSetupModel()
   m_runSetupMappedData.resize(m_runSetupMapperModel.indexFromItem(RunSetupItems::LAST_INDEX));
 
   m_runSetupMappedData[m_runSetupMapperModel.indexFromItem(RunSetupItems::TOTAL_LENGTH)] = 50.0;
-  m_runSetupMappedData[m_runSetupMapperModel.indexFromItem(RunSetupItems::DETECTOR_POSITION)] = 43.5;
+  m_runSetupMappedData[m_runSetupMapperModel.indexFromItem(RunSetupItems::DETECTOR_POSITION)] = 41.5;
   m_runSetupMappedData[m_runSetupMapperModel.indexFromItem(RunSetupItems::DRIVING_VOLTAGE)] = 20000.0;
 
   m_runSetupMapperModel.setUnderlyingData(&m_runSetupMappedData);
