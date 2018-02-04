@@ -180,7 +180,7 @@ void MainControlWidget::setRunSetup(const RunSetup &rs, const QVariant &eofType,
   static const auto getPolarity = [](const bool positive) {
     if (positive)
       return POLARITY_POSITIVE;
-    return POLARITY_POSITIVE;
+    return POLARITY_NEGATIVE;
   };
 
   static const auto getEOFTypeIndex = [this](const QVariant &v)
