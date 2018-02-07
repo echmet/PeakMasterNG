@@ -57,7 +57,6 @@ SOURCES += \
     src/gdm/core/basiccomposition.cpp \
     src/gdm/core/composition.cpp \
     src/gdm/core/gdm.cpp \
-    src/gdm/persistence/deserialize.cpp \
     src/ui/editconstituentdialog.cpp \
     src/ui/elementaries/modifyconstituentchargepushbutton.cpp \
     src/ui/internal_models/constituentchargesmodel.cpp \
@@ -136,8 +135,6 @@ HEADERS += \
     src/gdm/core/basiccomposition.h \
     src/gdm/core/composition.h \
     src/gdm/core/gdm.h \
-    src/gdm/persistence/deserialize.h \
-    src/gdm/persistence/persistenceexcept.h \
     src/ui/editconstituentdialog.h \
     src/ui/elementaries/modifyconstituentchargepushbutton.h \
     src/ui/internal_models/constituentchargesmodel.h \
