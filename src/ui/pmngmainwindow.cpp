@@ -101,7 +101,6 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   connect(ui->qpb_exportEFG, &QPushButton::clicked, this, &PMNGMainWindow::onExportElectrophoregram);
 
   connect(ui->actionExit, &QAction::triggered, this, &PMNGMainWindow::onExit);
-  connect(ui->actionCRASH, &QAction::triggered, this, &PMNGMainWindow::__onCrash);
   connect(ui->actionAbout, &QAction::triggered, this, &PMNGMainWindow::onAbout);
   connect(ui->actionNew, &QAction::triggered, this, &PMNGMainWindow::onNew);
   connect(ui->actionLoad, &QAction::triggered, this, &PMNGMainWindow::onLoad);
@@ -168,11 +167,6 @@ void PMNGMainWindow::onAbout()
 void PMNGMainWindow::onAutoPlotCutoffStateChanged(const int state)
 {
   ui->qle_plotCutoff->setDisabled(state == Qt::Checked);
-}
-
-void PMNGMainWindow::__onCrash()
-{
-  ::raise(SIGSEGV);
 }
 
 void PMNGMainWindow::onCalculate()

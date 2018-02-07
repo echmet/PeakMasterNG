@@ -84,7 +84,6 @@ private slots:
   void onAutoPlotCutoffStateChanged(const int state);
   void onCalculate();
   void onCompositionChanged();
-  void __onCrash();
   void onLoad();
   void onNew();
   void onExit();
