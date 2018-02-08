@@ -5,9 +5,6 @@ QWTPATH = "/home/madcat/Devel/ECHMET/qwt-6.1.3-bin"
 
 include("$$QWTPATH/features/qwt.prf")
 
-DEFINES += ECHMET_COMPILER_GCC_LIKE
-
-
 #Do not touch anything below this line!
 
 INCLUDEPATH += $$ECHMET_CORE_LIBS_DIR/include/ECHMET/CoreLibs

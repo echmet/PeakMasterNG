@@ -231,6 +231,20 @@ win32 {
     LIBS += -ldbghelp
 }
 
+win32-msvc* {
+    DEFINES += ECHMET_COMPILER_MSVC
+} win32-g++ {
+    DEFINES += ECHMET_COMPILER_GCC_LIKE
+} linux-g++ {
+    DEFINES += ECHMET_COMPILER_GCC_LIKE
+} linux-clang {
+    DEFINES += ECHMET_COMPILER_GCC_LIKE
+} macx-g++ {
+    DEFINES += ECHMET_COMPILER_GCC_LIKE
+} macx-clang {
+    DEFINES += ECHMET_COMPILER_GCC_LIKE
+}
+
 include($$PWD/PeakMasterNG.pri)
 
 RESOURCES += \
