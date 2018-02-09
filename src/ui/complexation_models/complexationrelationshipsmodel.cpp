@@ -248,10 +248,11 @@ QVariant ComplexationRelationshipsModel::makeItemData(const TreeItem *item, cons
   auto itemsToString = [](const QVector<double> &vec) -> QVariant {
     QString out;
 
-    for (const double d : vec) {
-      QString s = DoubleToStringConvertor::convert(d);
+    for (int idx = 0; idx < vec.size() - 1; idx++) {
+      QString s = DoubleToStringConvertor::convert(vec.at(idx));
       out += s + QString(" ");
     }
+    out += DoubleToStringConvertor::convert(vec.last());
 
     return out;
   };
@@ -386,6 +387,6 @@ bool ComplexationRelationshipsModel::setData(const QModelIndex &index, const QVa
 void ComplexationRelationshipsModel::setRoot(std::shared_ptr<RootTreeItem> root)
 {
   beginResetModel();
-  _currentRoot = root;
+  _currentRoot = std::move(root);
   endResetModel();
 }
