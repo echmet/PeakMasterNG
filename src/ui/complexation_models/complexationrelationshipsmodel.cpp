@@ -1,6 +1,15 @@
 #include "complexationrelationshipsmodel.h"
 #include "../../gearbox/doubletostringconvertor.h"
 
+#include <cmath>
+#include <QMessageBox>
+
+class InvalidConversionException : std::logic_error {
+public:
+  using std::logic_error::logic_error;
+  using std::logic_error::what;
+};
+
 const char * ComplexationRelationshipsModel::TreeItem::InvalidChildException::what() const noexcept
 {
   return "Invalid child item";
@@ -226,7 +235,7 @@ QVariant ComplexationRelationshipsModel::headerData(int section, Qt::Orientation
   case 2:
     return "Mobilities";
   case 3:
-    return "pBs";
+    return "Kxs";
   default:
     return QVariant();
   }
@@ -245,14 +254,18 @@ QModelIndex ComplexationRelationshipsModel::index(int row, int column, const QMo
 
 QVariant ComplexationRelationshipsModel::makeItemData(const TreeItem *item, const int column) const
 {
-  auto itemsToString = [](const QVector<double> &vec) -> QVariant {
+  auto itemsToString = [](const QVector<double> &vec, const std::function<double (double)> &convertor = [](const double v){ return v; }) -> QVariant {
     QString out;
 
+    auto process = [&convertor](const double _v) {
+      return DoubleToStringConvertor::convert(convertor(_v));
+    };
+
     for (int idx = 0; idx < vec.size() - 1; idx++) {
-      QString s = DoubleToStringConvertor::convert(vec.at(idx));
+      QString s = process(vec.at(idx));
       out += s + QString(" ");
     }
-    out += DoubleToStringConvertor::convert(vec.last());
+    out += process(vec.last());
 
     return out;
   };
@@ -274,7 +287,7 @@ QVariant ComplexationRelationshipsModel::makeItemData(const TreeItem *item, cons
     case 2:
       return itemsToString(ligandItem->mobilities);
     case 3:
-      return itemsToString(ligandItem->pBs);
+      return itemsToString(ligandItem->pBs, [](const double v){ return std::pow(10.0, -v); });
     default:
       return QVariant();
     }
@@ -332,7 +345,7 @@ int ComplexationRelationshipsModel::rowCount(const QModelIndex &parent) const
 
 bool ComplexationRelationshipsModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-  auto stringToItems = [](QVector<double> &vec, const QVariant &value) {
+  auto stringToItems = [](QVector<double> &vec, const QVariant &value, const std::function<double (double)> &convertor = [](const double v){ return v; }) {
     QStringList numbers = value.toString().split(" ");
     QVector<double> _temp;
 
@@ -344,7 +357,13 @@ bool ComplexationRelationshipsModel::setData(const QModelIndex &index, const QVa
       if (!ok)
         return false;
 
-      _temp.push_back(d);
+      try {
+        _temp.push_back(convertor(d));
+      } catch (const InvalidConversionException &ex) {
+        QMessageBox mbox(QMessageBox::Warning, tr("Cannot set complexation parameters"), ex.what());
+        mbox.exec();
+        return false;
+      }
     }
 
     vec = _temp;
@@ -372,7 +391,12 @@ bool ComplexationRelationshipsModel::setData(const QModelIndex &index, const QVa
     }
    case 3:
     {
-    bool correct = stringToItems(ligandItem->pBs, value);
+    bool correct = stringToItems(ligandItem->pBs, value,
+                                 [](const double v){
+      if (v <= 0)
+        throw InvalidConversionException(QString(tr("Invalid affinity constant value: %1")).arg(v).toUtf8().data());
+      return -std::log10(v);
+    });
 
     if (!correct)
       return false; /* TODO: Display a warning message here? */
