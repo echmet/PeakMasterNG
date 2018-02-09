@@ -18,7 +18,7 @@ public:
 private:
 
 private slots:
-  void onTextChanged(const QString);
+  void onTextChanged(const QString &);
 
 };
 

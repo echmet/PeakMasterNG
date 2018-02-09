@@ -64,7 +64,7 @@ void FloatingValueDelegate::updateEditorGeometry(QWidget *editor, const QStyleOp
   editor->setGeometry(option.rect);
 }
 
-void FloatingValueDelegate::onTextChanged(const QString)
+void FloatingValueDelegate::onTextChanged(const QString &)
 {
   bool ok;
   QLineEdit *lineEdit = qobject_cast<QLineEdit *>(QObject::sender());

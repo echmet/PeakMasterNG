@@ -229,13 +229,13 @@ QVariant ComplexationRelationshipsModel::headerData(int section, Qt::Orientation
 
   switch (section) {
   case 0:
-    return "Nucleus charge";
+    return tr("Nucleus charge");
   case 1:
-    return "Ligand charge";
+    return tr("Ligand charge");
   case 2:
-    return "Mobilities";
+    return tr("Mobilities");
   case 3:
-    return "Kxs";
+    return tr("Kxs");
   default:
     return QVariant();
   }
