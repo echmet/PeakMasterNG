@@ -67,7 +67,7 @@ void ComplexationParametersDelegate::onTextChanged(const QString &)
 
   bool ok = true;
 
-  const QStringList blocks =  lineEdit->text().split(" ");
+  const QStringList blocks =  lineEdit->text().split(ComplexationRelationshipsModel::ELEMENTS_SPLITTER);
   for (const auto &s : blocks) {
     DoubleToStringConvertor::back(s, &ok);
     if (!ok)
