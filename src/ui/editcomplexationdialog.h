@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QMap>
+
 #include "complexation_models/complexationrelationshipsmodel.h"
 
 namespace Ui {
@@ -10,6 +11,7 @@ namespace Ui {
 }
 
 class QAbstractItemModel;
+class ComplexationParametersDelegate;
 
 class EditComplexationDialog : public QDialog
 {
@@ -30,6 +32,7 @@ private:
 
   ComplexationRelationshipsModel *_crModel;
   QMap<QString, QPair<std::shared_ptr<ComplexationRelationshipsModel::RootTreeItem>, ComplexationRelationship>> _relationships;
+  ComplexationParametersDelegate *_delegate;
 
 private slots:
   void onAcceptClicked();

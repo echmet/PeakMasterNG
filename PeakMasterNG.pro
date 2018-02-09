@@ -115,7 +115,8 @@ SOURCES += \
     src/ui/pickconstituentfromdbdialog.cpp \
     src/ui/internal_models/databaseconstituentsphyspropstablemodel.cpp \
     src/ui/ploteventfilter.cpp \
-    src/ui/nonidealitycorrectionsdialog.cpp
+    src/ui/nonidealitycorrectionsdialog.cpp \
+    src/gearbox/complexationparametersdelegate.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -203,7 +204,8 @@ HEADERS += \
     src/ui/pickconstituentfromdbdialog.h \
     src/ui/internal_models/databaseconstituentsphyspropstablemodel.h \
     src/ui/ploteventfilter.h \
-    src/ui/nonidealitycorrectionsdialog.h
+    src/ui/nonidealitycorrectionsdialog.h \
+    src/gearbox/complexationparametersdelegate.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \

@@ -10,6 +10,11 @@ class ComplexationRelationshipsModel : public QAbstractItemModel
   Q_OBJECT
 
 public:
+  enum class ItemType {
+    DEFAULT,
+    PARAMETER_LIST
+  };
+
   class NucleusTreeItem;
   class LigandTreeItem;
 
@@ -96,6 +101,7 @@ public:
   bool setData(const QModelIndex &index, const QVariant &value, int role);
   void setRoot(std::shared_ptr<RootTreeItem> root);
 
+  static const QString ELEMENTS_SPLITTER;
 
 private:
   QVariant makeItemData(const TreeItem *item, const int column) const;
@@ -104,5 +110,7 @@ private:
   std::shared_ptr<RootTreeItem> _currentRoot;
 
 };
+
+Q_DECLARE_METATYPE(ComplexationRelationshipsModel::ItemType)
 
 #endif // UI_COMPLEXATIONRELATIONSHIPSMODEL_H

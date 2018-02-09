@@ -10,6 +10,8 @@ public:
   using std::logic_error::what;
 };
 
+const QString ComplexationRelationshipsModel::ELEMENTS_SPLITTER{" "};
+
 const char * ComplexationRelationshipsModel::TreeItem::InvalidChildException::what() const noexcept
 {
   return "Invalid child item";
@@ -194,6 +196,12 @@ QVariant ComplexationRelationshipsModel::data(const QModelIndex &index, int role
   if (!index.isValid())
     return QVariant();
 
+  if (role == Qt::UserRole + 1) {
+    if (index.column() == 2 || index.column() == 3)
+      return QVariant::fromValue<ItemType>(ItemType::PARAMETER_LIST);
+    return QVariant::fromValue<ItemType>(ItemType::DEFAULT);
+  }
+
   if (role != Qt::DisplayRole && role != Qt::EditRole)
     return QVariant();
 
@@ -263,7 +271,7 @@ QVariant ComplexationRelationshipsModel::makeItemData(const TreeItem *item, cons
 
     for (int idx = 0; idx < vec.size() - 1; idx++) {
       QString s = process(vec.at(idx));
-      out += s + QString(" ");
+      out += s + ELEMENTS_SPLITTER;
     }
     out += process(vec.last());
 
@@ -346,7 +354,7 @@ int ComplexationRelationshipsModel::rowCount(const QModelIndex &parent) const
 bool ComplexationRelationshipsModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
   auto stringToItems = [](QVector<double> &vec, const QVariant &value, const std::function<double (double)> &convertor = [](const double v){ return v; }) {
-    QStringList numbers = value.toString().split(" ");
+    QStringList numbers = value.toString().split(ELEMENTS_SPLITTER);
     QVector<double> _temp;
 
     for (const QString &s : numbers) {

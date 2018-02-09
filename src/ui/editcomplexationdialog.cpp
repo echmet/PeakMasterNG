@@ -1,6 +1,7 @@
 #include "editcomplexationdialog.h"
 #include "ui_editcomplexationdialog.h"
 #include "complexation_models/constituent_ui.h"
+#include "../gearbox/complexationparametersdelegate.h"
 
 #include <QComboBox>
 #include <QPushButton>
@@ -11,6 +12,10 @@ EditComplexationDialog::EditComplexationDialog(QWidget *parent) :
   ui{new Ui::EditComplexationDialog}
 {
   ui->setupUi(this);
+
+  _delegate = new ComplexationParametersDelegate(this);
+  ui->qtrv_complexation->setItemDelegate(_delegate);
+
 
   connect(ui->qcbox_ligands, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, &EditComplexationDialog::onLigandChanged);
   connect(ui->qpb_remove, &QPushButton::clicked, this, &EditComplexationDialog::onRemoveLigandClicked);
