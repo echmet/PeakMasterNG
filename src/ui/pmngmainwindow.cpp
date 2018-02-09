@@ -10,6 +10,8 @@
 #include "../gearbox/calculatorworker.h"
 #include "../persistence/persistence.h"
 #include "operationinprogressdialog.h"
+#include "../gearbox/efgdisplayer.h"
+#include "../gearbox/efgcsvexporter.h"
 
 #include <QDialogButtonBox>
 #include <QDataWidgetMapper>
@@ -20,8 +22,6 @@
 #include <QPushButton>
 #include <QStandardItemModel>
 #include <QThread>
-
-#include <signal.h>
 
 void inputToEOFValueType(double &EOFValue, CalculatorInterface::EOFValueType &EOFvt, const double inValue, const MainControlWidget::EOF_Type type)
 {
@@ -97,14 +97,13 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
 
   connect(h_scompWidget, &SystemCompositionWidget::compositionChanged, this, &PMNGMainWindow::onCompositionChanged);
   connect(m_mainCtrlWidget, &MainControlWidget::runSetupChanged, this, &PMNGMainWindow::onRunSetupChanged);
-  connect(ui->qpb_replotEFG, &QPushButton::clicked, this, &PMNGMainWindow::onPlotElectrophoregram);
-  connect(ui->qpb_exportEFG, &QPushButton::clicked, this, &PMNGMainWindow::onExportElectrophoregram);
 
   connect(ui->actionExit, &QAction::triggered, this, &PMNGMainWindow::onExit);
   connect(ui->actionAbout, &QAction::triggered, this, &PMNGMainWindow::onAbout);
   connect(ui->actionNew, &QAction::triggered, this, &PMNGMainWindow::onNew);
   connect(ui->actionLoad, &QAction::triggered, this, &PMNGMainWindow::onLoad);
   connect(ui->actionSave, &QAction::triggered, this, &PMNGMainWindow::onSave);
+  connect(ui->actionExportEFGAsCSV, &QAction::triggered, this, &PMNGMainWindow::onExportElectrophoregramAsCSV);
 
   ui->mainToolBar->addWidget(m_qpb_new);
   ui->mainToolBar->addWidget(m_qpb_load);
@@ -158,6 +157,15 @@ void PMNGMainWindow::initSignalItems()
   resetSignalItems();
 }
 
+EFGDisplayer PMNGMainWindow::makeMainWindowEFGDisplayer()
+{
+  auto dispExecutor = [this](const QVector<QPointF> &data, std::vector<CalculatorInterface::SpatialZoneInformation> &&szi, const CalculatorInterface::Signal &signal) {
+    m_signalPlotWidget->setSignal(data, plotSignalStyle(signal.type), signal.plotCaption, std::move(szi));
+  };
+
+  return EFGDisplayer(dispExecutor);
+}
+
 void PMNGMainWindow::onAbout()
 {
   AboutDialog dlg{};
@@ -171,6 +179,8 @@ void PMNGMainWindow::onAutoPlotCutoffStateChanged(const int state)
 
 void PMNGMainWindow::onCalculate()
 {
+  EFGDisplayer displayer = makeMainWindowEFGDisplayer();
+
   resetSignalItems();
 
   double EOFValue;
@@ -203,7 +213,7 @@ void PMNGMainWindow::onCalculate()
     m_calcIface.publishResults(rs.totalLength, rs.detectorPosition, rs.drivingVoltage, EOFValue, EOFvt, rs.positiveVoltage);
     if (calcStatus == CalculatorWorker::CalculationResult::OK) {
       addConstituentsSignals(m_calcIface.allConstituents());
-      plotElectrophoregram(false);
+      plotElectrophoregram(displayer);
     } else {
       QMessageBox errmbox{QMessageBox::Warning, tr("Calculation incomplete"),
                           QString{tr("Solver was unable to calculate electromigration properties of the system. "
@@ -218,10 +228,10 @@ void PMNGMainWindow::onCalculate()
   }
 }
 
-void PMNGMainWindow::onExportElectrophoregram()
+void PMNGMainWindow::onExportElectrophoregramAsCSV()
 {
   try {
-    plotElectrophoregram(true);
+    plotElectrophoregram(EFGCSVExporter::make());
   } catch (CalculatorInterfaceException &ex) {
     QMessageBox mbox{QMessageBox::Critical, tr("Failed to export electrophoregram"), ex.what()};
     mbox.exec();
@@ -307,7 +317,8 @@ void PMNGMainWindow::onNew()
 void PMNGMainWindow::onPlotElectrophoregram()
 {
   try {
-    plotElectrophoregram(false);
+    EFGDisplayer displayer = makeMainWindowEFGDisplayer();
+    plotElectrophoregram(displayer);
   } catch (CalculatorInterfaceException &ex) {
     QMessageBox mbox{QMessageBox::Critical, tr("Failed to plot electrophoregram"), ex.what()};
     mbox.exec();
@@ -327,11 +338,12 @@ void PMNGMainWindow::onRunSetupChanged(const bool invalidate)
 
     const MainControlWidget::RunSetup rs = m_mainCtrlWidget->runSetup();
     try {
+      EFGDisplayer displayer = makeMainWindowEFGDisplayer();
       m_calcIface.recalculateTimes(rs.totalLength, rs.detectorPosition,
                                    rs.drivingVoltage,
                                    EOFValue, EOFvt,
                                    rs.positiveVoltage);
-      plotElectrophoregram(false);
+      plotElectrophoregram(displayer);
     } catch (const CalculatorInterfaceException &ex) {
       QMessageBox mbox{QMessageBox::Critical, tr("Failed to plot electrophoregram"), ex.what()};
       mbox.exec();
@@ -390,7 +402,7 @@ void PMNGMainWindow::onSave()
   }
 }
 
-void PMNGMainWindow::plotElectrophoregram(const bool exportToFile)
+void PMNGMainWindow::plotElectrophoregram(const EFGDisplayer &displayer)
 {
   if (!m_calcIface.resultsAvailable())
     return;
@@ -417,31 +429,14 @@ void PMNGMainWindow::plotElectrophoregram(const bool exportToFile)
   CalculatorInterface::EOFValueType EOFvt;
   inputToEOFValueType(EOFValue, EOFvt, m_mainCtrlWidget->EOFValue(), m_mainCtrlWidget->EOFInputType());
 
-  if (!exportToFile) {
-    const auto signalTrace = m_calcIface.plotElectrophoregram(rs.totalLength, rs.detectorPosition,
-                                                              rs.drivingVoltage, rs.positiveVoltage,
-                                                              EOFValue, EOFvt, izLen, plotCutoff,
-                                                              signal);
-    auto zoneInfo = m_calcIface.spatialZoneInformation(rs.totalLength, rs.detectorPosition, rs.drivingVoltage,
-                                                       EOFValue, EOFvt, rs.positiveVoltage);
-    m_signalPlotWidget->setSignal(signalTrace, plotSignalStyle(signal.type), signal.plotCaption, std::move(zoneInfo));
-  } else {
-    QFileDialog dlg{};
-    dlg.setAcceptMode(QFileDialog::AcceptSave);
-    dlg.setNameFilter("CSV file (*.csv)");
-    if (dlg.exec() != QDialog::Accepted)
-      return;
+  const auto signalTrace = m_calcIface.plotElectrophoregram(rs.totalLength, rs.detectorPosition,
+                                                            rs.drivingVoltage, rs.positiveVoltage,
+                                                            EOFValue, EOFvt, izLen, plotCutoff,
+                                                            signal);
+  auto zoneInfo = m_calcIface.spatialZoneInformation(rs.totalLength, rs.detectorPosition, rs.drivingVoltage,
+                                                     EOFValue, EOFvt, rs.positiveVoltage);
 
-    const auto &files = dlg.selectedFiles();
-    if (files.size() < 1)
-      return;
-
-    m_calcIface.exportElectrophoregram(rs.totalLength, rs.detectorPosition,
-                                       rs.drivingVoltage, rs.positiveVoltage,
-                                       EOFValue, EOFvt, izLen, plotCutoff,
-                                       signal,
-                                       files.first());
-  }
+  displayer(signalTrace, std::move(zoneInfo), signal);
 }
 
 void PMNGMainWindow::resetSignalItems()

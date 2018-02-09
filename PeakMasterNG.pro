@@ -116,7 +116,9 @@ SOURCES += \
     src/ui/internal_models/databaseconstituentsphyspropstablemodel.cpp \
     src/ui/ploteventfilter.cpp \
     src/ui/nonidealitycorrectionsdialog.cpp \
-    src/gearbox/complexationparametersdelegate.cpp
+    src/gearbox/complexationparametersdelegate.cpp \
+    src/gearbox/efgdisplayer.cpp \
+    src/gearbox/efgcsvexporter.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -205,7 +207,9 @@ HEADERS += \
     src/ui/internal_models/databaseconstituentsphyspropstablemodel.h \
     src/ui/ploteventfilter.h \
     src/ui/nonidealitycorrectionsdialog.h \
-    src/gearbox/complexationparametersdelegate.h
+    src/gearbox/complexationparametersdelegate.h \
+    src/gearbox/efgdisplayer.h \
+    src/gearbox/efgcsvexporter.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \

@@ -91,13 +91,6 @@
             </property>
            </widget>
           </item>
-          <item>
-           <widget class="QPushButton" name="qpb_exportEFG">
-            <property name="text">
-             <string>Export</string>
-            </property>
-           </widget>
-          </item>
          </layout>
         </item>
        </layout>
@@ -130,7 +123,20 @@
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuExport">
+    <property name="title">
+     <string>E&amp;xport</string>
+    </property>
+    <widget class="QMenu" name="menuElectrophoregram">
+     <property name="title">
+      <string>Electrophoregram</string>
+     </property>
+     <addaction name="actionExportEFGAsCSV"/>
+    </widget>
+    <addaction name="menuElectrophoregram"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuExport"/>
    <addaction name="menuAbout"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -165,6 +171,11 @@
   <action name="actionSave">
    <property name="text">
     <string>&amp;Save</string>
+   </property>
+  </action>
+  <action name="actionExportEFGAsCSV">
+   <property name="text">
+    <string>As CSV</string>
    </property>
   </action>
  </widget>

@@ -78,12 +78,6 @@ public:
   QVector<QString> allConstituents() const;
   QVector<QString> analytes() const;
   void calculate(const bool correctForDebyeHuckel, const bool correctForOnsagerFuoss, const bool correctForViscosity);
-  void exportElectrophoregram(double totalLength, double detectorPosition,
-                              double drivingVoltage, const bool positiveVoltage,
-                              double EOFValue, const EOFValueType EOFvt,
-                              double injectionZoneLength, double plotToTime,
-                              const Signal &signal,
-                              const QString &filepath);
   static double minimumConcentration() noexcept;
   QVector<QPointF> plotElectrophoregram(double totalLength, double detectorPosition,
                                         double drivingVoltage, const bool positiveVoltage,

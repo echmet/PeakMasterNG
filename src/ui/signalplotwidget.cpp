@@ -126,6 +126,7 @@ void SignalPlotWidget::setBrush(const SignalStyle style)
     break;
   }
 }
+
 void SignalPlotWidget::setSignal(const QVector<QPointF> &signal, const SignalStyle style, const QString &yAxisText,
                                  std::vector<CalculatorInterface::SpatialZoneInformation> &&zinfo)
 {

@@ -15,6 +15,7 @@ namespace persistence {
 }
 
 class CalculatorInterface;
+class EFGDisplayer;
 class MainControlWidget;
 class ResultsModels;
 class QDataWidgetMapper;
@@ -48,9 +49,10 @@ private:
   };
 
   void addConstituentsSignals(const QVector<QString> &analytes);
+  EFGDisplayer makeMainWindowEFGDisplayer();
   void initPlotParams();
   void initSignalItems();
-  void plotElectrophoregram(const bool exportToFile);
+  void plotElectrophoregram(const EFGDisplayer &displayer);
   void resetSignalItems();
   void setControlsIcons();
 
@@ -87,7 +89,7 @@ private slots:
   void onLoad();
   void onNew();
   void onExit();
-  void onExportElectrophoregram();
+  void onExportElectrophoregramAsCSV();
   void onPlotElectrophoregram();
   void onRunSetupChanged(const bool invalidate);
   void onSave();

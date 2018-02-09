@@ -7,10 +7,7 @@
 #include <limits>
 #include <lemng.h>
 #include <memory>
-#include <QFile>
 #include <QPointF>
-#include <QTextCodec>
-#include <QTextStream>
 
 void destroyCZESystem(ECHMET::LEMNG::CZESystem *czeSystem)
 {
@@ -254,31 +251,6 @@ void CalculatorInterface::calculate(const bool correctForDebyeHuckel, const bool
   }
 
   m_ctx.makeValid();
-}
-
-void CalculatorInterface::exportElectrophoregram(double totalLength, double detectorPosition, double drivingVoltage, const bool positiveVoltage,
-                                                 double EOFValue, const EOFValueType EOFvt,
-                                                 double injectionZoneLength, double plotToTime,
-                                                 const Signal &signal,
-                                                 const QString &filepath)
-{
-  const auto data = plotElectrophoregramInternal(totalLength, detectorPosition, drivingVoltage, positiveVoltage,
-                                                 EOFValue, EOFvt, injectionZoneLength, plotToTime, signal);
-
-  QFile output{filepath};
-  if (!output.open(QIODevice::WriteOnly | QIODevice::Text))
-    throw CalculatorInterfaceException{"Cannot open output file"};
-
-  QTextStream ostr;
-  ostr.setCodec(QTextCodec::codecForName("UTF-8"));
-  ostr.setDevice(&output);
-  ostr.setRealNumberNotation(QTextStream::ScientificNotation);
-  ostr.setRealNumberPrecision(17);
-
-  for (const auto &pt : data)
-    ostr << pt.x() << "\t" << pt.y() << "\n";
-
-  output.flush();
 }
 
 void CalculatorInterface::fillAnalytesList()
