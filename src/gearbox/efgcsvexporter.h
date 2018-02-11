@@ -1,6 +1,7 @@
 #ifndef EFGCSVEXPORTER_H
 #define EFGCSVEXPORTER_H
 
+class CSVExportOptionsDialog;
 class EFGDisplayer;
 class QFileDialog;
 
@@ -14,6 +15,7 @@ private:
   ~EFGCSVExporter();
 
   QFileDialog *m_fileDlg;
+  CSVExportOptionsDialog *m_optionsDlg;
 
   static EFGCSVExporter *s_me;
 };

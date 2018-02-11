@@ -118,7 +118,8 @@ SOURCES += \
     src/ui/nonidealitycorrectionsdialog.cpp \
     src/gearbox/complexationparametersdelegate.cpp \
     src/gearbox/efgdisplayer.cpp \
-    src/gearbox/efgcsvexporter.cpp
+    src/gearbox/efgcsvexporter.cpp \
+    src/ui/csvexportoptionsdialog.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -209,7 +210,8 @@ HEADERS += \
     src/ui/nonidealitycorrectionsdialog.h \
     src/gearbox/complexationparametersdelegate.h \
     src/gearbox/efgdisplayer.h \
-    src/gearbox/efgcsvexporter.h
+    src/gearbox/efgcsvexporter.h \
+    src/ui/csvexportoptionsdialog.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \
@@ -225,7 +227,8 @@ FORMS += \
     src/ui/ioniccompositiondialog.ui \
     src/ui/operationinprogressdialog.ui \
     src/ui/pickconstituentfromdbdialog.ui \
-    src/ui/nonidealitycorrectionsdialog.ui
+    src/ui/nonidealitycorrectionsdialog.ui \
+    src/ui/csvexportoptionsdialog.ui
 
 unix {
     QMAKE_CXXFLAGS += "-Wall -Wextra -pedantic"
