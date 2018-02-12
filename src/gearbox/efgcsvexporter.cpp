@@ -10,6 +10,8 @@
 #include <QTextStream>
 #include <QLocale>
 #include <QMessageBox>
+#include <QApplication>
+#include <QClipboard>
 
 #include "../ui/csvexportoptionsdialog.h"
 
@@ -24,13 +26,6 @@ EFGDisplayer EFGCSVExporter::make()
   auto executor = [me](const QVector<QPointF> &data, std::vector<CalculatorInterface::SpatialZoneInformation> &&szi, const CalculatorInterface::Signal &sig) {
     Q_UNUSED(szi);
     Q_UNUSED(sig);
-
-    if (me->m_fileDlg->exec() != QDialog::Accepted)
-      return;
-
-    const auto &files = me->m_fileDlg->selectedFiles();
-    if (files.empty())
-      return;
 
     for (;;) {
       if (me->m_optionsDlg->exec() != QDialog::Accepted)
@@ -55,10 +50,6 @@ EFGDisplayer EFGCSVExporter::make()
     }
     const auto opts = me->m_optionsDlg->options();
 
-    QFile output{files.first()};
-    if (!output.open(QIODevice::WriteOnly | QIODevice::Text))
-      throw CalculatorInterfaceException{"Cannot open output file"};
-
     const QLocale loc = [](const CSVExportOptionsDialog::DecimalSeparator sep) {
       switch (sep) {
         case CSVExportOptionsDialog::DecimalSeparator::COMMA:
@@ -68,17 +59,33 @@ EFGDisplayer EFGCSVExporter::make()
       }
     }(opts.decimalSeparator);
 
+    QString outStr;
     QTextStream ostr;
     ostr.setLocale(loc);
     ostr.setCodec(QTextCodec::codecForName("UTF-8"));
-    ostr.setDevice(&output);
+    ostr.setString(&outStr);
     ostr.setRealNumberNotation(QTextStream::ScientificNotation);
     ostr.setRealNumberPrecision(17);
 
     for (const auto &pt : data)
       ostr << pt.x() << opts.fieldDelimiter << pt.y() << "\n";
 
-    output.flush();
+    if (opts.exportTarget == CSVExportOptionsDialog::ExportTarget::FILE) {
+      if (me->m_fileDlg->exec() != QDialog::Accepted)
+        return;
+
+      const auto &files = me->m_fileDlg->selectedFiles();
+      if (files.empty())
+        return;
+
+       QFile output{files.first()};
+       if (!output.open(QIODevice::WriteOnly | QIODevice::Text))
+         throw CalculatorInterfaceException{"Cannot open output file"};
+
+       output.write(outStr.toUtf8());
+    } else {
+      QApplication::clipboard()->setText(outStr);
+    }
   };
 
   return EFGDisplayer(executor);
