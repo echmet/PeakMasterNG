@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <QMessageBox>
+#include <functional>
 
 class InvalidConversionException : std::logic_error {
 public:
@@ -262,7 +263,7 @@ QModelIndex ComplexationRelationshipsModel::index(int row, int column, const QMo
 
 QVariant ComplexationRelationshipsModel::makeItemData(const TreeItem *item, const int column) const
 {
-  auto itemsToString = [](const QVector<double> &vec, const std::function<double (double)> &convertor = [](const double v){ return v; }) -> QVariant {
+  auto itemsToString = [](const QVector<double> &vec, const std::function<double (double)> &convertor) {
     QString out;
 
     auto process = [&convertor](const double _v) {
@@ -293,7 +294,7 @@ QVariant ComplexationRelationshipsModel::makeItemData(const TreeItem *item, cons
     case 1:
       return ligandItem->charge;
     case 2:
-      return itemsToString(ligandItem->mobilities);
+      return itemsToString(ligandItem->mobilities, [](const double v){ return v; });
     case 3:
       return itemsToString(ligandItem->pBs, [](const double v){ return std::pow(10.0, -v); });
     default:
@@ -353,7 +354,8 @@ int ComplexationRelationshipsModel::rowCount(const QModelIndex &parent) const
 
 bool ComplexationRelationshipsModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-  auto stringToItems = [](QVector<double> &vec, const QVariant &value, const std::function<double (double)> &convertor = [](const double v){ return v; }) {
+
+  auto stringToItems = [](QVector<double> &vec, const QVariant &value, const std::function<double (double)> &convertor) {
     QStringList numbers = value.toString().split(ELEMENTS_SPLITTER);
     QVector<double> _temp;
 
@@ -390,7 +392,7 @@ bool ComplexationRelationshipsModel::setData(const QModelIndex &index, const QVa
   switch (index.column()) {
   case 2:
     {
-    bool correct = stringToItems(ligandItem->mobilities, value);
+    bool correct = stringToItems(ligandItem->mobilities, value, [](const double v){ return v; });
 
     if (!correct)
       return false; /* TODO: Display a warning message here? */
