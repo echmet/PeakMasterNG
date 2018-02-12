@@ -306,7 +306,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QTableView" name="qtbv_systemEigenzones">
+    <widget class="CopiableItemsTableView" name="qtbv_systemEigenzones">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
        <horstretch>0</horstretch>
@@ -364,6 +364,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>CopiableItemsTableView</class>
+   <extends>QTableView</extends>
+   <header>src/ui/copiableitemstableview.h</header>
+  </customwidget>
   <customwidget>
    <class>FloatingValueLineEdit</class>
    <extends>QLineEdit</extends>

@@ -119,7 +119,8 @@ SOURCES += \
     src/gearbox/complexationparametersdelegate.cpp \
     src/gearbox/efgdisplayer.cpp \
     src/gearbox/efgcsvexporter.cpp \
-    src/ui/csvexportoptionsdialog.cpp
+    src/ui/csvexportoptionsdialog.cpp \
+    src/ui/copiableitemsstableview.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -211,7 +212,8 @@ HEADERS += \
     src/gearbox/complexationparametersdelegate.h \
     src/gearbox/efgdisplayer.h \
     src/gearbox/efgcsvexporter.h \
-    src/ui/csvexportoptionsdialog.h
+    src/ui/csvexportoptionsdialog.h \
+    src/ui/copiableitemstableview.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \
