@@ -270,11 +270,14 @@ QVariant ComplexationRelationshipsModel::makeItemData(const TreeItem *item, cons
       return DoubleToStringConvertor::convert(convertor(_v));
     };
 
-    for (int idx = 0; idx < vec.size() - 1; idx++) {
+    if (vec.empty())
+      return out;
+
+    out += process(vec.first());
+    for (int idx = 1; idx < vec.size(); idx++) {
       QString s = process(vec.at(idx));
-      out += s + ELEMENTS_SPLITTER;
+      out += ELEMENTS_SPLITTER + s;
     }
-    out += process(vec.last());
 
     return out;
   };
