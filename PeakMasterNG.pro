@@ -260,3 +260,7 @@ include($$PWD/PeakMasterNG.pri)
 
 RESOURCES += \
     pmngres.qrc
+
+win32 {
+    RC_FILE = PeakMasterNG.rc
+}
