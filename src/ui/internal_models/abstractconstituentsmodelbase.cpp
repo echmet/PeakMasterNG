@@ -8,8 +8,6 @@
 #include <QPalette>
 #include <QCoreApplication>
 
-#include <QDebug>
-
 const QString AbstractConstituentsModelBase::MIME_FORMAT{"application/vnd.text.list"};
 
 AbstractConstituentsModelBase::AbstractConstituentsModelBase(GDMProxy &GDMProxy, ComplexationManager &cpxMgr, QObject *parent) :
