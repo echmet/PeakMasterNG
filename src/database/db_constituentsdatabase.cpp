@@ -1,6 +1,5 @@
 #include "db_constituentsdatabase.h"
 
-#include <iostream>
 #include <sqlite3.h>
 #include <cstring>
 #include <tuple>
@@ -341,23 +340,17 @@ int ConstituentsDatabase::checkTableLayout_constituents_callback(void *table_col
   if (colName == nullptr || dataType == nullptr)
     return SQLITE_OK;
 
-  std::cerr << colName << " " << dataType << " " << std::endl;
-
   /* Check for primary key */
   if (strcmp(colName, TBC_COL_ID) == 0 && strcmp(dataType, TBC_COL_ID_TYPE) == 0) {
-    std::cerr << "Have id" << std::endl;
     (*table_cols_i)++;
   }
   else if (strcmp(colName, TBC_COL_NAME) == 0 && strcmp(dataType, TBC_COL_NAME_TYPE) == 0) {
-    std::cerr << "Have name" << std::endl;
     (*table_cols_i)++;
   }
   else if (strcmp(colName, TBC_COL_CHARGE_LOW) == 0 && strcmp(dataType, TBC_COL_CHARGE_LOW_TYPE) == 0) {
-     std::cerr << "Have charge_low" << std::endl;
     (*table_cols_i)++;
   }
   else if (strcmp(colName, TBC_COL_CHARGE_HIGH) == 0 && strcmp(dataType, TBC_COL_CHARGE_HIGH_TYPE) == 0) {
-    std::cerr << "Have charge_high" << std::endl;
     (*table_cols_i)++;
   }
 
@@ -381,23 +374,17 @@ int ConstituentsDatabase::checkTableLayout_pkas_callback(void *table_cols, int c
   if (colName == nullptr || dataType == nullptr)
     return SQLITE_OK;
 
-  std::cerr << colName << " " << dataType << " ";
-
   /* Check for primary key */
   if (strcmp(colName, TBP_COL_ID) == 0 && strcmp(dataType, TBP_COL_ID_TYPE) == 0) {
-    std::cerr << "Have id" << std::endl;
     (*table_cols_i)++;
   }
   else if (strcmp(colName, TBP_COL_CID) == 0 && strcmp(dataType, TBP_COL_CID_TYPE) == 0) {
-     std::cerr << "Have cid" << std::endl;
     (*table_cols_i)++;
   }
   else if (strcmp(colName, TBP_COL_TRANSITION) == 0 && strcmp(dataType, TBP_COL_TRANSITION_TYPE) == 0) {
-     std::cerr << "Have transition" << std::endl;
     (*table_cols_i)++;
   }
   else if (strcmp(colName, TBP_COL_PKA) == 0 && strcmp(dataType, TBP_COL_PKA_TYPE) == 0) {
-     std::cerr << "Have pka" << std::endl;
     (*table_cols_i)++;
   }
 
@@ -421,23 +408,17 @@ int ConstituentsDatabase::checkTableLayout_mobilities_callback(void *table_cols,
   if (colName == nullptr || dataType == nullptr)
     return SQLITE_OK;
 
-  std::cerr << colName << " " << dataType;
-
   /* Check for primary key */
   if (strcmp(colName, TBP_COL_ID) == 0 && strcmp(dataType, TBP_COL_ID_TYPE) == 0) {
-    std::cerr << "Have id" << std::endl;
     (*table_cols_i)++;
   }
   else if (strcmp(colName, TBP_COL_CID) == 0 && strcmp(dataType, TBP_COL_CID_TYPE) == 0) {
-     std::cerr << "Have cid" << std::endl;
     (*table_cols_i)++;
   }
   else if (strcmp(colName, TBP_COL_CHARGE) == 0 && strcmp(dataType, TBP_COL_CHARGE_TYPE) == 0) {
-     std::cerr << "Have charge" << std::endl;
     (*table_cols_i)++;
   }
   else if (strcmp(colName, TBP_COL_MOBILITY) == 0 && strcmp(dataType, TBP_COL_MOBILITY_TYPE) == 0) {
-     std::cerr << "Have mobility" << std::endl;
     (*table_cols_i)++;
   }
 
