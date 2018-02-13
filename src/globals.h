@@ -4,6 +4,7 @@
 #include <QPointF>
 #include <QString>
 #include <QVector>
+#include <QIcon>
 
 class Globals
 {
@@ -20,6 +21,7 @@ public:
 
   Globals() = delete;
 
+  static QIcon icon();
   static QString VERSION_STRING();
 
   static const QString CIMEC_WEB_LINK;

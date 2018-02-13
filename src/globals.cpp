@@ -1,5 +1,7 @@
 #include "globals.h"
 
+#include <QPixmap>
+
 const QString Globals::CIMEC_WEB_LINK{"http://www.cimec.org.ar/twiki/bin/view/Cimec/"};
 const QString Globals::ECHMET_WEB_LINK{"http://echmet.natur.cuni.cz"};
 const QString Globals::ORG_NAME{"ECHMET"};
@@ -13,6 +15,16 @@ const QVector<Globals::DeveloperID> Globals::DEVELOPERS = { Globals::DeveloperID
                                                             Globals::DeveloperID{"Pavel Dubsk\xC3\xBD", "pavel.dubsky@natur.cuni.cz", true}
                                                           };
 
+
+QIcon Globals::icon()
+{
+  static const QPixmap PROGRAM_ICON{":/images/res/PeakMaster_icon.png"};
+
+  if (PROGRAM_ICON.isNull())
+    return QIcon{};
+
+  return QIcon{PROGRAM_ICON};
+}
 
 QString Globals::DeveloperID::linkString() const
 {

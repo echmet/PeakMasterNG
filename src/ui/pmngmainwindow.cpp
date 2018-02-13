@@ -115,6 +115,8 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   setControlsIcons();
 
   h_scompWidget->setViscosityCorrectionEnabled(m_mainCtrlWidget->runSetup().correctForViscosity);
+
+  setWindowIcon(Globals::icon());
 }
 
 PMNGMainWindow::~PMNGMainWindow()
