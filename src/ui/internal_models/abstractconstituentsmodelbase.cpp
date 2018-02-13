@@ -6,6 +6,7 @@
 #include <QDataStream>
 #include <QMimeData>
 #include <QPalette>
+#include <QCoreApplication>
 
 #include <QDebug>
 
@@ -60,7 +61,18 @@ bool AbstractConstituentsModelBase::dropMimeData(const QMimeData *mdata, Qt::Dro
 
   QString targetName = data(parent, Qt::UserRole).toString();
   QString sourceName{};
+  qint64 pid;
+
+  stream >> pid;
+  if (stream.status() != QDataStream::Ok)
+    return false;
+
+  if (pid != QCoreApplication::applicationPid())
+    return false;
+
   stream >> sourceName;
+  if (stream.status() != QDataStream::Ok || !stream.atEnd())
+    return false;
 
   h_cpxMgr.makeComplexation(sourceName.toStdString(), targetName.toStdString());
 
@@ -93,6 +105,7 @@ QMimeData * AbstractConstituentsModelBase::mimeData(const QModelIndexList &index
 
     if (midx.isValid()) {
       const QString name = data(midx, Qt::UserRole).toString();
+      stream << QCoreApplication::applicationPid();
       stream << name;
     }
   }
