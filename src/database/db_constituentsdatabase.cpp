@@ -811,7 +811,7 @@ out:
 ConstituentsDatabase::RetCode ConstituentsDatabase::insertConstituentProperties(const int64_t id,
                                                                                 const std::vector<std::tuple<int, double, double>> &properties)
 {
-  RetCode tRet;
+  RetCode tRet = RetCode::E_DB_INV_ARG;
 
   for (size_t idx = 0; idx < properties.size(); idx++) {
     const auto charge = std::get<0>(properties.at(idx));
