@@ -29,7 +29,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QTableView" name="qtbv_constituents"/>
+    <widget class="DatabaseTableView" name="qtbv_constituents"/>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
@@ -43,6 +43,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DatabaseTableView</class>
+   <extends>QTableView</extends>
+   <header>src/ui/databasetableview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

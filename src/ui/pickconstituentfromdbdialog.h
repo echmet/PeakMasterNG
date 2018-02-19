@@ -29,8 +29,8 @@ private:
 
 private slots:
   void onAccepted();
-  void onConstituentListDoubleClicked(const QModelIndex &midx);
   void onConstituentNameChanged(const QString &name);
+  void onItemSelected(const int row);
   void onRejected();
 };
 

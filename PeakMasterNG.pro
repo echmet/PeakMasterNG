@@ -120,7 +120,8 @@ SOURCES += \
     src/gearbox/efgdisplayer.cpp \
     src/gearbox/efgcsvexporter.cpp \
     src/ui/csvexportoptionsdialog.cpp \
-    src/ui/copiableitemsstableview.cpp
+    src/ui/copiableitemsstableview.cpp \
+    src/ui/databasetableview.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -213,7 +214,8 @@ HEADERS += \
     src/gearbox/efgdisplayer.h \
     src/gearbox/efgcsvexporter.h \
     src/ui/csvexportoptionsdialog.h \
-    src/ui/copiableitemstableview.h
+    src/ui/copiableitemstableview.h \
+    src/ui/databasetableview.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \

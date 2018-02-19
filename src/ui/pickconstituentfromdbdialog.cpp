@@ -3,6 +3,7 @@
 
 #include "../gearbox/databaseproxy.h"
 #include "internal_models/databaseconstituentsphyspropstablemodel.h"
+#include "databasetableview.h"
 
 #include <QMessageBox>
 
@@ -20,7 +21,7 @@ PickConstituentFromDBDialog::PickConstituentFromDBDialog(DatabaseConstituentsPhy
 
   connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &PickConstituentFromDBDialog::onAccepted);
   connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &PickConstituentFromDBDialog::onRejected);
-  connect(ui->qtbv_constituents, &QTableView::doubleClicked, this, &PickConstituentFromDBDialog::onConstituentListDoubleClicked);
+  connect(ui->qtbv_constituents, &DatabaseTableView::itemSelected, this, &PickConstituentFromDBDialog::onItemSelected);
 }
 
 PickConstituentFromDBDialog::~PickConstituentFromDBDialog()
@@ -51,15 +52,6 @@ void PickConstituentFromDBDialog::onAccepted()
   accept();
 }
 
-void PickConstituentFromDBDialog::onConstituentListDoubleClicked(const QModelIndex &midx)
-{
-  if (!midx.isValid())
-    return;
-
-  m_selectedIndex = midx.row();
-  accept();
-}
-
 void PickConstituentFromDBDialog::onConstituentNameChanged(const QString &name)
 {
   if (!h_dbProxy.isAvailable())
@@ -74,6 +66,15 @@ void PickConstituentFromDBDialog::onConstituentNameChanged(const QString &name)
     QMessageBox mbox{QMessageBox::Warning, tr("Database lookup failed"), ex.what()};
     mbox.exec();
   }
+}
+
+void PickConstituentFromDBDialog::onItemSelected(const int row)
+{
+  if (row < 0)
+    return;
+
+  m_selectedIndex = row;
+  accept();
 }
 
 void PickConstituentFromDBDialog::onRejected()
