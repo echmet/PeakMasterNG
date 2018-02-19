@@ -175,7 +175,6 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::addConstituent(const char *n
   if (ret != SQLITE_DONE) {
     m_lastDBError = std::string(sqlite3_errmsg(m_dbh()));
 
-    tRet = RetCode::E_DB_QUERY;
     goto rollback;
   }
 
@@ -189,7 +188,6 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::addConstituent(const char *n
     m_lastDBError = std::string(errmsg);
     sqlite3_free(errmsg);
 
-    tRet = RetCode::E_DB_QUERY;
     goto rollback;
   }
   /* Everthing went fine */
@@ -203,8 +201,8 @@ rollback:
     sqlite3_free(errmsg);
 
     tRet = RetCode::E_DB_ROLLBACK;
-  }
-  tRet = RetCode::E_DB_QUERY;
+  } else
+    tRet = RetCode::E_DB_QUERY;
 
 out:
   sqlite3_reset(m_constituentExists());
