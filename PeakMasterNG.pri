@@ -1,8 +1,13 @@
+# Path to location where the ECHMETCoreLibs are installed
 ECHMET_CORE_LIBS_DIR = "/home/madcat/Devel/ECHMET/ECHMETCoreLibs-bin/"
-LEMNG_DIR = "/home/madcat/Devel/ECHMET/LEMNG-bin/"
-QWTPATH = "/home/madcat/Devel/ECHMET/qwt-6.1.3-bin"
 
-include("$$QWTPATH/features/qwt.prf")
+# Path to location where the LEMNG library is insalled
+LEMNG_DIR = "/home/madcat/Devel/ECHMET/LEMNG-bin/"
+
+# Path to where the Qwt toolkit is installed
+QWT_DIR = "/home/madcat/Devel/ECHMET/qwt-6.1.3-bin"
+
+include("$$QWT_DIR/features/qwt.prf")
 
 #Do not touch anything below this line!
 
