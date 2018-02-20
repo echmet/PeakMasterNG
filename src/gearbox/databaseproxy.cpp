@@ -6,8 +6,6 @@
 #include <cassert>
 #include <QString>
 
-typedef std::function<database::ConstituentsDatabase::RetCode (database::ConstituentsDatabase *,database::ConstituentsDatabase::MatchType, const std::string &, database::SearchResults)> QueryExecutor;
-
 const char *DatabaseProxy::DATABASE_PATH = "pmng_db.sql";
 
 DatabaseConstituent makeDatabaseConstituent(const database::Constituent &c)
