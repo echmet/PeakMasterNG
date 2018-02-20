@@ -869,6 +869,10 @@ void ConstituentsDatabase::prepareStatements()
 
   m_insertMobility = makeStatement("INSERT INTO %s(%s, %s, %s) VALUES(?, ?, ?)", MOBILITIES_TABLE_NAME, TBP_COL_CID, TBP_COL_CHARGE, TBP_COL_MOBILITY);
 
+  m_searchAll = makeStatement("SELECT %s,%s,%s,%s FROM %s",
+                              TBC_COL_ID, TBC_COL_CHARGE_LOW, TBC_COL_CHARGE_HIGH, TBC_COL_NAME,
+                              CONSTITUENTS_TABLE_NAME);
+
   m_searchByName = makeStatement("SELECT %s,%s,%s,%s FROM %s WHERE %s LIKE ? ORDER BY %s;",
                                  TBC_COL_ID, TBC_COL_CHARGE_LOW, TBC_COL_CHARGE_HIGH, TBC_COL_NAME,
                                  CONSTITUENTS_TABLE_NAME, TBC_COL_NAME, TBC_COL_NAME);
@@ -918,7 +922,7 @@ std::string ConstituentsDatabase::retCodeToString(const RetCode tRet) const
 
 ConstituentsDatabase::RetCode ConstituentsDatabase::searchByName(const char *name, const MatchType match, SearchResults &results)
 {
-  int ret;
+  int ret = 1;
   RetCode tRet;
   char *pattern;
 
@@ -938,6 +942,8 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::searchByName(const char *nam
   case MatchType::EXACT:
     ret = asprintf(&pattern, "%s", name);
     break;
+  case MatchType::ENTIRE_DB:
+    break; /* This is handled differently */
   default:
     return RetCode::E_DB_INV_ARG;
   }
@@ -945,15 +951,21 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::searchByName(const char *nam
   if (ret < 1)
     return RetCode::E_NOMEM;
 
-  ret = sqlite3_bind_text(m_searchByName(), 1, pattern, -1, &sqliteBoundStringDestructor);
-  if (ret != SQLITE_OK) {
-    m_lastDBError = std::string(sqlite3_errmsg(m_dbh()));
+  sqlite3_stmt *searchStmt;
+  if (match == MatchType::ENTIRE_DB) {
+    searchStmt = m_searchAll();
+  } else {
+    ret = sqlite3_bind_text(m_searchByName(), 1, pattern, -1, &sqliteBoundStringDestructor);
+    if (ret != SQLITE_OK) {
+      m_lastDBError = std::string(sqlite3_errmsg(m_dbh()));
 
-    tRet = RetCode::E_DB_QUERY;
-    goto out;
+      tRet = RetCode::E_DB_QUERY;
+      goto out_2;
+    }
+    searchStmt = m_searchByName();
   }
 
-  while ((ret = sqlite3_step(m_searchByName())) == SQLITE_ROW) {
+  while ((ret = sqlite3_step(searchStmt)) == SQLITE_ROW) {
     int iret;
     int64_t id;
     int chargeLow;
@@ -966,13 +978,13 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::searchByName(const char *nam
     sqlite3_reset(m_fetchMobility());
 
     try {
-      const char *pName = (const char *)sqlite3_column_text(m_searchByName(), 3);
+      const char *pName = (const char *)sqlite3_column_text(searchStmt, 3);
       if (pName == nullptr)
         continue;
 
-      id = sqlite3_column_int64(m_searchByName(), 0);
-      chargeLow = sqlite3_column_int(m_searchByName(), 1);
-      chargeHigh = sqlite3_column_int(m_searchByName(), 2);
+      id = sqlite3_column_int64(searchStmt, 0);
+      chargeLow = sqlite3_column_int(searchStmt, 1);
+      chargeHigh = sqlite3_column_int(searchStmt, 2);
 
       c = Constituent{id, pName, chargeLow, chargeHigh};
     } catch (...) {
@@ -1030,9 +1042,10 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::searchByName(const char *nam
   tRet = RetCode::OK;
 
 out:
+  sqlite3_reset(searchStmt);
+out_2:
   sqlite3_reset(m_fetchPKa());
   sqlite3_reset(m_fetchMobility());
-  sqlite3_reset(m_searchByName());
 
   return tRet;
 }

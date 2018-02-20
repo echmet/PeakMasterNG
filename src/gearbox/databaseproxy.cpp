@@ -6,6 +6,8 @@
 #include <cassert>
 #include <QString>
 
+typedef std::function<database::ConstituentsDatabase::RetCode (database::ConstituentsDatabase *,database::ConstituentsDatabase::MatchType, const std::string &, database::SearchResults)> QueryExecutor;
+
 const char *DatabaseProxy::DATABASE_PATH = "pmng_db.sql";
 
 DatabaseConstituent makeDatabaseConstituent(const database::Constituent &c)
@@ -23,6 +25,37 @@ DatabaseConstituent makeDatabaseConstituent(const database::Constituent &c)
   return DatabaseConstituent{QString::fromStdString(c.name()), std::move(pKas), std::move(mobilities), c.n(), c.p()};
 }
 
+std::vector<DatabaseConstituent> doQuery(database::ConstituentsDatabase *dbh,
+                                         const database::ConstituentsDatabase::MatchType match, std::string name)
+{
+
+  database::SearchResults _results{};
+  std::vector<DatabaseConstituent> results{};
+
+  std::transform(name.begin(), name.end(), name.begin(), ::toupper);
+
+  database::ConstituentsDatabase::RetCode tRet;
+  tRet = dbh->searchByName(name.c_str(), match, _results);
+  switch (tRet) {
+  case database::ConstituentsDatabase::RetCode::OK:
+    break; /* Fall through */
+  case database::ConstituentsDatabase::RetCode::E_DB_NO_RECORD:
+    return {};
+  default:
+    {
+    std::string err{"Database lookup failed: " + dbh->lastDBErrorMessage() + " " + dbh->retCodeToString(tRet)};
+    throw DatabaseException{err};
+    }
+  }
+
+  results.reserve(_results.size());
+
+  for (const auto &c : _results)
+    results.emplace_back(makeDatabaseConstituent(c));
+
+  return results;
+}
+
 DatabaseProxy::DatabaseProxy()
 {
   try {
@@ -38,36 +71,17 @@ DatabaseProxy::~DatabaseProxy() noexcept
     delete m_db;
 }
 
+std::vector<DatabaseConstituent> DatabaseProxy::fetchAll()
+{
+  return doQuery(m_db, database::ConstituentsDatabase::MatchType::ENTIRE_DB, std::string{});
+}
+
 bool DatabaseProxy::isAvailable() const
 {
   return m_db != nullptr;
 }
 
-std::vector<DatabaseConstituent> DatabaseProxy::search(std::string name)
+std::vector<DatabaseConstituent> DatabaseProxy::search(const std::string &name)
 {
-  database::SearchResults _results{};
-  std::vector<DatabaseConstituent> results{};
-
-  std::transform(name.begin(), name.end(), name.begin(), ::toupper);
-
-  database::ConstituentsDatabase::RetCode tRet;
-  tRet = m_db->searchByName(name.c_str(), database::ConstituentsDatabase::MatchType::BEGINS_WITH, _results);
-  switch (tRet) {
-  case database::ConstituentsDatabase::RetCode::OK:
-    break; /* Fall through */
-  case database::ConstituentsDatabase::RetCode::E_DB_NO_RECORD:
-    return {};
-  default:
-    {
-    std::string err{"Database lookup failed: " + m_db->lastDBErrorMessage() + " " + m_db->retCodeToString(tRet)};
-    throw DatabaseException{err};
-    }
-  }
-
-  results.reserve(_results.size());
-
-  for (const auto &c : _results)
-    results.emplace_back(makeDatabaseConstituent(c));
-
-  return results;
+  return doQuery(m_db, database::ConstituentsDatabase::MatchType::BEGINS_WITH, name);
 }

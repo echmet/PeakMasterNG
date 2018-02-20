@@ -22,6 +22,7 @@ PickConstituentFromDBDialog::PickConstituentFromDBDialog(DatabaseConstituentsPhy
   connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &PickConstituentFromDBDialog::onAccepted);
   connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &PickConstituentFromDBDialog::onRejected);
   connect(ui->qtbv_constituents, &DatabaseTableView::itemSelected, this, &PickConstituentFromDBDialog::onItemSelected);
+  connect(ui->qpb_allCompounds, &QPushButton::clicked, this, &PickConstituentFromDBDialog::onAllCompounds);
 }
 
 PickConstituentFromDBDialog::~PickConstituentFromDBDialog()
@@ -50,6 +51,21 @@ void PickConstituentFromDBDialog::onAccepted()
   }
 
   accept();
+}
+
+void PickConstituentFromDBDialog::onAllCompounds()
+{
+  if (!h_dbProxy.isAvailable())
+    return;
+
+  try {
+    auto results = h_dbProxy.fetchAll();
+
+    m_model.refreshData(std::move(results));
+  } catch (const DatabaseException &ex) {
+    QMessageBox mbox{QMessageBox::Warning, tr("Database lookup failed"), ex.what()};
+    mbox.exec();
+  }
 }
 
 void PickConstituentFromDBDialog::onConstituentNameChanged(const QString &name)

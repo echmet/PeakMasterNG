@@ -45,7 +45,8 @@ public:
     EXACT,
     BEGINS_WITH,
     ENDS_WITH,
-    CONTAINS
+    CONTAINS,
+    ENTIRE_DB
   };
 
   explicit ConstituentsDatabase(const char *path);
@@ -102,6 +103,7 @@ private:
   SQLiteStmtPtr m_insertConstituent;
   SQLiteStmtPtr m_insertPKa;
   SQLiteStmtPtr m_insertMobility;
+  SQLiteStmtPtr m_searchAll;
   SQLiteStmtPtr m_searchByName;
   SQLiteStmtPtr m_updateConstituent;
 

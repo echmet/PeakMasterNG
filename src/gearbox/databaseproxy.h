@@ -28,8 +28,9 @@ class DatabaseProxy {
 public:
   DatabaseProxy();
   ~DatabaseProxy() noexcept;
+  std::vector<DatabaseConstituent> fetchAll();
   bool isAvailable() const;
-  std::vector<DatabaseConstituent> search(std::string name);
+  std::vector<DatabaseConstituent> search(const std::string &name);
 
 private:
   database::ConstituentsDatabase *m_db;
