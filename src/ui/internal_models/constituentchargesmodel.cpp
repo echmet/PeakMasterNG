@@ -79,7 +79,7 @@ QVariant ConstituentChargesModel::data(const QModelIndex &index, int role) const
     return std::get<1>(m_charges.at(urow));
   case 1:
   {
-    if (std::get<0>(m_charges.at(urow)) == 0)
+    if (std::get<0>(m_charges.at(urow)) == 0 || m_charges.size() == 1)
       return "-";
 
     return std::get<2>(m_charges.at(urow));
