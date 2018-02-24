@@ -9,6 +9,8 @@
 #include <memory>
 #include <QPointF>
 
+#include <QDebug>
+
 void destroyCZESystem(ECHMET::LEMNG::CZESystem *czeSystem)
 {
   ECHMET::LEMNG::releaseCZESystem(czeSystem);
@@ -151,9 +153,10 @@ void fillBackgroundIonicComposition(ResultsData &rData, const ECHMET::LEMNG::RCo
   rData.backgroundCompositionRefresh(totalLowest, totalHighest, std::move(constituents), std::move(complexForms), std::move(concentrations));
 }
 
-CalculatorInterfaceException::CalculatorInterfaceException(const char *message, const bool isBGEValid) :
+CalculatorInterfaceException::CalculatorInterfaceException(const char *message, const bool isBGEValid, const bool isAnalytesDissociationValid) :
   std::runtime_error{message},
-  isBGEValid{isBGEValid}
+  isBGEValid{isBGEValid},
+  isAnalytesDissociationValid{isAnalytesDissociationValid}
 {
 }
 
@@ -247,7 +250,9 @@ void CalculatorInterface::calculate(const bool correctForDebyeHuckel, const bool
   if (tRet != ECHMET::LEMNG::RetCode::OK) {
     if (m_ctx.results->isBGEValid)
       m_ctx.makeBGEValid();
-    throw CalculatorInterfaceException{czeSystem->lastErrorString(), m_ctx.results->isBGEValid};
+    if (m_ctx.results->isAnalytesDissociationValid)
+      m_ctx.makeAnalytesDissociationValid();
+    throw CalculatorInterfaceException{czeSystem->lastErrorString(), m_ctx.results->isBGEValid, m_ctx.results->isAnalytesDissociationValid};
   }
 
   m_ctx.makeValid();
@@ -258,6 +263,21 @@ void CalculatorInterface::fillAnalytesList()
   for (const auto &it : m_sampleGDM) {
     if (m_backgroundGDM.find(it.name()) == m_backgroundGDM.cend())
       m_ctx.analytes.emplace_back(it.name());
+  }
+}
+
+void CalculatorInterface::mapResultsAnalytesDissociation()
+{
+  const auto anDissoc = m_ctx.results->analytesDissociation;
+
+  for (size_t idx = 0; idx < anDissoc->size(); idx++) {
+    const auto &dA = anDissoc->at(idx);
+
+    qDebug() << dA.name->c_str() << dA.effectiveMobility;
+
+    for (size_t jdx = 0; jdx < dA.ratios->size(); jdx++) {
+      qDebug() << "\t" << dA.ratios->at(jdx).name->c_str() << dA.ratios->at(jdx).fraction;
+    }
   }
 }
 
@@ -283,6 +303,7 @@ void CalculatorInterface::mapResults(const double totalLength, const double dete
                                      const double EOFMobility)
 {
   mapResultsBGE(totalLength, detectorPosition, drivingVoltage, EOFMobility);
+  mapResultsAnalytesDissociation();
 
   /* Map system eigenzones */
   recalculateTimesInternal(totalLength, detectorPosition, drivingVoltage, EOFMobility);
@@ -382,6 +403,9 @@ void CalculatorInterface::publishResults(double totalLength, double detectorPosi
 
   if (m_ctx.isBGEValid())
     mapResultsBGE(totalLength, detectorPosition, drivingVoltage, EOFMobility);
+
+  if (m_ctx.isAnalytesDissociationValid())
+    mapResultsAnalytesDissociation();
 }
 
 

@@ -13,9 +13,10 @@ namespace gdm {
 
 class CalculatorInterfaceException : public std::runtime_error {
 public:
-  explicit CalculatorInterfaceException(const char *message, const bool isBGEValid = false);
+  explicit CalculatorInterfaceException(const char *message, const bool isBGEValid = false, const bool isAnalytesDissociationValid = false);
 
   const bool isBGEValid;
+  const bool isAnalytesDissociationValid;
 };
 
 class CalculatorInterface : public QObject {
@@ -98,6 +99,7 @@ public slots:
 
 private:
   void fillAnalytesList();
+  void mapResultsAnalytesDissociation();
   void mapResultsBGE(const double totalLength, const double detectorPosition, const double drivingVoltage, const double EOFMobility);
   void mapResults(const double totalLength, const double detectorPosition, const double drivingVoltage, const double EOFMobility);
   double mobilityToTime(const double totalLength, const double detectorPosition, const double drivingVoltage, const double EOFMobility, const double u) const;
