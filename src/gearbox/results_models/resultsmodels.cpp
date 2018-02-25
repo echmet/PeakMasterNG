@@ -7,6 +7,11 @@ ResultsModels::ResultsModels(ResultsContainer &container) :
 {
 }
 
+AnalytesDissociationModel *ResultsModels::analytesDissociationModel()
+{
+  return m_container.m_analytesDissociationModel.get();
+}
+
 BackgroundPropertiesMapping::MapperModel * ResultsModels::backgroundMapperModel()
 {
   return m_container.m_backgroundPropsModel.get();

@@ -9,8 +9,6 @@
 #include <memory>
 #include <QPointF>
 
-#include <QDebug>
-
 void destroyCZESystem(ECHMET::LEMNG::CZESystem *czeSystem)
 {
   ECHMET::LEMNG::releaseCZESystem(czeSystem);
@@ -187,7 +185,7 @@ CalculatorInterface::CalculatorInterface(CalculatorInterface &&other) noexcept :
 }
 
 CalculatorInterface::~CalculatorInterface() noexcept
-{ 
+{
 }
 
 QVector<QString> CalculatorInterface::allConstituents() const
@@ -268,17 +266,25 @@ void CalculatorInterface::fillAnalytesList()
 
 void CalculatorInterface::mapResultsAnalytesDissociation()
 {
+  std::map<std::string, AnalytesDissociationModel::DissociatedAnalyte> analytes{};
   const auto anDissoc = m_ctx.results->analytesDissociation;
 
   for (size_t idx = 0; idx < anDissoc->size(); idx++) {
     const auto &dA = anDissoc->at(idx);
+    std::vector<AnalytesDissociationModel::DissociationRatio> ratios{};
 
-    qDebug() << dA.name->c_str() << dA.effectiveMobility;
+    ratios.reserve(dA.ratios->size());
 
     for (size_t jdx = 0; jdx < dA.ratios->size(); jdx++) {
-      qDebug() << "\t" << dA.ratios->at(jdx).name->c_str() << dA.ratios->at(jdx).fraction;
+      const auto &r = dA.ratios->at(jdx);
+
+      ratios.emplace_back(std::string{r.name->c_str()}, r.fraction);
     }
+
+    analytes.emplace(std::string{dA.name->c_str()}, AnalytesDissociationModel::DissociatedAnalyte{dA.effectiveMobility, std::move(ratios)});
   }
+
+  m_resultsData.analytesDissociationRefresh(std::move(analytes));
 }
 
 void CalculatorInterface::mapResultsBGE(const double totalLength, const double detectorPosition, const double drivingVoltage,
@@ -327,6 +333,8 @@ double CalculatorInterface::mobilityToTime(const double totalLength, const doubl
 void CalculatorInterface::onInvalidate()
 {
   m_ctx.invalidate();
+
+  m_resultsData.analytesDissociationRefresh({});
 
   auto &data = m_resultsData.backgroundPropsData();
   data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::BUFFER_CAPACITY)] = 0.0;

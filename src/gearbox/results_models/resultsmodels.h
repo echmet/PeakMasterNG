@@ -4,6 +4,7 @@
 #include "backgroundpropertiesmodel.h"
 #include "systemeigenzonestablemodel.h"
 
+class AnalytesDissociationModel;
 class ResultsContainer;
 
 class ResultsModels
@@ -11,6 +12,7 @@ class ResultsModels
 public:
   ResultsModels() = delete;
   ResultsModels(ResultsContainer &container);
+  AnalytesDissociationModel * analytesDissociationModel();
   BackgroundPropertiesMapping::MapperModel * backgroundMapperModel();
   QAbstractTableModel * bgeIonicCompositionModel();
   QAbstractTableModel * eigenzoneDetailsModel();

@@ -13,6 +13,7 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
   QWidget{parent},
   ui{new Ui::MainControlWidget},
   m_runSetupMapperModel{this},
+  m_analytesDissociationModel{resultsModels.analytesDissociationModel()},
   m_bgeIonicCompositionModel{resultsModels.bgeIonicCompositionModel()},
   m_eigenzoneDetailsModel{resultsModels.eigenzoneDetailsModel()}
 {
@@ -23,7 +24,7 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
   ui->qtbv_systemEigenzones->setModel(resultsModels.systemEigenzonesModel());
   ui->qtbv_systemEigenzones->resizeColumnsToContents();
 
-  m_bgeIonicCompDlg = new IonicCompositionDialog{m_bgeIonicCompositionModel, this};
+  m_bgeIonicCompDlg = new IonicCompositionDialog{m_bgeIonicCompositionModel, m_analytesDissociationModel, this};
   m_bgeIonicCompDlg->setWindowTitle(tr("BGE ionic composition"));
   m_nonidealityCorrectionsDlg = new NonidealityCorrectionsDialog{this};
   connect(ui->qpb_nonidealityCorrections, &QPushButton::clicked, this, &MainControlWidget::onNonidealityCorrectionsClicked);

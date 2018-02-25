@@ -329,7 +329,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Details</string>
+        <string>Eigenzone details</string>
        </property>
       </widget>
      </item>
@@ -342,7 +342,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>BGE ionic composition</string>
+        <string>Ionic composition</string>
        </property>
       </widget>
      </item>

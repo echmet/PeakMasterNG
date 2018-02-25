@@ -121,7 +121,8 @@ SOURCES += \
     src/gearbox/efgcsvexporter.cpp \
     src/ui/csvexportoptionsdialog.cpp \
     src/ui/copiableitemsstableview.cpp \
-    src/ui/databasetableview.cpp
+    src/ui/databasetableview.cpp \
+    src/gearbox/results_models/analytesdissociationmodel.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -215,7 +216,8 @@ HEADERS += \
     src/gearbox/efgcsvexporter.h \
     src/ui/csvexportoptionsdialog.h \
     src/ui/copiableitemstableview.h \
-    src/ui/databasetableview.h
+    src/ui/databasetableview.h \
+    src/gearbox/results_models/analytesdissociationmodel.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \

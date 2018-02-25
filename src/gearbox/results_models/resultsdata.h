@@ -1,6 +1,7 @@
 #ifndef RESULTSDATA_H
 #define RESULTSDATA_H
 
+#include "analytesdissociationmodel.h"
 #include "backgroundpropertiesmodel.h"
 #include "eigenzonedetailsmodel.h"
 #include "ioniccompositionmodel.h"
@@ -15,6 +16,8 @@ class ResultsData
 public:
   ResultsData() = delete;
   ResultsData(ResultsContainer &container);
+
+  void analytesDissociationRefresh(std::map<std::string, AnalytesDissociationModel::DissociatedAnalyte> &&analytes);
 
   void backgroundCompositionRefresh(const int lowestCharge, const int highestCharge,
                                     QVector<QString> &&constituents,

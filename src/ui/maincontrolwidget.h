@@ -11,6 +11,7 @@ namespace Ui {
   class MainControlWidget;
 }
 
+class AnalytesDissociationModel;
 class EigenzoneDetailsDialog;
 class IonicCompositionDialog;
 class NonidealityCorrectionsDialog;
@@ -73,6 +74,7 @@ private:
 
   QDataWidgetMapper *m_backgroundPropsMapper;
 
+  AnalytesDissociationModel *m_analytesDissociationModel;
   QAbstractTableModel *m_bgeIonicCompositionModel;
   QAbstractTableModel *m_eigenzoneDetailsModel;
 
