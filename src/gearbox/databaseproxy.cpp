@@ -24,7 +24,6 @@ DatabaseConstituent makeDatabaseConstituent(const database::Constituent &c)
 std::vector<DatabaseConstituent> doQuery(database::ConstituentsDatabase *dbh,
                                          const database::ConstituentsDatabase::MatchType match, std::string name)
 {
-
   database::SearchResults _results{};
   std::vector<DatabaseConstituent> results{};
 
@@ -34,7 +33,7 @@ std::vector<DatabaseConstituent> doQuery(database::ConstituentsDatabase *dbh,
   tRet = dbh->searchByName(name.c_str(), match, _results);
   switch (tRet) {
   case database::ConstituentsDatabase::RetCode::OK:
-    break; /* Fall through */
+    break;
   case database::ConstituentsDatabase::RetCode::E_DB_NO_RECORD:
     return {};
   default:
