@@ -34,6 +34,7 @@ private:
 private slots:
   void onAccept();
   void onReject();
+  void onViscosityCorrectionToggled(const int state);
 };
 
 #endif // NONIDEALITYCORRECTIONSDIALOG_H

@@ -1,12 +1,15 @@
 #include "nonidealitycorrectionsdialog.h"
 #include "ui_nonidealitycorrectionsdialog.h"
 
+#include <QMessageBox>
+
 NonidealityCorrectionsDialog::NonidealityCorrectionsDialog(QWidget *parent) :
   QDialog{parent},
   ui{new Ui::NonidealityCorrectionsDialog}
 {
   ui->setupUi(this);
 
+  connect(ui->qcb_viscosity, &QCheckBox::stateChanged, this, &NonidealityCorrectionsDialog::onViscosityCorrectionToggled);
   connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &NonidealityCorrectionsDialog::onAccept);
   connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &NonidealityCorrectionsDialog::onReject);
 }
@@ -49,4 +52,20 @@ void NonidealityCorrectionsDialog::setState(const State &state)
 NonidealityCorrectionsDialog::State NonidealityCorrectionsDialog::state() const
 {
   return {ui->qcb_debyeHuckel->isChecked(), ui->qcb_onsagerFuoss->isChecked(), ui->qcb_viscosity->isChecked()};
+}
+
+void NonidealityCorrectionsDialog::onViscosityCorrectionToggled(const int state)
+{
+  if (state == Qt::Checked) {
+    QMessageBox msg{QMessageBox::Warning,
+                    tr("Confirm action"),
+                    tr("Current implementation of viscosity correction is very approximative and unlikely to yield better results "
+                       "unless you are familiar with its specifics and scope of validity.\n\n"
+                       "Are you sure you want to enable viscosity corrrection?"),
+                    QMessageBox::Yes | QMessageBox::No};
+
+    int ret = msg.exec();
+    if (ret != QMessageBox::Yes)
+      ui->qcb_viscosity->setCheckState(Qt::Unchecked);
+  }
 }
