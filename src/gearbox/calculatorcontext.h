@@ -18,10 +18,8 @@ public:
   CalculatorContext(CalculatorContext &&other) noexcept;
   ~CalculatorContext() noexcept;
   void invalidate();
-  bool isAnalytesDissociationValid() const;
   bool isBGEValid() const;
   bool isValid() const;
-  void makeAnalytesDissociationValid();
   void makeBGEValid();
   void makeValid();
 
@@ -29,7 +27,6 @@ public:
   ECHMET::LEMNG::Results *results;
 
 private:
-  bool m_isAnalytesDissociationValid;
   bool m_isBGEValid;
   bool m_isValid;
 };

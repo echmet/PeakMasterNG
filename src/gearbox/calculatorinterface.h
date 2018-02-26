@@ -13,10 +13,9 @@ namespace gdm {
 
 class CalculatorInterfaceException : public std::runtime_error {
 public:
-  explicit CalculatorInterfaceException(const char *message, const bool isBGEValid = false, const bool isAnalytesDissociationValid = false);
+  explicit CalculatorInterfaceException(const char *message, const bool isBGEValid = false);
 
   const bool isBGEValid;
-  const bool isAnalytesDissociationValid;
 };
 
 class CalculatorInterface : public QObject {

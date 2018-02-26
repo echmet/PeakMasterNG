@@ -151,10 +151,9 @@ void fillBackgroundIonicComposition(ResultsData &rData, const ECHMET::LEMNG::RCo
   rData.backgroundCompositionRefresh(totalLowest, totalHighest, std::move(constituents), std::move(complexForms), std::move(concentrations));
 }
 
-CalculatorInterfaceException::CalculatorInterfaceException(const char *message, const bool isBGEValid, const bool isAnalytesDissociationValid) :
+CalculatorInterfaceException::CalculatorInterfaceException(const char *message, const bool isBGEValid) :
   std::runtime_error{message},
-  isBGEValid{isBGEValid},
-  isAnalytesDissociationValid{isAnalytesDissociationValid}
+  isBGEValid{isBGEValid}
 {
 }
 
@@ -248,9 +247,7 @@ void CalculatorInterface::calculate(const bool correctForDebyeHuckel, const bool
   if (tRet != ECHMET::LEMNG::RetCode::OK) {
     if (m_ctx.results->isBGEValid)
       m_ctx.makeBGEValid();
-    if (m_ctx.results->isAnalytesDissociationValid)
-      m_ctx.makeAnalytesDissociationValid();
-    throw CalculatorInterfaceException{czeSystem->lastErrorString(), m_ctx.results->isBGEValid, m_ctx.results->isAnalytesDissociationValid};
+    throw CalculatorInterfaceException{czeSystem->lastErrorString(), m_ctx.results->isBGEValid};
   }
 
   m_ctx.makeValid();
@@ -405,15 +402,13 @@ void CalculatorInterface::publishResults(double totalLength, double detectorPosi
   const double EOFMobility = EOFMobilityFromInput(EOFValue, EOFvt, totalLength, detectorPosition, drivingVoltage);
 
   if (m_ctx.isValid()) {
+    mapResultsAnalytesDissociation();
     mapResults(totalLength, detectorPosition, drivingVoltage, EOFMobility);
     return;
   }
 
   if (m_ctx.isBGEValid())
     mapResultsBGE(totalLength, detectorPosition, drivingVoltage, EOFMobility);
-
-  if (m_ctx.isAnalytesDissociationValid())
-    mapResultsAnalytesDissociation();
 }
 
 
