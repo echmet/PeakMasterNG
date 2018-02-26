@@ -942,9 +942,6 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::searchByName(const char *nam
   if (m_dbh == nullptr)
     return RetCode::E_DB_NOT_OPEN;
 
-  if (strlen(name) < 1)
-    return RetCode::OK;
-
   switch (match) {
   case MatchType::BEGINS_WITH:
     ret = asprintf(&pattern, "%s%%", name);
@@ -971,6 +968,9 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::searchByName(const char *nam
   if (match == MatchType::ENTIRE_DB) {
     searchStmt = m_searchAll();
   } else {
+    if (strlen(name) < 1)
+      return RetCode::OK;
+
     ret = sqlite3_bind_text(m_searchByName(), 1, pattern, -1, &sqliteBoundStringDestructor);
     if (ret != SQLITE_OK) {
       m_lastDBError = std::string(sqlite3_errmsg(m_dbh()));

@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
                                                                      gbox.complexationManager(), gbox.databaseProxy()};
   gbox.setUICompositionModels(scompWidget->analytesModel(), scompWidget->backgroundModel());
 
-  PMNGMainWindow *w = new PMNGMainWindow{scompWidget, gbox.calculatorInterface(), gbox.resultsModels(), gbox.persistence()};
+  PMNGMainWindow *w = new PMNGMainWindow{scompWidget, gbox.calculatorInterface(), gbox.resultsModels(), gbox.persistence(), gbox.databaseProxy()};
   QObject::connect(w, &PMNGMainWindow::clearAll, &gbox, &Gearbox::onClearAll);
 
   PMNGCrashHandler::checkForCrash();

@@ -12,6 +12,7 @@
 #include "operationinprogressdialog.h"
 #include "../gearbox/efgdisplayer.h"
 #include "../gearbox/efgcsvexporter.h"
+#include "databaseeditordialog.h"
 
 #include <QDialogButtonBox>
 #include <QDataWidgetMapper>
@@ -60,6 +61,7 @@ QVector<PMNGMainWindow::SignalItem> PMNGMainWindow::s_defaultSignalItems{
 PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
                                CalculatorInterface &&calcIface, ResultsModels resultsModels,
                                persistence::Persistence &persistence,
+                               DatabaseProxy &dbProxy,
                                QWidget *parent) :
   QMainWindow{parent},
   m_calcIface{calcIface},
@@ -69,6 +71,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   m_persistence{persistence},
   m_lastLoadPath{""},
   m_lastSavePath{""},
+  h_dbProxy{dbProxy},
   ui{new Ui::PMNGMainWindow}
 {
   ui->setupUi(this);
@@ -104,6 +107,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   connect(ui->actionLoad, &QAction::triggered, this, &PMNGMainWindow::onLoad);
   connect(ui->actionSave, &QAction::triggered, this, &PMNGMainWindow::onSave);
   connect(ui->actionExportEFGAsCSV, &QAction::triggered, this, &PMNGMainWindow::onExportElectrophoregramAsCSV);
+  connect(ui->actionDatabase_editor, &QAction::triggered, this, &PMNGMainWindow::onDatabaseEditor);
 
   ui->mainToolBar->addWidget(m_qpb_new);
   ui->mainToolBar->addWidget(m_qpb_load);
@@ -244,6 +248,12 @@ void PMNGMainWindow::onCompositionChanged()
 {
   m_calcIface.onInvalidate();
   m_signalPlotWidget->clear();
+}
+
+void PMNGMainWindow::onDatabaseEditor()
+{
+  DatabaseEditorDialog dlg{h_dbProxy, this};
+  dlg.exec();
 }
 
 void PMNGMainWindow::onExit()

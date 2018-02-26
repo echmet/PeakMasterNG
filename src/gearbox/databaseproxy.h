@@ -14,6 +14,7 @@ typedef std::map<int, double> DBChargePropsMap;
 
 class DatabaseConstituent {
 public:
+  const int64_t id;
   const QString name;
   const DBChargePropsMap pKas;
   const DBChargePropsMap mobilities;
@@ -31,6 +32,7 @@ public:
   DatabaseProxy();
   ~DatabaseProxy() noexcept;
   bool addConstituent(const std::string &name, const std::vector<double> &pKas, const std::vector<double> &mobilities, const int chargeLow, const int chargewHigh);
+  void deleteById(const int64_t id);
   std::vector<DatabaseConstituent> fetchAll();
   bool isAvailable() const;
   std::vector<DatabaseConstituent> search(const std::string &name);

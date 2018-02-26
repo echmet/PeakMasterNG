@@ -15,6 +15,7 @@ namespace persistence {
 }
 
 class CalculatorInterface;
+class DatabaseProxy;
 class EFGDisplayer;
 class MainControlWidget;
 class ResultsModels;
@@ -38,6 +39,7 @@ public:
   explicit PMNGMainWindow(SystemCompositionWidget *scompWidget,
                           CalculatorInterface &&calcIface, ResultsModels resultsModels,
                           persistence::Persistence &persistence,
+                          DatabaseProxy &dbProxy,
                           QWidget *parent = nullptr);
   ~PMNGMainWindow();
 
@@ -77,6 +79,8 @@ private:
   QString m_lastLoadPath;
   QString m_lastSavePath;
 
+  DatabaseProxy &h_dbProxy;
+
   Ui::PMNGMainWindow *ui;
 
   static QVector<SignalItem> s_defaultSignalItems;
@@ -86,10 +90,11 @@ private slots:
   void onAutoPlotCutoffStateChanged(const int state);
   void onCalculate();
   void onCompositionChanged();
+  void onDatabaseEditor();
   void onLoad();
-  void onNew();
   void onExit();
   void onExportElectrophoregramAsCSV();
+  void onNew();
   void onPlotElectrophoregram();
   void onRunSetupChanged(const bool invalidate);
   void onSave();

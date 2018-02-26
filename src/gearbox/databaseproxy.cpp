@@ -18,7 +18,7 @@ DatabaseConstituent makeDatabaseConstituent(const database::Constituent &c)
   assert(pKas.find(bChg) == pKas.cend());
   pKas.emplace(bChg, 0);
 
-  return DatabaseConstituent{QString::fromStdString(c.name()), pKas, c.mobilities(), c.chargeLow(), c.chargeHigh()};
+  return DatabaseConstituent{c.id(), QString::fromStdString(c.name()), pKas, c.mobilities(), c.chargeLow(), c.chargeHigh()};
 }
 
 std::vector<DatabaseConstituent> doQuery(database::ConstituentsDatabase *dbh,
@@ -81,6 +81,11 @@ bool DatabaseProxy::addConstituent(const std::string &name, const std::vector<do
   const auto  tRet = m_db->addConstituent(name.c_str(), chargeLow, chargeHigh, properties);
 
   return tRet == database::ConstituentsDatabase::RetCode::OK;
+}
+
+void DatabaseProxy::deleteById(const int64_t id)
+{
+  m_db->deleteConstituent(id);
 }
 
 std::vector<DatabaseConstituent> DatabaseProxy::fetchAll()
