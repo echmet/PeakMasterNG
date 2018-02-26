@@ -39,9 +39,11 @@ void NonidealityCorrectionsDialog::onReject()
 
 void NonidealityCorrectionsDialog::setState(const bool debyeHuckel, const bool onsagerFuoss, const bool viscosity)
 {
+  disconnect(ui->qcb_viscosity, &QCheckBox::stateChanged, this, &NonidealityCorrectionsDialog::onViscosityCorrectionToggled);
   ui->qcb_debyeHuckel->setChecked(debyeHuckel);
   ui->qcb_onsagerFuoss->setChecked(onsagerFuoss);
   ui->qcb_viscosity->setChecked(viscosity);
+  connect(ui->qcb_viscosity, &QCheckBox::stateChanged, this, &NonidealityCorrectionsDialog::onViscosityCorrectionToggled);
 }
 
 void NonidealityCorrectionsDialog::setState(const State &state)
