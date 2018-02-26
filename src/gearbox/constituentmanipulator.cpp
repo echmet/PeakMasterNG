@@ -8,7 +8,7 @@
 #include <cassert>
 #include <QMessageBox>
 
-bool validateConstituentProperties(const EditConstituentDialog *dlg)
+bool ConstituentManipulator::validateConstituentProperties(const EditConstituentDialog *dlg)
 {
   const QString name = dlg->name();
   const auto pKas = dlg->pKas();
@@ -23,7 +23,7 @@ bool validateConstituentProperties(const EditConstituentDialog *dlg)
     return false;
   }
 
-  /* Try to create a physical properties of constituent */
+  /* Try to create physical properties of constituent */
   try {
     gdm::PhysicalProperties props{gdm::ChargeInterval{chargeLow, chargeHigh}, pKas, mobilities, viscosityCoefficient};
   } catch (gdm::InvalidArgument &ex) {

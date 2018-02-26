@@ -67,6 +67,7 @@ private:
 
 private slots:
   void onAccepted();
+  void onAddToDatabase();
   void onAddChargeLow();
   void onAddChargeHigh();
   void onPickFromDatabase();
@@ -76,6 +77,7 @@ private slots:
   void onViscosityCoefficientIndexChanged(const int idx);
 
 signals:
+  void addToDatabase(const EditConstituentDialog *me);
   void validateInput(const EditConstituentDialog *me, bool *ok);
 };
 

@@ -40,24 +40,26 @@ EditConstituentDialog::EditConstituentDialog(DatabaseProxy &dbProxy,
 
   ui->qle_name->setText(name);
 
-  if (props.charges().high() == props.charges().low() && props.charges().low() != 0) {
-    m_chargesModel.insertRow(0);
-    m_chargesModel.setHeaderData(0, Qt::Vertical, props.charges().low());
-    m_chargesModel.setData(m_chargesModel.index(0, ConstituentChargesModel::MOBILITY), props.mobility(props.charges().low()));
-    m_chargesModel.removeRow(m_chargesModel.rowCount() - 1);
-  } else {
-    for (int charge = -1; charge >= props.charges().low(); charge--) {
-      m_chargesModel.insertRow(0);
-      m_chargesModel.setData(m_chargesModel.index(0, ConstituentChargesModel::MOBILITY), props.mobility(charge));
-      m_chargesModel.setData(m_chargesModel.index(0, ConstituentChargesModel::PKA), props.pKa(charge));
-    }
+  const int chargeLow = props.charges().low();
+  const int chargeHigh = props.charges().high();
+  const int bChg = [&]() {
+    if (chargeHigh < 0)
+      return chargeHigh;
+    if (chargeLow > 0)
+      return chargeLow;
+    return 0;
+  }();
 
-    for (int charge = 1; charge <= props.charges().high(); charge++) {
-      m_chargesModel.insertRow(m_chargesModel.rowCount());
-      m_chargesModel.setData(m_chargesModel.index(m_chargesModel.rowCount() - 1, ConstituentChargesModel::MOBILITY), props.mobility(charge));
-      m_chargesModel.setData(m_chargesModel.index(m_chargesModel.rowCount() - 1, ConstituentChargesModel::PKA), props.pKa(charge));
-    }
+  std::map<int, double> pKas;
+  std::map<int, double> mobilities;
+  for (int charge = chargeLow; charge <= chargeHigh; charge++) {
+    mobilities.emplace(charge, props.mobility(charge));
+    if (charge != bChg)
+      pKas.emplace(charge, props.pKa(charge));
+    else
+      pKas.emplace(charge, 0);
   }
+  m_chargesModel.refreshData(pKas, mobilities, chargeLow, chargeHigh);
 
   setConstituentType(type);
   setViscosityElements(props.viscosityCoefficient());
@@ -108,6 +110,11 @@ void EditConstituentDialog::onAccepted()
 
   if (ok)
     accept();
+}
+
+void EditConstituentDialog::onAddToDatabase()
+{
+  emit addToDatabase(this);
 }
 
 void EditConstituentDialog::onAddChargeLow()
@@ -186,7 +193,7 @@ std::vector<double> EditConstituentDialog::pKas() const
 
   for (int row = 0; row < m_chargesModel.rowCount(); row++) {
     const int charge = m_chargesModel.headerData(row, Qt::Vertical).toInt();
-    if (charge == 0)
+    if (m_chargesModel.isBaseCharge(charge))
       continue;
 
     pKas.emplace_back(m_chargesModel.data(m_chargesModel.index(row, ConstituentChargesModel::PKA)).toReal());
@@ -245,6 +252,7 @@ void EditConstituentDialog::setupWidget()
   connect(m_qpb_removeLow, &QPushButton::clicked, this, &EditConstituentDialog::onRemoveChargeLow);
   connect(m_qpb_addHigh, &QPushButton::clicked, this, &EditConstituentDialog::onAddChargeHigh);
   connect(m_qpb_removeHigh, &QPushButton::clicked, this, &EditConstituentDialog::onRemoveChargeHigh);
+  connect(ui->qpb_addToDatabase, &QPushButton::clicked, this, &EditConstituentDialog::onAddToDatabase);
 
   ui->qlay_lowChargeButtons->layout()->addWidget(m_qpb_addLow);
   ui->qlay_lowChargeButtons->layout()->addWidget(m_qpb_removeLow);

@@ -10,17 +10,15 @@ const char *DatabaseProxy::DATABASE_PATH = "pmng_db.sql";
 
 DatabaseConstituent makeDatabaseConstituent(const database::Constituent &c)
 {
-  std::map<int, double> pKas;
-  std::map<int, double> mobilities;
+  assert(c.chargeLow() <= c.chargeHigh());
 
-  assert(c.n() <= c.p());
+  auto pKas = c.pKas();
 
-  for (int charge = c.n(); charge <= c.p(); charge++) {
-    pKas.emplace(charge, c.pKa(charge));
-    mobilities.emplace(charge, c.mobility(charge));
-  }
+  const int bChg = database::ConstituentsDatabase::baseCharge(c.chargeLow(), c.chargeHigh());
+  assert(pKas.find(bChg) == pKas.cend());
+  pKas.emplace(bChg, 0);
 
-  return DatabaseConstituent{QString::fromStdString(c.name()), std::move(pKas), std::move(mobilities), c.n(), c.p()};
+  return DatabaseConstituent{QString::fromStdString(c.name()), pKas, c.mobilities(), c.chargeLow(), c.chargeHigh()};
 }
 
 std::vector<DatabaseConstituent> doQuery(database::ConstituentsDatabase *dbh,
@@ -67,6 +65,23 @@ DatabaseProxy::~DatabaseProxy() noexcept
 {
   if (m_db != nullptr)
     delete m_db;
+}
+
+bool DatabaseProxy::addConstituent(const std::string &name, const std::vector<double> &pKas, const std::vector<double> &mobilities, const int chargeLow, const int chargeHigh)
+{
+  std::vector<std::tuple<int, double, double>>  properties;
+
+  const int bChg = database::ConstituentsDatabase::baseCharge(chargeLow, chargeHigh);
+  for (int charge = chargeLow; charge <= chargeHigh; charge++) {
+    if (charge == bChg)
+      properties.emplace_back(charge, mobilities.at(charge - chargeLow), 0);
+    else
+      properties.emplace_back(charge, mobilities.at(charge - chargeLow), pKas.at(charge - chargeLow - (charge > bChg)));
+  }
+
+  const auto  tRet = m_db->addConstituent(name.c_str(), chargeLow, chargeHigh, properties);
+
+  return tRet == database::ConstituentsDatabase::RetCode::OK;
 }
 
 std::vector<DatabaseConstituent> DatabaseProxy::fetchAll()

@@ -78,6 +78,15 @@ void sqlite3_stmt_deleter(sqlite3_stmt *stmt) noexcept
     sqlite3_finalize(stmt);
 }
 
+int ConstituentsDatabase::baseCharge(const int chargeLow, const int chargeHigh) noexcept
+{
+  if (chargeHigh < 0)
+    return chargeHigh;
+  if (chargeLow > 0)
+    return chargeLow;
+  return 0;
+}
+
 template <typename... Args>
 ConstituentsDatabase::SQLiteStmtPtr ConstituentsDatabase::makeStatement(Args ...args)
 {
@@ -116,6 +125,9 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::addConstituent(const char *n
 
   if (m_dbh == nullptr)
     return RetCode::E_DB_NOT_OPEN;
+
+  if (strlen(name) < 1)
+    return RetCode::E_DB_INV_ARG;
 
   /* Bind statements */
   ret = sqlite3_bind_text(m_constituentExists(), 1, name, -1, SQLITE_STATIC);
@@ -809,6 +821,7 @@ out:
 ConstituentsDatabase::RetCode ConstituentsDatabase::insertConstituentProperties(const int64_t id,
                                                                                 const std::vector<std::tuple<int, double, double>> &properties)
 {
+  const int bChg = baseCharge(std::get<0>(properties.front()), std::get<0>(properties.back()));
   RetCode tRet = RetCode::E_DB_INV_ARG;
 
   for (size_t idx = 0; idx < properties.size(); idx++) {
@@ -816,7 +829,7 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::insertConstituentProperties(
     const auto mobility = std::get<1>(properties.at(idx));
     const auto pKa = std::get<2>(properties.at(idx));
 
-    if (charge != 0) {
+    if (charge != bChg) {
       tRet = insertConstituentPKa(id, charge, pKa);
       if (tRet != RetCode::OK)
         return tRet;
@@ -929,6 +942,9 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::searchByName(const char *nam
   if (m_dbh == nullptr)
     return RetCode::E_DB_NOT_OPEN;
 
+  if (strlen(name) < 1)
+    return RetCode::OK;
+
   switch (match) {
   case MatchType::BEGINS_WITH:
     ret = asprintf(&pattern, "%s%%", name);
@@ -971,8 +987,6 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::searchByName(const char *nam
     int chargeLow;
     int chargeHigh;
     Constituent c;
-    std::vector<std::pair<int, double>> pKas{};
-    std::vector<std::pair<int, double>> mobilities{};
 
     sqlite3_reset(m_fetchPKa());
     sqlite3_reset(m_fetchMobility());
@@ -987,7 +1001,7 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::searchByName(const char *nam
       chargeHigh = sqlite3_column_int(searchStmt, 2);
 
       c = Constituent{id, pName, chargeLow, chargeHigh};
-    } catch (...) {
+    } catch (const Constituent::ConstituentOperationException &) {
       tRet =  RetCode::E_DB_DATA;
       goto out;
     }
@@ -1004,36 +1018,23 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::searchByName(const char *nam
       const int transition = sqlite3_column_int(m_fetchPKa(), 0);
       const double pKa = sqlite3_column_double(m_fetchPKa(), 1);
 
-      pKas.emplace_back(transition, pKa);
+      try {
+        c.addpKa(transition, pKa);
+      } catch (Constituent::ConstituentOperationException &) {
+        tRet = RetCode::E_DB_DATA;
+        goto out;
+      }
     }
 
     while ((iret = sqlite3_step(m_fetchMobility())) == SQLITE_ROW) {
       const int charge = sqlite3_column_int(m_fetchMobility(), 0);
       const double mobility = sqlite3_column_double(m_fetchMobility(), 1);
 
-      mobilities.emplace_back(charge, mobility);
-    }
-
-    if (pKas.size() +1 != mobilities.size()) {
-      tRet = RetCode::E_DB_DATA;
-      goto out;
-    }
-
-    for (int charge = chargeLow; charge <= chargeHigh; charge++) {
-      const auto &mobility = mobilities.at(charge - chargeLow);
-      if (charge == 0)
-        c.addState(0, std::get<1>(mobility), 0); /* pKa value is ignored for zero charge */
-      else {
-        const auto &pKa = pKas.at(charge - chargeLow - (charge > 0));
-        if (std::get<0>(pKa) != std::get<0>(mobility)) {
-          tRet = RetCode::E_DB_DATA;
-          goto out;
-        }
-
-        if (!c.addState(charge, std::get<1>(pKa), std::get<1>(mobility))) {
-          tRet = RetCode::E_DB_DATA;
-          goto out;
-        }
+      try {
+        c.addMobility(charge, mobility);
+      } catch (Constituent::ConstituentOperationException &) {
+        tRet = RetCode::E_DB_DATA;
+        goto out;
       }
     }
 

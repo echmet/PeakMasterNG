@@ -8,13 +8,15 @@
 
 namespace database {
   class ConstituentsDatabase;
-};
+}
+
+typedef std::map<int, double> DBChargePropsMap;
 
 class DatabaseConstituent {
 public:
   const QString name;
-  const std::map<int, double> pKas;
-  const std::map<int, double> mobilities;
+  const DBChargePropsMap pKas;
+  const DBChargePropsMap mobilities;
   const int chargeLow;
   const int chargeHigh;
 };
@@ -28,6 +30,7 @@ class DatabaseProxy {
 public:
   DatabaseProxy();
   ~DatabaseProxy() noexcept;
+  bool addConstituent(const std::string &name, const std::vector<double> &pKas, const std::vector<double> &mobilities, const int chargeLow, const int chargewHigh);
   std::vector<DatabaseConstituent> fetchAll();
   bool isAvailable() const;
   std::vector<DatabaseConstituent> search(const std::string &name);

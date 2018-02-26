@@ -1,70 +1,64 @@
 #ifndef DATABASE_CONSTITUENT_H
 #define DATABASE_CONSTITUENT_H
 
+#include <stdexcept>
+#include <map>
 #include <string>
-#include <vector>
 
 namespace database {
 
 class Constituent
 {
 public:
-  class invalid_charge_range : public std::exception {
-    virtual const char *what() const noexcept
-    {
-      return "Charge range is invalid";
-    }
-  };
-  class data_uninitialized : public std::exception {
-    virtual const char *what() const noexcept
-    {
-      return "Constituent data have not been set";
-    }
-  };
-  class charge_already_set : public std::exception {
-    virtual const char *what() const noexcept
-    {
-      return "Charges were already set for this constituent";
-    }
+  class ConstituentOperationException : public std::runtime_error {
+  public:
+    using std::runtime_error::runtime_error;
   };
 
-  struct State {
-    explicit State();
-    explicit State(const State &other);
-    explicit State(const double mobility, const double pKa);
-
-    const double mobility;
-    const double pKa;
-
-    State & operator=(const State &other);
+  class PropertyAlreadySetException : public ConstituentOperationException {
+  public:
+    PropertyAlreadySetException() : ConstituentOperationException{"Property for this charge has already been set"} {}
   };
 
-  typedef std::vector<State> States;
+  class ChargeOutOfBoundsException : public ConstituentOperationException {
+  public:
+    ChargeOutOfBoundsException() : ConstituentOperationException{"Charge out of bounds"} {}
+  };
+
+  class InvalidChargeRangeException : public ConstituentOperationException {
+  public:
+    InvalidChargeRangeException() : ConstituentOperationException{"Charge range is invalid"} {}
+  };
 
   explicit Constituent();
   explicit Constituent(const Constituent &other);
   explicit Constituent(Constituent &&other) noexcept;
-  explicit Constituent(const int64_t id, const std::string &name, const int n, const int p);
-  bool addState(const int charge, const double pKa, const double mobility);
+  explicit Constituent(const int64_t id, const std::string &name, const int chargeLow, const int chargeHigh);
+  void addMobility(const int charge, const double mobility);
+  void addpKa(const int charge, const double pKa);
   int64_t id() const;
   double mobility(const int charge) const;
-  int n() const;
+  const std::map<int, double> & mobilities() const;
+  int chargeLow() const;
   std::string name() const;
-  int p() const;
+  int chargeHigh() const;
   double pKa(const int charge) const;
+  const std::map<int, double> & pKas() const;
   void setConstituent(const std::string &name, const int n, const int p);
 
-  Constituent &operator=(const Constituent &other);
+  Constituent & operator=(const Constituent &other);
+  Constituent & operator=(Constituent &&other) noexcept;
 
 private:
-  void checkChargesSet() const;
-  bool chargeInBounds(const int charge) const;
+  void chargeInBounds(const int charge) const;
 
   const int64_t m_id;
-  int m_n;
-  int m_p;
-  std::string m_name;
-  States m_states;
+  const int m_chargeLow;
+  const int m_chargeHigh;
+  const std::string m_name;
+
+  std::map<int, double> m_mobilities;
+  std::map<int, double> m_pKas;
 
 };
 

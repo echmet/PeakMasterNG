@@ -6,109 +6,93 @@
 
 namespace database {
 
-Constituent::State::State() :
-  mobility{0.0},
-  pKa{0.0}
-{
-}
-
-Constituent::State::State(const State &other) :
-  mobility{other.mobility},
-  pKa{other.pKa}
-{
-}
-
-Constituent::State::State(const double mobility, const double pKa) :
-  mobility{mobility},
-  pKa{pKa}
-{
-}
-
-Constituent::State &Constituent::State::operator=(const State &other)
-{
-  const_cast<double&>(mobility) = other.mobility;
-  const_cast<double&>(pKa) = other.pKa;
-
-  return *this;
-}
-
 Constituent::Constituent() :
-  m_id{0},
-  m_n{0},
-  m_p{0}
-{
-}
+  m_id{-1},
+  m_chargeLow{0},
+  m_chargeHigh{0}
+{}
 
 Constituent::Constituent(const Constituent &other) :
   m_id{other.m_id},
-  m_n{other.m_n},
-  m_p{other.m_p},
+  m_chargeLow{other.m_chargeLow},
+  m_chargeHigh{other.m_chargeHigh},
   m_name{other.m_name},
-  m_states(other.m_states)
+  m_mobilities(other.m_mobilities),
+  m_pKas(other.m_pKas)
 {
 }
 
 Constituent::Constituent(Constituent &&other) noexcept :
- m_id{other.m_id},
- m_n{other.m_n},
- m_p{other.m_p},
- m_name{std::move(other.m_name)},
- m_states{std::move(other.m_states)}
+  m_id{other.m_id},
+  m_chargeLow{other.m_chargeLow},
+  m_chargeHigh{other.m_chargeHigh},
+  m_name{std::move(other.m_name)},
+  m_mobilities(std::move(other.m_mobilities)),
+  m_pKas(std::move(other.m_pKas))
 {
 }
 
-Constituent::Constituent(const int64_t id, const std::string &name, const int n, const int p) :
+Constituent::Constituent(const int64_t id, const std::string &name, const int chargeLow, const int chargeHigh) :
   m_id(id),
-  m_n(n),
-  m_p(p),
+  m_chargeLow(chargeLow),
+  m_chargeHigh(chargeHigh),
   m_name(name)
 {
-  int chargeRange = p - n;
+  int chargeRange = chargeHigh - chargeLow;
   if (chargeRange > std::numeric_limits<int>::max())
     throw std::out_of_range("Vector of states is too long");
-  if (n > 0 || p < 0)
-    throw invalid_charge_range();
-
-  m_states.resize(chargeRange + 1);
+  if (chargeLow > chargeHigh)
+    throw InvalidChargeRangeException{};
 }
 
-Constituent &Constituent::operator=(const Constituent &other)
+Constituent & Constituent::operator=(const Constituent &other)
 {
   const_cast<int64_t&>(m_id) = other.m_id;
-  m_n = other.m_n;
-  m_p = other.m_p;
-  m_name = other.m_name;
-
-  for (const State &s : other.m_states)
-    m_states.push_back(s);
+  const_cast<int&>(m_chargeLow) = other.m_chargeLow;
+  const_cast<int&>(m_chargeHigh) = other.m_chargeHigh;
+  const_cast<std::string&>(m_name) = other.m_name;
+  m_mobilities = other.m_mobilities;
+  m_pKas = other.m_pKas;
 
   return *this;
 }
 
-bool Constituent::chargeInBounds(const int charge) const
+Constituent & Constituent::operator=(Constituent &&other) noexcept
 {
-  return (charge >= m_n && charge <= m_p);
+  const_cast<int64_t&>(m_id) = other.m_id;
+  const_cast<int&>(m_chargeLow) = other.m_chargeLow;
+  const_cast<int&>(m_chargeHigh) = other.m_chargeHigh;
+  const_cast<std::string&>(m_name) = std::move(other.m_name);
+  m_mobilities = std::move(other.m_mobilities);
+  m_pKas = std::move(other.m_pKas);
+
+  return *this;
 }
 
-void Constituent::checkChargesSet() const
+void Constituent::chargeInBounds(const int charge) const
 {
-  if (m_p - m_n <= 0)
-    throw data_uninitialized{};
+  if (!(charge >= m_chargeLow && charge <= m_chargeHigh))
+    throw ChargeOutOfBoundsException{};
 }
 
-bool Constituent::addState(const int charge, const double pKa, const double mobility)
+void Constituent::addMobility(const int charge, const double mobility)
 {
-  checkChargesSet();
+  chargeInBounds(charge);
 
-  if (!chargeInBounds(charge))
-    return false;
+  if (m_mobilities.find(charge) != m_mobilities.cend())
+    throw PropertyAlreadySetException{};
 
-  if (charge == 0)
-    m_states[-m_n] = std::move(State{mobility, std::nan("")});
-  else
-    m_states[charge - m_n] = std::move(State{mobility, pKa});
+  m_mobilities.emplace(charge, mobility);
+}
 
-  return true;
+void Constituent::addpKa(const int charge, const double pKa)
+{
+  chargeInBounds(charge);
+
+  if (m_pKas.find(charge) != m_pKas.cend())
+    throw PropertyAlreadySetException{};
+
+  m_pKas.emplace(charge, pKa);
 }
 
 int64_t Constituent::id() const
@@ -118,17 +102,23 @@ int64_t Constituent::id() const
 
 double Constituent::mobility(const int charge) const
 {
-  checkChargesSet();
+ chargeInBounds(charge);
 
-  if (!chargeInBounds(charge))
-    throw std::out_of_range{"Charge out of bounds"};
+  const auto it = m_mobilities.find(charge);
+  if (it == m_mobilities.cend())
+    throw ChargeOutOfBoundsException{};
 
-  return m_states.at(charge - m_n).mobility;
+  return it->second;
 }
 
-int Constituent::n() const
+const std::map<int, double> & Constituent::mobilities() const
 {
-  return m_n;
+  return m_mobilities;
+}
+
+int Constituent::chargeLow() const
+{
+  return m_chargeLow;
 }
 
 std::string Constituent::name() const
@@ -136,37 +126,25 @@ std::string Constituent::name() const
   return m_name;
 }
 
-int Constituent::p() const
+int Constituent::chargeHigh() const
 {
-  return m_p;
+  return m_chargeHigh;
 }
 
 double Constituent::pKa(const int charge) const
 {
-  checkChargesSet();
+  chargeInBounds(charge);
 
-  if (!chargeInBounds(charge))
-    throw std::out_of_range("Charge out of bounds");
+  const auto it = m_pKas.find(charge);
+  if (it == m_pKas.cend())
+    throw ChargeOutOfBoundsException{};
 
-  return m_states.at(charge - m_n).pKa;
+  return it->second;
 }
 
-void Constituent::setConstituent(const std::string &name, const int n, const int p)
+const std::map<int, double> & Constituent::pKas() const
 {
-  if (m_n != 0 || m_p != 0)
-    throw charge_already_set();
-
-  if (n > 0 || p < 0 || p - n <= 0)
-    throw invalid_charge_range();
-
-  m_name = name;
-  m_n = n;
-  m_p = p;
-
-  m_states.clear();
-  m_states.resize(m_p - m_n + 1);
-
-  m_states[-m_n] = State{0.0, std::nan("")};
+  return m_pKas;
 }
 
 } // namespace database

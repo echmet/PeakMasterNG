@@ -60,6 +60,13 @@
     </widget>
    </item>
    <item>
+    <widget class="QPushButton" name="qpb_addToDatabase">
+     <property name="text">
+      <string>Add to database</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="qlay_lowChargeButtons">
      <item>
       <widget class="QLabel" name="ql_adjLowCharges">

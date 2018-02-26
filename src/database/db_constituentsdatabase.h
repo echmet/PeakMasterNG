@@ -57,6 +57,8 @@ public:
   std::string retCodeToString(const RetCode tRet) const;
   RetCode searchByName(const char *name, const MatchType match, SearchResults &results);
 
+  static int baseCharge(const int chargeLow, const int chargeHigh) noexcept;
+
 private:
   typedef void(* SQLiteDBHDeleter)(sqlite3 *);
   typedef void(* SQLiteStmtDeleter)(sqlite3_stmt *);

@@ -79,7 +79,7 @@ QVariant ConstituentChargesModel::data(const QModelIndex &index, int role) const
     return std::get<1>(m_charges.at(urow));
   case 1:
   {
-    if (std::get<0>(m_charges.at(urow)) == 0 || m_charges.size() == 1)
+    if (isBaseCharge(index))
       return "-";
 
     return std::get<2>(m_charges.at(urow));
@@ -135,12 +135,11 @@ Qt::ItemFlags ConstituentChargesModel::flags(const QModelIndex &index) const
   if (m_charges.size() <= urow)
     return Qt::NoItemFlags;
 
-  /* Properties of zero charge are immutable */
   if (std::get<0>(m_charges.at(urow)) == 0)
     return defaultFlags;
-  /* Changing pKa value if these is only one charge makes no sense */
-  if (index.column() == 1 && m_charges.size() == 1)
-    return defaultFlags;
+  /* Changing pKa value of the base charge makes no sense */
+ if (isBaseCharge(index) && index.column() == 1)
+   return defaultFlags;
 
   return defaultFlags | Qt::ItemIsEditable;
 }
@@ -187,6 +186,30 @@ bool ConstituentChargesModel::insertColumns(int column, int count, const QModelI
   Q_UNUSED(column); Q_UNUSED(count); Q_UNUSED(parent);
 
   return false;
+}
+
+bool ConstituentChargesModel::isBaseCharge(const int charge) const
+{
+  const int chargeLow = std::get<0>(m_charges.front());
+  const int chargeHigh = std::get<0>(m_charges.back());
+
+  assert(charge >= chargeLow && charge <= chargeHigh);
+
+  return isBaseCharge(createIndex(charge - chargeLow, 0));
+}
+
+bool ConstituentChargesModel::isBaseCharge(const QModelIndex &index) const
+{
+  const int row = index.row();
+  const int chargeLow = std::get<0>(m_charges.front());
+  const int chargeHigh = std::get<0>(m_charges.back());
+
+  if (chargeHigh < 0 && row == m_charges.size() - 1)
+    return true;
+  if (chargeLow > 0 && row == 0)
+    return true;
+
+  return std::get<0>(m_charges.at(row)) == 0;
 }
 
 bool ConstituentChargesModel::removeRows(int row, int count, const QModelIndex &parent)

@@ -39,6 +39,8 @@ public:
   bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
   bool insertColumns(int column, int count, const QModelIndex &parent = QModelIndex()) override;
 
+  bool isBaseCharge(const int charge) const;
+
   // Remove data:
   bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
   bool removeColumns(int column, int count, const QModelIndex &parent = QModelIndex()) override;
@@ -46,6 +48,8 @@ public:
   void refreshData(const std::map<int, double> &pKas, const std::map<int, double> &mobilities, const int chargeLow, const int chargeHigh);
 
 private:
+  bool isBaseCharge(const QModelIndex &index) const;
+
   std::vector<ChargeBlock> m_charges;
 };
 

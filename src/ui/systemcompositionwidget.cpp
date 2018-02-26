@@ -91,6 +91,7 @@ void SystemCompositionWidget::addConstituent(GDMProxy &proxy, AbstractConstituen
   ConstituentManipulator manipulator{proxy, m_viscosityCorrectionEnabled};
 
   connect(&dlg, &EditConstituentDialog::validateInput, &manipulator, &ConstituentManipulator::onValidateConstituentInput);
+  connect(&dlg, &EditConstituentDialog::addToDatabase, this, &SystemCompositionWidget::onAddToDatabase);
 
   if (dlg.exec() == QDialog::Accepted) {
     gdm::Constituent constituent = manipulator.makeConstituent(&dlg);
@@ -189,6 +190,15 @@ void SystemCompositionWidget::onAddAnalyte()
 void SystemCompositionWidget::onAddBGE()
 {
   addConstituent(h_backgroundGDM, m_backgroundConstituentsModel);
+}
+
+void SystemCompositionWidget::onAddToDatabase(const EditConstituentDialog *dlg)
+{
+  if (!ConstituentManipulator::validateConstituentProperties(dlg))
+    return;
+
+  const auto ctuent = ConstituentManipulator::makeConstituent(dlg);
+  h_dbProxy.addConstituent(ctuent.name(), ctuent.physicalProperties().pKas(), ctuent.physicalProperties().mobilities(), ctuent.physicalProperties().charges().low(), ctuent.physicalProperties().charges().high());
 }
 
 void SystemCompositionWidget::onAnalytesDoubleClicked(const QModelIndex &idx)

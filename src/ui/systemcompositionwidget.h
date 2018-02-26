@@ -11,6 +11,7 @@ namespace Ui {
 class AbstractConstituentsModelBase;
 class ComplexationColorizerDelegate;
 class ComplexationManager;
+class EditConstituentDialog;
 class DatabaseProxy;
 class GDMProxy;
 class FloatingValueDelegate;
@@ -55,6 +56,7 @@ private:
 private slots:
   void onAddAnalyte();
   void onAddBGE();
+  void onAddToDatabase(const EditConstituentDialog *dlg);
   void onAnalytesDoubleClicked(const QModelIndex &idx);
   void onBGEDoubleClicked(const QModelIndex &idx);
   void onCompositionChanged();
