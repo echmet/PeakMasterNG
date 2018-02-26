@@ -38,12 +38,10 @@ std::vector<std::tuple<int, double, double>> makeProperties(const std::vector<do
 }
 
 std::vector<DatabaseConstituent> doQuery(database::ConstituentsDatabase *dbh,
-                                         const database::ConstituentsDatabase::MatchType match, std::string name)
+                                         const database::ConstituentsDatabase::MatchType match, const std::string &name)
 {
   database::SearchResults _results{};
   std::vector<DatabaseConstituent> results{};
-
-  std::transform(name.begin(), name.end(), name.begin(), ::toupper);
 
   database::ConstituentsDatabase::RetCode tRet;
   tRet = dbh->searchByName(name.c_str(), match, _results);
