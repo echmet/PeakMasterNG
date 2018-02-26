@@ -13,8 +13,8 @@ namespace gdm {
 }
 
 class DatabaseProxy;
+class EditChargesWidget;
 class FloatingValueDelegate;
-class ModifyConstituentChargePushButton;
 
 class EditConstituentDialog : public QDialog
 {
@@ -44,22 +44,12 @@ private:
   void setConstituentType(const EditConstituentDialog::ConstituentType type);
   void setViscosityElements(const double viscosityCoefficient);
   void setupWidget();
-  void updateChargeHigh();
-  void updateChargeLow();
-  void updateChargeModifiers();
 
   Ui::EditConstituentDialog *ui;
 
-  ModifyConstituentChargePushButton *m_qpb_addLow;
-  ModifyConstituentChargePushButton *m_qpb_removeLow;
-  ModifyConstituentChargePushButton *m_qpb_addHigh;
-  ModifyConstituentChargePushButton *m_qpb_removeHigh;
+  EditChargesWidget *m_editChargesWidget;
 
   DatabaseProxy &h_dbProxy;
-
-  ConstituentChargesModel m_chargesModel;
-
-  FloatingValueDelegate *m_fltDelegate;
 
   static const double VISCOSITY_COEFF_VERY_SMALL;
   static const double VISCOSITY_COEFF_SMALL;
@@ -68,12 +58,8 @@ private:
 private slots:
   void onAccepted();
   void onAddToDatabase();
-  void onAddChargeLow();
-  void onAddChargeHigh();
   void onPickFromDatabase();
   void onRejected();
-  void onRemoveChargeLow();
-  void onRemoveChargeHigh();
   void onViscosityCoefficientIndexChanged(const int idx);
 
 signals:

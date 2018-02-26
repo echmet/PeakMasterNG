@@ -122,7 +122,8 @@ SOURCES += \
     src/ui/csvexportoptionsdialog.cpp \
     src/ui/copiableitemsstableview.cpp \
     src/ui/databasetableview.cpp \
-    src/gearbox/results_models/analytesdissociationmodel.cpp
+    src/gearbox/results_models/analytesdissociationmodel.cpp \
+    src/ui/editchargeswidget.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -217,7 +218,8 @@ HEADERS += \
     src/ui/csvexportoptionsdialog.h \
     src/ui/copiableitemstableview.h \
     src/ui/databasetableview.h \
-    src/gearbox/results_models/analytesdissociationmodel.h
+    src/gearbox/results_models/analytesdissociationmodel.h \
+    src/ui/editchargeswidget.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \
@@ -234,7 +236,8 @@ FORMS += \
     src/ui/operationinprogressdialog.ui \
     src/ui/pickconstituentfromdbdialog.ui \
     src/ui/nonidealitycorrectionsdialog.ui \
-    src/ui/csvexportoptionsdialog.ui
+    src/ui/csvexportoptionsdialog.ui \
+    src/ui/editchargeswidget.ui
 
 unix {
     QMAKE_CXXFLAGS += "-Wall -Wextra -pedantic"
