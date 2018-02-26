@@ -22,6 +22,8 @@ class EditChargesWidget : public QWidget
 public:
   explicit EditChargesWidget(QWidget *parent = nullptr);
   explicit EditChargesWidget(const  gdm::PhysicalProperties &props, QWidget *parent = nullptr);
+  explicit EditChargesWidget(const std::vector<double> &pKas, const std::vector<double> &mobilities, const int chargeLow, const int chargeHigh, QWidget *parent = nullptr);
+  explicit EditChargesWidget(std::map<int, double> pKas, const std::map<int, double> &mobilities, const int chargeLow, const int chargeHigh, QWidget *parent = nullptr);
   ~EditChargesWidget();
   int chargeHigh() const;
   int chargeLow() const;

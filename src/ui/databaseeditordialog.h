@@ -19,6 +19,8 @@ public:
   ~DatabaseEditorDialog();
 
 private:
+  int getIndex() const;
+
   Ui::DatabaseEditorDialog *ui;
 
   DatabaseConstituentsPhysPropsTableModel *m_model;

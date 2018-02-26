@@ -31,8 +31,9 @@ class DatabaseProxy {
 public:
   DatabaseProxy();
   ~DatabaseProxy() noexcept;
-  bool addConstituent(const std::string &name, const std::vector<double> &pKas, const std::vector<double> &mobilities, const int chargeLow, const int chargewHigh);
-  void deleteById(const int64_t id);
+  bool addConstituent(const std::string &name, const std::vector<double> &pKas, const std::vector<double> &mobilities, const int chargeLow, const int chargeHigh);
+  bool deleteById(const int64_t id);
+  bool editConstituent(const int64_t id, const std::string &name, const std::vector<double> &pKas, const std::vector<double> &mobilities, const int chargeLow, const int chargeHigh);
   std::vector<DatabaseConstituent> fetchAll();
   bool isAvailable() const;
   std::vector<DatabaseConstituent> search(const std::string &name);

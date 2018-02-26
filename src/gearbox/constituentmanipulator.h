@@ -8,6 +8,7 @@
 class DatabaseProxy;
 class EditConstituentDialog;
 class GDMProxy;
+class IConstituentEditor;
 
 class ConstituentManipulator : public QObject
 {
@@ -18,12 +19,12 @@ public:
   ConstituentManipulator(const ConstituentManipulator &other);
   EditConstituentDialog * makeEditDialog(const std::string &name, GDMProxy &proxy, DatabaseProxy &dbProxy);
 
-  static gdm::Constituent makeConstituent(const EditConstituentDialog *dlg);
-  static bool validateConstituentProperties(const EditConstituentDialog *dlg);
+  static gdm::Constituent makeConstituent(const IConstituentEditor *dlg);
+  static bool validateConstituentProperties(const IConstituentEditor *dlg);
 
 public slots:
-  void onValidateConstituentInput(const EditConstituentDialog *dlg, bool *ok);
-  void onValidateConstituentInputUpdate(const EditConstituentDialog *dlg, bool *ok);
+  void onValidateConstituentInput(const IConstituentEditor *dlg, bool *ok);
+  void onValidateConstituentInputUpdate(const IConstituentEditor *dlg, bool *ok);
 
 private:
   const GDMProxy &h_proxy;

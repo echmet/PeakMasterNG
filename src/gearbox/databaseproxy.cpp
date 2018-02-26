@@ -21,6 +21,22 @@ DatabaseConstituent makeDatabaseConstituent(const database::Constituent &c)
   return DatabaseConstituent{c.id(), QString::fromStdString(c.name()), pKas, c.mobilities(), c.chargeLow(), c.chargeHigh()};
 }
 
+std::vector<std::tuple<int, double, double>> makeProperties(const std::vector<double> &pKas, const std::vector<double> &mobilities,
+                                                            const int chargeLow, const int chargeHigh)
+{
+  std::vector<std::tuple<int, double, double>> properties{};
+
+  const int bChg = database::ConstituentsDatabase::baseCharge(chargeLow, chargeHigh);
+  for (int charge = chargeLow; charge <= chargeHigh; charge++) {
+    if (charge == bChg)
+      properties.emplace_back(charge, mobilities.at(charge - chargeLow), 0);
+    else
+      properties.emplace_back(charge, mobilities.at(charge - chargeLow), pKas.at(charge - chargeLow - (charge > bChg)));
+  }
+
+  return properties;
+}
+
 std::vector<DatabaseConstituent> doQuery(database::ConstituentsDatabase *dbh,
                                          const database::ConstituentsDatabase::MatchType match, std::string name)
 {
@@ -68,24 +84,26 @@ DatabaseProxy::~DatabaseProxy() noexcept
 
 bool DatabaseProxy::addConstituent(const std::string &name, const std::vector<double> &pKas, const std::vector<double> &mobilities, const int chargeLow, const int chargeHigh)
 {
-  std::vector<std::tuple<int, double, double>>  properties;
+  const auto properties = makeProperties(pKas, mobilities, chargeLow, chargeHigh);
 
-  const int bChg = database::ConstituentsDatabase::baseCharge(chargeLow, chargeHigh);
-  for (int charge = chargeLow; charge <= chargeHigh; charge++) {
-    if (charge == bChg)
-      properties.emplace_back(charge, mobilities.at(charge - chargeLow), 0);
-    else
-      properties.emplace_back(charge, mobilities.at(charge - chargeLow), pKas.at(charge - chargeLow - (charge > bChg)));
-  }
-
-  const auto  tRet = m_db->addConstituent(name.c_str(), chargeLow, chargeHigh, properties);
+  const auto tRet = m_db->addConstituent(name.c_str(), chargeLow, chargeHigh, properties);
 
   return tRet == database::ConstituentsDatabase::RetCode::OK;
 }
 
-void DatabaseProxy::deleteById(const int64_t id)
+bool DatabaseProxy::deleteById(const int64_t id)
 {
-  m_db->deleteConstituent(id);
+  return m_db->deleteConstituent(id) == database::ConstituentsDatabase::RetCode::OK;
+}
+
+bool DatabaseProxy::editConstituent(const int64_t id, const std::string &name, const std::vector<double> &pKas, const std::vector<double> &mobilities,
+                                    const int chargeLow, const int chargeHigh)
+{
+  const auto properties = makeProperties(pKas, mobilities, chargeLow, chargeHigh);
+
+  const auto tRet = m_db->editConstituent(id, name.c_str(), chargeLow, chargeHigh, properties);
+
+  return tRet == database::ConstituentsDatabase::RetCode::OK;
 }
 
 std::vector<DatabaseConstituent> DatabaseProxy::fetchAll()

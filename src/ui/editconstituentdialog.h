@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include "internal_models/constituentchargesmodel.h"
+#include "../gearbox/iconstituenteditor.h"
 
 namespace Ui {
   class EditConstituentDialog;
@@ -16,29 +17,23 @@ class DatabaseProxy;
 class EditChargesWidget;
 class FloatingValueDelegate;
 
-class EditConstituentDialog : public QDialog
+class EditConstituentDialog : public QDialog, public IConstituentEditor
 {
   Q_OBJECT
 
 public:
-  enum class ConstituentType {
-    NUCLEUS,
-    LIGAND
-  };
-  Q_ENUM(ConstituentType)
-
   explicit EditConstituentDialog(DatabaseProxy &dbProxy, const bool viscosityCorrectionEnabled, QWidget *parent = nullptr);
   explicit EditConstituentDialog(DatabaseProxy &dbProxy, const QString &name, const EditConstituentDialog::ConstituentType type,
                                  const gdm::PhysicalProperties &props, const bool allowTypeChange, const bool viscosityCorrectionEnabled,
                                  QWidget *parent = nullptr);
   ~EditConstituentDialog();
-  int chargeHigh() const;
-  int chargeLow() const;
-  std::vector<double> mobilities() const;
-  QString name() const;
-  std::vector<double> pKas() const;
-  ConstituentType type() const;
-  double viscosityCoefficient() const;
+  virtual int chargeHigh() const override;
+  virtual int chargeLow() const override;
+  virtual std::vector<double> mobilities() const override;
+  virtual QString name() const override;
+  virtual std::vector<double> pKas() const override;
+  virtual ConstituentType type() const override;
+  virtual double viscosityCoefficient() const override;
 
 private:
   void setConstituentType(const EditConstituentDialog::ConstituentType type);
@@ -67,6 +62,5 @@ signals:
   void validateInput(const EditConstituentDialog *me, bool *ok);
 };
 
-Q_DECLARE_METATYPE(EditConstituentDialog::ConstituentType)
 
 #endif // EDITCONSTITUENTDIALOG_H

@@ -5,6 +5,17 @@
 #include "../gdm/core/constituent/physicalproperties.h"
 #include "../gearbox/floatingvaluedelegate.h"
 
+#include <cassert>
+
+int baseCharge(const int chargeLow, const int chargeHigh)
+{
+  if (chargeHigh < 0)
+    return chargeHigh;
+  if (chargeLow > 0)
+    return chargeLow;
+  return 0;
+}
+
 EditChargesWidget::EditChargesWidget(QWidget *parent) :
   QWidget{parent},
   ui{new Ui::EditChargesWidget},
@@ -24,16 +35,10 @@ EditChargesWidget::EditChargesWidget(const gdm::PhysicalProperties &props, QWidg
 
   const int chargeLow = props.charges().low();
   const int chargeHigh = props.charges().high();
-  const int bChg = [&]() {
-    if (chargeHigh < 0)
-      return chargeHigh;
-    if (chargeLow > 0)
-      return chargeLow;
-    return 0;
-  }();
+  const int bChg = baseCharge(chargeLow, chargeHigh);
 
-  std::map<int, double> pKas;
-  std::map<int, double> mobilities;
+  std::map<int, double> pKas{};
+  std::map<int, double> mobilities{};
   for (int charge = chargeLow; charge <= chargeHigh; charge++) {
     mobilities.emplace(charge, props.mobility(charge));
     if (charge != bChg)
@@ -46,6 +51,53 @@ EditChargesWidget::EditChargesWidget(const gdm::PhysicalProperties &props, QWidg
   setupWidget();
 }
 
+EditChargesWidget::EditChargesWidget(const std::vector<double> &pKas, const std::vector<double> &mobilities, const int chargeLow, const int chargeHigh,
+                                     QWidget *parent) :
+  QWidget{parent},
+  ui{new Ui::EditChargesWidget},
+  m_fltDelegate{new FloatingValueDelegate{this}}
+{
+  assert(pKas.size() == mobilities.size() + 1);
+
+  ui->setupUi(this);
+
+  const int bChg = baseCharge(chargeLow, chargeHigh);
+
+  std::map<int, double> _pKas{};
+  std::map<int, double> _mobilities{};
+  for (int charge = chargeLow; charge <= chargeHigh; charge++) {
+    _mobilities.emplace(charge, mobilities.at(charge - chargeLow));
+    if (charge != bChg)
+      _pKas.emplace(charge, pKas.at(charge - chargeLow - (charge > bChg)));
+    else
+      _pKas.emplace(charge, 0);
+  }
+  m_chargesModel.refreshData(_pKas, _mobilities, chargeLow, chargeHigh);
+
+  setupWidget();
+}
+
+EditChargesWidget::EditChargesWidget(std::map<int, double> pKas, const std::map<int, double> &mobilities, const int chargeLow, const int chargeHigh,
+                                     QWidget *parent) :
+  QWidget{parent},
+  ui{new Ui::EditChargesWidget},
+  m_fltDelegate{new FloatingValueDelegate{this}}
+{
+  ui->setupUi(this);
+
+  const int bChg = baseCharge(chargeLow, chargeHigh);
+  if (pKas.size() - 1 == mobilities.size()) {
+    if (pKas.find(bChg) == pKas.cend())
+      pKas.emplace(bChg, 0);
+    else
+      assert(false);
+  }
+  assert(pKas.size() == mobilities.size());
+
+  m_chargesModel.refreshData(pKas, mobilities, chargeLow, chargeHigh);
+
+  setupWidget();
+}
 EditChargesWidget::~EditChargesWidget()
 {
   delete ui;

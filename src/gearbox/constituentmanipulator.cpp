@@ -8,7 +8,7 @@
 #include <cassert>
 #include <QMessageBox>
 
-bool ConstituentManipulator::validateConstituentProperties(const EditConstituentDialog *dlg)
+bool ConstituentManipulator::validateConstituentProperties(const IConstituentEditor *dlg)
 {
   const QString name = dlg->name();
   const auto pKas = dlg->pKas();
@@ -47,7 +47,7 @@ ConstituentManipulator::ConstituentManipulator(const ConstituentManipulator &oth
 {
 }
 
-gdm::Constituent ConstituentManipulator::makeConstituent(const EditConstituentDialog *dlg)
+gdm::Constituent ConstituentManipulator::makeConstituent(const IConstituentEditor *dlg)
 {
   const gdm::ConstituentType type = [](EditConstituentDialog::ConstituentType _type) {
     switch (_type) {
@@ -87,7 +87,7 @@ EditConstituentDialog * ConstituentManipulator::makeEditDialog(const std::string
   return new EditConstituentDialog{dbProxy, QString::fromStdString(name), type, ctuent.physicalProperties(), allowTypeChange, m_viscosityCorrectionEnabled};
 }
 
-void ConstituentManipulator::onValidateConstituentInput(const EditConstituentDialog *dlg, bool *ok)
+void ConstituentManipulator::onValidateConstituentInput(const IConstituentEditor *dlg, bool *ok)
 {
   *ok = validateConstituentProperties(dlg);
 
@@ -98,7 +98,7 @@ void ConstituentManipulator::onValidateConstituentInput(const EditConstituentDia
   }
 }
 
-void ConstituentManipulator::onValidateConstituentInputUpdate(const EditConstituentDialog *dlg, bool *ok)
+void ConstituentManipulator::onValidateConstituentInputUpdate(const IConstituentEditor *dlg, bool *ok)
 {
   *ok = validateConstituentProperties(dlg);
 }
