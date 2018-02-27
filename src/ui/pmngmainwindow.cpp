@@ -98,6 +98,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   connect(m_qpb_save, &QPushButton::clicked, ui->actionSave, &QAction::trigger);
   m_qpb_calculate = new QPushButton{tr("Calculate!"), this};
   connect(m_qpb_calculate, &QPushButton::clicked, this, &PMNGMainWindow::onCalculate);
+  connect(ui->qpb_replotEFG, &QPushButton::clicked, this, &PMNGMainWindow::onPlotElectrophoregram);
 
   connect(h_scompWidget, &SystemCompositionWidget::compositionChanged, this, &PMNGMainWindow::onCompositionChanged);
   connect(m_mainCtrlWidget, &MainControlWidget::runSetupChanged, this, &PMNGMainWindow::onRunSetupChanged);
