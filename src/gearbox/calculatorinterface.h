@@ -41,6 +41,16 @@ public:
     SignalTypes type;
     QString constituentName;
     QString plotCaption;
+
+    bool operator==(const Signal &other) const noexcept {
+      return type == other.type &&
+             constituentName == other.constituentName &&
+             plotCaption == other.plotCaption;
+    }
+
+    bool operator!=(const Signal &other) const noexcept {
+      return !(*this == other);
+    }
   };
 
   class SpatialZoneInformation {

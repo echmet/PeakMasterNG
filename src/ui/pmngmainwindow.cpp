@@ -87,7 +87,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   initPlotParams();
 
   connect(ui->qcb_autoPlotCutoff, &QCheckBox::stateChanged, this, &PMNGMainWindow::onAutoPlotCutoffStateChanged);
-  connect(ui->qcbox_signal, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &PMNGMainWindow::onPlotElectrophoregram);
+  connect(ui->qcbox_signal, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, &PMNGMainWindow::onPlotElectrophoregram);
 
   m_qpb_new = new QPushButton{tr("New"), this};
   connect(m_qpb_new, &QPushButton::clicked, ui->actionNew, &QAction::trigger);
@@ -187,7 +187,7 @@ void PMNGMainWindow::onCalculate()
 {
   EFGDisplayer displayer = makeMainWindowEFGDisplayer();
 
-  resetSignalItems();
+  const QVariant lastSelectedSignal = resetSignalItems();
 
   double EOFValue;
   CalculatorInterface::EOFValueType EOFvt;
@@ -219,6 +219,7 @@ void PMNGMainWindow::onCalculate()
     m_calcIface.publishResults(rs.totalLength, rs.detectorPosition, rs.drivingVoltage, EOFValue, EOFvt, rs.positiveVoltage);
     if (calcStatus == CalculatorWorker::CalculationResult::OK) {
       addConstituentsSignals(m_calcIface.allConstituents());
+      selectSignalIfAvailable(lastSelectedSignal);
       plotElectrophoregram(displayer);
     } else {
       QMessageBox errmbox{QMessageBox::Warning, tr("Calculation incomplete"),
@@ -451,14 +452,30 @@ void PMNGMainWindow::plotElectrophoregram(const EFGDisplayer &displayer)
   displayer(signalTrace, std::move(zoneInfo), signal);
 }
 
-void PMNGMainWindow::resetSignalItems()
+QVariant PMNGMainWindow::resetSignalItems()
 {
+  const QVariant current = ui->qcbox_signal->currentData(Qt::UserRole + 1);
   m_signalTypesModel->clear();
 
   for (const auto &item : s_defaultSignalItems) {
     QStandardItem *si = new QStandardItem{item.name};
     si->setData(QVariant::fromValue<CalculatorInterface::Signal>(item.signal));
     m_signalTypesModel->appendRow(si);
+  }
+
+  return current;
+}
+
+void PMNGMainWindow::selectSignalIfAvailable(const QVariant &sig)
+{
+  const auto _sig = sig.value<CalculatorInterface::Signal>();
+
+  for (int idx = 0; idx < m_signalTypesModel->rowCount(); idx++) {
+    const auto _csig = m_signalTypesModel->data(m_signalTypesModel->index(idx, 0), Qt::UserRole + 1).value<CalculatorInterface::Signal>();
+    if (_sig == _csig) {
+      ui->qcbox_signal->setCurrentIndex(idx);
+      return;
+    }
   }
 }
 

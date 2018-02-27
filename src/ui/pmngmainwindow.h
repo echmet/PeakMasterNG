@@ -55,7 +55,8 @@ private:
   void initPlotParams();
   void initSignalItems();
   void plotElectrophoregram(const EFGDisplayer &displayer);
-  void resetSignalItems();
+  QVariant resetSignalItems();
+  void selectSignalIfAvailable(const QVariant &sig);
   void setControlsIcons();
 
   QPushButton *m_qpb_new;
