@@ -52,7 +52,7 @@ Authors
 ---
 Milan Štědrý (1)  
 Vlastimil Hruška (1)  
-Michal Jaros (1)
+Michal Jaroš (1)  
 Iva Zusková (1)  
 Bob Gaš (1)  
 Pavel Dubský (1)  
