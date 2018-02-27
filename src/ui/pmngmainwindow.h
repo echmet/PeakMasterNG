@@ -99,6 +99,7 @@ private slots:
   void onExit();
   void onExportElectrophoregramAsCSV();
   void onNew();
+  void onOpenDatabase();
   void onPlotElectrophoregram();
   void onRunSetupChanged(const bool invalidate);
   void onSave();

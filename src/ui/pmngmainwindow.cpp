@@ -13,6 +13,7 @@
 #include "../gearbox/efgdisplayer.h"
 #include "../gearbox/efgcsvexporter.h"
 #include "databaseeditordialog.h"
+#include "../gearbox/databaseproxy.h"
 
 #include <QDialogButtonBox>
 #include <QDataWidgetMapper>
@@ -110,6 +111,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   connect(ui->actionSave, &QAction::triggered, this, &PMNGMainWindow::onSave);
   connect(ui->actionExportEFGAsCSV, &QAction::triggered, this, &PMNGMainWindow::onExportElectrophoregramAsCSV);
   connect(ui->actionDatabase_editor, &QAction::triggered, this, &PMNGMainWindow::onDatabaseEditor);
+  connect(ui->actionOpen_database, &QAction::triggered, this, &PMNGMainWindow::onOpenDatabase);
 
   ui->mainToolBar->addWidget(m_qpb_new);
   ui->mainToolBar->addWidget(m_qpb_load);
@@ -330,6 +332,21 @@ void PMNGMainWindow::onNew()
   mbox.setDefaultButton(QMessageBox::No);
   if (mbox.exec() == QMessageBox::Yes)
     emit clearAll();
+}
+
+void PMNGMainWindow::onOpenDatabase()
+{
+  QFileDialog dlg{this, tr("Load database file")};
+
+  dlg.setAcceptMode(QFileDialog::AcceptOpen);
+  dlg.setNameFilter("SQLite3 database (*.sql)");
+
+  if (dlg.exec() == QDialog::Accepted) {
+    if (!h_dbProxy.openDatabase(dlg.selectedFiles().at(0))) {
+      QMessageBox errBox{QMessageBox::Warning, tr("Database error"), tr("Cannot open selected database file")};
+      errBox.exec();
+    }
+  }
 }
 
 void PMNGMainWindow::onPlotElectrophoregram()

@@ -114,6 +114,21 @@ bool DatabaseProxy::isAvailable() const
   return m_db != nullptr;
 }
 
+bool DatabaseProxy::openDatabase(const QString &path)
+{
+  if (m_db != nullptr)
+    delete m_db;
+
+  try {
+    m_db = new database::ConstituentsDatabase{path.toLocal8Bit()};
+  } catch (const std::runtime_error &) {
+    m_db = nullptr;
+    return false;
+  }
+
+  return true;
+}
+
 std::vector<DatabaseConstituent> DatabaseProxy::search(const std::string &name)
 {
   return doSearch(m_db, database::ConstituentsDatabase::MatchType::BEGINS_WITH, name);

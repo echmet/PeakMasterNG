@@ -36,6 +36,7 @@ public:
   bool editConstituent(const int64_t id, const std::string &name, const std::vector<double> &pKas, const std::vector<double> &mobilities, const int chargeLow, const int chargeHigh);
   std::vector<DatabaseConstituent> fetchAll();
   bool isAvailable() const;
+  bool openDatabase(const QString &path);
   std::vector<DatabaseConstituent> search(const std::string &name);
 
 private:

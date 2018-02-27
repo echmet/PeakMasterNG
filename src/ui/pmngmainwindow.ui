@@ -140,6 +140,7 @@
      <string>Database</string>
     </property>
     <addaction name="actionDatabase_editor"/>
+    <addaction name="actionOpen_database"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuExport"/>
@@ -187,7 +188,12 @@
   </action>
   <action name="actionDatabase_editor">
    <property name="text">
-    <string>Database editor</string>
+    <string>&amp;Database editor</string>
+   </property>
+  </action>
+  <action name="actionOpen_database">
+   <property name="text">
+    <string>Open database</string>
    </property>
   </action>
  </widget>
