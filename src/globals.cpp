@@ -10,9 +10,13 @@ const int Globals::VERSION_MAJ = 6;
 const int Globals::VERSION_MIN = 0;
 const QString Globals::VERSION_REV{"(alpha)"};
 
-const QVector<Globals::DeveloperID> Globals::DEVELOPERS = { Globals::DeveloperID{"Michal Mal\xC3\xBD", "malymi@natur.cuni.cz", true} ,
+const QVector<Globals::DeveloperID> Globals::DEVELOPERS = {
+                                                            Globals::DeveloperID{"Milan \xC5\xA0t\xC4\x9B""dr\xC3\xBD", "stedry@natur.cuni.cz", false},
+                                                            Globals::DeveloperID{"Vlastimil Hru\xC5\xA1""ka", "hruska2@natur.cuni.cz", false},
+                                                            Globals::DeveloperID{"Iva Zuskov\xC3\xA1", "zuskova@natur.cuni.cz", false},
+                                                            Globals::DeveloperID{"Bob Ga\xC5\xA1", "gas@natur.cuni.cz", false},
+                                                            Globals::DeveloperID{"Pavel Dubsk\xC3\xBD", "pavel.dubsky@natur.cuni.cz", true},
                                                             Globals::DeveloperID{"Gabriel Gerlero", "gabrielgerlero@gmail.com", false},
-                                                            Globals::DeveloperID{"Pavel Dubsk\xC3\xBD", "pavel.dubsky@natur.cuni.cz", true}
                                                           };
 
 

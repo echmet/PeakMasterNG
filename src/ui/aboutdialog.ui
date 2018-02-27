@@ -123,6 +123,19 @@
     <layout class="QVBoxLayout" name="qvlay_authors"/>
    </item>
    <item>
+    <widget class="QLabel" name="ql_hirokawa">
+     <property name="text">
+      <string>Database of constituents by Takeshi Hirokawa.</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QLabel" name="ql_thankYouQt">
      <property name="text">
       <string>&lt;THANK_YOU_QT&gt;</string>
