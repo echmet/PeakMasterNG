@@ -23,12 +23,52 @@ DatabaseEditorDialog::DatabaseEditorDialog(DatabaseProxy &dbProxy, QWidget *pare
   connect(ui->qpb_delete, &QPushButton::clicked, this, &DatabaseEditorDialog::onDeleteConstituent);
   connect(ui->qpb_edit, &QPushButton::clicked, this, &DatabaseEditorDialog::onEditConstituent);
   connect(ui->qle_constituentName, &QLineEdit::textChanged, this, &DatabaseEditorDialog::onConstituentNameChanged);
+  connect(ui->qtbv_constituents, &DatabaseTableView::itemSelected, this, &DatabaseEditorDialog::editConstituent);
 }
 
 DatabaseEditorDialog::~DatabaseEditorDialog()
 {
   delete ui;
   delete m_model;
+}
+
+void DatabaseEditorDialog::editConstituent(const int idx)
+{
+  try {
+    const auto &ctuent = m_model->constituentAt(idx);
+    EditDatabaseConstituentDialog dlg{ctuent.name, ctuent.pKas, ctuent.mobilities, ctuent.chargeLow, ctuent.chargeHigh, this};
+
+    connect(&dlg, &EditDatabaseConstituentDialog::validateInput,
+            [](const EditDatabaseConstituentDialog *me, bool *ok) {
+              *ok = ConstituentManipulator::validateConstituentProperties(me);
+            }
+    );
+
+    if (dlg.exec() != QDialog::Accepted)
+      return;
+
+    const QString msg = QString{tr("Are you sure you want to edit constituent %1 in the database?\n"
+                                   "This action cannot be undone!")}.arg(ctuent.name);
+    QMessageBox aboutToEdit{QMessageBox::Warning,
+                           tr("Confirm action"),
+                           msg,
+                           QMessageBox::Yes | QMessageBox::No};
+    if (aboutToEdit.exec() != QMessageBox::Yes)
+      return;
+
+    if (!h_dbProxy.editConstituent(ctuent.id, dlg.name().toStdString(), dlg.pKas(), dlg.mobilities(), dlg.chargeLow(), dlg.chargeHigh())) {
+        QMessageBox errBox{QMessageBox::Warning,
+                           tr("Database operation failed"),
+                           tr("Failed to update constituent in the database")};
+        errBox.exec();
+        return;
+    }
+
+    onConstituentNameChanged(ui->qle_constituentName->text());
+  } catch (const DatabaseException &ex) {
+    QMessageBox mbox{QMessageBox::Warning, tr("Database query error"), QString{tr("Database query error: %1")}.arg(ex.what())};
+    mbox.exec();
+  }
 }
 
 int DatabaseEditorDialog::getIndex() const
@@ -153,39 +193,5 @@ void DatabaseEditorDialog::onEditConstituent()
   if (idx < 0)
     return;
 
-  try {
-    const auto &ctuent = m_model->constituentAt(idx);
-    EditDatabaseConstituentDialog dlg{ctuent.name, ctuent.pKas, ctuent.mobilities, ctuent.chargeLow, ctuent.chargeHigh, this};
-
-    connect(&dlg, &EditDatabaseConstituentDialog::validateInput,
-            [](const EditDatabaseConstituentDialog *me, bool *ok) {
-              *ok = ConstituentManipulator::validateConstituentProperties(me);
-            }
-    );
-
-    if (dlg.exec() != QDialog::Accepted)
-      return;
-
-    const QString msg = QString{tr("Are you sure you want to edit constituent %1 in the database?\n"
-                                   "This action cannot be undone!")}.arg(ctuent.name);
-    QMessageBox aboutToEdit{QMessageBox::Warning,
-                           tr("Confirm action"),
-                           msg,
-                           QMessageBox::Yes | QMessageBox::No};
-    if (aboutToEdit.exec() != QMessageBox::Yes)
-      return;
-
-    if (!h_dbProxy.editConstituent(ctuent.id, dlg.name().toStdString(), dlg.pKas(), dlg.mobilities(), dlg.chargeLow(), dlg.chargeHigh())) {
-        QMessageBox errBox{QMessageBox::Warning,
-                           tr("Database operation failed"),
-                           tr("Failed to update constituent in the database")};
-        errBox.exec();
-        return;
-    }
-
-    onConstituentNameChanged(ui->qle_constituentName->text());
-  } catch (const DatabaseException &ex) {
-    QMessageBox mbox{QMessageBox::Warning, tr("Database query error"), QString{tr("Database query error: %1")}.arg(ex.what())};
-    mbox.exec();
-  }
+  editConstituent(idx);
 }

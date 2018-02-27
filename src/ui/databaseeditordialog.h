@@ -20,6 +20,7 @@ public:
 
 private:
   int getIndex() const;
+  void editConstituent(const int idx);
 
   Ui::DatabaseEditorDialog *ui;
 
