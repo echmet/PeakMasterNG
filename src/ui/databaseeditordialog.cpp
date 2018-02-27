@@ -101,6 +101,7 @@ void DatabaseEditorDialog::onDeleteConstituent()
         QMessageBox errBox{QMessageBox::Warning,
                           tr("Database operation failed"),
                           tr("Failed to delete constituent from the database")};
+        errBox.exec();
         return;
       }
 
@@ -144,6 +145,7 @@ void DatabaseEditorDialog::onEditConstituent()
         QMessageBox errBox{QMessageBox::Warning,
                            tr("Database operation failed"),
                            tr("Failed to update constituent in the database")};
+        errBox.exec();
         return;
     }
 
