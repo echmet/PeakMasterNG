@@ -50,6 +50,9 @@ int DatabaseEditorDialog::getIndex() const
 
 void DatabaseEditorDialog::onAddConstituent()
 {
+  if (!h_dbProxy.isAvailable())
+    return;
+
   EditDatabaseConstituentDialog dlg{this};
 
   connect(&dlg, &EditDatabaseConstituentDialog::validateInput,
@@ -107,6 +110,9 @@ void DatabaseEditorDialog::onConstituentNameChanged(const QString &name)
 
 void DatabaseEditorDialog::onDeleteConstituent()
 {
+  if (!h_dbProxy.isAvailable())
+    return;
+
   const int idx = getIndex();
   if (idx < 0)
     return;
@@ -140,6 +146,9 @@ void DatabaseEditorDialog::onDeleteConstituent()
 
 void DatabaseEditorDialog::onEditConstituent()
 {
+  if (!h_dbProxy.isAvailable())
+    return;
+
   const int idx = getIndex();
   if (idx < 0)
     return;
