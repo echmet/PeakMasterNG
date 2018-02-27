@@ -37,7 +37,7 @@ std::vector<std::tuple<int, double, double>> makeProperties(const std::vector<do
   return properties;
 }
 
-std::vector<DatabaseConstituent> doQuery(database::ConstituentsDatabase *dbh,
+std::vector<DatabaseConstituent> doSearch(database::ConstituentsDatabase *dbh,
                                          const database::ConstituentsDatabase::MatchType match, const std::string &name)
 {
   database::SearchResults _results{};
@@ -106,7 +106,7 @@ bool DatabaseProxy::editConstituent(const int64_t id, const std::string &name, c
 
 std::vector<DatabaseConstituent> DatabaseProxy::fetchAll()
 {
-  return doQuery(m_db, database::ConstituentsDatabase::MatchType::ENTIRE_DB, std::string{});
+  return doSearch(m_db, database::ConstituentsDatabase::MatchType::ENTIRE_DB, std::string{});
 }
 
 bool DatabaseProxy::isAvailable() const
@@ -116,5 +116,5 @@ bool DatabaseProxy::isAvailable() const
 
 std::vector<DatabaseConstituent> DatabaseProxy::search(const std::string &name)
 {
-  return doQuery(m_db, database::ConstituentsDatabase::MatchType::BEGINS_WITH, name);
+  return doSearch(m_db, database::ConstituentsDatabase::MatchType::BEGINS_WITH, name);
 }
