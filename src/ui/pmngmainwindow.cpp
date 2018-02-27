@@ -22,6 +22,7 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QStandardItemModel>
+#include <QShortcut>
 #include <QThread>
 
 void inputToEOFValueType(double &EOFValue, CalculatorInterface::EOFValueType &EOFvt, const double inValue, const MainControlWidget::EOF_Type type)
@@ -113,6 +114,9 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   ui->mainToolBar->addWidget(m_qpb_load);
   ui->mainToolBar->addWidget(m_qpb_save);
   ui->mainToolBar->addWidget(m_qpb_calculate);
+
+  m_calculateShortcut = new QShortcut(QKeySequence::Refresh, m_qpb_calculate);
+  connect(m_calculateShortcut, &QShortcut::activated, this, &PMNGMainWindow::onCalculate);
 
   onAutoPlotCutoffStateChanged(Qt::Checked);
 

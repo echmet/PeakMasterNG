@@ -21,6 +21,7 @@ class MainControlWidget;
 class ResultsModels;
 class QDataWidgetMapper;
 class QPushButton;
+class QShortcut;
 class QStandardItemModel;
 class SignalPlotWidget;
 class SystemCompositionWidget;
@@ -63,6 +64,8 @@ private:
   QPushButton *m_qpb_load;
   QPushButton *m_qpb_save;
   QPushButton *m_qpb_calculate;
+
+  QShortcut *m_calculateShortcut;
 
   CalculatorInterface m_calcIface;
   MainControlWidget *m_mainCtrlWidget;
