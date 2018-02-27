@@ -5,6 +5,19 @@
 
 #include <QVBoxLayout>
 
+EditDatabaseConstituentDialog::EditDatabaseConstituentDialog(QWidget *parent) :
+  QDialog{parent},
+  ui{new Ui::EditDatabaseConstituentDialog}
+{
+  ui->setupUi(this);
+
+  m_editChargesWidget = new EditChargesWidget{this};
+  static_cast<QVBoxLayout *>(layout())->insertWidget(1, m_editChargesWidget);
+
+  connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &EditDatabaseConstituentDialog::onAccepted);
+  connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &EditDatabaseConstituentDialog::reject);
+}
+
 EditDatabaseConstituentDialog::EditDatabaseConstituentDialog(const QString &name, const std::map<int, double> &pKas, const std::map<int, double> &mobilities,
                                                              const int chargeLow, const int chargeHigh,
                                                              QWidget *parent) :

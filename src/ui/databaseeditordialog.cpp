@@ -17,6 +17,7 @@ DatabaseEditorDialog::DatabaseEditorDialog(DatabaseProxy &dbProxy, QWidget *pare
   m_model = new DatabaseConstituentsPhysPropsTableModel{};
   ui->qtbv_constituents->setModel(m_model);
 
+  connect(ui->qpb_add, &QPushButton::clicked, this, &DatabaseEditorDialog::onAddConstituent);
   connect(ui->qpb_allCompounds, &QPushButton::clicked, this, &DatabaseEditorDialog::onAllCompounds);
   connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &DatabaseEditorDialog::accept);
   connect(ui->qpb_delete, &QPushButton::clicked, this, &DatabaseEditorDialog::onDeleteConstituent);
@@ -45,6 +46,30 @@ int DatabaseEditorDialog::getIndex() const
     return -1;
 
   return row;
+}
+
+void DatabaseEditorDialog::onAddConstituent()
+{
+  EditDatabaseConstituentDialog dlg{this};
+
+  connect(&dlg, &EditDatabaseConstituentDialog::validateInput,
+          [](const EditDatabaseConstituentDialog *me, bool *ok) {
+            *ok = ConstituentManipulator::validateConstituentProperties(me);
+          }
+  );
+
+  if (dlg.exec() != QDialog::Accepted)
+    return;
+
+  if (!h_dbProxy.addConstituent(dlg.name().toStdString(), dlg.pKas(), dlg.mobilities(), dlg.chargeLow(), dlg.chargeHigh())) {
+    QMessageBox errBox{QMessageBox::Warning,
+                       tr("Database operation failed"),
+                       tr("Failed to add constituent to the database")};
+    errBox.exec();
+    return;
+  }
+
+  onConstituentNameChanged(dlg.name());
 }
 
 void DatabaseEditorDialog::onAllCompounds()

@@ -17,6 +17,7 @@ class EditDatabaseConstituentDialog : public QDialog, public IConstituentEditor
   Q_OBJECT
 
 public:
+  explicit EditDatabaseConstituentDialog(QWidget *parent = nullptr);
   explicit EditDatabaseConstituentDialog(const QString &name, const std::map<int, double> &pKas, const std::map<int, double> &mobilities,
                                          const int chargeLow, const int chargeHigh, QWidget *parent = nullptr);
   ~EditDatabaseConstituentDialog();

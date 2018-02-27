@@ -27,6 +27,7 @@ private:
   DatabaseProxy &h_dbProxy;
 
 private slots:
+  void onAddConstituent();
   void onAllCompounds();
   void onConstituentNameChanged(const QString &name);
   void onDeleteConstituent();

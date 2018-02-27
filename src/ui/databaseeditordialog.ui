@@ -34,6 +34,13 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
+      <widget class="QPushButton" name="qpb_add">
+       <property name="text">
+        <string>Add</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="qpb_edit">
        <property name="text">
         <string>Edit</string>
