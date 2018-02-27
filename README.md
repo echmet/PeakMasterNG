@@ -50,9 +50,12 @@ As permitted by section 7. *Additional Terms* of The GNU GPLv3 license, the auth
 <a name="Authors"></a>
 Authors
 ---
-Michal Malý (1)  
+Milan Štědrý (1)  
+Vlastimil Hruška (1)  
+Iva Zusková (1)  
+Bob Gaš (1)  
+Pavel Dubský (1)  
 Gabriel Gerlero (2,3)  
-Pavel Dubský (1)
 
 (1)  
 Group of Electromigration and Chromatographic Methods (http://echmet.natur.cuni.cz)
