@@ -25,11 +25,11 @@ QJsonObject generateFromNucleusComplexForm(const std::string &ligandName, gdm::C
 {
   QJsonObject ret{};
 
-  ret["name"] = QString::fromStdString(ligandName);
-  ret["charge"] = ligandCharge;
-  ret["maxCount"] = static_cast<int>(complexForm.pBs().size());
-  ret["pBs"] = generateFromDoubles(complexForm.pBs());
-  ret["mobilities"] = generateFromDoubles(complexForm.mobilities());
+  ret[Persistence::CPX_NAME] = QString::fromStdString(ligandName);
+  ret[Persistence::CPX_CHARGE] = ligandCharge;
+  ret[Persistence::CPX_MAX_COUNT] = static_cast<int>(complexForm.pBs().size());
+  ret[Persistence::CPX_PBS] = generateFromDoubles(complexForm.pBs());
+  ret[Persistence::CPX_MOBILITIES] = generateFromDoubles(complexForm.mobilities());
 
   return ret;
 }
@@ -43,21 +43,21 @@ QJsonObject serializeComposition(const gdm::GDM gdm)
 
      switch (it->type()) {
      case gdm::ConstituentType::Nucleus:
-       constituent["type"] = "N";
+       constituent[Persistence::CTUENT_TYPE] = Persistence::CTUENT_TYPE_NUCLEUS;
        break;
      case gdm::ConstituentType::Ligand:
-        constituent["type"] = "L";
-        break;
+       constituent[Persistence::CTUENT_TYPE] = Persistence::CTUENT_TYPE_LIGAND;
+       break;
      }
 
-     constituent["name"] = QString::fromStdString(it->name());
+     constituent[Persistence::CTUENT_NAME] = QString::fromStdString(it->name());
 
-     constituent["chargeLow"] = it->physicalProperties().charges().low();
-     constituent["chargeHigh"] = it->physicalProperties().charges().high();
+     constituent[Persistence::CTUENT_CHARGE_LOW] = it->physicalProperties().charges().low();
+     constituent[Persistence::CTUENT_CHARGE_HIGH] = it->physicalProperties().charges().high();
 
-     constituent["pKas"] = generateFromDoubles(it->physicalProperties().pKas());
-     constituent["mobilities"] = generateFromDoubles(it->physicalProperties().mobilities());
-     constituent["viscosityCoefficient"] = it->physicalProperties().viscosityCoefficient();
+     constituent[Persistence::CTUENT_PKAS] = generateFromDoubles(it->physicalProperties().pKas());
+     constituent[Persistence::CTUENT_MOBILITIES] = generateFromDoubles(it->physicalProperties().mobilities());
+     constituent[Persistence::CTUENT_VISCOSITY_COEFFICIENT] = it->physicalProperties().viscosityCoefficient();
 
      //complexForms
      if (it->type() == gdm::ConstituentType::Nucleus) {
@@ -69,7 +69,7 @@ QJsonObject serializeComposition(const gdm::GDM gdm)
        for (auto nucleusCharge = nucleusCharges.low(); nucleusCharge <= nucleusCharges.high(); ++nucleusCharge) {
          QJsonObject complexForm{};
 
-         complexForm["nucleusCharge"] = nucleusCharge;
+         complexForm[Persistence::CPX_NUCLEUS_CHARGE] = nucleusCharge;
 
          QJsonArray ligandGroups{};
 
@@ -88,22 +88,22 @@ QJsonObject serializeComposition(const gdm::GDM gdm)
              if (complexFormIt != complexation.end()) {
                auto ligand = generateFromNucleusComplexForm(ligandIt->name(), ligandCharge, *complexFormIt);
 
-               QJsonObject ligandGroup{{"ligands", QJsonArray{ligand}}};
+               QJsonObject ligandGroup{{Persistence::CPX_LIGANDS, QJsonArray{ligand}}};
 
                ligandGroups.push_back(ligandGroup);
              }
            }
          }
-         complexForm["ligandGroups"] = ligandGroups;
+         complexForm[Persistence::CPX_LIGAND_GROUPS] = ligandGroups;
 
          complexForms.push_back(complexForm);
        }
-       constituent["complexForms"] = complexForms;
+       constituent[Persistence::CPX_COMPLEX_FORMS] = complexForms;
     }
     constituents.push_back(constituent);
   }
 
-  return QJsonObject{{"constituents", constituents}};
+  return QJsonObject{{Persistence::CTUENT_CTUENTS, constituents}};
 }
 
 QJsonObject serializeConcentrations(const gdm::GDM &gdm)
@@ -127,22 +127,22 @@ QJsonObject serializeConcentrations(const gdm::GDM &gdm)
 
 QJsonObject serializeSystem(const System &system)
 {
-  if (!(system.eofType == "N" ||
-        system.eofType == "U" ||
-        system.eofType == "T"))
+  if (!(system.eofType == Persistence::SYS_EOF_TYPE_NONE ||
+        system.eofType == Persistence::SYS_EOF_TYPE_MOBILITY ||
+        system.eofType == Persistence::SYS_EOF_TYPE_TIME))
     throw SerializationException{"Invalid EOF type"};
 
   QJsonObject sys{
-    {"totalLength", system.totalLength},
-    {"detectorPosition", system.detectorPosition},
-    {"drivingVoltage", system.drivingVoltage},
-    {"positiveVoltage", system.positiveVoltage},
-    {"eofType", system.eofType},
-    {"eofValue", system.eofValue},
-    {"correctForDebyeHuckel", system.correctForDebyeHuckel},
-    {"correctForOnsagerFuoss", system.correctForOnsagerFuoss},
-    {"correctForViscosity", system.correctForViscosity},
-    {"injectionZoneLength", system.injectionZoneLength}
+    {Persistence::SYS_TOTAL_LENGTH, system.totalLength},
+    {Persistence::SYS_DETECTOR_POSITION, system.detectorPosition},
+    {Persistence::SYS_DRIVING_VOLTAGE, system.drivingVoltage},
+    {Persistence::SYS_POSITIVE_VOLTAGE, system.positiveVoltage},
+    {Persistence::SYS_EOF_TYPE, system.eofType},
+    {Persistence::SYS_EOF_VALUE, system.eofValue},
+    {Persistence::SYS_CORRECT_FOR_DEBYE_HUCKEL, system.correctForDebyeHuckel},
+    {Persistence::SYS_CORRECT_FOR_ONSAGER_FUOSS, system.correctForOnsagerFuoss},
+    {Persistence::SYS_CORRECT_FOR_VISCOSITY, system.correctForViscosity},
+    {Persistence::SYS_INJECTION_ZONE_LENGTH, system.injectionZoneLength}
   };
 
   return sys;
@@ -153,10 +153,8 @@ void Serializer::serialize(const QString &filepath, const gdm::GDM &gdmBGE, cons
 {
   QFile out{filepath};
 
-  if (!out.open(QIODevice::WriteOnly | QIODevice::Text)) {
+  if (!out.open(QIODevice::WriteOnly | QIODevice::Text))
     throw SerializationException{"Cannot open output file"};
-    return;
-  }
 
   QJsonObject compositionBGE = serializeComposition(gdmBGE);
   QJsonObject compositionSample = serializeComposition(gdmSample);
@@ -164,11 +162,11 @@ void Serializer::serialize(const QString &filepath, const gdm::GDM &gdmBGE, cons
   QJsonObject concentrationsSample = serializeConcentrations(gdmSample);
   QJsonObject sys = serializeSystem(system);
 
-  QJsonDocument doc{{{"compositionBGE", compositionBGE},
-                     {"compositionSample", compositionSample},
-                     {"concentrationsBGE", concentrationsBGE},
-                     {"concentrationsSample", concentrationsSample},
-                     {"system", sys},
+  QJsonDocument doc{{{Persistence::ROOT_COMPOSITION_BGE, compositionBGE},
+                     {Persistence::ROOT_COMPOSITION_SAMPLE, compositionSample},
+                     {Persistence::ROOT_CONCENTRATIONS_BGE, concentrationsBGE},
+                     {Persistence::ROOT_CONCENTRATIONS_SAMPLE, concentrationsSample},
+                     {Persistence::ROOT_SYSTEM, sys},
                     }};
 
   QByteArray str = doc.toJson();

@@ -290,11 +290,11 @@ void PMNGMainWindow::onLoad()
     m_persistence.deserialize(files.at(0), system);
 
     QVariant eofType{};
-    if (system.eofType == "N")
+    if (system.eofType == persistence::Persistence::SYS_EOF_TYPE_NONE)
       eofType = QVariant::fromValue<MainControlWidget::EOF_Type>(MainControlWidget::EOF_NONE);
-    else if (system.eofType == "U")
+    else if (system.eofType == persistence::Persistence::SYS_EOF_TYPE_MOBILITY)
       eofType = QVariant::fromValue<MainControlWidget::EOF_Type>(MainControlWidget::EOF_MOBILITY);
-    else if (system.eofType == "T")
+    else if (system.eofType == persistence::Persistence::SYS_EOF_TYPE_TIME)
       eofType = QVariant::fromValue<MainControlWidget::EOF_Type>(MainControlWidget::EOF_MARKER_TIME);
     else {
       QMessageBox mbox{QMessageBox::Warning, tr("Loading error"), tr("Invalid value of EOF type")};
@@ -410,13 +410,13 @@ void PMNGMainWindow::onSave()
   const QString et = [](MainControlWidget::EOF_Type t) {
       switch (t) {
       case MainControlWidget::EOF_NONE:
-        return "N";
+        return persistence::Persistence::SYS_EOF_TYPE_NONE;
       case MainControlWidget::EOF_MOBILITY:
-        return "U";
+        return persistence::Persistence::SYS_EOF_TYPE_MOBILITY;
       case MainControlWidget::EOF_MARKER_TIME:
-        return "T";
-      return "";
+        return persistence::Persistence::SYS_EOF_TYPE_TIME;
       }
+      return QString{};
     }(m_mainCtrlWidget->EOFInputType());
 
   persistence::System sys{

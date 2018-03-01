@@ -50,6 +50,49 @@ public:
   void deserialize(const QString &filepath, System &system);
   void serialize(const QString &filepath, const System &system);
 
+  static const QString CTUENT_CTUENTS;
+  static const QString CTUENT_TYPE;
+  static const QString CTUENT_NAME;
+  static const QString CTUENT_CHARGE_LOW;
+  static const QString CTUENT_CHARGE_HIGH;
+  static const QString CTUENT_PKAS;
+  static const QString CTUENT_MOBILITIES;
+  static const QString CTUENT_VISCOSITY_COEFFICIENT;
+
+  static const QString CTUENT_TYPE_NUCLEUS;
+  static const QString CTUENT_TYPE_LIGAND;
+
+  static const QString CPX_NUCLEUS_CHARGE;
+  static const QString CPX_LIGANDS;
+  static const QString CPX_LIGAND_GROUPS;
+  static const QString CPX_COMPLEX_FORMS;
+  static const QString CPX_NAME;
+  static const QString CPX_CHARGE;
+  static const QString CPX_MAX_COUNT;
+  static const QString CPX_PBS;
+  static const QString CPX_MOBILITIES;
+
+  static const QString SYS_TOTAL_LENGTH;
+  static const QString SYS_DETECTOR_POSITION;
+  static const QString SYS_DRIVING_VOLTAGE;
+  static const QString SYS_POSITIVE_VOLTAGE;
+  static const QString SYS_EOF_TYPE;
+  static const QString SYS_EOF_VALUE;
+  static const QString SYS_CORRECT_FOR_DEBYE_HUCKEL;
+  static const QString SYS_CORRECT_FOR_ONSAGER_FUOSS;
+  static const QString SYS_CORRECT_FOR_VISCOSITY;
+  static const QString SYS_INJECTION_ZONE_LENGTH;
+
+  static const QString SYS_EOF_TYPE_NONE;
+  static const QString SYS_EOF_TYPE_MOBILITY;
+  static const QString SYS_EOF_TYPE_TIME;
+
+  static const QString ROOT_COMPOSITION_BGE;
+  static const QString ROOT_COMPOSITION_SAMPLE;
+  static const QString ROOT_CONCENTRATIONS_BGE;
+  static const QString ROOT_CONCENTRATIONS_SAMPLE;
+  static const QString ROOT_SYSTEM;
+
 private:
   gdm::GDM &m_bgeGDM;
   gdm::GDM &m_sampleGDM;
