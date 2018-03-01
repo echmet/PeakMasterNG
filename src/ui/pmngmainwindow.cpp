@@ -312,6 +312,9 @@ void PMNGMainWindow::onLoad()
       system.correctForViscosity
     };
 
+    m_plotParamsData[m_plotParamsModel.indexFromItem(PlotParamsItems::INJ_ZONE_LENGTH)] = system.injectionZoneLength;
+    m_plotParamsModel.notifyDataChanged(PlotParamsItems::INJ_ZONE_LENGTH, PlotParamsItems::INJ_ZONE_LENGTH);
+
     onCompositionChanged();
     m_mainCtrlWidget->setRunSetup(rs, eofType, system.eofValue);
 
@@ -425,7 +428,8 @@ void PMNGMainWindow::onSave()
     m_mainCtrlWidget->EOFValue(),
     rs.correctForDebyeHuckel,
     rs.correctForOnsagerFuoss,
-    rs.correctForViscosity
+    rs.correctForViscosity,
+    m_plotParamsData.at(m_plotParamsModel.indexFromItem(PlotParamsItems::INJ_ZONE_LENGTH))
   };
 
   try {

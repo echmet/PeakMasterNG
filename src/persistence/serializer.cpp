@@ -142,6 +142,7 @@ QJsonObject serializeSystem(const System &system)
     {"correctForDebyeHuckel", system.correctForDebyeHuckel},
     {"correctForOnsagerFuoss", system.correctForOnsagerFuoss},
     {"correctForViscosity", system.correctForViscosity},
+    {"injectionZoneLength", system.injectionZoneLength}
   };
 
   return sys;

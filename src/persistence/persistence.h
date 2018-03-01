@@ -39,6 +39,7 @@ public:
   bool correctForDebyeHuckel;
   bool correctForOnsagerFuoss;
   bool correctForViscosity;
+  double injectionZoneLength;
 };
 
 class Persistence : public QObject {

@@ -264,6 +264,13 @@ void deserializeSystem(System &system, const QJsonObject &obj)
   system.correctForOnsagerFuoss = obj["correctForOnsagerFuoss"].toBool();
   checkIfContains("correctForViscosity", obj);
   system.correctForViscosity = obj["correctForViscosity"].toBool();
+
+  try {
+    checkIfContains("injectionZoneLength", obj);
+    system.injectionZoneLength = obj["injectionZoneLength"].toDouble();
+  } catch (const MalformedJSONException &) {
+    system.injectionZoneLength = 1.0;
+  }
 }
 
 void Deserializer::deserialize(const QString &filepath, gdm::GDM &gdmBGE, gdm::GDM &gdmSample,
