@@ -34,11 +34,8 @@ void FloatingValueLineEdit::onEditingFinished()
   double dv;
 
   dv = DoubleToStringConvertor::back(text(), &ok);
-  if (ok) {
-    blockSignals(true);
-    this->setText(DoubleToStringConvertor::convert(dv));
-    blockSignals(false);
-  }
+  if (ok)
+    setNumberText(dv);
 }
 
 void FloatingValueLineEdit::onNumberFormatChanged(const QLocale *oldLocale)
@@ -47,10 +44,17 @@ void FloatingValueLineEdit::onNumberFormatChanged(const QLocale *oldLocale)
   double dv;
 
   dv = oldLocale->toDouble(this->text(), &ok);
-  if (ok) {
-    blockSignals(true);
-    this->setText(DoubleToStringConvertor::convert(dv));
-    blockSignals(false);
-  }
+  if (ok)
+    setNumberText(dv);
 }
 
+void FloatingValueLineEdit::setNumberText(const double dv)
+{
+  blockSignals(true);
+
+  const int prec = DoubleToStringConvertor::decimalDigits(text());
+  const QString t = DoubleToStringConvertor::convert(dv, 'f', prec);
+  this->setText(t);
+
+  blockSignals(false);
+}

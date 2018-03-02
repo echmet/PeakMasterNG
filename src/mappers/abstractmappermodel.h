@@ -55,28 +55,28 @@ public:
     return static_cast<I>(idx);
   }
 
-  void notifyAllDataChanged(const QVector<int> &roles = { Qt::DisplayRole })
+  virtual void notifyAllDataChanged(const QVector<int> &roles = { Qt::DisplayRole })
   {
     emit this->dataChanged(m_firstIndex,
                            m_lastIndex,
                            roles);
   }
 
-  void notifyDataChanged(const I &fromIndex, const I &toIndex, const QVector<int> &roles = { Qt::DisplayRole })
+  virtual void notifyDataChanged(const I &fromIndex, const I &toIndex, const QVector<int> &roles = { Qt::DisplayRole })
   {
     emit this->dataChanged(this->index(0, this->indexFromItem(fromIndex)),
                            this->index(0, this->indexFromItem(toIndex)),
                            roles);
   }
 
-  void notifyDataChangedFromStart(const I &toIndex, const QVector<int> &roles = { Qt::DisplayRole })
+  virtual void notifyDataChangedFromStart(const I &toIndex, const QVector<int> &roles = { Qt::DisplayRole })
   {
     emit this->dataChanged(m_firstIndex,
                            this->index(0, this->indexFromItem(toIndex)),
                            roles);
   }
 
-  void notifyDataChangedToEnd(const I &fromIndex, const QVector<int> &roles = { Qt::DisplayRole })
+  virtual void notifyDataChangedToEnd(const I &fromIndex, const QVector<int> &roles = { Qt::DisplayRole })
   {
     emit this->dataChanged(this->index(0, this->indexFromItem(fromIndex)),
                            m_lastIndex,
@@ -99,7 +99,7 @@ public:
 
   virtual bool setData(const QModelIndex &index, const QVariant &value, int role) override = 0;
 
-  void setUnderlyingData(QVector<T> *data)
+  virtual void setUnderlyingData(QVector<T> *data)
   {
     m_data = data;
     m_maxColumns = m_data->length();

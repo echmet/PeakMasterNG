@@ -13,7 +13,10 @@ public:
   static double back(QString value, bool *ok);
   static QString convert(const double d);
   static QString convert(const double d, const int digits);
+  static QString convert(const double d, const char format, const int digits);
+  static int decimalDigits(QString value);
   static int digits();
+  static int guessPrecision(const double d);
   static void initialize();
   static void loadUserSettings(const QVariant &settings);
   static const QLocale &locale();

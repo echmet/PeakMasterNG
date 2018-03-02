@@ -37,7 +37,9 @@ void FloatingValueDelegate::setEditorData(QWidget *editor, const QModelIndex &in
   if (lineEdit == nullptr)
     return;
 
-  lineEdit->setText(DoubleToStringConvertor::convert(value));
+  const int prec = index.model()->data(index, Qt::UserRole + 1).toInt();
+
+  lineEdit->setText(DoubleToStringConvertor::convert(value, 'f', prec));
 }
 
 void FloatingValueDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
@@ -54,6 +56,9 @@ void FloatingValueDelegate::setModelData(QWidget *editor, QAbstractItemModel *mo
   if (!ok)
     return;
 
+  const int prec  = DoubleToStringConvertor::decimalDigits(s);
+  /* Calling order matters. See FloatingMapperModel::setData() for details */
+  model->setData(index, prec, Qt::UserRole + 1);
   model->setData(index, value, Qt::EditRole);
 }
 

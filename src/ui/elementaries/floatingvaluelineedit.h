@@ -13,6 +13,9 @@ public:
   FloatingValueLineEdit(QWidget *parent = nullptr);
   void onNumberFormatChanged(const QLocale *oldLocale) override;
 
+private:
+  void setNumberText(const double dv);
+
 private slots:
   void ensureSanity(QString text);
   void onEditingFinished();

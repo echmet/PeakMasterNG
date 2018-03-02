@@ -1,6 +1,8 @@
 #include "doubletostringconvertor.h"
 #include "inumberformatchangeable.h"
 
+#include <cmath>
+
 DoubleToStringConvertor *DoubleToStringConvertor::s_me{nullptr};
 
 
@@ -28,14 +30,70 @@ QString DoubleToStringConvertor::convert(const double d)
   return s_me->m_locale.toString(d, s_me->m_type, s_me->m_digits);
 }
 
+QString DoubleToStringConvertor::convert(const double d, const char format, const int digits)
+{
+  QString s =s_me->m_locale.toString(d, format, digits);
+
+  /* Covert a case where the resulting string is rounded
+   * so that it does not look like a decimal number anymore */
+  if (decimalDigits(s) < 1) {
+    const int idx = s.lastIndexOf(s_me->m_locale.decimalPoint());
+    return s.mid(0, idx);
+  } else
+    return s;
+}
+
 QString DoubleToStringConvertor::convert(const double d, const int digits)
 {
   return s_me->m_locale.toString(d, s_me->m_type, digits);
 }
 
+int DoubleToStringConvertor::decimalDigits(QString value)
+{
+  value.remove(s_me->m_locale.groupSeparator());
+  value.remove(' ');
+
+  const int idx = value.indexOf(s_me->m_locale.decimalPoint());
+  if (idx < 0)
+    return 0;
+
+  int lastNonzeroChar = idx;
+  for (int _idx = idx + 1; _idx < value.length(); _idx++) {
+    if (value.at(_idx) != '0')
+      lastNonzeroChar = _idx;
+  }
+
+  return lastNonzeroChar - idx;
+}
+
 int DoubleToStringConvertor::digits()
 {
   return s_me->m_digits;
+}
+
+int DoubleToStringConvertor::guessPrecision(const double d)
+{
+  int finPrec = s_me->m_digits;
+
+  if (d == 0)
+    return 0;
+
+  for (int exp = 0; exp <= finPrec; exp++) {
+    const double fact = std::pow(10, exp);
+    const double nd = std::floor(d * fact) / fact;
+
+    if (std::abs(nd) < 1.0e-13) {
+      finPrec++;
+      if (finPrec > 17)
+        return 17;
+      continue;
+    }
+
+    if (std::abs(d - nd) <= std::pow(10, -(exp + 3)))
+      return exp;
+  }
+
+  return finPrec;
 }
 
 void DoubleToStringConvertor::initialize()

@@ -11,10 +11,11 @@ void registerMetatypes();
 int main(int argc, char *argv[])
 {
   QApplication a(argc, argv);
+  DoubleToStringConvertor::initialize();
+
   Gearbox gbox{};
 
   registerMetatypes();
-  DoubleToStringConvertor::initialize();
 
   PMNGCrashHandler::installCrashHandler();
 
