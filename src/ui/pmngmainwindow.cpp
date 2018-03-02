@@ -148,13 +148,15 @@ void PMNGMainWindow::addConstituentsSignals(const QVector<QString> &constituents
 void PMNGMainWindow::initPlotParams()
 {
   m_plotParamsData.resize(m_plotParamsModel.indexFromItem(PlotParamsItems::LAST_INDEX));
-  m_plotParamsModel.setUnderlyingData(&m_plotParamsData);
 
   m_plotParamsData[m_plotParamsModel.indexFromItem(PlotParamsItems::CUTOFF)] = 60.0;
   m_plotParamsData[m_plotParamsModel.indexFromItem(PlotParamsItems::INJ_ZONE_LENGTH)] = 1.0;
 
+  m_plotParamsModel.setUnderlyingData(&m_plotParamsData);
+
   m_plotParamsMapper = new QDataWidgetMapper{this};
   m_plotParamsMapper->setModel(&m_plotParamsModel);
+  m_plotParamsMapper->setItemDelegate(&m_fltDelegate);
   m_plotParamsMapper->addMapping(ui->qle_plotCutoff, m_plotParamsModel.indexFromItem(PlotParamsItems::CUTOFF));
   m_plotParamsMapper->addMapping(ui->qle_injZoneLength, m_plotParamsModel.indexFromItem(PlotParamsItems::INJ_ZONE_LENGTH));
   m_plotParamsMapper->toFirst();

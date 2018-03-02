@@ -3,6 +3,7 @@
 
 #include "../gearbox/calculatorinterface.h"
 #include "../mappers/floatmappermodel.h"
+#include "../gearbox/floatingvaluedelegate.h"
 
 #include <QMainWindow>
 
@@ -75,6 +76,8 @@ private:
   QDataWidgetMapper *m_plotParamsMapper;
   FloatMapperModel<PlotParamsItems> m_plotParamsModel;
   QVector<double> m_plotParamsData;
+
+  FloatingValueDelegate m_fltDelegate;
 
   persistence::Persistence &m_persistence;
 
