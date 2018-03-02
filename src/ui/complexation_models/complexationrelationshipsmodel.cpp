@@ -267,7 +267,9 @@ QVariant ComplexationRelationshipsModel::makeItemData(const TreeItem *item, cons
     QString out;
 
     auto process = [&convertor](const double _v) {
-      return DoubleToStringConvertor::convert(convertor(_v));
+      const double cv = convertor(_v);
+      const int prec = DoubleToStringConvertor::guessPrecision(cv);
+      return DoubleToStringConvertor::convert(cv, 'f', prec);
     };
 
     if (vec.empty())

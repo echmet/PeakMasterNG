@@ -34,13 +34,21 @@ QString DoubleToStringConvertor::convert(const double d, const char format, cons
 {
   QString s =s_me->m_locale.toString(d, format, digits);
 
-  /* Covert a case where the resulting string is rounded
-   * so that it does not look like a decimal number anymore */
-  if (decimalDigits(s) < 1) {
-    const int idx = s.lastIndexOf(s_me->m_locale.decimalPoint());
-    return s.mid(0, idx);
-  } else
+  /* Covert a case where the resulting string is rounded and contains trailoing zeros as a result */
+  const int idx = s.lastIndexOf(s_me->m_locale.decimalPoint());
+
+  if (idx < 0)
     return s;
+
+  int lastNonZeroIdx = idx;
+  for (int _idx = s.length() - 1; _idx > idx; _idx--) {
+    if (s.at(_idx) != '0') {
+      lastNonZeroIdx = _idx;
+      break;
+    }
+  }
+
+  return s.mid(0, lastNonZeroIdx + 1);
 }
 
 QString DoubleToStringConvertor::convert(const double d, const int digits)
