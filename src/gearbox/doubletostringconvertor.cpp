@@ -16,8 +16,10 @@ DoubleToStringConvertor::~DoubleToStringConvertor()
 {
 }
 
-double DoubleToStringConvertor::back(const QString &value, bool *ok)
+double DoubleToStringConvertor::back(QString value, bool *ok)
 {
+  value.remove(s_me->m_locale.groupSeparator());
+
   return s_me->m_locale.toDouble(value, ok);
 }
 
