@@ -11,7 +11,7 @@ public:
   using std::logic_error::what;
 };
 
-const QString ComplexationRelationshipsModel::ELEMENTS_SPLITTER{" "};
+const QString ComplexationRelationshipsModel::ELEMENTS_SPLITTER{";"};
 
 const char * ComplexationRelationshipsModel::TreeItem::InvalidChildException::what() const noexcept
 {
