@@ -34,7 +34,7 @@ QString DoubleToStringConvertor::convert(const double d, const char format, cons
 {
   QString s =s_me->m_locale.toString(d, format, digits);
 
-  /* Covert a case where the resulting string is rounded and contains trailoing zeros as a result */
+  /* Covert a case where the resulting string is rounded and contains trailing zeros as a result */
   const int idx = s.lastIndexOf(s_me->m_locale.decimalPoint());
 
   if (idx < 0)
