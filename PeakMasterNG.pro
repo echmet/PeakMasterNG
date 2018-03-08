@@ -125,7 +125,8 @@ SOURCES += \
     src/gearbox/results_models/analytesdissociationmodel.cpp \
     src/ui/editchargeswidget.cpp \
     src/ui/databaseeditordialog.cpp \
-    src/ui/editdatabaseconstituentdialog.cpp
+    src/ui/editdatabaseconstituentdialog.cpp \
+    src/ui/toggletracepointsdialog.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -224,7 +225,8 @@ HEADERS += \
     src/ui/editchargeswidget.h \
     src/ui/databaseeditordialog.h \
     src/ui/editdatabaseconstituentdialog.h \
-    src/gearbox/iconstituenteditor.h
+    src/gearbox/iconstituenteditor.h \
+    src/ui/toggletracepointsdialog.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \
@@ -244,7 +246,8 @@ FORMS += \
     src/ui/csvexportoptionsdialog.ui \
     src/ui/editchargeswidget.ui \
     src/ui/databaseeditordialog.ui \
-    src/ui/editdatabaseconstituentdialog.ui
+    src/ui/editdatabaseconstituentdialog.ui \
+    src/ui/toggletracepointsdialog.ui
 
 unix {
     QMAKE_CXXFLAGS += "-Wall -Wextra -pedantic"

@@ -81,13 +81,62 @@ public:
     const QString name;
   };
 
+  class TracepointInfo {
+  public:
+    TracepointInfo(const int32_t TPID, QString &&description) noexcept :
+      TPID{TPID},
+      description{description}
+    {}
+
+    TracepointInfo(const TracepointInfo &other) :
+      TPID{other.TPID},
+      description{other.description}
+    {}
+
+    TracepointInfo & operator=(const TracepointInfo &other)
+    {
+      const_cast<int32_t&>(TPID) = other.TPID;
+      const_cast<QString&>(description) = other.description;
+
+      return *this;
+    }
+
+    const int32_t TPID;
+    const QString description;
+  };
+
+  class TracepointState {
+  public:
+    TracepointState(const int32_t TPID, const bool enabled) :
+      TPID{TPID},
+      enabled{enabled}
+    {}
+
+    TracepointState(const TracepointState &other) :
+      TPID{other.TPID},
+      enabled{other.enabled}
+    {}
+
+    TracepointState & operator=(const TracepointState &other)
+    {
+      const_cast<int32_t&>(TPID) = other.TPID;
+      const_cast<bool&>(enabled) = other.enabled;
+
+      return *this;
+    }
+
+    const int32_t TPID;
+    const bool enabled;
+  };
+
   CalculatorInterface(gdm::GDM &backgroundGDM, gdm::GDM &sampleGDM, ResultsData resultsData);
   CalculatorInterface(const CalculatorInterface &other);
   CalculatorInterface(CalculatorInterface &&other) noexcept;
   ~CalculatorInterface() noexcept;
   QVector<QString> allConstituents() const;
   QVector<QString> analytes() const;
-  void calculate(const bool correctForDebyeHuckel, const bool correctForOnsagerFuoss, const bool correctForViscosity);
+  void calculate(const bool correctForDebyeHuckel, const bool correctForOnsagerFuoss, const bool correctForViscosity,
+                 const std::vector<TracepointState> &tracepointStates, const std::string &traceOutputFile, bool &traceWrittenOk);
   static double minimumConcentration() noexcept;
   QVector<QPointF> plotElectrophoregram(double totalLength, double detectorPosition,
                                         double drivingVoltage, const bool positiveVoltage,
@@ -102,6 +151,7 @@ public:
   bool resultsAvailable() const;
   std::vector<SpatialZoneInformation> spatialZoneInformation(double totalLength, double detectorPosition, double drivingVoltage,
                                                              const double EOFValue, const EOFValueType EOFvt, bool positiveVoltage) const;
+  std::vector<TracepointInfo> tracepointInformation() const;
 
 public slots:
   void onInvalidate();

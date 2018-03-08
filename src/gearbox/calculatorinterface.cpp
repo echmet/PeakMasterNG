@@ -8,6 +8,10 @@
 #include <lemng.h>
 #include <memory>
 #include <QPointF>
+#include <fstream>
+
+Q_STATIC_ASSERT(sizeof(CalculatorInterface::TracepointInfo::TPID) == sizeof(ECHMET::LEMNG::TracepointInfo::id));
+Q_STATIC_ASSERT(sizeof(CalculatorInterface::TracepointState::TPID) == sizeof(ECHMET::LEMNG::TracepointInfo::id));
 
 void destroyCZESystem(ECHMET::LEMNG::CZESystem *czeSystem)
 {
@@ -213,7 +217,8 @@ QVector<QString> CalculatorInterface::analytes() const
   return _analytes;
 }
 
-void CalculatorInterface::calculate(const bool correctForDebyeHuckel, const bool correctForOnsagerFuoss, const bool correctForViscosity)
+void CalculatorInterface::calculate(const bool correctForDebyeHuckel, const bool correctForOnsagerFuoss, const bool correctForViscosity,
+                                    const std::vector<TracepointState> &tracepointStates, const std::string &traceOutputFile, bool &traceWrittenOk)
 {
   ECHMET::LEMNG::CZESystem *czeSystemRaw;
   ECHMET::LEMNG::InAnalyticalConcentrationsMap *backgroundMapRaw;
@@ -243,11 +248,24 @@ void CalculatorInterface::calculate(const bool correctForDebyeHuckel, const bool
   applyAnalyticalConcentrations(m_backgroundGDM, backgroundMapRaw);
   applyAnalyticalConcentrations(m_sampleGDM, sampleMapRaw);
 
+  for (const auto &item : tracepointStates)
+    czeSystem->toggleTracepoint(item.TPID, item.enabled);
+
   tRet = czeSystem->evaluate(backgroundMapRaw, sampleMapRaw, corrections, *m_ctx.results);
+
   if (tRet != ECHMET::LEMNG::RetCode::OK) {
     if (m_ctx.results->isBGEValid)
       m_ctx.makeBGEValid();
     throw CalculatorInterfaceException{czeSystem->lastErrorString(), m_ctx.results->isBGEValid};
+  }
+
+  traceWrittenOk = true;
+  if (traceOutputFile.size() > 0) {
+    const auto trace = std::string{czeSystem->trace()->c_str()};
+
+    std::ofstream ofs{traceOutputFile};
+    ofs << trace;
+    traceWrittenOk = ofs.good();
   }
 
   m_ctx.makeValid();
@@ -667,4 +685,43 @@ std::vector<CalculatorInterface::SpatialZoneInformation> CalculatorInterface::sp
   }
 
   return zinfo;
+}
+
+std::vector<CalculatorInterface::TracepointInfo> CalculatorInterface::tracepointInformation() const
+{
+  ECHMET::LEMNG::CZESystem *czeSystemRaw;
+  ECHMET::LEMNG::TracepointInfoVec *tpiVec;
+  std::vector<TracepointInfo> tracepointInfo{};
+
+  auto backgroundIcVec = ECHMET::SysComp::createInConstituentVec(0);
+  auto sampleIcVec = ECHMET::SysComp::createInConstituentVec(0);
+
+  ECHMET::LEMNG::RetCode tRet = ECHMET::LEMNG::makeCZESystem(backgroundIcVec, sampleIcVec, czeSystemRaw);
+  if (tRet != ECHMET::LEMNG::RetCode::OK)
+    goto out;
+
+  tpiVec = czeSystemRaw->tracepointInfo();
+  if (tpiVec == nullptr)
+    goto out_2;
+
+  for (size_t idx = 0; idx < tpiVec->size(); idx++) {
+    const auto &tpi = tpiVec->at(idx);
+    tracepointInfo.emplace_back(tpi.id, tpi.description->c_str());
+  }
+
+  /* Cleanup to be handled by LEMNG later */
+  for (size_t idx = 0; idx < tpiVec->size(); idx++) {
+    auto &tpi = tpiVec->at(idx);
+    tpi.description->destroy();
+  }
+  tpiVec->destroy();
+
+out_2:
+  ECHMET::LEMNG::releaseCZESystem(czeSystemRaw);
+out:
+  backgroundIcVec->destroy();
+  sampleIcVec->destroy();
+
+  return tracepointInfo;
+
 }

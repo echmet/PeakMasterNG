@@ -14,6 +14,7 @@
 #include "../gearbox/efgcsvexporter.h"
 #include "databaseeditordialog.h"
 #include "../gearbox/databaseproxy.h"
+#include "toggletracepointsdialog.h"
 
 #include <QDialogButtonBox>
 #include <QDataWidgetMapper>
@@ -112,6 +113,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   connect(ui->actionExportEFGAsCSV, &QAction::triggered, this, &PMNGMainWindow::onExportElectrophoregramAsCSV);
   connect(ui->actionDatabase_editor, &QAction::triggered, this, &PMNGMainWindow::onDatabaseEditor);
   connect(ui->actionOpen_database, &QAction::triggered, this, &PMNGMainWindow::onOpenDatabase);
+  connect(ui->actionSet_debugging_output, &QAction::triggered, this, &PMNGMainWindow::onSetDebuggingOutput);
 
   ui->mainToolBar->addWidget(m_qpb_new);
   ui->mainToolBar->addWidget(m_qpb_load);
@@ -205,7 +207,9 @@ void PMNGMainWindow::onCalculate()
 
   OperationInProgressDialog inProgDlg{"Calculating..."};
 
-  CalculatorWorker worker{m_calcIface, rs.correctForDebyeHuckel, rs.correctForOnsagerFuoss, rs.correctForViscosity};
+  CalculatorWorker worker{m_calcIface, rs.correctForDebyeHuckel, rs.correctForOnsagerFuoss, rs.correctForViscosity,
+                          m_tracingSetup.tracepointStates,
+                          m_tracingSetup.tracingEnabled ? m_tracingSetup.outputFilePath.toStdString() : ""};
   QThread thread{};
   worker.moveToThread(&thread);
 
@@ -216,6 +220,11 @@ void PMNGMainWindow::onCalculate()
   thread.start();
   inProgDlg.exec();
   thread.wait();
+
+  if (!worker.traceWrittenOk()) {
+    QMessageBox errBox{QMessageBox::Warning, tr("Trace"), tr("Failed to write trace file")};
+    errBox.exec();
+  }
 
   const auto calcStatus = worker.calcStatus();
   if (calcStatus == CalculatorWorker::CalculationResult::INVALID) {
@@ -441,6 +450,17 @@ void PMNGMainWindow::onSave()
     QMessageBox mbox{QMessageBox::Warning, tr("Unable to save system"), ex.what()};
     mbox.exec();
   }
+}
+
+void PMNGMainWindow::onSetDebuggingOutput()
+{
+  const auto tracepointInformation = m_calcIface.tracepointInformation();
+
+  ToggleTracepointsDialog dlg{tracepointInformation, m_tracingSetup, this};
+  if (dlg.exec() != QDialog::Accepted)
+    return;
+
+  m_tracingSetup = dlg.result();
 }
 
 void PMNGMainWindow::plotElectrophoregram(const EFGDisplayer &displayer)

@@ -4,8 +4,10 @@
 #include "../gearbox/calculatorinterface.h"
 #include "../mappers/floatmappermodel.h"
 #include "../gearbox/floatingvaluedelegate.h"
+#include "toggletracepointsdialog.h"
 
 #include <QMainWindow>
+#include <vector>
 
 namespace Ui {
   class PMNGMainWindow;
@@ -88,6 +90,8 @@ private:
 
   DatabaseProxy &h_dbProxy;
 
+  ToggleTracepointsDialog::TracingSetup m_tracingSetup;
+
   Ui::PMNGMainWindow *ui;
 
   static QVector<SignalItem> s_defaultSignalItems;
@@ -106,6 +110,7 @@ private slots:
   void onPlotElectrophoregram();
   void onRunSetupChanged(const bool invalidate);
   void onSave();
+  void onSetDebuggingOutput();
 
 signals:
   void clearAll();

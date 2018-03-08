@@ -142,9 +142,16 @@
     <addaction name="actionDatabase_editor"/>
     <addaction name="actionOpen_database"/>
    </widget>
+   <widget class="QMenu" name="menuAdvanced">
+    <property name="title">
+     <string>Ad&amp;vanced</string>
+    </property>
+    <addaction name="actionSet_debugging_output"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuExport"/>
    <addaction name="menuDatabase"/>
+   <addaction name="menuAdvanced"/>
    <addaction name="menuAbout"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -193,7 +200,12 @@
   </action>
   <action name="actionOpen_database">
    <property name="text">
-    <string>Open database</string>
+    <string>&amp;Open database</string>
+   </property>
+  </action>
+  <action name="actionSet_debugging_output">
+   <property name="text">
+    <string>Set debugging output</string>
    </property>
   </action>
  </widget>
