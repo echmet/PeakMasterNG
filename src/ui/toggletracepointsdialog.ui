@@ -11,9 +11,16 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Set debugging output</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QCheckBox" name="qcb_enableTracing">
+     <property name="text">
+      <string>Enable tracing</string>
+     </property>
+    </widget>
+   </item>
    <item>
     <widget class="QLabel" name="ql_mainCaption">
      <property name="text">
@@ -21,13 +28,6 @@
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="qcb_enableTracing">
-     <property name="text">
-      <string>Enable tracing</string>
      </property>
     </widget>
    </item>
