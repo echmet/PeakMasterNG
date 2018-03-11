@@ -72,6 +72,7 @@ public:
   TracingSetup result() const;
 
 private:
+  void setupTracepointList(const std::vector<CalculatorInterface::TracepointInfo> &tracepointInformation, const TracingSetup &tracingSetup);
   std::vector<CalculatorInterface::TracepointState> tracepointStates() const;
 
   Ui::ToggleTracepointsDialog *ui;

@@ -21,37 +21,19 @@ ToggleTracepointsDialog::ToggleTracepointsDialog(const std::vector<CalculatorInt
   ui->qscrArea_tracepoints->setWidget(w);
   w->show();
 
-  for (const auto &item : tracepointInformation) {
-    QCheckBox *cbox = new QCheckBox{this};
-    cbox->setText(item.description);
-    cbox->setProperty("TPID", item.TPID);
-    m_tracepoints.emplace_back(cbox, false);
+  if (tracepointInformation.size() > 0)
+    setupTracepointList(tracepointInformation, tracingSetup);
+  else {
+    w->setLayout(new QVBoxLayout{this});
 
-    m_qvlay_tracepoints->addWidget(cbox);
+    QLabel *l = new QLabel{tr("No tracepoints are available.\nLEMNG library was probably built without tracing support."), this};
+    l->setWordWrap(true);
+    w->layout()->addWidget(l);
+
+    connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &ToggleTracepointsDialog::reject);
   }
 
-  if (tracingSetup.tracepointStates.size() > 0) {
-    Q_ASSERT(tracepointInformation.size() == tracingSetup.tracepointStates.size());
-
-    for (size_t idx = 0; idx < tracingSetup.tracepointStates.size(); idx++) {
-      const auto &item = tracingSetup.tracepointStates.at(idx);
-      auto cbox = std::get<0>(m_tracepoints.at(idx));
-
-      Q_ASSERT(item.TPID == cbox->property("TPID"));
-      cbox->setChecked(item.enabled);
-      std::get<1>(m_tracepoints.at(idx)) = item.enabled;
-    }
-  }
-
-  ui->qle_outputFile->setText(tracingSetup.outputFilePath);
-  ui->qcb_enableTracing->setChecked(tracingSetup.tracingEnabled);
-  ui->qle_outputFile->setEnabled(tracingSetup.tracingEnabled);
-  m_outputFilePath = tracingSetup.outputFilePath;
-
-  connect(ui->qpb_chooseOutputFile, &QPushButton::clicked, this, &ToggleTracepointsDialog::onSetOutputFile);
   connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &ToggleTracepointsDialog::reject);
-  connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &ToggleTracepointsDialog::onAccepted);
-  connect(ui->qcb_enableTracing, &QCheckBox::toggled, this, &ToggleTracepointsDialog::onEnableTracingToggled);
 }
 
 ToggleTracepointsDialog::~ToggleTracepointsDialog()
@@ -104,6 +86,40 @@ ToggleTracepointsDialog::TracingSetup ToggleTracepointsDialog::result() const
   };
 
   return ts;
+}
+
+void ToggleTracepointsDialog::setupTracepointList(const std::vector<CalculatorInterface::TracepointInfo> &tracepointInformation, const TracingSetup &tracingSetup)
+{
+  for (const auto &item : tracepointInformation) {
+    QCheckBox *cbox = new QCheckBox{this};
+    cbox->setText(item.description);
+    cbox->setProperty("TPID", item.TPID);
+    m_tracepoints.emplace_back(cbox, false);
+
+    m_qvlay_tracepoints->addWidget(cbox);
+  }
+
+  if (tracingSetup.tracepointStates.size() > 0) {
+    Q_ASSERT(tracepointInformation.size() == tracingSetup.tracepointStates.size());
+
+    for (size_t idx = 0; idx < tracingSetup.tracepointStates.size(); idx++) {
+      const auto &item = tracingSetup.tracepointStates.at(idx);
+      auto cbox = std::get<0>(m_tracepoints.at(idx));
+
+      Q_ASSERT(item.TPID == cbox->property("TPID"));
+      cbox->setChecked(item.enabled);
+      std::get<1>(m_tracepoints.at(idx)) = item.enabled;
+    }
+  }
+
+  ui->qle_outputFile->setText(tracingSetup.outputFilePath);
+  ui->qcb_enableTracing->setChecked(tracingSetup.tracingEnabled);
+  ui->qle_outputFile->setEnabled(tracingSetup.tracingEnabled);
+  m_outputFilePath = tracingSetup.outputFilePath;
+
+  connect(ui->qpb_chooseOutputFile, &QPushButton::clicked, this, &ToggleTracepointsDialog::onSetOutputFile);
+  connect(ui->qcb_enableTracing, &QCheckBox::toggled, this, &ToggleTracepointsDialog::onEnableTracingToggled);
+  connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &ToggleTracepointsDialog::onAccepted);
 }
 
 std::vector<CalculatorInterface::TracepointState> ToggleTracepointsDialog::tracepointStates() const
