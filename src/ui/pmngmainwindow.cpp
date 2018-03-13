@@ -454,10 +454,17 @@ void PMNGMainWindow::onSave()
 
 void PMNGMainWindow::onSetDebuggingOutput()
 {
+  static QSize dlgSize;
   const auto tracepointInformation = m_calcIface.tracepointInformation();
 
   ToggleTracepointsDialog dlg{tracepointInformation, m_tracingSetup, this};
-  if (dlg.exec() != QDialog::Accepted)
+  if (!dlgSize.isEmpty())
+    dlg.resize(dlgSize);
+
+  const int ret = dlg.exec();
+  dlgSize = dlg.size();
+
+  if (ret != QDialog::Accepted)
     return;
 
   m_tracingSetup = dlg.result();
