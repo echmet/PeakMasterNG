@@ -68,7 +68,7 @@ void ToggleTracepointsDialog::onFilterTextChanged(const QString &text)
 
   for (auto &&item : m_tracepoints) {
     QCheckBox *cb = std::get<0>(item);
-    const QString &cbText = cb->text();
+    const QString cbText = cb->text().remove('&');
 
     cb->setVisible(showAll ? true : cbText.contains(text, Qt::CaseInsensitive));
   }
