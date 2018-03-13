@@ -62,6 +62,18 @@ void ToggleTracepointsDialog::onEnableTracingToggled(const bool enabled)
   ui->qle_outputFile->setEnabled(enabled);
 }
 
+void ToggleTracepointsDialog::onFilterTextChanged(const QString &text)
+{
+  const bool showAll = text.length() < 1;
+
+  for (auto &&item : m_tracepoints) {
+    QCheckBox *cb = std::get<0>(item);
+    const QString &cbText = cb->text();
+
+    cb->setVisible(showAll ? true : cbText.contains(text, Qt::CaseInsensitive));
+  }
+}
+
 void ToggleTracepointsDialog::onSetOutputFile()
 {
   if (!ui->qcb_enableTracing->isChecked())
@@ -98,6 +110,7 @@ void ToggleTracepointsDialog::setupTracepointList(const std::vector<CalculatorIn
 
     m_qvlay_tracepoints->addWidget(cbox);
   }
+  m_qvlay_tracepoints->addStretch();
 
   if (tracingSetup.tracepointStates.size() > 0) {
     Q_ASSERT(tracepointInformation.size() == tracingSetup.tracepointStates.size());
@@ -120,6 +133,7 @@ void ToggleTracepointsDialog::setupTracepointList(const std::vector<CalculatorIn
   connect(ui->qpb_chooseOutputFile, &QPushButton::clicked, this, &ToggleTracepointsDialog::onSetOutputFile);
   connect(ui->qcb_enableTracing, &QCheckBox::toggled, this, &ToggleTracepointsDialog::onEnableTracingToggled);
   connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &ToggleTracepointsDialog::onAccepted);
+  connect(ui->qle_filter, &QLineEdit::textChanged, this, &ToggleTracepointsDialog::onFilterTextChanged);
 }
 
 std::vector<CalculatorInterface::TracepointState> ToggleTracepointsDialog::tracepointStates() const

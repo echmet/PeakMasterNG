@@ -84,6 +84,7 @@ private:
 private slots:
   void onAccepted();
   void onEnableTracingToggled(const bool enabled);
+  void onFilterTextChanged(const QString &text);
   void onSetOutputFile();
 };
 
