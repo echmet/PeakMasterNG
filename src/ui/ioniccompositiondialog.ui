@@ -75,7 +75,7 @@
        <item>
         <widget class="QLabel" name="ql_warning">
          <property name="text">
-          <string>Note that the dissociation states are computed for analytes at infinite dilution.</string>
+          <string>Note that the dissociation states are computed for analytes at infinite dilution and are expressed as molar fraction.</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
