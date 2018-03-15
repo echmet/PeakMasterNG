@@ -19,7 +19,7 @@ AbstractConstituentsModelBase::AbstractConstituentsModelBase(GDMProxy &GDMProxy,
 
 void AbstractConstituentsModelBase::addConstituent(const QString &name)
 {
-  const int idx = m_constituentNames.size() - 1;
+  const int idx = m_constituentNames.size();
 
   beginInsertRows(QModelIndex{}, idx, idx);
   m_constituentNames.append(name);
