@@ -27,7 +27,9 @@ double DoubleToStringConvertor::back(QString value, bool *ok)
 
 QString DoubleToStringConvertor::convert(const double d)
 {
-  return s_me->m_locale.toString(d, s_me->m_type, s_me->m_digits);
+  const QString s = s_me->m_locale.toString(d, s_me->m_type, s_me->m_digits);
+
+  s_me->correctTralingDecSep(s);
 }
 
 QString DoubleToStringConvertor::convert(const double d, const char format, const int digits)
@@ -48,12 +50,25 @@ QString DoubleToStringConvertor::convert(const double d, const char format, cons
     }
   }
 
-  return s.mid(0, lastNonZeroIdx + 1);
+  s = s.mid(0, lastNonZeroIdx + 1);
+
+  return s_me->correctTralingDecSep(s);
 }
 
 QString DoubleToStringConvertor::convert(const double d, const int digits)
 {
-  return s_me->m_locale.toString(d, s_me->m_type, digits);
+  const QString s = s_me->m_locale.toString(d, s_me->m_type, digits);
+
+  return s_me->correctTralingDecSep(s);
+}
+
+QString DoubleToStringConvertor::correctTralingDecSep(const QString &s)
+{
+  const QChar &ds = s_me->m_locale.decimalPoint();
+
+  if (s.endsWith(ds))
+    return s.mid(0, s.length() - 1);
+  return s;
 }
 
 int DoubleToStringConvertor::decimalDigits(QString value)

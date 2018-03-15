@@ -27,6 +27,7 @@ public:
 
 private:
   DoubleToStringConvertor();
+  QString correctTralingDecSep(const QString &s);
 
   QLocale m_locale;
   int m_digits;
