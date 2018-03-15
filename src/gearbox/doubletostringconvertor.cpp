@@ -29,7 +29,7 @@ QString DoubleToStringConvertor::convert(const double d)
 {
   const QString s = s_me->m_locale.toString(d, s_me->m_type, s_me->m_digits);
 
-  s_me->correctTralingDecSep(s);
+  return s_me->correctTralingDecSep(s);
 }
 
 QString DoubleToStringConvertor::convert(const double d, const char format, const int digits)
