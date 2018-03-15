@@ -253,12 +253,6 @@ void CalculatorInterface::calculate(const bool correctForDebyeHuckel, const bool
 
   tRet = czeSystem->evaluate(backgroundMapRaw, sampleMapRaw, corrections, *m_ctx.results);
 
-  if (tRet != ECHMET::LEMNG::RetCode::OK) {
-    if (m_ctx.results->isBGEValid)
-      m_ctx.makeBGEValid();
-    throw CalculatorInterfaceException{czeSystem->lastErrorString(), m_ctx.results->isBGEValid};
-  }
-
   traceWrittenOk = true;
   if (traceOutputFile.size() > 0) {
     const auto trace = std::string{czeSystem->trace()->c_str()};
@@ -266,6 +260,12 @@ void CalculatorInterface::calculate(const bool correctForDebyeHuckel, const bool
     std::ofstream ofs{traceOutputFile};
     ofs << trace;
     traceWrittenOk = ofs.good();
+  }
+
+  if (tRet != ECHMET::LEMNG::RetCode::OK) {
+    if (m_ctx.results->isBGEValid)
+      m_ctx.makeBGEValid();
+    throw CalculatorInterfaceException{czeSystem->lastErrorString(), m_ctx.results->isBGEValid};
   }
 
   m_ctx.makeValid();
