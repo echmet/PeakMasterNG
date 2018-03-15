@@ -361,7 +361,7 @@ bool ComplexationRelationshipsModel::setData(const QModelIndex &index, const QVa
 {
 
   auto stringToItems = [](QVector<double> &vec, const QVariant &value, const std::function<double (double)> &convertor) {
-    QStringList numbers = value.toString().split(ELEMENTS_SPLITTER);
+    QStringList numbers = value.toString().split(ELEMENTS_SPLITTER, QString::SkipEmptyParts);
     QVector<double> _temp;
 
     for (const QString &s : numbers) {
