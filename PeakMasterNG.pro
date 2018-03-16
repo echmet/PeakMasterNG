@@ -281,3 +281,7 @@ RESOURCES += \
 win32 {
     RC_FILE = PeakMasterNG.rc
 }
+
+flatpak_build {
+    DEFINES += PMNG_FLATPAK_BUILD
+}

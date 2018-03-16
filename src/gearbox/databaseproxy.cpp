@@ -6,7 +6,11 @@
 #include <cassert>
 #include <QString>
 
+#ifdef PMNG_FLATPAK_BUILD
+const char *DatabaseProxy::DATABASE_PATH = "/app/share/PeakMasterNG/pmng_db.sql";
+#else
 const char *DatabaseProxy::DATABASE_PATH = "pmng_db.sql";
+#endif // PMNG_FLATPAK_BUILD
 
 DatabaseConstituent makeDatabaseConstituent(const database::Constituent &c)
 {
