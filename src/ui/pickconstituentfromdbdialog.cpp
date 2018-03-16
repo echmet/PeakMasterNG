@@ -58,6 +58,8 @@ void PickConstituentFromDBDialog::onAllCompounds()
   if (!h_dbProxy.isAvailable())
     return;
 
+  ui->stackedWidget->setCurrentIndex(0);
+
   try {
     auto results = h_dbProxy.fetchAll();
 
@@ -72,6 +74,8 @@ void PickConstituentFromDBDialog::onConstituentNameChanged(const QString &name)
 {
   if (!h_dbProxy.isAvailable())
     return;
+
+  ui->stackedWidget->setCurrentIndex(0);
 
   try {
     std::string _name = name.toStdString();
