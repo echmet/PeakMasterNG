@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Exec=PeakMasterNG
+Name=PeakMaster
+GenericName=Capillary Zone Electrophoresis simulator
+X-KDE-StartupNotify=true
+Terminal=false
+Categories=Science;Education
+Icon=PeakMasterNG
