@@ -3,7 +3,7 @@ PeakMaster NG
 
 Introduction
 ---
-PeakMaster NG is a graphical user interface for [LEMNG](https://github.com/echmet/LEMNG) model for simulations of capillary zone electrophoresis experiments. PeakMaster NG provides convenient means to enter input data for the LEMNG model and display the results of LEMNG's calculations. PeakMaster NG binaries and a user guide can be downloaded from the [ECHMET research group website](https://echmet.natur.cuni.cz/peakmaster) or an [alternate backup site](https://devoid-pointer.net/echmet/downloads.php).
+PeakMaster NG is a graphical user interface for [LEMNG](https://github.com/echmet/LEMNG) model for simulations of capillary zone electrophoresis experiments. PeakMaster NG provides convenient means to enter input data for the LEMNG model and display the results of LEMNG's calculations. PeakMaster NG binaries and a user guide can be downloaded from the [ECHMET research group website](https://echmet.natur.cuni.cz/peakmaster).
 
 Building
 ---
@@ -24,7 +24,7 @@ The README assumes that a system-wide installation of the Qt toolkit is availabl
 1. Set up paths to dependencies accordingly to your setup in `PeakMasterNG.pri` file. See the content of the file for details.
 2. `cd` to the directory with PeakMaster NG sources.
 3. Create a new directory named `build` and `cd` into the directory
-4. Run `qmake ../PeakMasterNG.pro CONFIG+=Release`
+4. Run `qmake ../PeakMasterNG.pro CONFIG+=release`
 5. Run `make`
 
 Prior to launching the binary, make sure that all required binary libraries are available to the OS'es dynamic linker.
