@@ -284,4 +284,9 @@ win32 {
 
 flatpak_build {
     DEFINES += PMNG_FLATPAK_BUILD
+
+    package.path = /app/bin
+    package.files += PeakMasterNG
+    package.CONFIG = no_check_exist
+    INSTALLS += package
 }
