@@ -42,11 +42,17 @@ void gdm::detail::eraseAll(ComplexationMap& obj, ConstituentType constituentType
 
 void gdm::detail::clampAll(ComplexationMap& obj, ConstituentType constituentType, const std::string& constituentName, ChargeInterval interval) noexcept
 {
+    ComplexationMap newObj = obj;
+
     for(auto& entry : obj) {
-        auto& complexation = entry.second;
-        if(name(entry.first, constituentType) == constituentName) clamp(complexation, constituentType, interval);
-        if (entry.second.size() == 0) obj.erase(entry.first);
+        auto it = newObj.find(entry.first);
+        if (it == newObj.end()) continue;
+        auto& complexation = it->second;
+        if(name(it->first, constituentType) == constituentName) clamp(complexation, constituentType, interval);
+        if (it->second.size() == 0) newObj.erase(it->first);
     }
+
+    obj = newObj;
 
     assert(contains(interval, chargeSpan(obj, constituentType, constituentName)));
 }
