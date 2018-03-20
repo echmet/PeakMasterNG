@@ -15,7 +15,7 @@ CrashHandlerDialog::CrashHandlerDialog(const bool postCrash, QWidget *parent) :
   ui{new Ui::CrashHandlerDialog},
   m_apologyMessagePartOneDuring{QString(QObject::tr("We are sorry, but %1 has encountered an internal error from which it cannot recover.")).arg(Globals::SOFTWARE_NAME)},
   m_apologyMessagePartOnePostCrash{QString(QObject::tr("We are sorry, but it seems that %1 crashed last time it was run.")).arg(Globals::SOFTWARE_NAME)},
-  m_apologyMessagePartTwo{QObject::tr("%1\n"
+  m_apologyMessagePartTwo{QObject::tr("\n"
                                       "You may want to report the backtrace below along with a description (in English or Czech) "
                                       "of what exactly happened to the developers.")}
 {
