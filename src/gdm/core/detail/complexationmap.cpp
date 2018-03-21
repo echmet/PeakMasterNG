@@ -46,13 +46,12 @@ void gdm::detail::clampAll(ComplexationMap& obj, ConstituentType constituentType
 
     for(auto& entry : obj) {
         auto it = newObj.find(entry.first);
-        if (it == newObj.end()) continue;
         auto& complexation = it->second;
         if(name(it->first, constituentType) == constituentName) clamp(complexation, constituentType, interval);
         if (it->second.size() == 0) newObj.erase(it->first);
     }
 
-    obj = newObj;
+    obj = std::move(newObj);
 
     assert(contains(interval, chargeSpan(obj, constituentType, constituentName)));
 }
