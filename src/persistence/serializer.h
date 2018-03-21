@@ -15,7 +15,7 @@ class Serializer
 {
 public:
   Serializer() = delete;
-  static void serialize(const QString &filepath, const gdm::GDM &gdmBGE, const gdm::GDM &gdmSample,
+  static void serialize(QString filepath, const gdm::GDM &gdmBGE, const gdm::GDM &gdmSample,
                         const System &system);
 };
 

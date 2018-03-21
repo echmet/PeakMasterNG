@@ -148,9 +148,12 @@ QJsonObject serializeSystem(const System &system)
   return sys;
 }
 
-void Serializer::serialize(const QString &filepath, const gdm::GDM &gdmBGE, const gdm::GDM &gdmSample,
+void Serializer::serialize(QString filepath, const gdm::GDM &gdmBGE, const gdm::GDM &gdmSample,
                            const System &system)
 {
+  if (!filepath.endsWith(".json", Qt::CaseInsensitive))
+    filepath.append(".json");
+
   QFile out{filepath};
 
   if (!out.open(QIODevice::WriteOnly | QIODevice::Text))
