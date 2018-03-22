@@ -49,7 +49,14 @@
            </widget>
           </item>
           <item>
-           <widget class="FloatingValueLineEdit" name="qle_plotCutoff"/>
+           <widget class="FloatingValueLineEdit" name="qle_plotCutoff">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QCheckBox" name="qcb_autoPlotCutoff">
@@ -69,7 +76,14 @@
            </widget>
           </item>
           <item>
-           <widget class="FloatingValueLineEdit" name="qle_injZoneLength"/>
+           <widget class="FloatingValueLineEdit" name="qle_injZoneLength">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
           </item>
           <item>
            <spacer name="horizontalSpacer_2">
