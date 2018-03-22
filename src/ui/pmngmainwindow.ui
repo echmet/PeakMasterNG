@@ -27,7 +27,7 @@
           <item>
            <widget class="QLabel" name="ql_signal">
             <property name="text">
-             <string>Signal</string>
+             <string>Profile</string>
             </property>
            </widget>
           </item>
@@ -205,7 +205,7 @@
   </action>
   <action name="actionSet_debugging_output">
    <property name="text">
-    <string>Set debugging output</string>
+    <string>&amp;Set debugging output</string>
    </property>
   </action>
  </widget>
