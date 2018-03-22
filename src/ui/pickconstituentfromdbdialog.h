@@ -27,6 +27,8 @@ private:
 
   int m_selectedIndex;
 
+  static QSize m_lastDlgSize;
+
 private slots:
   void onAccepted();
   void onAllCompounds();

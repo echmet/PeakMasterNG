@@ -87,8 +87,13 @@ SystemCompositionWidget::~SystemCompositionWidget()
 
 void SystemCompositionWidget::addConstituent(GDMProxy &proxy, AbstractConstituentsModelBase *model)
 {
+  static QSize m_dlgSize{};
+
   EditConstituentDialog dlg{h_dbProxy, m_viscosityCorrectionEnabled, this};
   ConstituentManipulator manipulator{proxy, m_viscosityCorrectionEnabled};
+
+  if (!m_dlgSize.isEmpty())
+    dlg.resize(m_dlgSize);
 
   connect(&dlg, &EditConstituentDialog::validateInput, &manipulator, &ConstituentManipulator::onValidateConstituentInput);
   connect(&dlg, &EditConstituentDialog::addToDatabase, this, &SystemCompositionWidget::onAddToDatabase);
@@ -99,6 +104,7 @@ void SystemCompositionWidget::addConstituent(GDMProxy &proxy, AbstractConstituen
     proxy.insert(std::move(constituent));
 
     model->addConstituent(dlg.name());
+    m_dlgSize = dlg.size();
   }
 }
 

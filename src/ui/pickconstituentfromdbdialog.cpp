@@ -7,6 +7,8 @@
 
 #include <QMessageBox>
 
+QSize PickConstituentFromDBDialog::m_lastDlgSize = QSize{};
+
 PickConstituentFromDBDialog::PickConstituentFromDBDialog(DatabaseConstituentsPhysPropsTableModel &model, DatabaseProxy &dbProxy, QWidget *parent) :
   QDialog{parent},
   ui{new Ui::PickConstituentFromDBDialog},
@@ -16,6 +18,9 @@ PickConstituentFromDBDialog::PickConstituentFromDBDialog(DatabaseConstituentsPhy
 {
   ui->setupUi(this);
   ui->qtbv_constituents->setModel(&m_model);
+
+  if (!m_lastDlgSize.isEmpty())
+    resize(m_lastDlgSize);
 
   connect(ui->qle_constituentName, &QLineEdit::textChanged, this, &PickConstituentFromDBDialog::onConstituentNameChanged);
 
@@ -50,6 +55,7 @@ void PickConstituentFromDBDialog::onAccepted()
     }
   }
 
+  m_lastDlgSize = size();
   accept();
 }
 
@@ -94,6 +100,7 @@ void PickConstituentFromDBDialog::onItemSelected(const int row)
     return;
 
   m_selectedIndex = row;
+  m_lastDlgSize = size();
   accept();
 }
 

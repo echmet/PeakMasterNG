@@ -34,6 +34,8 @@ private:
   QMap<QString, QPair<std::shared_ptr<ComplexationRelationshipsModel::RootTreeItem>, ComplexationRelationship>> _relationships;
   ComplexationParametersDelegate *_delegate;
 
+  static QSize m_lastDlgSize;
+
 private slots:
   void onAcceptClicked();
   void onLigandChanged(const int idx);

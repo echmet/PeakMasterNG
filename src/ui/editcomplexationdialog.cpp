@@ -6,6 +6,7 @@
 #include <QComboBox>
 #include <QPushButton>
 
+QSize EditComplexationDialog::m_lastDlgSize = QSize{};
 
 EditComplexationDialog::EditComplexationDialog(QWidget *parent) :
   QDialog{parent},
@@ -16,6 +17,8 @@ EditComplexationDialog::EditComplexationDialog(QWidget *parent) :
   _delegate = new ComplexationParametersDelegate(this);
   ui->qtrv_complexation->setItemDelegate(_delegate);
 
+  if (!m_lastDlgSize.isEmpty())
+    resize(m_lastDlgSize);
 
   connect(ui->qcbox_ligands, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, &EditComplexationDialog::onLigandChanged);
   connect(ui->qpb_remove, &QPushButton::clicked, this, &EditComplexationDialog::onRemoveLigandClicked);
@@ -58,6 +61,7 @@ EditComplexationDialog::AllComplexationRelationships EditComplexationDialog::all
 
 void EditComplexationDialog::onAcceptClicked()
 {
+  m_lastDlgSize = size();
   accept();
 }
 
