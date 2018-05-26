@@ -12,9 +12,9 @@ CalculatorWorker::CalculatorWorker(CalculatorInterface &calcIface, const bool co
 {
 }
 
-CalculatorWorker::CalculationResult CalculatorWorker::calcStatus() const
+CalculatorWorker::CalculationResult CalculatorWorker::calcResult() const
 {
-  return m_calcStatus;
+  return m_calcResult;
 }
 
 const QString & CalculatorWorker::errorMsg() const
@@ -24,15 +24,24 @@ const QString & CalculatorWorker::errorMsg() const
 
 void CalculatorWorker::process()
 {
-
   try {
     m_calcIface.calculate(m_correctForDebyeHuckel, m_correctForOnsagerFuoss, m_correctForViscosity,
                           m_tracepointStates,
                           m_traceOutputFile,
                           m_traceWrittenOk);
-    m_calcStatus = CalculationResult::OK;
+    m_calcResult = CalculationResult::OK;
   } catch (CalculatorInterfaceException &ex) {
-    m_calcStatus = ex.isBGEValid ? CalculationResult::PARTIAL : CalculationResult::INVALID;
+    m_calcResult = [](const CalculatorInterfaceException::SolutionState state) {
+      switch (state) {
+      case CalculatorInterfaceException::SolutionState::INVALID:
+        return CalculationResult::INVALID;
+      case CalculatorInterfaceException::SolutionState::BGE_ONLY:
+        return CalculationResult::PARTIAL_BGE;
+      case CalculatorInterfaceException::SolutionState::PARTIAL_EIGENZONES:
+        return CalculationResult::PARTIAL_EIGENZONES;
+      };
+    }(ex.state);
+
     m_errorMsg = ex.what();
   }
 

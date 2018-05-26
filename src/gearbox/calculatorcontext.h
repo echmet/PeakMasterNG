@@ -13,22 +13,28 @@ namespace ECHMET {
 class CalculatorContext
 {
 public:
+  enum class CompleteResultsValidity {
+    INVALID,
+    OK,
+    PARTIAL
+  };
+
   CalculatorContext();
   CalculatorContext(const CalculatorContext &other);
   CalculatorContext(CalculatorContext &&other) noexcept;
   ~CalculatorContext() noexcept;
   void invalidate();
   bool isBGEValid() const;
-  bool isValid() const;
+  CompleteResultsValidity isValid() const;
   void makeBGEValid();
-  void makeValid();
+  void makeValid(const bool fullyValid);
 
   std::vector<std::string> analytes;
   ECHMET::LEMNG::Results *results;
 
 private:
   bool m_isBGEValid;
-  bool m_isValid;
+  CompleteResultsValidity m_isValid;
 };
 
 #endif // CALCULATORCONTEXT_H

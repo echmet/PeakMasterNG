@@ -226,8 +226,8 @@ void PMNGMainWindow::onCalculate()
     errBox.exec();
   }
 
-  const auto calcStatus = worker.calcStatus();
-  if (calcStatus == CalculatorWorker::CalculationResult::INVALID) {
+  const auto calcResult = worker.calcResult();
+  if (calcResult == CalculatorWorker::CalculationResult::INVALID) {
     QMessageBox errmbox{QMessageBox::Critical, tr("Calculation failed"), worker.errorMsg()};
     errmbox.exec();
     return;
@@ -235,15 +235,23 @@ void PMNGMainWindow::onCalculate()
 
   try {
     m_calcIface.publishResults(rs.totalLength, rs.detectorPosition, rs.drivingVoltage, EOFValue, EOFvt, rs.positiveVoltage);
-    if (calcStatus == CalculatorWorker::CalculationResult::OK) {
+    if (calcResult == CalculatorWorker::CalculationResult::OK) {
       addConstituentsSignals(m_calcIface.allConstituents());
       selectSignalIfAvailable(lastSelectedSignal);
       plotElectrophoregram(displayer);
-    } else {
+    } else if (calcResult == CalculatorWorker::CalculationResult::PARTIAL_BGE) {
       QMessageBox errmbox{QMessageBox::Warning, tr("Calculation incomplete"),
                           QString{tr("Solver was unable to calculate electromigration properties of the system. "
                                      "Properties of background electrolyte, however, are available.\n\n"
-                                     "Error reported by the sovler:\n"
+                                     "Error reported by the solver:\n"
+                                     "%1")}.arg(worker.errorMsg())};
+      errmbox.exec();
+    } else if (calcResult == CalculatorWorker::CalculationResult::PARTIAL_EIGENZONES) {
+      QMessageBox errmbox{QMessageBox::Warning, tr("Calculation incomplete"),
+                          QString{tr("Solver was unable to calculate properties of some of the eigenzones. "
+                                     "You can still use the results but keep in mind that properties "
+                                     "of eigenzones displayed in red might be incorrect.\n\n"
+                                     "Error reported by the solver:\n"
                                      "%1")}.arg(worker.errorMsg())};
       errmbox.exec();
     }

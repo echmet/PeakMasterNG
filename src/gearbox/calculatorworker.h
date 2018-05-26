@@ -11,14 +11,15 @@ class CalculatorWorker : public QObject
 public:
   enum class CalculationResult {
     INVALID,
-    PARTIAL,
+    PARTIAL_BGE,
+    PARTIAL_EIGENZONES,
     OK,
   };
 
   CalculatorWorker(CalculatorInterface &calcIface, const bool correctForDebyeHuckel, const bool correctForOnsagerFuoss, const bool correctForViscosity,
                    const std::vector<CalculatorInterface::TracepointState> &tracepointStates,
                    const std::string &traceOutputFile);
-  CalculationResult calcStatus() const;
+  CalculationResult calcResult() const;
   const QString &errorMsg() const;
   bool traceWrittenOk() const;
 public slots:
@@ -31,7 +32,7 @@ private:
   const bool m_correctForViscosity;
   const std::vector<CalculatorInterface::TracepointState> m_tracepointStates;
   const std::string m_traceOutputFile;
-  CalculationResult m_calcStatus;
+  CalculationResult m_calcResult;
   bool m_traceWrittenOk;
   QString m_errorMsg;
 

@@ -13,9 +13,15 @@ namespace gdm {
 
 class CalculatorInterfaceException : public std::runtime_error {
 public:
-  explicit CalculatorInterfaceException(const char *message, const bool isBGEValid = false);
+  enum class SolutionState {
+    INVALID,
+    BGE_ONLY,
+    PARTIAL_EIGENZONES
+  };
 
-  const bool isBGEValid;
+  explicit CalculatorInterfaceException(const char *message, const SolutionState state = SolutionState::INVALID);
+
+  const SolutionState state;
 };
 
 class CalculatorInterface : public QObject {

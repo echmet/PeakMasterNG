@@ -5,7 +5,7 @@
 CalculatorContext::CalculatorContext() :
   results{new ECHMET::LEMNG::Results{}},
   m_isBGEValid{false},
-  m_isValid{false}
+  m_isValid{CompleteResultsValidity::INVALID}
 {
 }
 
@@ -41,7 +41,7 @@ void CalculatorContext::invalidate()
   }
 
   m_isBGEValid = false;
-  m_isValid = false;
+  m_isValid = CompleteResultsValidity::INVALID;
 }
 
 bool CalculatorContext::isBGEValid() const
@@ -49,7 +49,7 @@ bool CalculatorContext::isBGEValid() const
   return m_isBGEValid;
 }
 
-bool CalculatorContext::isValid() const
+CalculatorContext::CompleteResultsValidity CalculatorContext::isValid() const
 {
   return m_isValid;
 }
@@ -59,8 +59,8 @@ void CalculatorContext::makeBGEValid()
   m_isBGEValid = true;
 }
 
-void CalculatorContext::makeValid()
+void CalculatorContext::makeValid(const bool fullyValid)
 {
   m_isBGEValid = true;
-  m_isValid = true;
+  m_isValid = fullyValid ? CompleteResultsValidity::OK : CompleteResultsValidity::PARTIAL;
 }

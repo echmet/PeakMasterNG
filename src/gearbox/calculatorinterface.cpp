@@ -155,9 +155,9 @@ void fillBackgroundIonicComposition(ResultsData &rData, const ECHMET::LEMNG::RCo
   rData.backgroundCompositionRefresh(totalLowest, totalHighest, std::move(constituents), std::move(complexForms), std::move(concentrations));
 }
 
-CalculatorInterfaceException::CalculatorInterfaceException(const char *message, const bool isBGEValid) :
+CalculatorInterfaceException::CalculatorInterfaceException(const char *message, const SolutionState state) :
   std::runtime_error{message},
-  isBGEValid{isBGEValid}
+  state{state}
 {
 }
 
@@ -195,7 +195,7 @@ QVector<QString> CalculatorInterface::allConstituents() const
 {
   QVector<QString> _ctuents{};
 
-  if (!m_ctx.isValid())
+  if (m_ctx.isValid() == CalculatorContext::CompleteResultsValidity::INVALID)
     return _ctuents;
 
   for (const auto &c : m_sampleGDM)
@@ -208,7 +208,7 @@ QVector<QString> CalculatorInterface::analytes() const
 {
   QVector<QString> _analytes{};
 
-  if (!m_ctx.isValid())
+  if (m_ctx.isValid() == CalculatorContext::CompleteResultsValidity::INVALID)
     return _analytes;
 
   for (const auto &a : m_ctx.analytes)
@@ -262,13 +262,17 @@ void CalculatorInterface::calculate(const bool correctForDebyeHuckel, const bool
     traceWrittenOk = ofs.good();
   }
 
-  if (tRet != ECHMET::LEMNG::RetCode::OK) {
+  if (tRet == ECHMET::LEMNG::RetCode::E_PARTIAL_EIGENZONES) {
+    m_ctx.makeValid(false);
+    throw CalculatorInterfaceException{ECHMET::LEMNG::LEMNGerrorToString(tRet), CalculatorInterfaceException::SolutionState::PARTIAL_EIGENZONES};
+  } else if (tRet != ECHMET::LEMNG::RetCode::OK) {
     if (m_ctx.results->isBGEValid)
       m_ctx.makeBGEValid();
-    throw CalculatorInterfaceException{czeSystem->lastErrorString(), m_ctx.results->isBGEValid};
+    const auto state = (m_ctx.results->isBGEValid) ? CalculatorInterfaceException::SolutionState::BGE_ONLY : CalculatorInterfaceException::SolutionState::INVALID;
+    throw CalculatorInterfaceException{czeSystem->lastErrorString(), state};
   }
 
-  m_ctx.makeValid();
+  m_ctx.makeValid(true);
 }
 
 void CalculatorInterface::fillAnalytesList()
@@ -419,7 +423,7 @@ void CalculatorInterface::publishResults(double totalLength, double detectorPosi
 
   const double EOFMobility = EOFMobilityFromInput(EOFValue, EOFvt, totalLength, detectorPosition, drivingVoltage);
 
-  if (m_ctx.isValid()) {
+  if (m_ctx.isValid() != CalculatorContext::CompleteResultsValidity::INVALID) {
     mapResultsAnalytesDissociation();
     mapResults(totalLength, detectorPosition, drivingVoltage, EOFMobility);
     return;
@@ -448,7 +452,7 @@ QVector<QPointF> CalculatorInterface::plotElectrophoregramInternal(double totalL
 {
   QVector<QPointF> plot{};
 
-  if (!m_ctx.isValid())
+  if (m_ctx.isValid() == CalculatorContext::CompleteResultsValidity::INVALID)
     return plot;
 
   totalLength /= 100.0;
@@ -585,7 +589,7 @@ void CalculatorInterface::recalculateEigenzoneDetails(const double totalLength, 
 void CalculatorInterface::recalculateTimes(double totalLength, double detectorPosition, double drivingVoltage,
                                            const double EOFValue, const EOFValueType EOFvt, bool positiveVoltage)
 {
-  if (!m_ctx.isValid())
+  if (m_ctx.isValid() == CalculatorContext::CompleteResultsValidity::INVALID)
     return;
 
   if (totalLength <= 0)
@@ -632,13 +636,13 @@ void CalculatorInterface::recalculateTimesInternal(const double totalLength, con
 
 bool CalculatorInterface::resultsAvailable() const
 {
-  return m_ctx.isValid();
+  return m_ctx.isValid() != CalculatorContext::CompleteResultsValidity::INVALID;
 }
 
 std::vector<CalculatorInterface::SpatialZoneInformation> CalculatorInterface::spatialZoneInformation(double totalLength, double detectorPosition, double drivingVoltage,
                                                                                                      const double EOFValue, const EOFValueType EOFvt, bool positiveVoltage) const
 {
-  if (!m_ctx.isValid())
+  if (m_ctx.isValid() == CalculatorContext::CompleteResultsValidity::INVALID)
     return {};
 
   if (totalLength <= 0)
