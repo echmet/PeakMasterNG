@@ -254,6 +254,10 @@ void PMNGMainWindow::onCalculate()
                                      "Error reported by the solver:\n"
                                      "%1")}.arg(worker.errorMsg())};
       errmbox.exec();
+
+      addConstituentsSignals(m_calcIface.allConstituents());
+      selectSignalIfAvailable(lastSelectedSignal);
+      plotElectrophoregram(displayer);
     }
   } catch (const CalculatorInterfaceException &ex) {
     QMessageBox errmbox{QMessageBox::Critical, tr("Cannot display results"), ex.what()};
