@@ -1,5 +1,7 @@
 #include "systemeigenzonestablemodel.h"
 
+#include <QPalette>
+
 SystemEigenzonesTableModel::SystemEigenzonesTableModel(QObject *parent)
   : QAbstractTableModel(parent)
 {
@@ -47,10 +49,19 @@ QVariant SystemEigenzonesTableModel::data(const QModelIndex &index, int role) co
   if (!index.isValid())
     return QVariant();
 
+  const size_t urow = static_cast<size_t>(index.row());
+
+  if (role == Qt::ForegroundRole) {
+    const QPalette p{};
+
+    if (!std::get<2>(m_dataVec.at(urow)))
+      return QColor{Qt::red};
+    return p.text().color();
+  }
+
   if (role != Qt::DisplayRole)
     return QVariant{};
 
-  const size_t urow = static_cast<size_t>(index.row());
   if (urow >= m_dataVec.size())
     return QVariant{};
 

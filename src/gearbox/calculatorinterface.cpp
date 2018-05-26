@@ -627,7 +627,7 @@ void CalculatorInterface::recalculateTimesInternal(const double totalLength, con
     if (ez.ztype != ECHMET::LEMNG::EigenzoneType::SYSTEM)
       continue;
 
-    dataVec.emplace_back(ez.mobility, mobilityToTime(totalLength, detectorPosition, drivingVoltage, EOFMobility, ez.mobility));
+    dataVec.emplace_back(ez.mobility, mobilityToTime(totalLength, detectorPosition, drivingVoltage, EOFMobility, ez.mobility), ez.valid);
   }
 
   m_resultsData.systemEigenzonesRefresh(std::move(dataVec));

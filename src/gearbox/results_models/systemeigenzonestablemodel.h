@@ -9,7 +9,7 @@ class SystemEigenzonesTableModel : public QAbstractTableModel
   Q_OBJECT
 
 public:
-  typedef std::vector<std::tuple<double, double>> DataVector;
+  typedef std::vector<std::tuple<double, double, bool>> DataVector;
 
   explicit SystemEigenzonesTableModel(QObject *parent = nullptr);
 
