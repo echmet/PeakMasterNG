@@ -17,6 +17,9 @@ DatabaseEditorDialog::DatabaseEditorDialog(DatabaseProxy &dbProxy, QWidget *pare
   m_model = new DatabaseConstituentsPhysPropsTableModel{};
   ui->qtbv_constituents->setModel(m_model);
 
+  ui->qcbox_matchType->addItem(tr("Name begins with..."), QVariant::fromValue(DatabaseProxy::MatchType::BEGINS_WITH));
+  ui->qcbox_matchType->addItem(tr("Name contains..."), QVariant::fromValue(DatabaseProxy::MatchType::CONTAINS));
+
   connect(ui->qpb_add, &QPushButton::clicked, this, &DatabaseEditorDialog::onAddConstituent);
   connect(ui->qpb_allCompounds, &QPushButton::clicked, this, &DatabaseEditorDialog::onAllCompounds);
   connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &DatabaseEditorDialog::accept);
@@ -24,6 +27,7 @@ DatabaseEditorDialog::DatabaseEditorDialog(DatabaseProxy &dbProxy, QWidget *pare
   connect(ui->qpb_edit, &QPushButton::clicked, this, &DatabaseEditorDialog::onEditConstituent);
   connect(ui->qle_constituentName, &QLineEdit::textChanged, this, &DatabaseEditorDialog::onConstituentNameChanged);
   connect(ui->qtbv_constituents, &DatabaseTableView::itemSelected, this, &DatabaseEditorDialog::editConstituent);
+  connect(ui->qcbox_matchType, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, &DatabaseEditorDialog::onMatchTypeActivated);
 }
 
 DatabaseEditorDialog::~DatabaseEditorDialog()
@@ -64,6 +68,30 @@ void DatabaseEditorDialog::editConstituent(const int idx)
   }
 
   onConstituentNameChanged(ui->qle_constituentName->text());
+}
+
+void DatabaseEditorDialog::executeSearch(const QString &name, const QVariant &matchVar)
+{
+  if (!h_dbProxy.isAvailable())
+    return;
+
+  try {
+     const auto match = [matchVar]() {
+      if (!matchVar.canConvert<DatabaseProxy::MatchType>())
+        return DatabaseProxy::MatchType::BEGINS_WITH;
+      return matchVar.value<DatabaseProxy::MatchType>();
+    }();
+
+    std::string _name = name.toStdString();
+    auto results = h_dbProxy.search(_name, match);
+
+    m_model->refreshData(std::move(results));
+    ui->qtbv_constituents->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    ui->qtbv_constituents->verticalHeader()->resizeSections(QHeaderView::ResizeToContents);
+  } catch (const DatabaseException &ex) {
+    QMessageBox mbox{QMessageBox::Warning, tr("Database lookup failed"), ex.what()};
+    mbox.exec();
+  }
 }
 
 int DatabaseEditorDialog::getIndex() const
@@ -127,20 +155,7 @@ void DatabaseEditorDialog::onAllCompounds()
 
 void DatabaseEditorDialog::onConstituentNameChanged(const QString &name)
 {
-  if (!h_dbProxy.isAvailable())
-    return;
-
-  try {
-    std::string _name = name.toStdString();
-    auto results = h_dbProxy.search(_name);
-
-    m_model->refreshData(std::move(results));
-    ui->qtbv_constituents->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-    ui->qtbv_constituents->verticalHeader()->resizeSections(QHeaderView::ResizeToContents);
-  } catch (const DatabaseException &ex) {
-    QMessageBox mbox{QMessageBox::Warning, tr("Database lookup failed"), ex.what()};
-    mbox.exec();
-  }
+  executeSearch(name, ui->qcbox_matchType->currentData());
 }
 
 void DatabaseEditorDialog::onDeleteConstituent()
@@ -184,4 +199,9 @@ void DatabaseEditorDialog::onEditConstituent()
     return;
 
   editConstituent(idx);
+}
+
+void DatabaseEditorDialog::onMatchTypeActivated(const int)
+{
+  executeSearch(ui->qle_constituentName->text(), ui->qcbox_matchType->currentData());
 }

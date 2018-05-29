@@ -20,6 +20,7 @@ public:
 
 private:
   int getIndex() const;
+  void executeSearch(const QString &name, const QVariant &matchVar);
   void editConstituent(const int idx);
 
   Ui::DatabaseEditorDialog *ui;
@@ -33,6 +34,7 @@ private slots:
   void onConstituentNameChanged(const QString &name);
   void onDeleteConstituent();
   void onEditConstituent();
+  void onMatchTypeActivated(const int);
 };
 
 #endif // DATABASEEDITORDIALOG_H

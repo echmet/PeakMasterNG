@@ -20,6 +20,8 @@ public:
   int selectedIndex() const;
 
 private:
+  void executeSearch(const QString &name, const QVariant &matchVar);
+
   Ui::PickConstituentFromDBDialog *ui;
 
   DatabaseProxy &h_dbProxy;
@@ -34,6 +36,7 @@ private slots:
   void onAllCompounds();
   void onConstituentNameChanged(const QString &name);
   void onItemSelected(const int row);
+  void onMatchTypeActivated(const int);
   void onRejected();
 };
 

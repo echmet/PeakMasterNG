@@ -22,17 +22,45 @@ PickConstituentFromDBDialog::PickConstituentFromDBDialog(DatabaseConstituentsPhy
   if (!m_lastDlgSize.isEmpty())
     resize(m_lastDlgSize);
 
+  ui->qcbox_matchType->addItem(tr("Name begins with..."), QVariant::fromValue(DatabaseProxy::MatchType::BEGINS_WITH));
+  ui->qcbox_matchType->addItem(tr("Name contains..."), QVariant::fromValue(DatabaseProxy::MatchType::CONTAINS));
+
   connect(ui->qle_constituentName, &QLineEdit::textChanged, this, &PickConstituentFromDBDialog::onConstituentNameChanged);
 
   connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &PickConstituentFromDBDialog::onAccepted);
   connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &PickConstituentFromDBDialog::onRejected);
   connect(ui->qtbv_constituents, &DatabaseTableView::itemSelected, this, &PickConstituentFromDBDialog::onItemSelected);
   connect(ui->qpb_allCompounds, &QPushButton::clicked, this, &PickConstituentFromDBDialog::onAllCompounds);
+  connect(ui->qcbox_matchType, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, &PickConstituentFromDBDialog::onMatchTypeActivated);
 }
 
 PickConstituentFromDBDialog::~PickConstituentFromDBDialog()
 {
   delete ui;
+}
+
+void PickConstituentFromDBDialog::executeSearch(const QString &name, const QVariant &matchVar)
+{
+  if (!h_dbProxy.isAvailable())
+    return;
+
+  ui->stackedWidget->setCurrentIndex(0);
+
+  try {
+    const auto match = [matchVar]() {
+      if (!matchVar.canConvert<DatabaseProxy::MatchType>())
+        return DatabaseProxy::MatchType::BEGINS_WITH;
+      return matchVar.value<DatabaseProxy::MatchType>();
+    }();
+
+    std::string _name = name.toStdString();
+    auto results = h_dbProxy.search(_name, match);
+
+    m_model.refreshData(std::move(results));
+  } catch (const DatabaseException &ex) {
+    QMessageBox mbox{QMessageBox::Warning, tr("Database lookup failed"), ex.what()};
+    mbox.exec();
+  }
 }
 
 void PickConstituentFromDBDialog::onAccepted()
@@ -78,20 +106,7 @@ void PickConstituentFromDBDialog::onAllCompounds()
 
 void PickConstituentFromDBDialog::onConstituentNameChanged(const QString &name)
 {
-  if (!h_dbProxy.isAvailable())
-    return;
-
-  ui->stackedWidget->setCurrentIndex(0);
-
-  try {
-    std::string _name = name.toStdString();
-    auto results = h_dbProxy.search(_name);
-
-    m_model.refreshData(std::move(results));
-  } catch (const DatabaseException &ex) {
-    QMessageBox mbox{QMessageBox::Warning, tr("Database lookup failed"), ex.what()};
-    mbox.exec();
-  }
+  executeSearch(name, ui->qcbox_matchType->currentData());
 }
 
 void PickConstituentFromDBDialog::onItemSelected(const int row)
@@ -102,6 +117,11 @@ void PickConstituentFromDBDialog::onItemSelected(const int row)
   m_selectedIndex = row;
   m_lastDlgSize = size();
   accept();
+}
+
+void PickConstituentFromDBDialog::onMatchTypeActivated(const int)
+{
+  executeSearch(ui->qle_constituentName->text(), ui->qcbox_matchType->currentData());
 }
 
 void PickConstituentFromDBDialog::onRejected()

@@ -133,7 +133,16 @@ bool DatabaseProxy::openDatabase(const QString &path)
   return true;
 }
 
-std::vector<DatabaseConstituent> DatabaseProxy::search(const std::string &name)
+std::vector<DatabaseConstituent> DatabaseProxy::search(const std::string &name, const MatchType matchType)
 {
-  return doSearch(m_db, database::ConstituentsDatabase::MatchType::CONTAINS, name);
+  const auto match = [matchType]() {
+    switch (matchType) {
+      case MatchType::CONTAINS:
+        return database::ConstituentsDatabase::MatchType::CONTAINS;
+      default:
+      return database::ConstituentsDatabase::MatchType::BEGINS_WITH;
+    }
+  }();
+
+  return doSearch(m_db, match, name);
 }
