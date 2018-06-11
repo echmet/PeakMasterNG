@@ -9,6 +9,7 @@
 #include "ploteventfilter.h"
 #include "../gearbox/doubletostringconvertor.h"
 
+#include <QToolTip>
 #include <QVBoxLayout>
 
 static
@@ -99,12 +100,33 @@ void SignalPlotWidget::onPointHovered(const QPoint &pos)
   ui->ql_yVal->setText(DoubleToStringConvertor::convert(cp.y()));
 
   const double x = cp.x();
-  QString zoneName{};
+  QStringList zoneNames{};
   for (const auto &z : m_zinfo) {
     if (x >= z.beginsAt && x <= z.endsAt)
-      zoneName += z.name + " ";
+      zoneNames << z.name;
   }
-  ui->ql_zoneVal->setText(zoneName);
+
+  if (zoneNames.isEmpty()) {
+    QToolTip::hideText();
+    ui->ql_zoneVal->setText(QLatin1String(""));
+  } else {
+    const auto zoneText = [&zoneNames]() -> std::pair<QString, QString> {
+      QString resToolTip;
+      QString resTray;
+
+      for (int idx = 0; idx < zoneNames.size() - 1; idx++) {
+        resToolTip += zoneNames.at(idx) + QLatin1String("\n");
+        resTray += zoneNames.at(idx) + QLatin1String(" ");
+      }
+      resToolTip += zoneNames.last();
+      resTray += zoneNames.last();
+
+      return { resToolTip, resTray };
+    }();
+
+    QToolTip::showText(m_plot->mapToGlobal(pos), std::get<0>(zoneText), m_plot);
+    ui->ql_zoneVal->setText(std::get<1>(zoneText));
+  }
 }
 
 void SignalPlotWidget::setBrush(const SignalStyle style)
