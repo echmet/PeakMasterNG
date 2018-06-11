@@ -514,7 +514,7 @@ void PMNGMainWindow::plotElectrophoregram(const EFGDisplayer &displayer)
                                                             EOFValue, EOFvt, izLen, plotCutoff,
                                                             signal);
   auto zoneInfo = m_calcIface.spatialZoneInformation(rs.totalLength, rs.detectorPosition, rs.drivingVoltage,
-                                                     EOFValue, EOFvt, rs.positiveVoltage);
+                                                     EOFValue, EOFvt, rs.positiveVoltage, izLen, plotCutoff);
 
   displayer(signalTrace, std::move(zoneInfo), signal);
 }

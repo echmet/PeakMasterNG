@@ -100,8 +100,7 @@ void SignalPlotWidget::onPointHovered(const QPoint &pos)
   const double x = cp.x();
   QString zoneName{};
   for (const auto &z : m_zinfo) {
-    const double wHalf = z.width / 2.0;
-    if (x >= z.time - wHalf && x <= z.time + wHalf)
+    if (x >= z.beginsAt && x <= z.endsAt)
       zoneName += z.name + " ";
   }
   ui->ql_zoneVal->setText(zoneName);

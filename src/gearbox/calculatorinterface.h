@@ -63,27 +63,32 @@ public:
   public:
     SpatialZoneInformation() :
       time{0},
-      width{0},
+      beginsAt{0},
+      endsAt{0},
       name{}
     {}
-    SpatialZoneInformation(const double time, const double width, QString &&name) :
+    SpatialZoneInformation(const double time, const double beginsAt, const double endsAt, QString &&name) :
       time{time},
-      width{width},
+      beginsAt{beginsAt},
+      endsAt{endsAt},
       name{name}
     {}
     SpatialZoneInformation(const SpatialZoneInformation &other) :
       time{other.time},
-      width{other.width},
+      beginsAt{other.beginsAt},
+      endsAt{other.endsAt},
       name{other.name}
     {}
     SpatialZoneInformation(SpatialZoneInformation &&other) noexcept :
       time{other.time},
-      width{other.width},
+      beginsAt{other.beginsAt},
+      endsAt{other.endsAt},
       name{std::move(other.name)}
     {}
 
     const double time;
-    const double width;
+    const double beginsAt;
+    const double endsAt;
     const QString name;
   };
 
@@ -156,7 +161,8 @@ public:
                         const double EOFValue, const EOFValueType EOFvt, bool positiveVoltage);
   bool resultsAvailable() const;
   std::vector<SpatialZoneInformation> spatialZoneInformation(double totalLength, double detectorPosition, double drivingVoltage,
-                                                             const double EOFValue, const EOFValueType EOFvt, bool positiveVoltage) const;
+                                                             const double EOFValue, const EOFValueType EOFvt, bool positiveVoltage,
+                                                             const double injectionZoneLength, const double plotToTime) const;
   std::vector<TracepointInfo> tracepointInformation() const;
 
 public slots:

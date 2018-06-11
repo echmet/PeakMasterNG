@@ -155,6 +155,27 @@ void fillBackgroundIonicComposition(ResultsData &rData, const ECHMET::LEMNG::RCo
   rData.backgroundCompositionRefresh(totalLowest, totalHighest, std::move(constituents), std::move(complexForms), std::move(concentrations));
 }
 
+static
+ECHMET::LEMNG::REigenzoneEnvelopeVec * findEigenzoneEnvelopes(const ECHMET::LEMNG::Results &results, const double totalLength,
+                                                              const double detectorPosition, const double drivingVoltage,
+                                                              const double EOFMobility, const double injectionZoneLength,
+                                                              const double plotToTime)
+{
+  ECHMET::LEMNG::REigenzoneEnvelopeVec *envelopes;
+
+  ECHMET::LEMNG::RetCode tRet = ECHMET::LEMNG::findEigenzoneEnvelopes(envelopes, results, drivingVoltage, totalLength,
+                                                                      detectorPosition, EOFMobility, injectionZoneLength,
+                                                                      plotToTime);
+
+  if (tRet != ECHMET::LEMNG::RetCode::OK) {
+    std::string errStr = std::string{"Cannot get eigenzone envelopes: "} + std::string{ECHMET::LEMNG::LEMNGerrorToString(tRet)};
+
+    throw CalculatorInterfaceException{errStr.c_str()};
+  }
+
+  return envelopes;
+}
+
 CalculatorInterfaceException::CalculatorInterfaceException(const char *message, const SolutionState state) :
   std::runtime_error{message},
   state{state}
@@ -640,7 +661,8 @@ bool CalculatorInterface::resultsAvailable() const
 }
 
 std::vector<CalculatorInterface::SpatialZoneInformation> CalculatorInterface::spatialZoneInformation(double totalLength, double detectorPosition, double drivingVoltage,
-                                                                                                     const double EOFValue, const EOFValueType EOFvt, bool positiveVoltage) const
+                                                                                                     const double EOFValue, const EOFValueType EOFvt, bool positiveVoltage,
+                                                                                                     const double injectionZoneLength, const double plotToTime) const
 {
   if (m_ctx.isValid() == CalculatorContext::CompleteResultsValidity::INVALID)
     return {};
@@ -659,6 +681,15 @@ std::vector<CalculatorInterface::SpatialZoneInformation> CalculatorInterface::sp
   detectorPosition /= 100.0;
 
   const double EOFMobility = EOFMobilityFromInput(EOFValue, EOFvt, totalLength, detectorPosition, drivingVoltage);
+
+  ECHMET::LEMNG::REigenzoneEnvelopeVec *envelopes = findEigenzoneEnvelopes(*m_ctx.results, totalLength, detectorPosition, drivingVoltage, EOFMobility,
+                                                                           injectionZoneLength / 1000.0, plotToTime * 60.0);
+
+  if (envelopes->size() != m_ctx.results->eigenzones->size()) {
+    envelopes->destroy();
+
+    throw CalculatorInterfaceException{"Envelopes vs. eigenzones size mismatch"};
+  }
 
   std::vector<SpatialZoneInformation> zinfo{};
   const auto _analytes = analytes();
@@ -683,10 +714,14 @@ std::vector<CalculatorInterface::SpatialZoneInformation> CalculatorInterface::sp
     } else
       zoneName = "System";
 
+    const auto env = envelopes->at(idx);
+
     zinfo.emplace_back(mobilityToTime(totalLength, detectorPosition, drivingVoltage, EOFMobility, ez.mobility),
-                       1.0/6.0, /* Empirical, to be improved later */
+                       env.beginsAt / 60.0, env.endsAt / 60.0,
                        std::move(zoneName));
   }
+
+  envelopes->destroy();
 
   return zinfo;
 }
