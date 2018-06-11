@@ -8,6 +8,7 @@
 #include <signal.h>
 #include "rawmemblock.h"
 
+static
 void st_memcpy(void *dest, const void *src, const size_t size)
 {
   char *_dest = static_cast<char *>(dest);
@@ -17,6 +18,7 @@ void st_memcpy(void *dest, const void *src, const size_t size)
     _dest[idx] = _src[idx];
 }
 
+static
 size_t st_strlen(const char *str)
 {
   size_t len = 0;
@@ -27,7 +29,7 @@ size_t st_strlen(const char *str)
   return len;
 }
 
-
+static
 size_t st_strcpy(char *dest, const char *str)
 {
   const size_t len = st_strlen(str);
@@ -41,6 +43,7 @@ size_t st_strcpy(char *dest, const char *str)
   return len;
 }
 
+static
 void st_zeromem(void *dest, const char v, const size_t size)
 {
   char * _dest = static_cast<char *>(dest);
@@ -49,6 +52,7 @@ void st_zeromem(void *dest, const char v, const size_t size)
     _dest[idx] = v;
 }
 
+static
 void signumToString(char *dest, const int signum)
 {
   const char *signame;

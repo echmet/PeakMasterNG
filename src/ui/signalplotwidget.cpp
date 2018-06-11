@@ -11,6 +11,7 @@
 
 #include <QVBoxLayout>
 
+static
 size_t findClosestIdx(const std::vector<QPointF> &data, const double currentX)
 {
   const double firstX = data.front().x();

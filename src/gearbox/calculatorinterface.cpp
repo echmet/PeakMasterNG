@@ -13,11 +13,13 @@
 Q_STATIC_ASSERT(sizeof(CalculatorInterface::TracepointInfo::TPID) == sizeof(ECHMET::LEMNG::TracepointInfo::id));
 Q_STATIC_ASSERT(sizeof(CalculatorInterface::TracepointState::TPID) == sizeof(ECHMET::LEMNG::TracepointInfo::id));
 
+static
 void destroyCZESystem(ECHMET::LEMNG::CZESystem *czeSystem)
 {
   ECHMET::LEMNG::releaseCZESystem(czeSystem);
 }
 
+static
 void destroyInConcentrationMap(ECHMET::LEMNG::InAnalyticalConcentrationsMap *map)
 {
   map->destroy();
@@ -26,6 +28,7 @@ void destroyInConcentrationMap(ECHMET::LEMNG::InAnalyticalConcentrationsMap *map
 typedef std::unique_ptr<ECHMET::LEMNG::InAnalyticalConcentrationsMap, decltype(&destroyInConcentrationMap)> IACMapWrapper;
 typedef std::unique_ptr<ECHMET::LEMNG::CZESystem, decltype(&destroyCZESystem)> CZESystemWrapper;
 
+static
 void applyAnalyticalConcentrations(const gdm::GDM &gdm, ECHMET::LEMNG::InAnalyticalConcentrationsMap *acMap)
 {
   for (auto it = gdm.cbegin(); it != gdm.cend(); it++) {
@@ -36,6 +39,7 @@ void applyAnalyticalConcentrations(const gdm::GDM &gdm, ECHMET::LEMNG::InAnalyti
   }
 }
 
+static
 ECHMET::NonidealityCorrections makeNonidealityCorrections(const bool correctForDebyeHuckel, const bool correctForOnsagerFuoss, const bool correctForViscosity)
 {
   ECHMET::NonidealityCorrections corrs = 0;
@@ -50,12 +54,14 @@ ECHMET::NonidealityCorrections makeNonidealityCorrections(const bool correctForD
   return corrs;
 }
 
+static
 double mobilityFromTime(const double t, const double totalLength, const double detectorPosition, const double drivingVoltage)
 {
   const double E = drivingVoltage / totalLength;
   return detectorPosition / (t * E);
 }
 
+static
 double EOFMobilityFromInput(const double EOFValue, const CalculatorInterface::EOFValueType EOFvt,
                             const double totalLength, const double detectorPosition, const double drivingVoltage)
 {
@@ -64,6 +70,7 @@ double EOFMobilityFromInput(const double EOFValue, const CalculatorInterface::EO
   return mobilityFromTime(EOFValue, totalLength, detectorPosition, drivingVoltage) * 1.0e9;
 }
 
+static
 void fillBackgroundIonicComposition(ResultsData &rData, const ECHMET::LEMNG::RConstituentMap *composition)
 {
   QVector<QString> constituents{};

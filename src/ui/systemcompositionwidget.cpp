@@ -12,6 +12,7 @@
 
 #include <QMessageBox>
 
+static
 void enableDragDrop(QTableView *v)
 {
  v->setDragDropMode(QAbstractItemView::DragDrop);

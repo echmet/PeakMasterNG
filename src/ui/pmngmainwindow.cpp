@@ -27,6 +27,7 @@
 #include <QShortcut>
 #include <QThread>
 
+static
 void inputToEOFValueType(double &EOFValue, CalculatorInterface::EOFValueType &EOFvt, const double inValue, const MainControlWidget::EOF_Type type)
 {
   if (type == MainControlWidget::EOF_MOBILITY) {

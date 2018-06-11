@@ -7,6 +7,7 @@ DatabaseConstituentsPhysPropsTableModel::DatabaseConstituentsPhysPropsTableModel
 {
 }
 
+static
 QString chargeToString(const int charge)
 {
   if (charge <= 0)

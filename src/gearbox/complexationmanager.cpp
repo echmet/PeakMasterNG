@@ -8,6 +8,7 @@
 #include <cassert>
 #include <QMessageBox>
 
+static
 int calculateHue(const int step, const int lastHue)
 {
   auto wrap = [](const int v) {
@@ -30,6 +31,7 @@ int calculateHue(const int step, const int lastHue)
   }
 }
 
+static
 EditComplexationDialog * makeComplexationDialog(const gdm::GDM::const_iterator nucleusIt, const gdm::GDM::const_iterator ligandIt, ComplexationRelationshipsModel *model, const gdm::GDM &gdm)
 {
   EditComplexationDialog *dlg = new EditComplexationDialog{};
@@ -75,6 +77,7 @@ EditComplexationDialog * makeComplexationDialog(const gdm::GDM::const_iterator n
   return dlg;
 }
 
+static
 bool processComplexationsForGDM(const std::string &nucleus, gdm::GDM &GDM,
                                 const EditComplexationDialog::AllComplexationRelationships &allRels,
                                 const EditComplexationDialog::AllComplexationRelationships &oldRels)

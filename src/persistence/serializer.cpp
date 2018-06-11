@@ -12,6 +12,7 @@
 
 namespace persistence {
 
+static
 QJsonArray generateFromDoubles(const std::vector<double> &src)
 {
   QJsonArray ret{};
@@ -21,6 +22,7 @@ QJsonArray generateFromDoubles(const std::vector<double> &src)
   return ret;
 }
 
+static
 QJsonObject generateFromNucleusComplexForm(const std::string &ligandName, gdm::ChargeNumber ligandCharge, const gdm::ComplexForm &complexForm)
 {
   QJsonObject ret{};
@@ -34,6 +36,7 @@ QJsonObject generateFromNucleusComplexForm(const std::string &ligandName, gdm::C
   return ret;
 }
 
+static
 QJsonObject serializeComposition(const gdm::GDM gdm)
 {
    QJsonArray constituents{};
@@ -106,6 +109,7 @@ QJsonObject serializeComposition(const gdm::GDM gdm)
   return QJsonObject{{Persistence::CTUENT_CTUENTS, constituents}};
 }
 
+static
 QJsonObject serializeConcentrations(const gdm::GDM &gdm)
 {
   QJsonObject concentrations;
@@ -125,6 +129,7 @@ QJsonObject serializeConcentrations(const gdm::GDM &gdm)
   return concentrations;
 }
 
+static
 QJsonObject serializeSystem(const System &system)
 {
   if (!(system.eofType == Persistence::SYS_EOF_TYPE_NONE ||

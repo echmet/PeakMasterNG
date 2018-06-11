@@ -12,6 +12,7 @@ const char *DatabaseProxy::DATABASE_PATH = "/app/share/PeakMasterNG/pmng_db.sql"
 const char *DatabaseProxy::DATABASE_PATH = "pmng_db.sql";
 #endif // PMNG_FLATPAK_BUILD
 
+static
 DatabaseConstituent makeDatabaseConstituent(const database::Constituent &c)
 {
   assert(c.chargeLow() <= c.chargeHigh());
@@ -25,6 +26,7 @@ DatabaseConstituent makeDatabaseConstituent(const database::Constituent &c)
   return DatabaseConstituent{c.id(), QString::fromStdString(c.name()), pKas, c.mobilities(), c.chargeLow(), c.chargeHigh()};
 }
 
+static
 std::vector<std::tuple<int, double, double>> makeProperties(const std::vector<double> &pKas, const std::vector<double> &mobilities,
                                                             const int chargeLow, const int chargeHigh)
 {
@@ -41,6 +43,7 @@ std::vector<std::tuple<int, double, double>> makeProperties(const std::vector<do
   return properties;
 }
 
+static
 std::vector<DatabaseConstituent> doSearch(database::ConstituentsDatabase *dbh,
                                          const database::ConstituentsDatabase::MatchType match, const std::string &name)
 {

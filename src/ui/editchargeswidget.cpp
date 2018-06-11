@@ -7,6 +7,7 @@
 
 #include <cassert>
 
+static
 int baseCharge(const int chargeLow, const int chargeHigh)
 {
   if (chargeHigh < 0)

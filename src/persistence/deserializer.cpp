@@ -14,11 +14,14 @@
 
 namespace persistence {
 
+static
 void checkIfContains(const QString &str, const QJsonObject &obj)
 {
   if (!obj.contains(str))
     throw MalformedJSONException{std::string{"Missing "} + str.toStdString()};
 }
+
+static
 std::map<std::string, gdm::Complexation> deserializeNucleusComplexForms(const QJsonObject &obj)
 {
   std::map<std::string, gdm::Complexation> ret{};
@@ -97,6 +100,7 @@ std::map<std::string, gdm::Complexation> deserializeNucleusComplexForms(const QJ
   return ret;
 }
 
+static
 std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>>> deserializeConstituents(const QJsonArray &arr)
 {
   std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>>> ret{};
@@ -181,6 +185,7 @@ std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>
   return ret;
 }
 
+static
 void deserializeComposition(gdm::GDM &gdm, const QJsonObject &obj)
 {
   checkIfContains(Persistence::CTUENT_CTUENTS, obj);
@@ -217,6 +222,7 @@ void deserializeComposition(gdm::GDM &gdm, const QJsonObject &obj)
   }
 }
 
+static
 void deserializeConcentrations(gdm::GDM &gdm, const QJsonObject &obj)
 {
   for (auto ctuentIt = gdm.begin(); ctuentIt != gdm.end(); ctuentIt++) {
@@ -232,6 +238,7 @@ void deserializeConcentrations(gdm::GDM &gdm, const QJsonObject &obj)
 
 }
 
+static
 void deserializeSystem(System &system, const QJsonObject &obj)
 {
   const auto readDouble = [&](const QString &name, double &v, bool check = true) {

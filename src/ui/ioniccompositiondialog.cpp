@@ -6,6 +6,7 @@
 #include <QAbstractTableModel>
 #include <QStandardItemModel>
 
+static
 int isContained(const QStandardItemModel *model, const QString &s)
 {
   for (int idx = 0; idx < model->rowCount(); idx++) {

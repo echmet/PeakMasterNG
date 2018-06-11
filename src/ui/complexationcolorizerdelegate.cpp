@@ -4,6 +4,7 @@
 #include <cmath>
 #include <QPainter>
 
+static
 void paintLigand(QPainter *painter, const QStyleOptionViewItem &option, const QList<QColor> &colors)
 {
   const int w = option.rect.width();
@@ -26,6 +27,7 @@ void paintLigand(QPainter *painter, const QStyleOptionViewItem &option, const QL
   }
 }
 
+static
 void paintNucleus(QPainter *painter, const QStyleOptionViewItem &option, const QColor &clr)
 {
   painter->fillRect(option.rect, QBrush{clr});
