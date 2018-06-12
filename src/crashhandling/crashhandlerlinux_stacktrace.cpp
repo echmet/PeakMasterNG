@@ -44,15 +44,6 @@ size_t st_strcpy(char *dest, const char *str)
 }
 
 static
-void st_zeromem(void *dest, const char v, const size_t size)
-{
-  char * _dest = static_cast<char *>(dest);
-
-  for (size_t idx = 0; idx < size; idx++)
-    _dest[idx] = v;
-}
-
-static
 void signumToString(char *dest, const int signum)
 {
   const char *signame;
