@@ -127,7 +127,8 @@ SOURCES += \
     src/ui/databaseeditordialog.cpp \
     src/ui/editdatabaseconstituentdialog.cpp \
     src/ui/toggletracepointsdialog.cpp \
-    src/gearbox/results_models/analytesextrainfomodel.cpp
+    src/gearbox/results_models/analytesextrainfomodel.cpp \
+    src/ui/analytesconstituentsheader.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -229,7 +230,8 @@ HEADERS += \
     src/gearbox/iconstituenteditor.h \
     src/ui/toggletracepointsdialog.h \
     src/ui/internal_models/analytesconstituentsmodel.h \
-    src/gearbox/results_models/analytesextrainfomodel.h
+    src/gearbox/results_models/analytesextrainfomodel.h \
+    src/ui/analytesconstituentsheader.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \

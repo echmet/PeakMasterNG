@@ -9,7 +9,9 @@
 #include "complexationcolorizerdelegate.h"
 #include "../gearbox/floatingvaluedelegate.h"
 #include "../gearbox/databaseproxy.h"
+#include "analytesconstituentsheader.h"
 
+#include <QHeaderView>
 #include <QMessageBox>
 
 static
@@ -76,8 +78,15 @@ SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMPro
   ui->qtbv_backgroudConstituents->setMinimumHeight(100);
   ui->qtbv_analytes->setMinimumHeight(100);
 
-  ui->qtbv_backgroudConstituents->resizeColumnsToContents();
-  ui->qtbv_analytes->resizeColumnsToContents();
+  ui->qtbv_backgroudConstituents->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+
+  AnalytesConstituentsHeader *ach = new AnalytesConstituentsHeader{Qt::Horizontal, ui->qtbv_analytes};
+  ui->qtbv_analytes->setHorizontalHeader(ach);
+
+  for (int col = 0; col < m_analytesModel->firstExtraInfoColumn(); col++)
+    ui->qtbv_analytes->horizontalHeader()->setSectionResizeMode(col, QHeaderView::ResizeToContents);
+  for (int col = m_analytesModel->firstExtraInfoColumn(); col < m_analytesModel->columnCount(QModelIndex{}); col++)
+    ui->qtbv_analytes->setColumnWidth(col, ach->sizeHintForColumn(col));
 
   setControlsIcons();
 }
@@ -214,7 +223,9 @@ void SystemCompositionWidget::onAnalytesDataChanged(const QModelIndex &topLeft, 
   Q_UNUSED(roles);
   Q_UNUSED(bottomRight);
 
-  if (topLeft.column() < m_analytesModel->firstExtraInfoColumn())
+  const int firstExtraCol = m_analytesModel->firstExtraInfoColumn();
+
+  if (topLeft.column() < firstExtraCol)
     onCompositionChanged();
 }
 
@@ -240,9 +251,6 @@ void SystemCompositionWidget::onBGEDoubleClicked(const QModelIndex &idx)
 
 void SystemCompositionWidget::onCompositionChanged()
 {
-  ui->qtbv_backgroudConstituents->resizeColumnToContents(2);
-  ui->qtbv_analytes->resizeColumnToContents(2);
-
   emit compositionChanged();
 }
 
