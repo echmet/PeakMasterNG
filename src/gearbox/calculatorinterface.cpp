@@ -382,6 +382,7 @@ void CalculatorInterface::onInvalidate()
   m_ctx.invalidate();
 
   m_resultsData.analytesDissociationRefresh({});
+  m_resultsData.analytesExtraInfoRefresh({});
 
   auto &data = m_resultsData.backgroundPropsData();
   data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::BUFFER_CAPACITY)] = 0.0;
@@ -704,6 +705,10 @@ std::vector<CalculatorInterface::TimeDependentZoneInformation> CalculatorInterfa
 
   for (size_t idx = 0; idx < m_ctx.results->eigenzones->size(); idx++) {
     const auto &ez = m_ctx.results->eigenzones->at(idx);
+    const auto env = envelopes->at(idx);
+    bool isSystemZone = false;
+    double concentrationMax = 0.0;
+    double conductivityMax = 0.0;
 
     QString zoneName{};
     if (ez.ztype == ECHMET::LEMNG::EigenzoneType::ANALYTE) {
@@ -713,20 +718,27 @@ std::vector<CalculatorInterface::TimeDependentZoneInformation> CalculatorInterfa
       while (it->hasNext()) {
         const auto c = it->value();
         if (c.concentration >= ECHMET::LEMNG::minimumSafeConcentration() && _analytes.contains(it->key())) {
+          const double conductivityBGE = m_ctx.results->BGEProperties.conductivity;
+
           zoneName = QString{it->key()};
+          concentrationMax = env.HVLRMax * c.concentration;
+          conductivityMax = env.HVLRMax * (ez.solutionProperties.conductivity - conductivityBGE) + conductivityBGE;
+
           break;
         }
         it->next();
       }
       it->destroy();
-    } else
+    } else {
+      isSystemZone = true;
       zoneName = "System";
+    }
 
-    const auto env = envelopes->at(idx);
-
-    zinfo.emplace_back(mobilityToTime(totalLength, detectorPosition, drivingVoltage, EOFMobility, ez.mobility),
+    zinfo.emplace_back(isSystemZone,
+                       mobilityToTime(totalLength, detectorPosition, drivingVoltage, EOFMobility, ez.mobility),
                        env.beginsAt / 60.0, env.endsAt / 60.0,
-                       std::move(zoneName));
+                       std::move(zoneName),
+                       concentrationMax, conductivityMax);
   }
 
   envelopes->destroy();

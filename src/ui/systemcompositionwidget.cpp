@@ -2,7 +2,7 @@
 #include "ui_systemcompositionwidget.h"
 
 #include "../gearbox/gdmproxy.h"
-#include "internal_models/constituentsmodelimpl.h"
+#include "internal_models/analytesconstituentsmodel.h"
 #include "editconstituentdialog.h"
 #include "../gearbox/constituentmanipulator.h"
 #include "../gearbox/complexationmanager.h"
@@ -23,6 +23,7 @@ void enableDragDrop(QTableView *v)
 }
 
 SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMProxy &sampleGDM, ComplexationManager &cpxMgr, DatabaseProxy &dbProxy,
+                                                 const AnalytesExtraInfoModel * const analytesEXIModel,
                                                  QWidget *parent) :
   QWidget{parent},
   ui{new Ui::SystemCompositionWidget},
@@ -40,7 +41,7 @@ SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMPro
   m_ccDelegateBGE = new ComplexationColorizerDelegate{m_backgroundConstituentsModel, this};
   m_fltDelegateBGE = new FloatingValueDelegate{this};
 
-  m_analytesModel = new ConstituentsModelImpl<1>{{ "Sample" }, sampleGDM, cpxMgr, this};
+  m_analytesModel = new AnalytesConstituentsModel{analytesEXIModel, { "Sample" }, sampleGDM, cpxMgr, this};
   ui->qtbv_analytes->setModel(m_analytesModel);
   enableDragDrop(ui->qtbv_analytes);
   m_ccDelegateAnalytes = new ComplexationColorizerDelegate{m_analytesModel, this};
@@ -62,7 +63,7 @@ SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMPro
   connect(m_backgroundConstituentsModel, &AbstractConstituentsModelBase::rowsInserted, this, &SystemCompositionWidget::onCompositionChanged);
   connect(m_backgroundConstituentsModel, &AbstractConstituentsModelBase::rowsRemoved, this, &SystemCompositionWidget::onCompositionChanged);
 
-  connect(m_analytesModel, &AbstractConstituentsModelBase::dataChanged, this, &SystemCompositionWidget::onCompositionChanged);
+  connect(m_analytesModel, &AbstractConstituentsModelBase::dataChanged, this, &SystemCompositionWidget::onAnalytesDataChanged);
   connect(m_analytesModel, &AbstractConstituentsModelBase::rowsInserted, this, &SystemCompositionWidget::onCompositionChanged);
   connect(m_analytesModel, &AbstractConstituentsModelBase::rowsRemoved, this, &SystemCompositionWidget::onCompositionChanged);
 
@@ -206,6 +207,15 @@ void SystemCompositionWidget::onAddToDatabase(const EditConstituentDialog *dlg)
 
   const auto ctuent = ConstituentManipulator::makeConstituent(dlg);
   h_dbProxy.addConstituent(ctuent.name(), ctuent.physicalProperties().pKas(), ctuent.physicalProperties().mobilities(), ctuent.physicalProperties().charges().low(), ctuent.physicalProperties().charges().high());
+}
+
+void SystemCompositionWidget::onAnalytesDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
+{
+  Q_UNUSED(roles);
+  Q_UNUSED(bottomRight);
+
+  if (topLeft.column() < m_analytesModel->firstExtraInfoColumn())
+    onCompositionChanged();
 }
 
 void SystemCompositionWidget::onAnalytesDoubleClicked(const QModelIndex &idx)

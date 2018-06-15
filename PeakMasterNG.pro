@@ -126,7 +126,8 @@ SOURCES += \
     src/ui/editchargeswidget.cpp \
     src/ui/databaseeditordialog.cpp \
     src/ui/editdatabaseconstituentdialog.cpp \
-    src/ui/toggletracepointsdialog.cpp
+    src/ui/toggletracepointsdialog.cpp \
+    src/gearbox/results_models/analytesextrainfomodel.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -226,7 +227,9 @@ HEADERS += \
     src/ui/databaseeditordialog.h \
     src/ui/editdatabaseconstituentdialog.h \
     src/gearbox/iconstituenteditor.h \
-    src/ui/toggletracepointsdialog.h
+    src/ui/toggletracepointsdialog.h \
+    src/ui/internal_models/analytesconstituentsmodel.h \
+    src/gearbox/results_models/analytesextrainfomodel.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \

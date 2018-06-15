@@ -2,6 +2,7 @@
 #define RESULTSDATA_H
 
 #include "analytesdissociationmodel.h"
+#include "analytesextrainfomodel.h"
 #include "backgroundpropertiesmodel.h"
 #include "eigenzonedetailsmodel.h"
 #include "ioniccompositionmodel.h"
@@ -18,6 +19,7 @@ public:
   ResultsData(ResultsContainer &container);
 
   void analytesDissociationRefresh(std::map<std::string, AnalytesDissociationModel::DissociatedAnalyte> &&analytes);
+  void analytesExtraInfoRefresh(const QVector<AnalytesExtraInfoModel::ExtraInfo> &dataVec);
 
   void backgroundCompositionRefresh(const int lowestCharge, const int highestCharge,
                                     QVector<QString> &&constituents,

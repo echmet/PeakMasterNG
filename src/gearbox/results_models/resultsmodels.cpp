@@ -12,6 +12,11 @@ AnalytesDissociationModel *ResultsModels::analytesDissociationModel()
   return m_container.m_analytesDissociationModel.get();
 }
 
+AnalytesExtraInfoModel * ResultsModels::analytesExtraInfoModel()
+{
+  return m_container.m_analytesExtraInfoModel.get();
+}
+
 BackgroundPropertiesMapping::MapperModel * ResultsModels::backgroundMapperModel()
 {
   return m_container.m_backgroundPropsModel.get();

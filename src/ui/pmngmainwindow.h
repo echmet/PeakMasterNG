@@ -17,6 +17,7 @@ namespace persistence {
   class Persistence;
 }
 
+class AnalytesExtraInfoModel;
 class CalculatorInterface;
 class DatabaseProxy;
 class EFGDisplayer;
@@ -44,6 +45,7 @@ public:
                           CalculatorInterface &&calcIface, ResultsModels resultsModels,
                           persistence::Persistence &persistence,
                           DatabaseProxy &dbProxy,
+                          AnalytesExtraInfoModel * const analytesEXIModel, const QAbstractTableModel * const eigenzoneDetailsModel,
                           QWidget *parent = nullptr);
   ~PMNGMainWindow();
 
@@ -84,6 +86,9 @@ private:
   MainControlWidget *m_mainCtrlWidget;
   SignalPlotWidget *m_signalPlotWidget;
   SystemCompositionWidget *h_scompWidget;
+
+  AnalytesExtraInfoModel * const h_analytesEXIModel;
+  const QAbstractTableModel * const h_eigenzoneDetailsModel;
 
   QDataWidgetMapper *m_plotParamsMapper;
   FloatMapperModel<PlotParamsItems> m_plotParamsModel;

@@ -12,6 +12,11 @@ void ResultsData::analytesDissociationRefresh(std::map<std::string, AnalytesDiss
   m_container.m_analytesDissociationModel->refreshData(std::move(analytes));
 }
 
+void ResultsData::analytesExtraInfoRefresh(const QVector<AnalytesExtraInfoModel::ExtraInfo> &dataVec)
+{
+  m_container.m_analytesExtraInfoModel->setData(dataVec);
+}
+
 void ResultsData::backgroundCompositionRefresh(const int lowestCharge, const int highestCharge,
                                                QVector<QString> &&constituents,
                                                QVector<QString> &&complex,

@@ -44,6 +44,13 @@ bool EigenzoneDetailsModel::displayDeltasState() const
   return m_displayDeltas;
 }
 
+const EigenzoneDetailsModel::EigenzoneProps & EigenzoneDetailsModel::eigenzonePropsAt(const int idx) const noexcept
+{
+  assert(idx >= 0 && idx < rowCount());
+
+  return m_eigenzones.at(idx);
+}
+
 QVariant EigenzoneDetailsModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
   if (role != Qt::DisplayRole)

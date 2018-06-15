@@ -62,44 +62,54 @@ public:
   class TimeDependentZoneInformation {
   public:
     TimeDependentZoneInformation() :
+      isSystemZone{false},
       time{0},
       beginsAt{0},
       endsAt{0},
-      name{}
+      name{},
+      concentrationMax{0},
+      conductivityMax{0}
     {}
-    TimeDependentZoneInformation(const double time, const double beginsAt, const double endsAt, QString &&name) :
+    TimeDependentZoneInformation(const bool isSystemZone, const double time, const double beginsAt, const double endsAt, QString &&name,
+                                 const double concentrationMax, const double conductivityMax) :
+      isSystemZone{isSystemZone},
       time{time},
       beginsAt{beginsAt},
       endsAt{endsAt},
-      name{name}
+      name{name},
+      concentrationMax{concentrationMax},
+      conductivityMax{conductivityMax}
     {}
     TimeDependentZoneInformation(const TimeDependentZoneInformation &other) :
+      isSystemZone{other.isSystemZone},
       time{other.time},
       beginsAt{other.beginsAt},
       endsAt{other.endsAt},
-      name{other.name}
-    {}
-    TimeDependentZoneInformation(TimeDependentZoneInformation &&other) noexcept :
-      time{other.time},
-      beginsAt{other.beginsAt},
-      endsAt{other.endsAt},
-      name{other.name}
+      name{other.name},
+      concentrationMax{other.concentrationMax},
+      conductivityMax{other.conductivityMax}
     {}
 
     TimeDependentZoneInformation & operator=(const TimeDependentZoneInformation &other)
     {
+      const_cast<bool&>(isSystemZone) = other.isSystemZone;
       const_cast<double&>(time) = other.time;
       const_cast<double&>(beginsAt) = other.beginsAt;
       const_cast<double&>(endsAt) = other.endsAt;
       const_cast<QString&>(name) = other.name;
+      const_cast<double&>(concentrationMax) = other.concentrationMax;
+      const_cast<double&>(conductivityMax) = other.conductivityMax;
 
       return *this;
     }
 
+    const bool isSystemZone;
     const double time;
     const double beginsAt;
     const double endsAt;
     const QString name;
+    const double concentrationMax;
+    const double conductivityMax;
   };
 
   class TracepointInfo {

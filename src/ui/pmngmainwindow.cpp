@@ -4,6 +4,8 @@
 #include "maincontrolwidget.h"
 #include "signalplotwidget.h"
 #include "../gearbox/results_models/resultsmodels.h"
+#include "../gearbox/results_models/analytesextrainfomodel.h"
+#include "../gearbox/results_models/eigenzonedetailsmodel.h"
 #include "systemcompositionwidget.h"
 #include "aboutdialog.h"
 #include "../globals.h"
@@ -16,6 +18,7 @@
 #include "../gearbox/databaseproxy.h"
 #include "toggletracepointsdialog.h"
 
+#include <cassert>
 #include <QDialogButtonBox>
 #include <QDataWidgetMapper>
 #include <QFileDialog>
@@ -42,6 +45,30 @@ void inputToEOFValueType(double &EOFValue, CalculatorInterface::EOFValueType &EO
   }
 }
 
+static
+QVector<AnalytesExtraInfoModel::ExtraInfo> makeAnalytesExtraInfo(const std::vector<CalculatorInterface::TimeDependentZoneInformation> &tdzi,
+                                                                 const QAbstractTableModel * const ezDetailsModelBase)
+{
+  const EigenzoneDetailsModel *ezDetailsModel = static_cast<const EigenzoneDetailsModel *>(ezDetailsModelBase);
+  QVector<AnalytesExtraInfoModel::ExtraInfo> data{};
+
+  assert(tdzi.size() == ezDetailsModel->columnCount());
+
+  for (int idx = 0; idx < ezDetailsModel->columnCount(); idx++) {
+    const auto &tdInfo = tdzi.at(idx);
+    const auto &ezProps = ezDetailsModel->eigenzonePropsAt(idx);
+    if (tdInfo.isSystemZone)
+      continue;
+
+    const double uEff = ezProps.mobility;
+    const double uEMD = ezProps.uEMD;
+
+    data.append(AnalytesExtraInfoModel::ExtraInfo{tdInfo.name, uEff, tdInfo.time, uEMD, tdInfo.concentrationMax, tdInfo.conductivityMax});
+  }
+
+  return data;
+}
+
 SignalPlotWidget::SignalStyle plotSignalStyle(const CalculatorInterface::SignalTypes type)
 {
   switch (type) {
@@ -66,11 +93,14 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
                                CalculatorInterface &&calcIface, ResultsModels resultsModels,
                                persistence::Persistence &persistence,
                                DatabaseProxy &dbProxy,
+                               AnalytesExtraInfoModel * const analytesEXIModel, const QAbstractTableModel * const eigenzoneDetailsModel,
                                QWidget *parent) :
   QMainWindow{parent},
   m_calcIface{calcIface},
   m_signalPlotWidget{new SignalPlotWidget{this}},
   h_scompWidget{scompWidget},
+  h_analytesEXIModel{analytesEXIModel},
+  h_eigenzoneDetailsModel{eigenzoneDetailsModel},
   m_plotParamsModel{this},
   m_persistence{persistence},
   m_lastLoadPath{""},
@@ -255,10 +285,12 @@ void PMNGMainWindow::onCalculate()
       const auto tdzi =  m_calcIface.timeDependentZoneInformation(rs.totalLength, rs.detectorPosition, rs.drivingVoltage,
                                                                   plotInfo.EOFValue, plotInfo.EOFvt, rs.positiveVoltage,
                                                                   plotInfo.injZoneLength, plotInfo.plotCutoff);
+      const auto exInfo = makeAnalytesExtraInfo(tdzi, h_eigenzoneDetailsModel);
 
       addConstituentsSignals(m_calcIface.allConstituents());
       selectSignalIfAvailable(lastSelectedSignal);
       plotElectrophoregram(displayer, tdzi, plotInfo.EOFValue, plotInfo.EOFvt, plotInfo.injZoneLength, plotInfo.plotCutoff);
+      h_analytesEXIModel->setData(exInfo);
     } else if (calcResult == CalculatorWorker::CalculationResult::PARTIAL_BGE) {
       QMessageBox errmbox{QMessageBox::Warning, tr("Calculation incomplete"),
                           QString{tr("Solver was unable to calculate electromigration properties of the system. "
@@ -278,10 +310,12 @@ void PMNGMainWindow::onCalculate()
       const auto tdzi =  m_calcIface.timeDependentZoneInformation(rs.totalLength, rs.detectorPosition, rs.drivingVoltage,
                                                                   plotInfo.EOFValue, plotInfo.EOFvt, rs.positiveVoltage,
                                                                   plotInfo.injZoneLength, plotInfo.plotCutoff);
+      const auto exInfo = makeAnalytesExtraInfo(tdzi, h_eigenzoneDetailsModel);
 
       addConstituentsSignals(m_calcIface.allConstituents());
       selectSignalIfAvailable(lastSelectedSignal);
       plotElectrophoregram(displayer, tdzi, plotInfo.EOFValue, plotInfo.EOFvt, plotInfo.injZoneLength, plotInfo.plotCutoff);
+      h_analytesEXIModel->setData(exInfo);
     }
   } catch (const CalculatorInterfaceException &ex) {
     QMessageBox errmbox{QMessageBox::Critical, tr("Cannot display results"), ex.what()};
@@ -440,7 +474,10 @@ void PMNGMainWindow::onRunSetupChanged(const bool invalidate)
       const auto tdzi = m_calcIface.timeDependentZoneInformation(rs.totalLength, rs.detectorPosition, rs.drivingVoltage,
                                                                  plotInfo.EOFValue, plotInfo.EOFvt, rs.positiveVoltage,
                                                                  plotInfo.injZoneLength, plotInfo.plotCutoff);
+      const auto exInfo = makeAnalytesExtraInfo(tdzi, h_eigenzoneDetailsModel);
+
       plotElectrophoregram(displayer, tdzi, plotInfo.EOFValue, plotInfo.EOFvt, plotInfo.injZoneLength, plotInfo.plotCutoff);
+      h_analytesEXIModel->setData(exInfo);
     } catch (const CalculatorInterfaceException &ex) {
       QMessageBox mbox{QMessageBox::Critical, tr("Failed to plot electrophoregram"), ex.what()};
       mbox.exec();
@@ -540,6 +577,8 @@ void PMNGMainWindow::plotElectrophoregram(const EFGDisplayer &displayer, const s
                                                             EOFValue, EOFvt, izLen, plotCutoff,
                                                             signal);
 
+  const auto exInfo = makeAnalytesExtraInfo(tdzi, h_eigenzoneDetailsModel);
+  h_analytesEXIModel->setData(exInfo);
   displayer(signalTrace, tdzi, signal);
 }
 

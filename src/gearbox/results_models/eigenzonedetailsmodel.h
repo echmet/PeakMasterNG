@@ -27,6 +27,8 @@ public:
   explicit EigenzoneDetailsModel(QObject *parent = nullptr);
   bool displayDeltasState() const;
 
+  const EigenzoneProps & eigenzonePropsAt(const int idx) const noexcept;
+
   // Header:
   QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 

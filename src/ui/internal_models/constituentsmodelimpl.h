@@ -2,11 +2,11 @@
 #define CONSTITUENTSMODELIMPL_H
 
 #include "abstractconstituentsmodel.h"
+#include "../../gearbox/gdmproxy.h"
 
 #include <cassert>
 
 class ComplexationManager;
-class GDMProxy;
 
 template <int N>
 class ConstituentsModelImpl : public AbstractConstituentsModel<N>

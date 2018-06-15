@@ -9,6 +9,8 @@ namespace Ui {
 }
 
 class AbstractConstituentsModelBase;
+class AnalytesConstituentsModel;
+class AnalytesExtraInfoModel;
 class ComplexationColorizerDelegate;
 class ComplexationManager;
 class EditConstituentDialog;
@@ -22,6 +24,7 @@ class SystemCompositionWidget : public QWidget
 
 public:
   explicit SystemCompositionWidget(GDMProxy &backgroundGDM, GDMProxy &sampleGDM, ComplexationManager &cpxMgr, DatabaseProxy &dbProxy,
+                                   const AnalytesExtraInfoModel * const analytesEXIModel,
                                    QWidget *parent = nullptr);
   ~SystemCompositionWidget();
   AbstractConstituentsModelBase * analytesModel() noexcept;
@@ -43,7 +46,7 @@ private:
   ComplexationManager &h_cpxMgr;
   DatabaseProxy &h_dbProxy;
 
-  AbstractConstituentsModelBase *m_analytesModel;
+  AnalytesConstituentsModel *m_analytesModel;
   AbstractConstituentsModelBase *m_backgroundConstituentsModel;
 
   ComplexationColorizerDelegate *m_ccDelegateAnalytes;
@@ -57,6 +60,7 @@ private slots:
   void onAddAnalyte();
   void onAddBGE();
   void onAddToDatabase(const EditConstituentDialog *dlg);
+  void onAnalytesDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles);
   void onAnalytesDoubleClicked(const QModelIndex &idx);
   void onBGEDoubleClicked(const QModelIndex &idx);
   void onCompositionChanged();
