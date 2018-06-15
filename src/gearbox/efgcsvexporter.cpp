@@ -23,8 +23,8 @@ EFGDisplayer EFGCSVExporter::make()
     s_me = new EFGCSVExporter{};
 
   auto me = EFGCSVExporter::s_me;
-  auto executor = [me](const QVector<QPointF> &data, std::vector<CalculatorInterface::SpatialZoneInformation> &&szi, const CalculatorInterface::Signal &sig) {
-    Q_UNUSED(szi);
+  auto executor = [me](const QVector<QPointF> &data, const std::vector<CalculatorInterface::TimeDependentZoneInformation> &tdzi, const CalculatorInterface::Signal &sig) {
+    Q_UNUSED(tdzi);
     Q_UNUSED(sig);
 
     for (;;) {

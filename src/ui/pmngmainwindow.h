@@ -48,6 +48,14 @@ public:
   ~PMNGMainWindow();
 
 private:
+  class PlottingInfo {
+  public:
+    double EOFValue;
+    CalculatorInterface::EOFValueType EOFvt;
+    double injZoneLength;
+    double plotCutoff;
+  };
+
   class SignalItem {
   public:
     QString name;
@@ -58,7 +66,9 @@ private:
   EFGDisplayer makeMainWindowEFGDisplayer();
   void initPlotParams();
   void initSignalItems();
-  void plotElectrophoregram(const EFGDisplayer &displayer);
+  PlottingInfo makePlottingInfo();
+  void plotElectrophoregram(const EFGDisplayer &displayer, const std::vector<CalculatorInterface::TimeDependentZoneInformation> &tdzi,
+                            const double EOFValue, CalculatorInterface::EOFValueType EOFvt, const double izLen, const double plotCutoff);
   QVariant resetSignalItems();
   void selectSignalIfAvailable(const QVariant &sig);
   void setControlsIcons();

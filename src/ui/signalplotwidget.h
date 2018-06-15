@@ -33,7 +33,7 @@ public:
   ~SignalPlotWidget();
   void clear();
   void setSignal(const QVector<QPointF> &signal, const SignalStyle style, const QString &yAxisText,
-                 std::vector<CalculatorInterface::SpatialZoneInformation> &&zinfo);
+                 const std::vector<CalculatorInterface::TimeDependentZoneInformation> &tdzi);
 
 private:
   void setBrush(const SignalStyle style);
@@ -46,7 +46,7 @@ private:
   QwtPlotZoomer *m_plotZoomer;
   std::vector<QPointF> m_signal;
 
-  std::vector<CalculatorInterface::SpatialZoneInformation> m_zinfo;
+  std::vector<CalculatorInterface::TimeDependentZoneInformation> m_tdzi;
 
 private slots:
   void onPointHovered(const QPoint &pos);

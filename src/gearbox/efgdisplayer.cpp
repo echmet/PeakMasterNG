@@ -5,7 +5,7 @@ EFGDisplayer::EFGDisplayer(const Executor &executor) :
 {
 }
 
-void EFGDisplayer::operator()(const QVector<QPointF> &data, std::vector<CalculatorInterface::SpatialZoneInformation> &&szi, const CalculatorInterface::Signal &signal) const
+void EFGDisplayer::operator()(const QVector<QPointF> &data, const std::vector<CalculatorInterface::TimeDependentZoneInformation> &tdzi, const CalculatorInterface::Signal &signal) const
 {
-  m_executor(data, std::move(szi), signal);
+  m_executor(data, tdzi, signal);
 }

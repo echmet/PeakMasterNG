@@ -59,32 +59,42 @@ public:
     }
   };
 
-  class SpatialZoneInformation {
+  class TimeDependentZoneInformation {
   public:
-    SpatialZoneInformation() :
+    TimeDependentZoneInformation() :
       time{0},
       beginsAt{0},
       endsAt{0},
       name{}
     {}
-    SpatialZoneInformation(const double time, const double beginsAt, const double endsAt, QString &&name) :
+    TimeDependentZoneInformation(const double time, const double beginsAt, const double endsAt, QString &&name) :
       time{time},
       beginsAt{beginsAt},
       endsAt{endsAt},
       name{name}
     {}
-    SpatialZoneInformation(const SpatialZoneInformation &other) :
+    TimeDependentZoneInformation(const TimeDependentZoneInformation &other) :
       time{other.time},
       beginsAt{other.beginsAt},
       endsAt{other.endsAt},
       name{other.name}
     {}
-    SpatialZoneInformation(SpatialZoneInformation &&other) noexcept :
+    TimeDependentZoneInformation(TimeDependentZoneInformation &&other) noexcept :
       time{other.time},
       beginsAt{other.beginsAt},
       endsAt{other.endsAt},
-      name{std::move(other.name)}
+      name{other.name}
     {}
+
+    TimeDependentZoneInformation & operator=(const TimeDependentZoneInformation &other)
+    {
+      const_cast<double&>(time) = other.time;
+      const_cast<double&>(beginsAt) = other.beginsAt;
+      const_cast<double&>(endsAt) = other.endsAt;
+      const_cast<QString&>(name) = other.name;
+
+      return *this;
+    }
 
     const double time;
     const double beginsAt;
@@ -156,13 +166,13 @@ public:
                                         const Signal &signal);
   void publishResults(double totalLength, double detectorPosition, double drivingVoltage,
                       const double EOFValue, const EOFValueType EOFvt,
-                      bool positiveVoltage);
+                      const bool positiveVoltage);
   void recalculateTimes(double totalLength, double detectorPosition, double drivingVoltage,
                         const double EOFValue, const EOFValueType EOFvt, bool positiveVoltage);
   bool resultsAvailable() const;
-  std::vector<SpatialZoneInformation> spatialZoneInformation(double totalLength, double detectorPosition, double drivingVoltage,
-                                                             const double EOFValue, const EOFValueType EOFvt, bool positiveVoltage,
-                                                             const double injectionZoneLength, const double plotToTime) const;
+  std::vector<TimeDependentZoneInformation> timeDependentZoneInformation(double totalLength, double detectorPosition, double drivingVoltage,
+                                                                         const double EOFValue, const EOFValueType EOFvt, bool positiveVoltage,
+                                                                         const double injectionZoneLength, const double plotToTime) const;
   std::vector<TracepointInfo> tracepointInformation() const;
 
 public slots:

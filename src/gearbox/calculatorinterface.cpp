@@ -434,7 +434,7 @@ QVector<QPointF> CalculatorInterface::plotAllAnalytes(const double totalLength, 
 
 void CalculatorInterface::publishResults(double totalLength, double detectorPosition, double drivingVoltage,
                                          const double EOFValue, const EOFValueType EOFvt,
-                                         bool positiveVoltage)
+                                         const bool positiveVoltage)
 {
   if (totalLength <= 0)
     throw CalculatorInterfaceException{"Invalid value of \"total length\""};
@@ -454,6 +454,7 @@ void CalculatorInterface::publishResults(double totalLength, double detectorPosi
   if (m_ctx.isValid() != CalculatorContext::CompleteResultsValidity::INVALID) {
     mapResultsAnalytesDissociation();
     mapResults(totalLength, detectorPosition, drivingVoltage, EOFMobility);
+
     return;
   }
 
@@ -667,9 +668,9 @@ bool CalculatorInterface::resultsAvailable() const
   return m_ctx.isValid() != CalculatorContext::CompleteResultsValidity::INVALID;
 }
 
-std::vector<CalculatorInterface::SpatialZoneInformation> CalculatorInterface::spatialZoneInformation(double totalLength, double detectorPosition, double drivingVoltage,
-                                                                                                     const double EOFValue, const EOFValueType EOFvt, bool positiveVoltage,
-                                                                                                     const double injectionZoneLength, const double plotToTime) const
+std::vector<CalculatorInterface::TimeDependentZoneInformation> CalculatorInterface::timeDependentZoneInformation(double totalLength, double detectorPosition, double drivingVoltage,
+                                                                                                                 const double EOFValue, const EOFValueType EOFvt, bool positiveVoltage,
+                                                                                                                 const double injectionZoneLength, const double plotToTime) const
 {
   if (m_ctx.isValid() == CalculatorContext::CompleteResultsValidity::INVALID)
     return {};
@@ -698,7 +699,7 @@ std::vector<CalculatorInterface::SpatialZoneInformation> CalculatorInterface::sp
     throw CalculatorInterfaceException{"Envelopes vs. eigenzones size mismatch"};
   }
 
-  std::vector<SpatialZoneInformation> zinfo{};
+  std::vector<TimeDependentZoneInformation> zinfo{};
   const auto _analytes = analytes();
 
   for (size_t idx = 0; idx < m_ctx.results->eigenzones->size(); idx++) {

@@ -101,7 +101,7 @@ void SignalPlotWidget::onPointHovered(const QPoint &pos)
 
   const double x = cp.x();
   QStringList zoneNames{};
-  for (const auto &z : m_zinfo) {
+  for (const auto &z : m_tdzi) {
     if (x >= z.beginsAt && x <= z.endsAt)
       zoneNames << z.name;
   }
@@ -150,13 +150,13 @@ void SignalPlotWidget::setBrush(const SignalStyle style)
 }
 
 void SignalPlotWidget::setSignal(const QVector<QPointF> &signal, const SignalStyle style, const QString &yAxisText,
-                                 std::vector<CalculatorInterface::SpatialZoneInformation> &&zinfo)
+                                 const std::vector<CalculatorInterface::TimeDependentZoneInformation> &tdzi)
 {
   m_plotCurve->setSamples(signal);
   setBrush(style);
   m_signal = signal.toStdVector();
 
-  m_zinfo = std::move(zinfo);
+  m_tdzi = tdzi;
 
   m_plot->setAxisTitle(QwtPlot::Axis::yLeft, yAxisText);
 
