@@ -11,6 +11,7 @@
 #include "../gearbox/databaseproxy.h"
 #include "analytesconstituentsheader.h"
 
+#include <QBoxLayout>
 #include <QHeaderView>
 #include <QMessageBox>
 
@@ -87,6 +88,13 @@ SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMPro
     ui->qtbv_analytes->horizontalHeader()->setSectionResizeMode(col, QHeaderView::ResizeToContents);
   for (int col = m_analytesModel->firstExtraInfoColumn(); col < m_analytesModel->columnCount(QModelIndex{}); col++)
     ui->qtbv_analytes->setColumnWidth(col, ach->sizeHintForColumn(col));
+
+  QBoxLayout *layout = qobject_cast<QBoxLayout *>(this->layout());
+  if (layout == nullptr)
+    throw std::runtime_error{"Layout of SystemCompositionWidget is expected to be a QBoxLayout"};
+
+  layout->setStretch(0, 2);
+  layout->setStretch(1, 3);
 
   setControlsIcons();
 }
