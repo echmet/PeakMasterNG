@@ -52,7 +52,7 @@ QVector<AnalytesExtraInfoModel::ExtraInfo> makeAnalytesExtraInfo(const std::vect
   const EigenzoneDetailsModel *ezDetailsModel = static_cast<const EigenzoneDetailsModel *>(ezDetailsModelBase);
   QVector<AnalytesExtraInfoModel::ExtraInfo> data{};
 
-  assert(tdzi.size() == ezDetailsModel->columnCount());
+  assert(tdzi.size() == static_cast<size_t>(ezDetailsModel->columnCount()));
 
   for (int idx = 0; idx < ezDetailsModel->columnCount(); idx++) {
     const auto &tdInfo = tdzi.at(idx);
