@@ -62,8 +62,11 @@ QVector<AnalytesExtraInfoModel::ExtraInfo> makeAnalytesExtraInfo(const std::vect
 
     const double uEff = ezProps.mobility;
     const double uEMD = ezProps.uEMD;
+    const bool detectable = [&tdInfo]() {
+      return tdInfo.time > 0.0 && tdInfo.beginsAt > 0.0;
+    }();
 
-    data.append(AnalytesExtraInfoModel::ExtraInfo{tdInfo.name, uEff, tdInfo.time, uEMD, tdInfo.concentrationMax, tdInfo.conductivityMax});
+    data.append(AnalytesExtraInfoModel::ExtraInfo{tdInfo.name, uEff, tdInfo.time, uEMD, tdInfo.concentrationMax, tdInfo.conductivityMax, detectable});
   }
 
   return data;

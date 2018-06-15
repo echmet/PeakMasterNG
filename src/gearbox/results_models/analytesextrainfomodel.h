@@ -14,7 +14,8 @@ public:
   public:
     ExtraInfo();
     explicit ExtraInfo(const QString &analyte, const double uEff, const double time, const double uEMD,
-                       const double concentrationMax, const double conductivityMax);
+                       const double concentrationMax, const double conductivityMax,
+                       const bool detectable);
     ExtraInfo(const ExtraInfo &other);
 
     ExtraInfo & operator=(const ExtraInfo &other);
@@ -25,6 +26,7 @@ public:
     const double uEMD;
     const double concentrationMax;
     const double conductivityMax;
+    const bool detectable;
     const bool valid;
   };
 
