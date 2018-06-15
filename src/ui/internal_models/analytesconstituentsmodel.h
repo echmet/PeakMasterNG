@@ -69,9 +69,9 @@ public:
     else if (section == baseColumnCount + 1)
       return QObject::tr("Time (min)");
     else if (section == baseColumnCount + 2)
-      return QObject::tr("Concentration Max (mM)");
+      return QObject::tr("c Max (mM)");
     else if (section == baseColumnCount + 3)
-      return QObject::tr("Conductivity Max (S/m)");
+      return QObject::tr("\u03BA Max (S/m)");
     else if (section == baseColumnCount + 4)
       return QObject::tr("\u03BC EMD (\u00B7 1e-9)");
 

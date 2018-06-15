@@ -79,7 +79,7 @@ SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMPro
   ui->qtbv_backgroudConstituents->setMinimumHeight(100);
   ui->qtbv_analytes->setMinimumHeight(100);
 
-  ui->qtbv_backgroudConstituents->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+  ui->qtbv_backgroudConstituents->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
   AnalytesConstituentsHeader *ach = new AnalytesConstituentsHeader{Qt::Horizontal, ui->qtbv_analytes};
   ui->qtbv_analytes->setHorizontalHeader(ach);
@@ -93,8 +93,8 @@ SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMPro
   if (layout == nullptr)
     throw std::runtime_error{"Layout of SystemCompositionWidget is expected to be a QBoxLayout"};
 
-  layout->setStretch(0, 2);
-  layout->setStretch(1, 3);
+  layout->setStretch(0, 4);
+  layout->setStretch(1, 5);
 
   setControlsIcons();
 }
