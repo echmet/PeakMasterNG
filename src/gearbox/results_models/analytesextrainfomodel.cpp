@@ -7,20 +7,20 @@ AnalytesExtraInfoModel::ExtraInfo::ExtraInfo() :
   uEMD{0},
   concentrationMax{0},
   conductivityMax{0},
-  detectable{false},
+  detected{false},
   valid{false}
 {}
 
 AnalytesExtraInfoModel::ExtraInfo::ExtraInfo(const QString &analyte, const double uEff, const double time, const double uEMD,
                                              const double concentrationMax, const double conductivityMax,
-                                             const bool detectable) :
+                                             const bool detected) :
   analyte{analyte},
   uEff{uEff},
   time{time},
   uEMD{uEMD},
   concentrationMax{concentrationMax},
   conductivityMax{conductivityMax},
-  detectable{detectable},
+  detected{detected},
   valid{true}
 {}
 
@@ -31,7 +31,7 @@ AnalytesExtraInfoModel::ExtraInfo::ExtraInfo(const ExtraInfo &other) :
   uEMD{other.uEMD},
   concentrationMax{other.concentrationMax},
   conductivityMax{other.conductivityMax},
-  detectable{other.detectable},
+  detected{other.detected},
   valid{true}
 {}
 
@@ -43,7 +43,7 @@ AnalytesExtraInfoModel::ExtraInfo & AnalytesExtraInfoModel::ExtraInfo::operator=
   const_cast<double&>(uEMD) = other.uEMD;
   const_cast<double&>(concentrationMax) = other.concentrationMax;
   const_cast<double&>(conductivityMax) = other.conductivityMax;
-  const_cast<bool&>(detectable) = other.detectable;
+  const_cast<bool&>(detected) = other.detected;
   const_cast<bool&>(valid) = other.valid;
 
   return *this;

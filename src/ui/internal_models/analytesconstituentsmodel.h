@@ -39,11 +39,11 @@ public:
         return {};
       return exInfo.time;
     } else if (col == baseColumnCount + 2) {
-      if (!exInfo.detectable)
+      if (!exInfo.detected)
         return {};
       return exInfo.concentrationMax;
    } else if (col == baseColumnCount + 3) {
-      if (!exInfo.detectable)
+      if (!exInfo.detected)
         return {};
       return exInfo.conductivityMax;
    } else if (col == baseColumnCount + 4)
