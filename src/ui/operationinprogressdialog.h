@@ -13,7 +13,7 @@ class OperationInProgressDialog : public QDialog
 
 public:
   explicit OperationInProgressDialog(const QString &title, QWidget *parent = nullptr);
-  ~OperationInProgressDialog();
+  ~OperationInProgressDialog() override;
   int exec() override;
   void reject() override;
 
