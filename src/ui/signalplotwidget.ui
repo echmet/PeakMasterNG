@@ -26,7 +26,7 @@
      <item>
       <widget class="QComboBox" name="qcbox_signal">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -41,7 +41,14 @@
       </widget>
      </item>
      <item>
-      <widget class="FloatingValueLineEdit" name="qle_plotCutoff"/>
+      <widget class="FloatingValueLineEdit" name="qle_plotCutoff">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QCheckBox" name="qcb_autoPlotCutoff">
@@ -61,7 +68,14 @@
       </widget>
      </item>
      <item>
-      <widget class="FloatingValueLineEdit" name="qle_injZoneLength"/>
+      <widget class="FloatingValueLineEdit" name="qle_injZoneLength">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="qpb_replot">
@@ -74,6 +88,9 @@
       <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Expanding</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
