@@ -20,7 +20,6 @@
 
 #include <cassert>
 #include <QDialogButtonBox>
-#include <QDataWidgetMapper>
 #include <QFileDialog>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -28,6 +27,7 @@
 #include <QPushButton>
 #include <QStandardItemModel>
 #include <QShortcut>
+#include <QSplitter>
 #include <QThread>
 
 static
@@ -115,16 +115,16 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
 
   setWindowTitle(Globals::VERSION_STRING());
 
-  ui->qvlay_compositionEFG->insertWidget(0, h_scompWidget);
-  ui->qvlay_compositionEFG->addWidget(m_signalPlotWidget);
+  QSplitter *splitter = new QSplitter{Qt::Vertical, this};
+  ui->qvlay_compositionEFG->insertWidget(0, splitter);
+
+  splitter->addWidget(h_scompWidget);
+  splitter->addWidget(m_signalPlotWidget);
 
   m_mainCtrlWidget = new MainControlWidget{resultsModels, this};
   ui->qvlay_leftPane->addWidget(m_mainCtrlWidget);
 
   initPlotParams();
-
-  connect(ui->qcb_autoPlotCutoff, &QCheckBox::stateChanged, this, &PMNGMainWindow::onAutoPlotCutoffStateChanged);
-  connect(ui->qcbox_signal, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, &PMNGMainWindow::onPlotElectrophoregram);
 
   m_qpb_new = new QPushButton{tr("New"), this};
   connect(m_qpb_new, &QPushButton::clicked, ui->actionNew, &QAction::trigger);
@@ -134,7 +134,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   connect(m_qpb_save, &QPushButton::clicked, ui->actionSave, &QAction::trigger);
   m_qpb_calculate = new QPushButton{tr("Calculate!"), this};
   connect(m_qpb_calculate, &QPushButton::clicked, this, &PMNGMainWindow::onCalculate);
-  connect(ui->qpb_replotEFG, &QPushButton::clicked, this, &PMNGMainWindow::onPlotElectrophoregram);
+  connect(m_signalPlotWidget, &SignalPlotWidget::replotElectrophoregram, this, &PMNGMainWindow::onPlotElectrophoregram);
 
   connect(h_scompWidget, &SystemCompositionWidget::compositionChanged, this, &PMNGMainWindow::onCompositionChanged);
   connect(m_mainCtrlWidget, &MainControlWidget::runSetupChanged, this, &PMNGMainWindow::onRunSetupChanged);
@@ -156,8 +156,6 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
 
   m_calculateShortcut = new QShortcut(QKeySequence::Refresh, m_qpb_calculate);
   connect(m_calculateShortcut, &QShortcut::activated, this, &PMNGMainWindow::onCalculate);
-
-  onAutoPlotCutoffStateChanged(Qt::Checked);
 
   setControlsIcons();
 
@@ -183,19 +181,14 @@ void PMNGMainWindow::addConstituentsSignals(const QVector<QString> &constituents
 
 void PMNGMainWindow::initPlotParams()
 {
-  m_plotParamsData.resize(m_plotParamsModel.indexFromItem(PlotParamsItems::LAST_INDEX));
+  m_plotParamsData.resize(m_plotParamsModel.indexFromItem(SignalPlotWidget::PlotParamsItems::LAST_INDEX));
 
-  m_plotParamsData[m_plotParamsModel.indexFromItem(PlotParamsItems::CUTOFF)] = 60.0;
-  m_plotParamsData[m_plotParamsModel.indexFromItem(PlotParamsItems::INJ_ZONE_LENGTH)] = 1.0;
+  m_plotParamsData[m_plotParamsModel.indexFromItem(SignalPlotWidget::PlotParamsItems::CUTOFF)] = 60.0;
+  m_plotParamsData[m_plotParamsModel.indexFromItem(SignalPlotWidget::PlotParamsItems::INJ_ZONE_LENGTH)] = 1.0;
 
   m_plotParamsModel.setUnderlyingData(&m_plotParamsData);
 
-  m_plotParamsMapper = new QDataWidgetMapper{this};
-  m_plotParamsMapper->setModel(&m_plotParamsModel);
-  m_plotParamsMapper->setItemDelegate(&m_fltDelegate);
-  m_plotParamsMapper->addMapping(ui->qle_plotCutoff, m_plotParamsModel.indexFromItem(PlotParamsItems::CUTOFF));
-  m_plotParamsMapper->addMapping(ui->qle_injZoneLength, m_plotParamsModel.indexFromItem(PlotParamsItems::INJ_ZONE_LENGTH));
-  m_plotParamsMapper->toFirst();
+  m_signalPlotWidget->setPlotParamsMapper(&m_plotParamsModel);
 
   initSignalItems();
 }
@@ -204,7 +197,7 @@ void PMNGMainWindow::initSignalItems()
 {
   m_signalTypesModel = new QStandardItemModel{this};
 
-  ui->qcbox_signal->setModel(m_signalTypesModel);
+  m_signalPlotWidget->setSignalItemsModel(m_signalTypesModel);
   resetSignalItems();
 }
 
@@ -223,11 +216,11 @@ PMNGMainWindow::PlottingInfo PMNGMainWindow::makePlottingInfo()
   CalculatorInterface::EOFValueType EOFvt;
   inputToEOFValueType(EOFValue, EOFvt, m_mainCtrlWidget->EOFValue(), m_mainCtrlWidget->EOFInputType());
 
-  const double izLen = m_plotParamsData.at(m_plotParamsModel.indexFromItem(PlotParamsItems::INJ_ZONE_LENGTH));
+  const double izLen = m_plotParamsData.at(m_plotParamsModel.indexFromItem(SignalPlotWidget::PlotParamsItems::INJ_ZONE_LENGTH));
   const double plotCutoff = [&]() {
-    if (ui->qcb_autoPlotCutoff->isChecked())
+    if (m_signalPlotWidget->autoPlotCutoff())
       return -1.0;
-    return m_plotParamsData.at(m_plotParamsModel.indexFromItem(PlotParamsItems::CUTOFF));
+    return m_plotParamsData.at(m_plotParamsModel.indexFromItem(SignalPlotWidget::PlotParamsItems::CUTOFF));
   }();
 
   return PlottingInfo{ EOFValue, EOFvt, izLen, plotCutoff };
@@ -237,11 +230,6 @@ void PMNGMainWindow::onAbout()
 {
   AboutDialog dlg{};
   dlg.exec();
-}
-
-void PMNGMainWindow::onAutoPlotCutoffStateChanged(const int state)
-{
-  ui->qle_plotCutoff->setDisabled(state == Qt::Checked);
 }
 
 void PMNGMainWindow::onCalculate()
@@ -398,8 +386,8 @@ void PMNGMainWindow::onLoad()
       system.correctForViscosity
     };
 
-    m_plotParamsData[m_plotParamsModel.indexFromItem(PlotParamsItems::INJ_ZONE_LENGTH)] = system.injectionZoneLength;
-    m_plotParamsModel.notifyDataChanged(PlotParamsItems::INJ_ZONE_LENGTH, PlotParamsItems::INJ_ZONE_LENGTH);
+    m_plotParamsData[m_plotParamsModel.indexFromItem(SignalPlotWidget::PlotParamsItems::INJ_ZONE_LENGTH)] = system.injectionZoneLength;
+    m_plotParamsModel.notifyDataChanged(SignalPlotWidget::PlotParamsItems::INJ_ZONE_LENGTH, SignalPlotWidget::PlotParamsItems::INJ_ZONE_LENGTH);
 
     onCompositionChanged();
     m_mainCtrlWidget->setRunSetup(rs, eofType, system.eofValue);
@@ -528,7 +516,7 @@ void PMNGMainWindow::onSave()
     rs.correctForDebyeHuckel,
     rs.correctForOnsagerFuoss,
     rs.correctForViscosity,
-    m_plotParamsData.at(m_plotParamsModel.indexFromItem(PlotParamsItems::INJ_ZONE_LENGTH))
+    m_plotParamsData.at(m_plotParamsModel.indexFromItem(SignalPlotWidget::PlotParamsItems::INJ_ZONE_LENGTH))
   };
 
   try {
@@ -568,7 +556,7 @@ void PMNGMainWindow::plotElectrophoregram(const EFGDisplayer &displayer, const s
   const MainControlWidget::RunSetup rs = m_mainCtrlWidget->runSetup();
 
   /* Signal type to plot */
-  const QStandardItem *sigItem = m_signalTypesModel->item(ui->qcbox_signal->currentIndex(), 0);
+  const QStandardItem *sigItem = m_signalTypesModel->item(m_signalPlotWidget->selectedSignalIndex(), 0);
   if (sigItem == nullptr)
     return;
   if (!sigItem->data().canConvert<CalculatorInterface::Signal>())
@@ -587,7 +575,8 @@ void PMNGMainWindow::plotElectrophoregram(const EFGDisplayer &displayer, const s
 
 QVariant PMNGMainWindow::resetSignalItems()
 {
-  const QVariant current = ui->qcbox_signal->currentData(Qt::UserRole + 1);
+  //const QVariant current = ui->qcbox_signal->currentData(Qt::UserRole + 1);
+  const QVariant current = m_signalTypesModel->data(m_signalTypesModel->index(m_signalPlotWidget->selectedSignalIndex(), 0), Qt::UserRole + 1);
   m_signalTypesModel->clear();
 
   for (const auto &item : s_defaultSignalItems) {
@@ -606,7 +595,7 @@ void PMNGMainWindow::selectSignalIfAvailable(const QVariant &sig)
   for (int idx = 0; idx < m_signalTypesModel->rowCount(); idx++) {
     const auto _csig = m_signalTypesModel->data(m_signalTypesModel->index(idx, 0), Qt::UserRole + 1).value<CalculatorInterface::Signal>();
     if (_sig == _csig) {
-      ui->qcbox_signal->setCurrentIndex(idx);
+      m_signalPlotWidget->setSignalIndex(idx);
       return;
     }
   }

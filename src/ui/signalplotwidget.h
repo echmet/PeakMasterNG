@@ -7,7 +7,7 @@ class QwtPlotPicker;
 class QwtPlotZoomer;
 
 #include "../gearbox/calculatorinterface.h"
-
+#include "../gearbox/floatingvaluedelegate.h"
 
 #include <QPointF>
 #include <QVector>
@@ -16,6 +16,9 @@ class QwtPlotZoomer;
 namespace Ui {
   class SignalPlotWidget;
 }
+
+class QDataWidgetMapper;
+class QStandardItemModel;
 
 class SignalPlotWidget : public QWidget
 {
@@ -28,12 +31,22 @@ public:
     ALL_ANALYTES,
     CONCENTRATION
   };
+  enum class PlotParamsItems {
+    CUTOFF,
+    INJ_ZONE_LENGTH,
+    LAST_INDEX
+  };
 
   explicit SignalPlotWidget(QWidget *parent = nullptr);
   ~SignalPlotWidget();
+  bool autoPlotCutoff() const noexcept;
   void clear();
+  int selectedSignalIndex() const noexcept;
+  void setPlotParamsMapper(FloatMapperModel<PlotParamsItems> *model);
   void setSignal(const QVector<QPointF> &signal, const SignalStyle style, const QString &yAxisText,
                  const std::vector<CalculatorInterface::TimeDependentZoneInformation> &tdzi);
+  void setSignalIndex(const int idx);
+  void setSignalItemsModel(QStandardItemModel *model);
 
 private:
   void setBrush(const SignalStyle style);
@@ -48,9 +61,16 @@ private:
 
   std::vector<CalculatorInterface::TimeDependentZoneInformation> m_tdzi;
 
-private slots:
-  void onPointHovered(const QPoint &pos);
+  FloatingValueDelegate m_fltDelegate;
+  QDataWidgetMapper *m_plotParamsMapper;
 
+private slots:
+  void onAutoPlotCutoffStateChanged(const int state);
+  void onPointHovered(const QPoint &pos);
+  void onTriggerReplotElectrophoregram();
+
+signals:
+  void replotElectrophoregram();
 };
 
 #endif // SIGNALPLOTWIDGET_H

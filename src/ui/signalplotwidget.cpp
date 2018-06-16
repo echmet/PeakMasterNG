@@ -9,6 +9,8 @@
 #include "ploteventfilter.h"
 #include "../gearbox/doubletostringconvertor.h"
 
+#include <QDataWidgetMapper>
+#include <QStandardItemModel>
 #include <QToolTip>
 #include <QVBoxLayout>
 
@@ -60,6 +62,8 @@ SignalPlotWidget::SignalPlotWidget(QWidget *parent) :
   m_plotPicker->setStateMachine(new QwtPickerClickPointMachine{}); /* Come blow my ClickPoint machine! */
   m_plotPicker->setMousePattern(QwtEventPattern::MouseSelect1, Qt::RightButton);
 
+  m_plotParamsMapper = new QDataWidgetMapper{this};
+
   auto filter = new PlotEventFilter{this};
   m_plot->canvas()->installEventFilter(filter);
   connect(filter, &PlotEventFilter::mouseMoved, this, &SignalPlotWidget::onPointHovered);
@@ -67,12 +71,18 @@ SignalPlotWidget::SignalPlotWidget(QWidget *parent) :
   {
     QVBoxLayout *lay = qobject_cast<QVBoxLayout *>(this->layout());
     if (lay != nullptr)
-      lay->insertWidget(0, m_plot);
+      lay->insertWidget(1, m_plot);
   }
   m_plot->setAxisTitle(QwtPlot::Axis::xBottom, "time (min)");
 
   m_plot->setMinimumHeight(50);
   this->setMinimumHeight(50);
+
+  connect(ui->qpb_replot, &QPushButton::clicked, this, &SignalPlotWidget::onTriggerReplotElectrophoregram);
+  connect(ui->qcbox_signal, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, &SignalPlotWidget::onTriggerReplotElectrophoregram);
+  connect(ui->qcb_autoPlotCutoff, &QCheckBox::stateChanged, this, &SignalPlotWidget::onAutoPlotCutoffStateChanged);
+
+  onAutoPlotCutoffStateChanged(Qt::Checked);
 }
 
 SignalPlotWidget::~SignalPlotWidget()
@@ -80,11 +90,22 @@ SignalPlotWidget::~SignalPlotWidget()
   delete ui;
 }
 
+bool SignalPlotWidget::autoPlotCutoff() const noexcept
+{
+  return ui->qcb_autoPlotCutoff->isChecked();
+}
+
 void SignalPlotWidget::clear()
 {
   m_plotCurve->setSamples(QVector<QPointF>{});
   m_plot->replot();
 }
+
+void SignalPlotWidget::onAutoPlotCutoffStateChanged(const int state)
+{
+  ui->qle_plotCutoff->setDisabled(state == Qt::Checked);
+}
+
 
 void SignalPlotWidget::onPointHovered(const QPoint &pos)
 {
@@ -129,6 +150,16 @@ void SignalPlotWidget::onPointHovered(const QPoint &pos)
   }
 }
 
+void SignalPlotWidget::onTriggerReplotElectrophoregram()
+{
+  emit replotElectrophoregram();
+}
+
+int SignalPlotWidget::selectedSignalIndex() const noexcept
+{
+  return ui->qcbox_signal->currentIndex();
+}
+
 void SignalPlotWidget::setBrush(const SignalStyle style)
 {
   const qreal pw = m_plotCurve->pen().widthF();
@@ -149,6 +180,15 @@ void SignalPlotWidget::setBrush(const SignalStyle style)
   }
 }
 
+void SignalPlotWidget::setPlotParamsMapper(FloatMapperModel<PlotParamsItems> *model)
+{
+  m_plotParamsMapper->setModel(model);
+  m_plotParamsMapper->setItemDelegate(&m_fltDelegate);
+  m_plotParamsMapper->addMapping(ui->qle_plotCutoff, model->indexFromItem(PlotParamsItems::CUTOFF));
+  m_plotParamsMapper->addMapping(ui->qle_injZoneLength, model->indexFromItem(PlotParamsItems::INJ_ZONE_LENGTH));
+  m_plotParamsMapper->toFirst();
+}
+
 void SignalPlotWidget::setSignal(const QVector<QPointF> &signal, const SignalStyle style, const QString &yAxisText,
                                  const std::vector<CalculatorInterface::TimeDependentZoneInformation> &tdzi)
 {
@@ -164,4 +204,14 @@ void SignalPlotWidget::setSignal(const QVector<QPointF> &signal, const SignalSty
   m_plot->replot();
   m_plotZoomer->zoom(brect);
   m_plotZoomer->setZoomBase(brect);
+}
+
+void SignalPlotWidget::setSignalIndex(const int idx)
+{
+  ui->qcbox_signal->setCurrentIndex(idx);
+}
+
+void SignalPlotWidget::setSignalItemsModel(QStandardItemModel *model)
+{
+  ui->qcbox_signal->setModel(model);
 }

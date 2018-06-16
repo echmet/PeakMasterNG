@@ -3,7 +3,7 @@
 
 #include "../gearbox/calculatorinterface.h"
 #include "../mappers/floatmappermodel.h"
-#include "../gearbox/floatingvaluedelegate.h"
+#include "signalplotwidget.h"
 #include "toggletracepointsdialog.h"
 
 #include <QMainWindow>
@@ -23,7 +23,6 @@ class DatabaseProxy;
 class EFGDisplayer;
 class MainControlWidget;
 class ResultsModels;
-class QDataWidgetMapper;
 class QPushButton;
 class QShortcut;
 class QStandardItemModel;
@@ -35,12 +34,6 @@ class PMNGMainWindow : public QMainWindow
   Q_OBJECT
 
 public:
-  enum class PlotParamsItems {
-    CUTOFF,
-    INJ_ZONE_LENGTH,
-    LAST_INDEX
-  };
-
   explicit PMNGMainWindow(SystemCompositionWidget *scompWidget,
                           CalculatorInterface &&calcIface, ResultsModels resultsModels,
                           persistence::Persistence &persistence,
@@ -90,11 +83,8 @@ private:
   AnalytesExtraInfoModel * const h_analytesEXIModel;
   const QAbstractTableModel * const h_eigenzoneDetailsModel;
 
-  QDataWidgetMapper *m_plotParamsMapper;
-  FloatMapperModel<PlotParamsItems> m_plotParamsModel;
   QVector<double> m_plotParamsData;
-
-  FloatingValueDelegate m_fltDelegate;
+  FloatMapperModel<SignalPlotWidget::PlotParamsItems> m_plotParamsModel;
 
   persistence::Persistence &m_persistence;
 
@@ -113,7 +103,6 @@ private:
 
 private slots:
   void onAbout();
-  void onAutoPlotCutoffStateChanged(const int state);
   void onCalculate();
   void onCompositionChanged();
   void onDatabaseEditor();
