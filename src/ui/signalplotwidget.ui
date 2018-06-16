@@ -61,7 +61,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="qle_injZoneLength"/>
+      <widget class="FloatingValueLineEdit" name="qle_injZoneLength"/>
      </item>
      <item>
       <widget class="QPushButton" name="qpb_replot">
