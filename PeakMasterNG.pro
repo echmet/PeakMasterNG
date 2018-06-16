@@ -231,7 +231,8 @@ HEADERS += \
     src/ui/toggletracepointsdialog.h \
     src/ui/internal_models/analytesconstituentsmodel.h \
     src/gearbox/results_models/analytesextrainfomodel.h \
-    src/ui/analytesconstituentsheader.h
+    src/ui/analytesconstituentsheader.h \
+    src/ui/hacks.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \

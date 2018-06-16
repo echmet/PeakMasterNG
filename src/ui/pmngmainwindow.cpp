@@ -17,6 +17,7 @@
 #include "databaseeditordialog.h"
 #include "../gearbox/databaseproxy.h"
 #include "toggletracepointsdialog.h"
+#include "hacks.h"
 
 #include <cassert>
 #include <QDialogButtonBox>
@@ -116,6 +117,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   setWindowTitle(Globals::VERSION_STRING());
 
   QSplitter *splitter = new QSplitter{Qt::Vertical, this};
+  hacks::makeSplitterAppear(splitter);
   ui->qvlay_compositionEFG->insertWidget(0, splitter);
 
   splitter->addWidget(h_scompWidget);
