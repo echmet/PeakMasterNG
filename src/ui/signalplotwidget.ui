@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>870</width>
+    <width>1082</width>
     <height>300</height>
    </rect>
   </property>
@@ -64,6 +64,13 @@
       <widget class="QLineEdit" name="qle_injZoneLength"/>
      </item>
      <item>
+      <widget class="QPushButton" name="qpb_replot">
+       <property name="text">
+        <string>Replot</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -77,18 +84,13 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="qpb_replot">
-       <property name="text">
-        <string>Replot</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
       <widget class="QLabel" name="ql_x">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>X:</string>
        </property>
@@ -96,6 +98,12 @@
      </item>
      <item>
       <widget class="QLabel" name="ql_xVal">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -103,6 +111,12 @@
      </item>
      <item>
       <widget class="QLabel" name="ql_y">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Y:</string>
        </property>
@@ -110,37 +124,16 @@
      </item>
      <item>
       <widget class="QLabel" name="ql_yVal">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string/>
        </property>
       </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="ql_zone">
-       <property name="text">
-        <string>Zone:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="ql_zoneVal">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
      </item>
     </layout>
    </item>

@@ -129,7 +129,6 @@ void SignalPlotWidget::onPointHovered(const QPoint &pos)
 
   if (zoneNames.isEmpty()) {
     QToolTip::hideText();
-    ui->ql_zoneVal->setText(QLatin1String(""));
   } else {
     const auto zoneText = [&zoneNames]() -> std::pair<QString, QString> {
       QString resToolTip;
@@ -146,7 +145,6 @@ void SignalPlotWidget::onPointHovered(const QPoint &pos)
     }();
 
     QToolTip::showText(m_plot->mapToGlobal(pos), std::get<0>(zoneText), m_plot);
-    ui->ql_zoneVal->setText(std::get<1>(zoneText));
   }
 }
 
