@@ -35,7 +35,7 @@ public:
     if (col == baseColumnCount)
       return exInfo.uEff;
     else if (col == baseColumnCount + 1) {
-      if (exInfo.time <= 0.0)
+      if (!exInfo.detected)
         return {};
       return exInfo.time;
     } else if (col == baseColumnCount + 2) {
@@ -67,7 +67,7 @@ public:
     if (section == baseColumnCount)
       return QObject::tr("\xCE\xBC Eff (\xE2\x8B\x85 1e-9)");
     else if (section == baseColumnCount + 1)
-      return QObject::tr("Time (min)");
+      return QObject::tr("Time Max (min)");
     else if (section == baseColumnCount + 2)
       return QObject::tr("c Max (mM)");
     else if (section == baseColumnCount + 3)

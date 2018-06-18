@@ -63,17 +63,20 @@ public:
   public:
     TimeDependentZoneInformation() :
       isSystemZone{false},
-      time{0},
+      timeTrue{0},
+      timeMax{0},
       beginsAt{0},
       endsAt{0},
       name{},
       concentrationMax{0},
       conductivityMax{0}
     {}
-    TimeDependentZoneInformation(const bool isSystemZone, const double time, const double beginsAt, const double endsAt, QString &&name,
+    TimeDependentZoneInformation(const bool isSystemZone, const double timeTrue, const double timeMax,
+                                 const double beginsAt, const double endsAt, QString &&name,
                                  const double concentrationMax, const double conductivityMax) :
       isSystemZone{isSystemZone},
-      time{time},
+      timeTrue{timeTrue},
+      timeMax{timeMax},
       beginsAt{beginsAt},
       endsAt{endsAt},
       name{name},
@@ -82,7 +85,8 @@ public:
     {}
     TimeDependentZoneInformation(const TimeDependentZoneInformation &other) :
       isSystemZone{other.isSystemZone},
-      time{other.time},
+      timeTrue{other.timeTrue},
+      timeMax{other.timeMax},
       beginsAt{other.beginsAt},
       endsAt{other.endsAt},
       name{other.name},
@@ -93,7 +97,8 @@ public:
     TimeDependentZoneInformation & operator=(const TimeDependentZoneInformation &other)
     {
       const_cast<bool&>(isSystemZone) = other.isSystemZone;
-      const_cast<double&>(time) = other.time;
+      const_cast<double&>(timeTrue) = other.timeTrue;
+      const_cast<double&>(timeMax) = other.timeMax;
       const_cast<double&>(beginsAt) = other.beginsAt;
       const_cast<double&>(endsAt) = other.endsAt;
       const_cast<QString&>(name) = other.name;
@@ -104,7 +109,8 @@ public:
     }
 
     const bool isSystemZone;
-    const double time;
+    const double timeTrue;
+    const double timeMax;
     const double beginsAt;
     const double endsAt;
     const QString name;

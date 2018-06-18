@@ -709,6 +709,7 @@ std::vector<CalculatorInterface::TimeDependentZoneInformation> CalculatorInterfa
     bool isSystemZone = false;
     double concentrationMax = 0.0;
     double conductivityMax = 0.0;
+    double timeMax = 0.0;
 
     QString zoneName{};
     if (ez.ztype == ECHMET::LEMNG::EigenzoneType::ANALYTE) {
@@ -723,6 +724,7 @@ std::vector<CalculatorInterface::TimeDependentZoneInformation> CalculatorInterfa
           zoneName = QString{it->key()};
           concentrationMax = env.HVLRMax * c.concentration;
           conductivityMax = env.HVLRMax * (ez.solutionProperties.conductivity - conductivityBGE) + conductivityBGE;
+          timeMax = env.tMax;
 
           break;
         }
@@ -736,6 +738,7 @@ std::vector<CalculatorInterface::TimeDependentZoneInformation> CalculatorInterfa
 
     zinfo.emplace_back(isSystemZone,
                        mobilityToTime(totalLength, detectorPosition, drivingVoltage, EOFMobility, ez.mobility),
+                       timeMax / 60.0,
                        env.beginsAt / 60.0, env.endsAt / 60.0,
                        std::move(zoneName),
                        concentrationMax, conductivityMax);
