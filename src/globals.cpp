@@ -11,13 +11,13 @@ const int Globals::VERSION_MIN = 0;
 const QString Globals::VERSION_REV{"d"};
 
 const QVector<Globals::DeveloperID> Globals::DEVELOPERS = {
-                                                            Globals::DeveloperID{"Milan \xC5\xA0t\xC4\x9B""dr\xC3\xBD", "stedry@natur.cuni.cz", false},
-                                                            Globals::DeveloperID{"Vlastimil Hru\xC5\xA1""ka", "hruska2@natur.cuni.cz", false},
-                                                            Globals::DeveloperID{"Michal Jaro\xC5\xA1", "mjaros@fulbrightweb.org", false},
-                                                            Globals::DeveloperID{"Iva Zuskov\xC3\xA1", "zuskova@natur.cuni.cz", false},
-                                                            Globals::DeveloperID{"Bob Ga\xC5\xA1", "gas@natur.cuni.cz", false},
-                                                            Globals::DeveloperID{"Pavel Dubsk\xC3\xBD", "pavel.dubsky@natur.cuni.cz", true},
-                                                            Globals::DeveloperID{"Gabriel Gerlero", "gabrielgerlero@gmail.com", false},
+                                                            Globals::DeveloperID{u8"Milan \xC5\xA0t\xC4\x9B""dr\xC3\xBD", "stedry@natur.cuni.cz", false},
+                                                            Globals::DeveloperID{u8"Vlastimil Hru\xC5\xA1""ka", "hruska2@natur.cuni.cz", false},
+                                                            Globals::DeveloperID{u8"Michal Jaro\xC5\xA1", "mjaros@fulbrightweb.org", false},
+                                                            Globals::DeveloperID{u8"Iva Zuskov\xC3\xA1", "zuskova@natur.cuni.cz", false},
+                                                            Globals::DeveloperID{u8"Bob Ga\xC5\xA1", "gas@natur.cuni.cz", false},
+                                                            Globals::DeveloperID{u8"Pavel Dubsk\xC3\xBD", "pavel.dubsky@natur.cuni.cz", true},
+                                                            Globals::DeveloperID{u8"Gabriel Gerlero", "gabrielgerlero@gmail.com", false},
                                                           };
 
 
