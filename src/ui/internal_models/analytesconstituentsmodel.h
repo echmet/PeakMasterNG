@@ -65,15 +65,15 @@ public:
       return ConstituentsModelImpl::headerData(section, orientation, role);
 
     if (section == baseColumnCount)
-      return QObject::tr(u8"\xCE\xBC Eff (\xE2\x8B\x85 1e-9)");
+      return QObject::tr("\xCE\xBC Eff (\xE2\x8B\x85 1e-9)");
     else if (section == baseColumnCount + 1)
-      return QObject::tr(u8"Time (min)");
+      return QObject::tr("Time (min)");
     else if (section == baseColumnCount + 2)
-      return QObject::tr(u8"c Max (mM)");
+      return QObject::tr("c Max (mM)");
     else if (section == baseColumnCount + 3)
-      return QObject::tr(u8"\xCE\xBC Max (S/m)");
+      return QObject::tr("\xCE\xBC Max (S/m)");
     else if (section == baseColumnCount + 4)
-      return QObject::tr(u8"\xCE\xBC EMD (\xE2\x8B\x85 1e-9)");
+      return QObject::tr("\xCE\xBC EMD (\xE2\x8B\x85 1e-9)");
 
     return {};
   }

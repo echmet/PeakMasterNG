@@ -4,10 +4,10 @@
 #include <QPalette>
 
 const QString EigenzoneDetailsModel::s_typeStr{tr("Type")};
-const QString EigenzoneDetailsModel::s_mobilityStr{tr(u8"Mobility (\xE2\x8B\x85 1e-9)")};
+const QString EigenzoneDetailsModel::s_mobilityStr{tr("Mobility (\xE2\x8B\x85 1e-9)")};
 const QString EigenzoneDetailsModel::s_timeStr{tr("Time (min)")};
-const QString EigenzoneDetailsModel::s_uEMDStr{tr(u8"\xCE\xBC EMD (\xE2\x8B\x85 1e-9)")};
-const QString EigenzoneDetailsModel::s_conductivityStr{tr(u8"Conductivity (S/m)")};
+const QString EigenzoneDetailsModel::s_uEMDStr{tr("\xCE\xBC EMD (\xE2\x8B\x85 1e-9)")};
+const QString EigenzoneDetailsModel::s_conductivityStr{tr("Conductivity (S/m)")};
 const QString EigenzoneDetailsModel::s_pHStr{"pH"};
 
 EigenzoneDetailsModel::EigenzoneDetailsModel(QObject *parent)
