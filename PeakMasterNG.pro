@@ -128,7 +128,9 @@ SOURCES += \
     src/ui/editdatabaseconstituentdialog.cpp \
     src/ui/toggletracepointsdialog.cpp \
     src/gearbox/results_models/analytesextrainfomodel.cpp \
-    src/ui/analytesconstituentsheader.cpp
+    src/ui/analytesconstituentsheader.cpp \
+    src/gearbox/results_models/backgroundeffectivemobilitiesmodel.cpp \
+    src/ui/backgroundconstituentsheader.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -232,7 +234,10 @@ HEADERS += \
     src/ui/internal_models/analytesconstituentsmodel.h \
     src/gearbox/results_models/analytesextrainfomodel.h \
     src/ui/analytesconstituentsheader.h \
-    src/ui/hacks.h
+    src/ui/hacks.h \
+    src/ui/internal_models/backgroundconstituentsmodel.h \
+    src/gearbox/results_models/backgroundeffectivemobilitiesmodel.h \
+    src/ui/backgroundconstituentsheader.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \

@@ -11,6 +11,8 @@ namespace Ui {
 class AbstractConstituentsModelBase;
 class AnalytesConstituentsModel;
 class AnalytesExtraInfoModel;
+class BackgroundConstituentsModel;
+class BackgroundEffectiveMobilitiesModel;
 class ComplexationColorizerDelegate;
 class ComplexationManager;
 class EditConstituentDialog;
@@ -25,6 +27,7 @@ class SystemCompositionWidget : public QWidget
 public:
   explicit SystemCompositionWidget(GDMProxy &backgroundGDM, GDMProxy &sampleGDM, ComplexationManager &cpxMgr, DatabaseProxy &dbProxy,
                                    const AnalytesExtraInfoModel * const analytesEXIModel,
+                                   const BackgroundEffectiveMobilitiesModel * const BGEEffMobsModel,
                                    QWidget *parent = nullptr);
   ~SystemCompositionWidget();
   AbstractConstituentsModelBase * analytesModel() noexcept;
@@ -47,8 +50,7 @@ private:
   DatabaseProxy &h_dbProxy;
 
   AnalytesConstituentsModel *m_analytesModel;
-  AbstractConstituentsModelBase *m_backgroundConstituentsModel;
-
+  BackgroundConstituentsModel *m_backgroundConstituentsModel;
   ComplexationColorizerDelegate *m_ccDelegateAnalytes;
   ComplexationColorizerDelegate *m_ccDelegateBGE;
   FloatingValueDelegate *m_fltDelegateAnalytes;
@@ -61,6 +63,7 @@ private slots:
   void onAddBGE();
   void onAddToDatabase(const EditConstituentDialog *dlg);
   void onAnalytesDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles);
+  void onBackgroundChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles);
   void onAnalytesDoubleClicked(const QModelIndex &idx);
   void onBGEDoubleClicked(const QModelIndex &idx);
   void onCompositionChanged();

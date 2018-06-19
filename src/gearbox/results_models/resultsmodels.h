@@ -6,6 +6,7 @@
 #include "systemeigenzonestablemodel.h"
 
 class AnalytesDissociationModel;
+class BackgroundEffectiveMobilitiesModel;
 class ResultsContainer;
 
 class ResultsModels
@@ -15,6 +16,7 @@ public:
   ResultsModels(ResultsContainer &container);
   AnalytesDissociationModel * analytesDissociationModel();
   AnalytesExtraInfoModel * analytesExtraInfoModel();
+  BackgroundEffectiveMobilitiesModel * backgroundEffectiveMobilitiesModel();
   BackgroundPropertiesMapping::MapperModel * backgroundMapperModel();
   QAbstractTableModel * bgeIonicCompositionModel();
   QAbstractTableModel * eigenzoneDetailsModel();

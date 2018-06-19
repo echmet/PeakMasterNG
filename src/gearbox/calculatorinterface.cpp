@@ -163,6 +163,28 @@ void fillBackgroundIonicComposition(ResultsData &rData, const ECHMET::LEMNG::RCo
 }
 
 static
+void fillBackgroundEffectiveMobs(ResultsData &rData, const ECHMET::LEMNG::RConstituentMap *composition)
+{
+  QMap<QString, double> data;
+
+  auto it = composition->begin();
+  if (it == nullptr)
+    return;
+
+  while (it->hasNext()) {
+    const QString name = QString::fromUtf8(it->key());
+    const double uEff = it->value().effectiveMobility;
+
+    data[name] = uEff;
+
+    it->next();
+  }
+  it->destroy();
+
+  rData.backgroundEffectiveMobilitiesRefresh(data);
+}
+
+static
 ECHMET::LEMNG::REigenzoneEnvelopeVec * findEigenzoneEnvelopes(const ECHMET::LEMNG::Results &results, const double totalLength,
                                                               const double detectorPosition, const double drivingVoltage,
                                                               const double EOFMobility, const double injectionZoneLength,
@@ -342,6 +364,8 @@ void CalculatorInterface::mapResultsBGE(const double totalLength, const double d
 
   /* Fill background ionic composition */
   fillBackgroundIonicComposition(m_resultsData, m_ctx.results->BGEProperties.composition);
+
+  fillBackgroundEffectiveMobs(m_resultsData, m_ctx.results->BGEProperties.composition);
 }
 
 void CalculatorInterface::mapResults(const double totalLength, const double detectorPosition, const double drivingVoltage,
@@ -375,6 +399,7 @@ void CalculatorInterface::onInvalidate()
 
   m_resultsData.analytesDissociationRefresh({});
   m_resultsData.analytesExtraInfoRefresh({});
+  m_resultsData.backgroundEffectiveMobilitiesRefresh({});
 
   auto &data = m_resultsData.backgroundPropsData();
   data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::BUFFER_CAPACITY)] = 0.0;

@@ -26,6 +26,8 @@ public:
                                     QVector<QString> &&complex,
                                     QVector<IonicCompositionModel::ConstituentConcentrations> &&concentrations) noexcept;
 
+  void backgroundEffectiveMobilitiesRefresh(const QMap<QString, double> &dataMap);
+
   QVector<double> & backgroundPropsData();
   int backgroundPropsIndex(const BackgroundPropertiesMapping::Items item) const;
   void backgroundPropsRefresh();

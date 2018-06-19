@@ -3,6 +3,7 @@
 
 #include "../gearbox/gdmproxy.h"
 #include "internal_models/analytesconstituentsmodel.h"
+#include "internal_models/backgroundconstituentsmodel.h"
 #include "editconstituentdialog.h"
 #include "../gearbox/constituentmanipulator.h"
 #include "../gearbox/complexationmanager.h"
@@ -10,6 +11,7 @@
 #include "../gearbox/floatingvaluedelegate.h"
 #include "../gearbox/databaseproxy.h"
 #include "analytesconstituentsheader.h"
+#include "backgroundconstituentsheader.h"
 
 #include <QBoxLayout>
 #include <QHeaderView>
@@ -27,6 +29,7 @@ void enableDragDrop(QTableView *v)
 
 SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMProxy &sampleGDM, ComplexationManager &cpxMgr, DatabaseProxy &dbProxy,
                                                  const AnalytesExtraInfoModel * const analytesEXIModel,
+                                                 const BackgroundEffectiveMobilitiesModel * const BGEEffMobsModel,
                                                  QWidget *parent) :
   QWidget{parent},
   ui{new Ui::SystemCompositionWidget},
@@ -38,7 +41,7 @@ SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMPro
 {
   ui->setupUi(this);
 
-  m_backgroundConstituentsModel = new ConstituentsModelImpl<2>{{ "BGE", "Sample" }, backgroundGDM, cpxMgr, this};
+  m_backgroundConstituentsModel = new BackgroundConstituentsModel{BGEEffMobsModel, { "BGE", "Sample" }, backgroundGDM, cpxMgr, this};
   ui->qtbv_backgroudConstituents->setModel(m_backgroundConstituentsModel);
   enableDragDrop(ui->qtbv_backgroudConstituents);
   m_ccDelegateBGE = new ComplexationColorizerDelegate{m_backgroundConstituentsModel, this};
@@ -62,7 +65,7 @@ SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMPro
   connect(&cpxMgr, &ComplexationManager::complexationStatusChanged, m_analytesModel, &AbstractConstituentsModelBase::onComplexationStatusUpdated);
   connect(&cpxMgr, &ComplexationManager::complexationStatusChanged, this, &SystemCompositionWidget::onCompositionChanged);
 
-  connect(m_backgroundConstituentsModel, &AbstractConstituentsModelBase::dataChanged, this, &SystemCompositionWidget::onCompositionChanged);
+  connect(m_backgroundConstituentsModel, &AbstractConstituentsModelBase::dataChanged, this, &SystemCompositionWidget::onBackgroundChanged);
   connect(m_backgroundConstituentsModel, &AbstractConstituentsModelBase::rowsInserted, this, &SystemCompositionWidget::onCompositionChanged);
   connect(m_backgroundConstituentsModel, &AbstractConstituentsModelBase::rowsRemoved, this, &SystemCompositionWidget::onCompositionChanged);
 
@@ -79,7 +82,12 @@ SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMPro
   ui->qtbv_backgroudConstituents->setMinimumHeight(100);
   ui->qtbv_analytes->setMinimumHeight(100);
 
-  ui->qtbv_backgroudConstituents->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+  BackgroundConstituentsHeader *bch = new BackgroundConstituentsHeader{Qt::Horizontal, ui->qtbv_backgroudConstituents};
+  ui->qtbv_backgroudConstituents->setHorizontalHeader(bch);
+  for (int col= 0; col < m_backgroundConstituentsModel->firstExtraInfoColumn(); col++)
+    ui->qtbv_backgroudConstituents->horizontalHeader()->setSectionResizeMode(col, QHeaderView::ResizeToContents);
+  for (int col = m_backgroundConstituentsModel->firstExtraInfoColumn(); col < m_backgroundConstituentsModel->columnCount(QModelIndex{}); col++)
+    ui->qtbv_backgroudConstituents->setColumnWidth(col, bch->sizeHintForColumn(col));
 
   AnalytesConstituentsHeader *ach = new AnalytesConstituentsHeader{Qt::Horizontal, ui->qtbv_analytes};
   ui->qtbv_analytes->setHorizontalHeader(ach);
@@ -120,7 +128,7 @@ void SystemCompositionWidget::addConstituent(GDMProxy &proxy, AbstractConstituen
   if (dlg.exec() == QDialog::Accepted) {
     gdm::Constituent constituent = manipulator.makeConstituent(&dlg);
 
-    proxy.insert(std::move(constituent));
+    proxy.insert(constituent);
 
     model->addConstituent(dlg.name());
     m_dlgSize = dlg.size();
@@ -245,6 +253,15 @@ void SystemCompositionWidget::onAnalytesDoubleClicked(const QModelIndex &idx)
   const QVariant v = m_analytesModel->data(m_analytesModel->index(idx.row(), 0), Qt::UserRole);
   handleDoubleClick(idx.column(), v, h_sampleGDM, m_analytesModel);
   ui->qtbv_analytes->resizeColumnToContents(2);
+}
+
+void  SystemCompositionWidget::onBackgroundChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
+{
+  Q_UNUSED(roles);
+  Q_UNUSED(bottomRight);
+
+  if (topLeft.column() < m_backgroundConstituentsModel->firstExtraInfoColumn())
+    onCompositionChanged();
 }
 
 void SystemCompositionWidget::onBGEDoubleClicked(const QModelIndex &idx)

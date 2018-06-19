@@ -17,6 +17,11 @@ AnalytesExtraInfoModel * ResultsModels::analytesExtraInfoModel()
   return m_container.m_analytesExtraInfoModel.get();
 }
 
+BackgroundEffectiveMobilitiesModel * ResultsModels::backgroundEffectiveMobilitiesModel()
+{
+  return m_container.m_backgroundEffMobilitiesModel.get();
+}
+
 BackgroundPropertiesMapping::MapperModel * ResultsModels::backgroundMapperModel()
 {
   return m_container.m_backgroundPropsModel.get();
