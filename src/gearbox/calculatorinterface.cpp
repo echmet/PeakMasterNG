@@ -245,8 +245,7 @@ QVector<QString> CalculatorInterface::analytes() const
   return _analytes;
 }
 
-void CalculatorInterface::calculate(const bool correctForDebyeHuckel, const bool correctForOnsagerFuoss, const bool correctForViscosity,
-                                    const std::vector<TracepointState> &tracepointStates, const std::string &traceOutputFile, bool &traceWrittenOk)
+void CalculatorInterface::calculate(const bool correctForDebyeHuckel, const bool correctForOnsagerFuoss, const bool correctForViscosity)
 {
   ECHMET::LEMNG::CZESystem *czeSystemRaw;
   ECHMET::LEMNG::InAnalyticalConcentrationsMap *backgroundMapRaw;
@@ -276,19 +275,7 @@ void CalculatorInterface::calculate(const bool correctForDebyeHuckel, const bool
   applyAnalyticalConcentrations(m_backgroundGDM, backgroundMapRaw);
   applyAnalyticalConcentrations(m_sampleGDM, sampleMapRaw);
 
-  for (const auto &item : tracepointStates)
-    czeSystem->toggleTracepoint(item.TPID, item.enabled);
-
   tRet = czeSystem->evaluate(backgroundMapRaw, sampleMapRaw, corrections, *m_ctx.results);
-
-  traceWrittenOk = true;
-  if (traceOutputFile.size() > 0) {
-    const auto trace = std::string{czeSystem->trace()->c_str()};
-
-    std::ofstream ofs{traceOutputFile};
-    ofs << trace;
-    traceWrittenOk = ofs.good();
-  }
 
   if (tRet == ECHMET::LEMNG::RetCode::E_PARTIAL_EIGENZONES) {
     m_ctx.makeValid(false);
@@ -301,6 +288,11 @@ void CalculatorInterface::calculate(const bool correctForDebyeHuckel, const bool
   }
 
   m_ctx.makeValid(true);
+}
+
+void CalculatorInterface::disableAllTracepoints() noexcept
+{
+  ECHMET::LEMNG::toggleAllTracepoints(false);
 }
 
 void CalculatorInterface::fillAnalytesList()
@@ -669,6 +661,13 @@ bool CalculatorInterface::resultsAvailable() const
   return m_ctx.isValid() != CalculatorContext::CompleteResultsValidity::INVALID;
 }
 
+void CalculatorInterface::setTracepoints(const std::vector<TracepointState> &tracepointStates) noexcept
+{
+
+  for (const auto &item : tracepointStates)
+    ECHMET::LEMNG::toggleTracepoint(item.TPID, item.enabled);
+}
+
 std::vector<CalculatorInterface::TimeDependentZoneInformation> CalculatorInterface::timeDependentZoneInformation(double totalLength, double detectorPosition, double drivingVoltage,
                                                                                                                  const double EOFValue, const EOFValueType EOFvt, bool positiveVoltage,
                                                                                                                  const double injectionZoneLength, const double plotToTime) const
@@ -762,7 +761,7 @@ std::vector<CalculatorInterface::TracepointInfo> CalculatorInterface::tracepoint
   if (tRet != ECHMET::LEMNG::RetCode::OK)
     goto out;
 
-  tpiVec = czeSystemRaw->tracepointInfo();
+  tpiVec = ECHMET::LEMNG::tracepointInfo();
   if (tpiVec == nullptr)
     goto out_2;
 
@@ -785,5 +784,17 @@ out:
   sampleIcVec->destroy();
 
   return tracepointInfo;
+}
 
+bool CalculatorInterface::writeTrace(const std::string &traceOutputFile) noexcept
+{
+  if (traceOutputFile.size() > 0) {
+    const auto trace = std::string{ECHMET::LEMNG::trace()->c_str()};
+
+    std::ofstream ofs{traceOutputFile};
+    ofs << trace;
+    return ofs.good();
+  }
+
+  return true;
 }

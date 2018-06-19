@@ -243,11 +243,14 @@ void PMNGMainWindow::onCalculate()
   const auto plotInfo = makePlottingInfo();
   const MainControlWidget::RunSetup rs = m_mainCtrlWidget->runSetup();
 
+  if (m_tracingSetup.tracingEnabled)
+    m_calcIface.setTracepoints(m_tracingSetup.tracepointStates);
+  else
+    m_calcIface.disableAllTracepoints();
+
   OperationInProgressDialog inProgDlg{"Calculating..."};
 
-  CalculatorWorker worker{m_calcIface, rs.correctForDebyeHuckel, rs.correctForOnsagerFuoss, rs.correctForViscosity,
-                          m_tracingSetup.tracepointStates,
-                          m_tracingSetup.tracingEnabled ? m_tracingSetup.outputFilePath.toStdString() : ""};
+  CalculatorWorker worker{m_calcIface, rs.correctForDebyeHuckel, rs.correctForOnsagerFuoss, rs.correctForViscosity};
   QThread thread{};
   worker.moveToThread(&thread);
 
@@ -258,11 +261,6 @@ void PMNGMainWindow::onCalculate()
   thread.start();
   inProgDlg.exec();
   thread.wait();
-
-  if (!worker.traceWrittenOk()) {
-    QMessageBox errBox{QMessageBox::Warning, tr("Trace"), tr("Failed to write trace file")};
-    errBox.exec();
-  }
 
   const auto calcResult = worker.calcResult();
   if (calcResult == CalculatorWorker::CalculationResult::INVALID) {
@@ -313,6 +311,15 @@ void PMNGMainWindow::onCalculate()
   } catch (const CalculatorInterfaceException &ex) {
     QMessageBox errmbox{QMessageBox::Critical, tr("Cannot display results"), ex.what()};
     errmbox.exec();
+  }
+
+  if (m_tracingSetup.tracingEnabled) {
+    const bool ret = m_calcIface.writeTrace(m_tracingSetup.outputFilePath.toStdString());
+
+    if (!ret) {
+      QMessageBox errBox{QMessageBox::Warning, tr("Trace"), tr("Failed to write trace file")};
+      errBox.exec();
+    }
   }
 }
 

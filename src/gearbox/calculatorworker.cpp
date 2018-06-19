@@ -1,14 +1,10 @@
 #include "calculatorworker.h"
 
-CalculatorWorker::CalculatorWorker(CalculatorInterface &calcIface, const bool correctForDeybeHuckel, const bool correctForOnsagerFuoss, const bool correctForViscosity,
-                                   const std::vector<CalculatorInterface::TracepointState> &tracepointStates,
-                                   const std::string &traceOutputFile) :
+CalculatorWorker::CalculatorWorker(CalculatorInterface &calcIface, const bool correctForDeybeHuckel, const bool correctForOnsagerFuoss, const bool correctForViscosity) :
   m_calcIface{calcIface},
   m_correctForDebyeHuckel{correctForDeybeHuckel},
   m_correctForOnsagerFuoss{correctForOnsagerFuoss},
-  m_correctForViscosity{correctForViscosity},
-  m_tracepointStates{tracepointStates},
-  m_traceOutputFile{traceOutputFile}
+  m_correctForViscosity{correctForViscosity}
 {
 }
 
@@ -25,10 +21,7 @@ const QString & CalculatorWorker::errorMsg() const
 void CalculatorWorker::process()
 {
   try {
-    m_calcIface.calculate(m_correctForDebyeHuckel, m_correctForOnsagerFuoss, m_correctForViscosity,
-                          m_tracepointStates,
-                          m_traceOutputFile,
-                          m_traceWrittenOk);
+    m_calcIface.calculate(m_correctForDebyeHuckel, m_correctForOnsagerFuoss, m_correctForViscosity);
     m_calcResult = CalculationResult::OK;
   } catch (CalculatorInterfaceException &ex) {
     m_calcResult = [](const CalculatorInterfaceException::SolutionState state) {
@@ -46,9 +39,4 @@ void CalculatorWorker::process()
   }
 
   emit finished(this);
-}
-
-bool CalculatorWorker::traceWrittenOk() const
-{
-  return m_traceWrittenOk;
 }

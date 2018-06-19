@@ -16,12 +16,10 @@ public:
     OK,
   };
 
-  CalculatorWorker(CalculatorInterface &calcIface, const bool correctForDebyeHuckel, const bool correctForOnsagerFuoss, const bool correctForViscosity,
-                   const std::vector<CalculatorInterface::TracepointState> &tracepointStates,
-                   const std::string &traceOutputFile);
+  CalculatorWorker(CalculatorInterface &calcIface, const bool correctForDebyeHuckel, const bool correctForOnsagerFuoss, const bool correctForViscosity);
   CalculationResult calcResult() const;
-  const QString &errorMsg() const;
-  bool traceWrittenOk() const;
+  const QString & errorMsg() const;
+
 public slots:
   void process();
 
@@ -30,10 +28,7 @@ private:
   const bool m_correctForDebyeHuckel;
   const bool m_correctForOnsagerFuoss;
   const bool m_correctForViscosity;
-  const std::vector<CalculatorInterface::TracepointState> m_tracepointStates;
-  const std::string m_traceOutputFile;
   CalculationResult m_calcResult;
-  bool m_traceWrittenOk;
   QString m_errorMsg;
 
 signals:

@@ -172,8 +172,8 @@ public:
   ~CalculatorInterface() noexcept;
   QVector<QString> allConstituents() const;
   QVector<QString> analytes() const;
-  void calculate(const bool correctForDebyeHuckel, const bool correctForOnsagerFuoss, const bool correctForViscosity,
-                 const std::vector<TracepointState> &tracepointStates, const std::string &traceOutputFile, bool &traceWrittenOk);
+  void calculate(const bool correctForDebyeHuckel, const bool correctForOnsagerFuoss, const bool correctForViscosity);
+  void disableAllTracepoints() noexcept;
   static double minimumConcentration() noexcept;
   QVector<QPointF> plotElectrophoregram(double totalLength, double detectorPosition,
                                         double drivingVoltage, const bool positiveVoltage,
@@ -186,10 +186,12 @@ public:
   void recalculateTimes(double totalLength, double detectorPosition, double drivingVoltage,
                         const double EOFValue, const EOFValueType EOFvt, bool positiveVoltage);
   bool resultsAvailable() const;
+  void setTracepoints(const std::vector<TracepointState> &tracepointStates) noexcept;
   std::vector<TimeDependentZoneInformation> timeDependentZoneInformation(double totalLength, double detectorPosition, double drivingVoltage,
                                                                          const double EOFValue, const EOFValueType EOFvt, bool positiveVoltage,
                                                                          const double injectionZoneLength, const double plotToTime) const;
   std::vector<TracepointInfo> tracepointInformation() const;
+  bool writeTrace(const std::string &traceOutputFile) noexcept;
 
 public slots:
   void onInvalidate();
