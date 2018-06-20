@@ -22,7 +22,7 @@ QVariant SystemEigenzonesTableModel::headerData(int section, Qt::Orientation ori
 
   switch (section) {
   case 0:
-    return tr("Mobility (1e-9)");
+    return tr("Mobility (\xE2\x8B\x85 1e-9)");
   case 1:
     return tr("Time (min)");
   }
