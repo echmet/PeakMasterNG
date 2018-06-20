@@ -17,7 +17,9 @@ class IonicCompositionDialog : public QDialog
 
 public:
   explicit IonicCompositionDialog(QAbstractTableModel *model, AnalytesDissociationModel *analytesModel, QWidget *parent = nullptr);
-  ~IonicCompositionDialog();
+  ~IonicCompositionDialog() override;
+
+  virtual QSize sizeHint() const override;
 
 private:
   Ui::IonicCompositionDialog *ui;
@@ -26,6 +28,8 @@ private:
   QStandardItemModel *m_analytesNamesModel;
 
   QString m_lastSelectedAnalyte;
+
+  static const QString FILL_TO_STRING;
 
 private slots:
   void onAnalyteSelectionChanged(int idx);

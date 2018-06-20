@@ -113,6 +113,7 @@ double MainControlWidget::EOFValue() const
 
 void MainControlWidget::onBGEIonicCompositionClicked()
 {
+  m_bgeIonicCompDlg->resize(m_bgeIonicCompDlg->sizeHint());
   m_bgeIonicCompDlg->exec();
 }
 

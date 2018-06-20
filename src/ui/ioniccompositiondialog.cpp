@@ -2,9 +2,13 @@
 #include "ui_ioniccompositiondialog.h"
 #include "../gearbox/results_models/analytesdissociationmodel.h"
 #include "../gearbox/doubletostringconvertor.h"
+#include "elementaries/uihelpers.h"
 
 #include <QAbstractTableModel>
+#include <QScreen>
 #include <QStandardItemModel>
+
+const QString IonicCompositionDialog::FILL_TO_STRING{"9.999999999_"};
 
 static
 int isContained(const QStandardItemModel *model, const QString &s)
@@ -80,4 +84,36 @@ void IonicCompositionDialog::onAnalytesDissociationDataUpdated()
     ui->qle_effectiveMobility->setText(DoubleToStringConvertor::convert(m_analytesModel->effectiveMobility()));
   } else
     ui->qle_effectiveMobility->setText("");
+}
+
+QSize IonicCompositionDialog::sizeHint() const
+{
+   /* Arbitrarily chosen values */
+  const int WIDTH_SPACER = 125;
+  const int HEIGHT_SPACER = 75;
+  const QScreen *scr = UIHelpers::findScreenForWidget(this);
+
+  auto fm = ui->qtbv_bgeIonicComposition->fontMetrics();
+  const auto model = ui->qtbv_bgeIonicComposition->model();
+
+  int width = fm.width(FILL_TO_STRING) * model->columnCount();
+
+  QString longestRow;
+  for (int idx = 0; idx < model->rowCount(); idx++) {
+    const QString text = model->headerData(idx, Qt::Vertical).toString();
+    if (text.length() > longestRow.length())
+      longestRow = text;
+  }
+  width += fm.width(longestRow) + WIDTH_SPACER;
+
+  int height = fm.height() * (model->rowCount() + 1) * 2 + HEIGHT_SPACER;
+
+  if (scr != nullptr) {
+    if (width > scr->availableSize().width())
+      width = scr->availableSize().width();
+    if (height > scr->availableSize().height())
+      height = scr->availableSize().height();
+  }
+
+  return QSize{width, height};
 }
