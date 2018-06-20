@@ -206,7 +206,7 @@
      <item row="11" column="0">
       <widget class="QLabel" name="ql_resistivity">
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Resistivity (Ohm&amp;#8729;m)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;RESISTIVITY_PLCHLDR&gt;</string>
        </property>
       </widget>
      </item>

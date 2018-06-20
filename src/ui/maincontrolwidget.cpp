@@ -19,6 +19,8 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
 {
   ui->setupUi(this);
 
+  ui->ql_resistivity->setText(tr("Resistivity (Ohm\xE2\x8B\x85m)"));
+
   initBackgroundPropsModel(resultsModels.backgroundMapperModel());
   initRunSetupModel();
   ui->qtbv_systemEigenzones->setModel(resultsModels.systemEigenzonesModel());
