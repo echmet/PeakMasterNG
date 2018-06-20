@@ -83,6 +83,10 @@ SignalPlotWidget::SignalPlotWidget(QWidget *parent) :
   connect(ui->qcb_autoPlotCutoff, &QCheckBox::stateChanged, this, &SignalPlotWidget::onAutoPlotCutoffStateChanged);
 
   onAutoPlotCutoffStateChanged(Qt::Checked);
+
+  connect(ui->qle_plotCutoff, &FloatingValueLineEdit::valueChanged, this, &SignalPlotWidget::onPlottingParametersChanged);
+  connect(ui->qle_injZoneLength, &FloatingValueLineEdit::valueChanged, this, &SignalPlotWidget::onPlottingParametersChanged);
+  connect(ui->qcb_autoPlotCutoff, &QCheckBox::stateChanged, this, &SignalPlotWidget::onPlottingParametersChanged);
 }
 
 SignalPlotWidget::~SignalPlotWidget()
@@ -106,6 +110,12 @@ void SignalPlotWidget::onAutoPlotCutoffStateChanged(const int state)
   ui->qle_plotCutoff->setDisabled(state == Qt::Checked);
 }
 
+
+void SignalPlotWidget::onPlottingParametersChanged()
+{
+  m_plotParamsMapper->submit();
+  emit replotElectrophoregram();
+}
 
 void SignalPlotWidget::onPointHovered(const QPoint &pos)
 {

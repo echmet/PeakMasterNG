@@ -66,6 +66,7 @@ private:
 
 private slots:
   void onAutoPlotCutoffStateChanged(const int state);
+  void onPlottingParametersChanged();
   void onPointHovered(const QPoint &pos);
   void onTriggerReplotElectrophoregram();
 

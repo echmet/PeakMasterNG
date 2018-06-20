@@ -20,6 +20,8 @@ private slots:
   void ensureSanity(QString text);
   void onEditingFinished();
 
+signals:
+  void valueChanged(double);
 };
 
 #endif // FLOATINGVALUELINEEDIT_H

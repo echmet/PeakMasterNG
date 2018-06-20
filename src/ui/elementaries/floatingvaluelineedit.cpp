@@ -34,8 +34,10 @@ void FloatingValueLineEdit::onEditingFinished()
   double dv;
 
   dv = DoubleToStringConvertor::back(text(), &ok);
-  if (ok)
+  if (ok) {
     setNumberText(dv);
+    emit valueChanged(dv);
+  }
 }
 
 void FloatingValueLineEdit::onNumberFormatChanged(const QLocale *oldLocale)
