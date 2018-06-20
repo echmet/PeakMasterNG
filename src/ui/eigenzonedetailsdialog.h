@@ -15,7 +15,9 @@ class EigenzoneDetailsDialog : public QDialog
 
 public:
   explicit EigenzoneDetailsDialog(QAbstractTableModel *model, const bool displayDeltas, QWidget *parent = nullptr);
-  ~EigenzoneDetailsDialog();
+  ~EigenzoneDetailsDialog() override;
+
+  virtual QSize sizeHint() const override;
 
 private:
   Ui::EigenzoneDetailsDialog *ui;

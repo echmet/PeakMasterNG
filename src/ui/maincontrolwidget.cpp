@@ -157,6 +157,7 @@ void MainControlWidget::onRunSetupChangedInvalidate()
 
 void MainControlWidget::onShowEigenzoneDetailsClicked()
 {
+  m_ezDetailsDlg->resize(m_ezDetailsDlg->sizeHint());
   m_ezDetailsDlg->exec();
 }
 

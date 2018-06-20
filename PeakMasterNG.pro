@@ -130,7 +130,8 @@ SOURCES += \
     src/gearbox/results_models/analytesextrainfomodel.cpp \
     src/ui/analytesconstituentsheader.cpp \
     src/gearbox/results_models/backgroundeffectivemobilitiesmodel.cpp \
-    src/ui/backgroundconstituentsheader.cpp
+    src/ui/backgroundconstituentsheader.cpp \
+    src/ui/elementaries/uihelpers.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -237,7 +238,8 @@ HEADERS += \
     src/ui/hacks.h \
     src/ui/internal_models/backgroundconstituentsmodel.h \
     src/gearbox/results_models/backgroundeffectivemobilitiesmodel.h \
-    src/ui/backgroundconstituentsheader.h
+    src/ui/backgroundconstituentsheader.h \
+    src/ui/elementaries/uihelpers.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \
