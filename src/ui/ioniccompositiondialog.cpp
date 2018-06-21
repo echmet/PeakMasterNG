@@ -96,7 +96,7 @@ QSize IonicCompositionDialog::sizeHint() const
   auto fm = ui->qtbv_bgeIonicComposition->fontMetrics();
   const auto model = ui->qtbv_bgeIonicComposition->model();
 
-  int width = fm.width(FILL_TO_STRING) * model->columnCount();
+  int width = fm.width(FILL_TO_STRING) * model->columnCount() * 1.2;
 
   QString longestRow;
   for (int idx = 0; idx < model->rowCount(); idx++) {
