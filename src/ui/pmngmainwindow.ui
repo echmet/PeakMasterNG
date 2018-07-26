@@ -49,6 +49,7 @@
     <property name="title">
      <string>He&amp;lp</string>
     </property>
+    <addaction name="actionCheck_for_update"/>
     <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menuExport">
@@ -134,6 +135,11 @@
   <action name="actionSet_debugging_output">
    <property name="text">
     <string>&amp;Set debugging output</string>
+   </property>
+  </action>
+  <action name="actionCheck_for_update">
+   <property name="text">
+    <string>Check for update</string>
    </property>
   </action>
  </widget>

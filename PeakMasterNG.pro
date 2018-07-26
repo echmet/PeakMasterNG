@@ -131,7 +131,12 @@ SOURCES += \
     src/ui/analytesconstituentsheader.cpp \
     src/gearbox/results_models/backgroundeffectivemobilitiesmodel.cpp \
     src/ui/backgroundconstituentsheader.cpp \
-    src/ui/elementaries/uihelpers.cpp
+    src/ui/elementaries/uihelpers.cpp \
+    src/ui/checkforupdatedialog.cpp \
+    src/ui/softwareupdatewidget.cpp \
+    src/softwareupdater.cpp \
+    src/softwareupdateresult.cpp \
+    src/ui/autoupdatecheckdialog.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -239,7 +244,12 @@ HEADERS += \
     src/ui/internal_models/backgroundconstituentsmodel.h \
     src/gearbox/results_models/backgroundeffectivemobilitiesmodel.h \
     src/ui/backgroundconstituentsheader.h \
-    src/ui/elementaries/uihelpers.h
+    src/ui/elementaries/uihelpers.h \
+    src/ui/checkforupdatedialog.h \
+    src/ui/softwareupdatewidget.h \
+    src/softwareupdater.h \
+    src/softwareupdateresult.h \
+    src/ui/autoupdatecheckdialog.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \
@@ -260,7 +270,10 @@ FORMS += \
     src/ui/editchargeswidget.ui \
     src/ui/databaseeditordialog.ui \
     src/ui/editdatabaseconstituentdialog.ui \
-    src/ui/toggletracepointsdialog.ui
+    src/ui/toggletracepointsdialog.ui \
+    src/ui/checkforupdatedialog.ui \
+    src/ui/softwareupdatewidget.ui \
+    src/ui/autoupdatecheckdialog.ui
 
 unix {
     QMAKE_CXXFLAGS += "-Wall -Wextra -pedantic"

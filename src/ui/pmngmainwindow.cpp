@@ -18,6 +18,8 @@
 #include "../gearbox/databaseproxy.h"
 #include "toggletracepointsdialog.h"
 #include "hacks.h"
+#include "checkforupdatedialog.h"
+#include "../softwareupdater.h"
 
 #include <cassert>
 #include <QDialogButtonBox>
@@ -73,6 +75,7 @@ QVector<AnalytesExtraInfoModel::ExtraInfo> makeAnalytesExtraInfo(const std::vect
   return data;
 }
 
+static
 SignalPlotWidget::SignalStyle plotSignalStyle(const CalculatorInterface::SignalTypes type)
 {
   switch (type) {
@@ -126,6 +129,8 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   m_mainCtrlWidget = new MainControlWidget{resultsModels, this};
   ui->qvlay_leftPane->addWidget(m_mainCtrlWidget);
 
+  m_checkForUpdateDlg = new CheckForUpdateDialog{this};
+
   initPlotParams();
 
   m_qpb_new = new QPushButton{tr("New"), this};
@@ -150,6 +155,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   connect(ui->actionDatabase_editor, &QAction::triggered, this, &PMNGMainWindow::onDatabaseEditor);
   connect(ui->actionOpen_database, &QAction::triggered, this, &PMNGMainWindow::onOpenDatabase);
   connect(ui->actionSet_debugging_output, &QAction::triggered, this, &PMNGMainWindow::onSetDebuggingOutput);
+  connect(ui->actionCheck_for_update, &QAction::triggered, this, &PMNGMainWindow::onOpenUpdateDialog);
 
   ui->mainToolBar->addWidget(m_qpb_new);
   ui->mainToolBar->addWidget(m_qpb_load);
@@ -179,6 +185,12 @@ void PMNGMainWindow::addConstituentsSignals(const QVector<QString> &constituents
     si->setData(QVariant::fromValue<CalculatorInterface::Signal>({ CalculatorInterface::SignalTypes::CONCENTRATION, a, plotCaption }));
     m_signalTypesModel->appendRow(si);
   }
+}
+
+void PMNGMainWindow::connectUpdater(SoftwareUpdater *const updater)
+{
+  connect(m_checkForUpdateDlg, &CheckForUpdateDialog::checkForUpdate, updater, &SoftwareUpdater::onCheckForUpdate);
+  connect(updater, &SoftwareUpdater::checkComplete, m_checkForUpdateDlg, &CheckForUpdateDialog::onCheckComplete);
 }
 
 void PMNGMainWindow::initPlotParams()
@@ -433,6 +445,11 @@ void PMNGMainWindow::onOpenDatabase()
       errBox.exec();
     }
   }
+}
+
+void PMNGMainWindow::onOpenUpdateDialog()
+{
+  m_checkForUpdateDlg->exec();
 }
 
 void PMNGMainWindow::onPlotElectrophoregram()

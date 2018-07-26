@@ -19,6 +19,7 @@ namespace persistence {
 
 class AnalytesExtraInfoModel;
 class CalculatorInterface;
+class CheckForUpdateDialog;
 class DatabaseProxy;
 class EFGDisplayer;
 class MainControlWidget;
@@ -27,6 +28,8 @@ class QPushButton;
 class QShortcut;
 class QStandardItemModel;
 class SignalPlotWidget;
+class SoftwareUpdater;
+class SoftwareUpdateResult;
 class SystemCompositionWidget;
 
 class PMNGMainWindow : public QMainWindow
@@ -41,6 +44,7 @@ public:
                           AnalytesExtraInfoModel * const analytesEXIModel, const QAbstractTableModel * const eigenzoneDetailsModel,
                           QWidget *parent = nullptr);
   ~PMNGMainWindow();
+  void connectUpdater(SoftwareUpdater *updater);
 
 private:
   class PlottingInfo {
@@ -79,6 +83,7 @@ private:
   MainControlWidget *m_mainCtrlWidget;
   SignalPlotWidget *m_signalPlotWidget;
   SystemCompositionWidget *h_scompWidget;
+  CheckForUpdateDialog *m_checkForUpdateDlg;
 
   AnalytesExtraInfoModel * const h_analytesEXIModel;
   const QAbstractTableModel * const h_eigenzoneDetailsModel;
@@ -111,6 +116,7 @@ private slots:
   void onExportElectrophoregramAsCSV();
   void onNew();
   void onOpenDatabase();
+  void onOpenUpdateDialog();
   void onPlotElectrophoregram();
   void onRunSetupChanged(const bool invalidate);
   void onSave();
