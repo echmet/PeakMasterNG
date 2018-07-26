@@ -32,6 +32,9 @@
 #include <QShortcut>
 #include <QSplitter>
 #include <QThread>
+#include <QTimer>
+
+#define THEY_LIVE
 
 static
 void inputToEOFValueType(double &EOFValue, CalculatorInterface::EOFValueType &EOFvt, const double inValue, const MainControlWidget::EOF_Type type)
@@ -117,8 +120,6 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
 {
   ui->setupUi(this);
 
-  setWindowTitle(Globals::VERSION_STRING());
-
   QSplitter *splitter = new QSplitter{Qt::Vertical, this};
   hacks::makeSplitterAppear(splitter);
   ui->qvlay_compositionEFG->insertWidget(0, splitter);
@@ -170,6 +171,18 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   h_scompWidget->setViscosityCorrectionEnabled(m_mainCtrlWidget->runSetup().correctForViscosity);
 
   setWindowIcon(Globals::icon());
+
+#ifdef THEY_LIVE
+  setWindowTitle(QString("%1. %2").arg(QString::fromUtf8("\x49\x20\x63\x61\x6d\x65\x20\x68\x65\x72\x65\x20\x74\x6f\x20\x64\x72\x61\x77"
+                                                         "\x20\x70\x65\x61\x6b\x73\x20\x61\x6e\x64\x20\x63\x68\x65\x77\x20\x62\x75\x62"
+                                                         "\x62\x6c\x65\x67\x75\x6d\x2e\x2e\x2e\x20\x61\x6e\x64\x20\x49\x27\x6d\x20\x61"
+                                                         "\x6c\x6c\x20\x6f\x75\x74\x74\x61\x20\x67\x75\x6d"))
+                                  .arg(Globals::VERSION_STRING()));
+
+  QTimer::singleShot(4466, this, [this]() { this->setWindowTitle(Globals::VERSION_STRING()); });
+#else
+  setWindowTitle(Globals::VERSION_STRING());
+#endif // THEY_LIVE
 }
 
 PMNGMainWindow::~PMNGMainWindow()
