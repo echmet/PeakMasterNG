@@ -636,6 +636,7 @@ void PMNGMainWindow::setControlsIcons()
   ui->actionSave->setIcon(QIcon::fromTheme("document-save"));
   ui->actionExit->setIcon(QIcon::fromTheme("application-exit"));
   ui->actionAbout->setIcon(QIcon::fromTheme("help-about"));
+  ui->actionCheck_for_update->setIcon(QIcon::fromTheme("system-software-update"));
 
   /* Button bar */
   m_qpb_new->setIcon(QIcon::fromTheme("document-new"));
@@ -649,6 +650,7 @@ void PMNGMainWindow::setControlsIcons()
   ui->actionSave->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
   ui->actionExit->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
   ui->actionAbout->setIcon(style()->standardIcon(QStyle::SP_DialogHelpButton));
+  ui->actionCheck_for_update->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
 
   /* Button bar */
   m_qpb_new->setIcon(style()->standardIcon(QStyle::SP_FileDialogNewFolder));
