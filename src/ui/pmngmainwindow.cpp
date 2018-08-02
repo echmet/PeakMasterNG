@@ -351,8 +351,13 @@ void PMNGMainWindow::onCalculate()
 void PMNGMainWindow::onExportElectrophoregramAsCSV()
 {
   try {
+    const MainControlWidget::RunSetup rs = m_mainCtrlWidget->runSetup();
     const auto plotInfo = makePlottingInfo();
-    plotElectrophoregram(EFGCSVExporter::make(), std::vector<CalculatorInterface::TimeDependentZoneInformation>{},
+    const auto tdzi =  m_calcIface.timeDependentZoneInformation(rs.totalLength, rs.detectorPosition, rs.drivingVoltage,
+                                                                plotInfo.EOFValue, plotInfo.EOFvt, rs.positiveVoltage,
+                                                                plotInfo.injZoneLength, plotInfo.plotCutoff);
+
+    plotElectrophoregram(EFGCSVExporter::make(), tdzi,
                          plotInfo.EOFValue, plotInfo.EOFvt, plotInfo.injZoneLength, plotInfo.plotCutoff);
   } catch (CalculatorInterfaceException &ex) {
     QMessageBox mbox{QMessageBox::Critical, tr("Failed to export electrophoregram"), ex.what()};
