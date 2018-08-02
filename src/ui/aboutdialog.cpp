@@ -22,11 +22,11 @@ AboutDialog::AboutDialog(QWidget *parent) :
                                      .arg(QSysInfo::buildCpuArchitecture()));
 
   {
-    m_echmetPix = QPixmap{":/images/res/ECHMET_logo_velke.png"}.scaledToWidth(100);
+    m_echmetPix = QPixmap{":/images/res/ECHMET_logo_velke.png"}.scaledToWidth(100 * scaleFactor());
     ui->ql_echmetLogo->setText("");
     ui->ql_echmetLogo->setPixmap(m_echmetPix);
 
-    m_cimecPix = QPixmap{":/images/res/cimectransp3.png"}.scaledToWidth(100);
+    m_cimecPix = QPixmap{":/images/res/cimectransp3.png"}.scaledToWidth(100 * scaleFactor());
     ui->ql_cimecLogo->setText("");
     ui->ql_cimecLogo->setPixmap(m_cimecPix);
   }
@@ -57,4 +57,13 @@ AboutDialog::~AboutDialog()
 void AboutDialog::onCloseClicked()
 {
   accept();
+}
+
+qreal AboutDialog::scaleFactor()
+{
+  const auto fm = this->fontMetrics();
+
+  const qreal sf = fm.height() / 16.0; /* "...and keep the SF-score low." */
+
+  return sf;
 }

@@ -24,6 +24,8 @@ private:
 private slots:
   void onCloseClicked();
 
+  qreal scaleFactor();
+
 };
 
 #endif // ABOUTDIALOG_H
