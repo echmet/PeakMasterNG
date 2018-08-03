@@ -29,6 +29,10 @@ ComplexationRelationshipsModel::RootTreeItem::RootTreeItem() :
 {
 }
 
+ComplexationRelationshipsModel::TreeItem::~TreeItem()
+{
+}
+
 ComplexationRelationshipsModel::TreeItem & ComplexationRelationshipsModel::TreeItem::operator=(const TreeItem &other)
 {
   const_cast<Type&>(itype) = other.itype;

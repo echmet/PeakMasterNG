@@ -27,6 +27,8 @@ public:
       LIGAND,
     };
 
+    virtual ~TreeItem();
+
     class InvalidChildException :public std::exception {
     public:
       const char * what() const noexcept;
