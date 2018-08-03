@@ -136,7 +136,8 @@ SOURCES += \
     src/ui/softwareupdatewidget.cpp \
     src/softwareupdater.cpp \
     src/softwareupdateresult.cpp \
-    src/ui/autoupdatecheckdialog.cpp
+    src/ui/autoupdatecheckdialog.cpp \
+    src/ui/commonpropertieswidget.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -249,7 +250,8 @@ HEADERS += \
     src/ui/softwareupdatewidget.h \
     src/softwareupdater.h \
     src/softwareupdateresult.h \
-    src/ui/autoupdatecheckdialog.h
+    src/ui/autoupdatecheckdialog.h \
+    src/ui/commonpropertieswidget.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \
