@@ -22,6 +22,7 @@ public:
   Globals() = delete;
 
   static QIcon icon();
+  static bool isZombieOS();
   static QString VERSION_STRING();
 
   static const QString CIMEC_WEB_LINK;

@@ -1,18 +1,25 @@
 #include "eigenzonedetailsmodel.h"
 
+#include "../../globals.h"
+
 #include <cassert>
 #include <QPalette>
 
 const QString EigenzoneDetailsModel::s_typeStr{tr("Type")};
-const QString EigenzoneDetailsModel::s_mobilityStr{tr("Mobility (\xE2\x8B\x85 1e-9)")};
 const QString EigenzoneDetailsModel::s_timeStr{tr("Time (min)")};
-const QString EigenzoneDetailsModel::s_uEMDStr{tr("\xCE\xBC EMD (\xE2\x8B\x85 1e-9)")};
 const QString EigenzoneDetailsModel::s_conductivityStr{tr("Conductivity (S/m)")};
 const QString EigenzoneDetailsModel::s_pHStr{"pH"};
 
 EigenzoneDetailsModel::EigenzoneDetailsModel(QObject *parent)
   : QAbstractTableModel(parent)
 {
+  if (Globals::isZombieOS()) {
+    m_mobilityStr = QString{tr("Mobility (. 1e-9)")};
+    m_uEMDStr = QString{tr("u EMD (. 1e-9)")};
+  } else {
+    m_mobilityStr = QString{tr("Mobility (\xE2\x8B\x85 1e-9)")};
+    m_uEMDStr = QString{tr("\xCE\xBC EMD (\xE2\x8B\x85 1e-9)")};
+  }
 }
 
 double EigenzoneDetailsModel::constituentsConcentrations(const EigenzoneProps &zone, const int idx) const
@@ -67,11 +74,11 @@ QVariant EigenzoneDetailsModel::headerData(int section, Qt::Orientation orientat
     case 0:
       return s_typeStr;
     case 1:
-      return s_mobilityStr;
+      return m_mobilityStr;
     case 2:
       return s_timeStr;
     case 3:
-      return s_uEMDStr;
+      return m_uEMDStr;
     case 4:
       return s_conductivityStr;
     case 5:

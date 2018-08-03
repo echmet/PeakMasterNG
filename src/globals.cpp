@@ -1,6 +1,7 @@
 #include "globals.h"
 
 #include <QPixmap>
+#include <QSysInfo>
 
 const QString Globals::CIMEC_WEB_LINK{"http://www.cimec.org.ar/twiki/bin/view/Cimec/"};
 const QString Globals::ECHMET_WEB_LINK{"http://echmet.natur.cuni.cz"};
@@ -39,6 +40,21 @@ QString Globals::DeveloperID::linkString() const
 QString Globals::DeveloperID::prettyString() const
 {
   return QString("%1 (%2)").arg(name).arg(mail);
+}
+
+bool Globals::isZombieOS()
+{
+#ifdef Q_OS_WIN
+  static const QString WINDOWS("windows");
+  static const QString XP("xp");
+
+  const auto type = QSysInfo::productType();
+  const auto ver = QSysInfo::productVersion();
+
+  return type.toLower() == WINDOWS && ver.toLower() == XP;
+#else
+  return false;
+#endif // Q_OS_WIN
 }
 
 QString Globals::VERSION_STRING()

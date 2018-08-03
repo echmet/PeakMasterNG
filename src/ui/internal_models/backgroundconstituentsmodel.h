@@ -4,6 +4,8 @@
 #include "constituentsmodelimpl.h"
 #include "../../gearbox/results_models/backgroundeffectivemobilitiesmodel.h"
 
+#include "../../globals.h"
+
 class BackgroundConstituentsModel : public ConstituentsModelImpl<2>
 {
 public:
@@ -12,6 +14,11 @@ public:
     ConstituentsModelImpl{concentrationHeaders, GDMProxy, cpxMgr, parent},
     h_BGEEffMobsModel{BGEEffMobsModel}
   {
+    if (Globals::isZombieOS())
+      m_uEffStr = QObject::tr("u Eff (. 1e-9)");
+    else
+      m_uEffStr = QObject::tr("\xCE\xBC Eff (\xE2\x8B\x85 1e-9)");
+
     connect(BGEEffMobsModel, &BackgroundEffectiveMobilitiesModel::dataChanged, this, &BackgroundConstituentsModel::onEffectiveMobilitiesChanged);
   }
 
@@ -42,7 +49,7 @@ public:
       return ConstituentsModelImpl::headerData(section, orientation, role);
 
     if (section == baseColumnCount)
-      return QObject::tr("\xCE\xBC Eff (\xE2\x8B\x85 1e-9)");
+      return m_uEffStr;
 
     return {};
   }
@@ -59,6 +66,8 @@ public:
 
 private:
   const BackgroundEffectiveMobilitiesModel * const h_BGEEffMobsModel;
+
+  QString m_uEffStr;
 
 private slots:
   void onEffectiveMobilitiesChanged()

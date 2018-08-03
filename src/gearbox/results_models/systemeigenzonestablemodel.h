@@ -27,6 +27,7 @@ public:
 
 private:
   DataVector m_dataVec;
+  QString m_mobilityStr;
 
 };
 

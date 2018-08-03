@@ -5,6 +5,8 @@
 #include "ioniccompositiondialog.h"
 #include "nonidealitycorrectionsdialog.h"
 
+#include "../globals.h"
+
 #include "../gearbox/results_models/eigenzonedetailsmodel.h"
 
 #include <QDataWidgetMapper>
@@ -19,7 +21,10 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
 {
   ui->setupUi(this);
 
-  ui->ql_resistivity->setText(tr("Resistivity (Ohm\xE2\x8B\x85m)"));
+  if (Globals::isZombieOS())
+    ui->ql_resistivity->setText(tr("Resistivity (Ohm.m)"));
+  else
+    ui->ql_resistivity->setText(tr("Resistivity (Ohm\xE2\x8B\x85m)"));
 
   initBackgroundPropsModel(resultsModels.backgroundMapperModel());
   initRunSetupModel();

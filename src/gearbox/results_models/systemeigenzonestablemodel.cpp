@@ -1,10 +1,16 @@
 #include "systemeigenzonestablemodel.h"
 
+#include "../../globals.h"
+
 #include <QPalette>
 
 SystemEigenzonesTableModel::SystemEigenzonesTableModel(QObject *parent)
   : QAbstractTableModel(parent)
 {
+  if (Globals::isZombieOS())
+    m_mobilityStr = QString(tr("Mobility (. 1e-9)"));
+  else
+    m_mobilityStr = QString(tr("Mobility (\xE2\x8B\x85 1e-9)"));
 }
 
 QVariant SystemEigenzonesTableModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -22,7 +28,7 @@ QVariant SystemEigenzonesTableModel::headerData(int section, Qt::Orientation ori
 
   switch (section) {
   case 0:
-    return tr("Mobility (\xE2\x8B\x85 1e-9)");
+    return m_mobilityStr;
   case 1:
     return tr("Time (min)");
   }

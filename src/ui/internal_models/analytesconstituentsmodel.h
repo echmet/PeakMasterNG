@@ -4,6 +4,8 @@
 #include "../../gearbox/results_models/analytesextrainfomodel.h"
 #include "constituentsmodelimpl.h"
 
+#include "../../globals.h"
+
 class AnalytesConstituentsModel : public ConstituentsModelImpl<1>
 {
 public:
@@ -12,6 +14,16 @@ public:
     ConstituentsModelImpl{concentrationHeaders, GDMProxy, cpxMgr, parent},
     h_analytesEXIModel{analytesEXIModel}
   {
+    if (Globals::isZombieOS()) {
+      m_condMaxStr = QObject::tr("K Max (S/m)");
+      m_uEffStr = QObject::tr("u Eff (. 1e-9)");
+      m_uEMDStr = QObject::tr("u EMD (. 1e-9)");
+    } else {
+      m_condMaxStr = QObject::tr("\xCE\xBA Max (S/m)");
+      m_uEffStr = QObject::tr("\xCE\xBC Eff (\xE2\x8B\x85 1e-9)");
+      m_uEMDStr = QObject::tr("\xCE\xBC EMD (\xE2\x8B\x85 1e-9)");
+    }
+
     connect(h_analytesEXIModel, &AnalytesExtraInfoModel::dataChanged, this, &AnalytesConstituentsModel::onExtraInfoChanged);
   }
 
@@ -65,15 +77,15 @@ public:
       return ConstituentsModelImpl::headerData(section, orientation, role);
 
     if (section == baseColumnCount)
-      return QObject::tr("\xCE\xBC Eff (\xE2\x8B\x85 1e-9)");
+      return m_uEffStr;
     else if (section == baseColumnCount + 1)
       return QObject::tr("Time Max (min)");
     else if (section == baseColumnCount + 2)
       return QObject::tr("c Max (mM)");
     else if (section == baseColumnCount + 3)
-      return QObject::tr("\xCE\xBA Max (S/m)");
+      return m_condMaxStr;
     else if (section == baseColumnCount + 4)
-      return QObject::tr("\xCE\xBC EMD (\xE2\x8B\x85 1e-9)");
+      return m_uEMDStr;
 
     return {};
   }
@@ -85,6 +97,10 @@ public:
 
 private:
   const AnalytesExtraInfoModel * h_analytesEXIModel;
+
+  QString m_condMaxStr;
+  QString m_uEffStr;
+  QString m_uEMDStr;
 
 private slots:
   void onExtraInfoChanged()

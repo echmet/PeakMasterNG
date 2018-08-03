@@ -51,10 +51,11 @@ private:
   QVector<EigenzoneProps> m_eigenzones;
   bool m_displayDeltas;
 
+  QString m_mobilityStr;
+  QString m_uEMDStr;
+
   static const QString s_typeStr;
-  static const QString s_mobilityStr;
   static const QString s_timeStr;
-  static const QString s_uEMDStr;
   static const QString s_conductivityStr;
   static const QString s_pHStr;
 };
