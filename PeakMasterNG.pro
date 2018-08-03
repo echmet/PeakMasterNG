@@ -136,8 +136,7 @@ SOURCES += \
     src/ui/softwareupdatewidget.cpp \
     src/softwareupdater.cpp \
     src/softwareupdateresult.cpp \
-    src/ui/autoupdatecheckdialog.cpp \
-    src/ui/commonpropertieswidget.cpp
+    src/ui/autoupdatecheckdialog.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -219,7 +218,6 @@ HEADERS += \
     src/persistence/deserializer.h \
     src/ui/operationinprogressdialog.h \
     src/database/db_constituent.h \
-    src/database/db_constituent.h \
     src/database/db_constituentsdatabase.h \
     src/gearbox/databaseproxy.h \
     src/ui/pickconstituentfromdbdialog.h \
@@ -250,13 +248,11 @@ HEADERS += \
     src/ui/softwareupdatewidget.h \
     src/softwareupdater.h \
     src/softwareupdateresult.h \
-    src/ui/autoupdatecheckdialog.h \
-    src/ui/commonpropertieswidget.h
+    src/ui/autoupdatecheckdialog.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \
     src/ui/editconstituentdialog.ui \
-    src/ui/commonpropertieswidget.ui \
     src/ui/signalplotwidget.ui \
     src/ui/maincontrolwidget.ui \
     src/ui/systemcompositionwidget.ui \
