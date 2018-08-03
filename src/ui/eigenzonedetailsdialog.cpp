@@ -4,6 +4,7 @@
 
 #include "../globals.h"
 
+#include <cmath>
 #include <QAbstractTableModel>
 #include <QFontMetrics>
 #include <QScreen>
