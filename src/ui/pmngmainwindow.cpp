@@ -91,6 +91,8 @@ SignalPlotWidget::SignalStyle plotSignalStyle(const CalculatorInterface::SignalT
   case CalculatorInterface::SignalTypes::CONCENTRATION:
     return SignalPlotWidget::SignalStyle::CONCENTRATION;
   }
+
+  throw std::runtime_error("Unhandled signal type value");
 }
 
 QVector<PMNGMainWindow::SignalItem> PMNGMainWindow::s_defaultSignalItems{
