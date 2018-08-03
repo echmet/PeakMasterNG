@@ -33,6 +33,8 @@ void CalculatorWorker::process()
       case CalculatorInterfaceException::SolutionState::PARTIAL_EIGENZONES:
         return CalculationResult::PARTIAL_EIGENZONES;
       };
+
+      throw std::runtime_error("Unhandled solution state value");
     }(ex.state);
 
     m_errorMsg = ex.what();

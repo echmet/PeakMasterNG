@@ -57,6 +57,8 @@ EFGDisplayer EFGCSVExporter::make()
         case CSVExportOptionsDialog::DecimalSeparator::PERIOD:
           return QLocale(QLocale::C);
       }
+
+      throw std::runtime_error("Unhandled decimal separator value");
     }(opts.decimalSeparator);
 
     QString outStr;
