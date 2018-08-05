@@ -58,6 +58,7 @@ private:
   static const QString s_timeStr;
   static const QString s_conductivityStr;
   static const QString s_pHStr;
+  static const QVector<int> s_untaintableRows;
 };
 
 #endif // EIGENZONEDETAILSMODEL_H

@@ -9,6 +9,8 @@ const QString EigenzoneDetailsModel::s_typeStr{QObject::tr("Type")};
 const QString EigenzoneDetailsModel::s_timeStr{QObject::tr("Time (min)")};
 const QString EigenzoneDetailsModel::s_conductivityStr{QObject::tr("Conductivity (S/m)")};
 const QString EigenzoneDetailsModel::s_pHStr{"pH"};
+const QVector<int> EigenzoneDetailsModel::s_untaintableRows{ 0, 1, 2 };
+
 
 EigenzoneDetailsModel::EigenzoneDetailsModel(QObject *parent)
   : QAbstractTableModel(parent)
@@ -115,8 +117,12 @@ QVariant EigenzoneDetailsModel::data(const QModelIndex &index, int role) const
     return {};
 
   const auto &zone = m_eigenzones.at(col);
+  const int row = index.row();
 
   if (role == Qt::ForegroundRole) {
+    if (s_untaintableRows.contains(row))
+      return {};
+
     const QPalette p{};
 
     if (zone.tainted)
@@ -127,7 +133,6 @@ QVariant EigenzoneDetailsModel::data(const QModelIndex &index, int role) const
   if (role != Qt::DisplayRole)
     return {};
 
-  const int row = index.row();
   if (row < 0 || row >= rowCount())
     return {};
 
