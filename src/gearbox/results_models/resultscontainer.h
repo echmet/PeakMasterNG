@@ -4,7 +4,7 @@
 #include "analytesdissociationmodel.h"
 #include "analytesextrainfomodel.h"
 #include "backgroundeffectivemobilitiesmodel.h"
-#include "backgroundpropertiesmodel.h"
+#include "backgroundpropertiesmapping.h"
 #include "eigenzonedetailsmodel.h"
 #include "ioniccompositionmodel.h"
 #include "systemeigenzonestablemodel.h"

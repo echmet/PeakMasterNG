@@ -2,7 +2,7 @@
 #define RESULTSMODELS_H
 
 #include "analytesextrainfomodel.h"
-#include "backgroundpropertiesmodel.h"
+#include "backgroundpropertiesmapping.h"
 #include "systemeigenzonestablemodel.h"
 
 class AnalytesDissociationModel;

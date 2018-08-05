@@ -166,7 +166,6 @@ HEADERS += \
     src/gearbox/backgroundgdmproxy.h \
     src/mappers/abstractmappermodel.h \
     src/gearbox/calculatorinterface.h \
-    src/gearbox/results_models/backgroundpropertiesmodel.h \
     src/gearbox/results_models/resultsmodels.h \
     src/gearbox/results_models/resultsdata.h \
     src/gearbox/results_models/resultscontainer.h \
@@ -248,7 +247,8 @@ HEADERS += \
     src/ui/softwareupdatewidget.h \
     src/softwareupdater.h \
     src/softwareupdateresult.h \
-    src/ui/autoupdatecheckdialog.h
+    src/ui/autoupdatecheckdialog.h \
+    src/gearbox/results_models/backgroundpropertiesmapping.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \
