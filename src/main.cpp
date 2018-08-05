@@ -41,5 +41,7 @@ int main(int argc, char *argv[])
 
   PMNGCrashHandler::uninstallCrashHandler();
 
+  delete w;
+
   return ret;
 }
