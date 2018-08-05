@@ -5,9 +5,9 @@
 #include <cassert>
 #include <QPalette>
 
-const QString EigenzoneDetailsModel::s_typeStr{tr("Type")};
-const QString EigenzoneDetailsModel::s_timeStr{tr("Time (min)")};
-const QString EigenzoneDetailsModel::s_conductivityStr{tr("Conductivity (S/m)")};
+const QString EigenzoneDetailsModel::s_typeStr{QObject::tr("Type")};
+const QString EigenzoneDetailsModel::s_timeStr{QObject::tr("Time (min)")};
+const QString EigenzoneDetailsModel::s_conductivityStr{QObject::tr("Conductivity (S/m)")};
 const QString EigenzoneDetailsModel::s_pHStr{"pH"};
 
 EigenzoneDetailsModel::EigenzoneDetailsModel(QObject *parent)
