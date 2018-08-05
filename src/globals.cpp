@@ -24,7 +24,11 @@ const QVector<Globals::DeveloperID> Globals::DEVELOPERS = {
 
 QIcon Globals::icon()
 {
+#ifdef Q_OS_WIN
+  static const QPixmap PROGRAM_ICON{":/images/res/PeakMaster_icon.ico"};
+#else
   static const QPixmap PROGRAM_ICON{":/images/res/PeakMaster_icon.png"};
+#endif // Q_OS_WIN
 
   if (PROGRAM_ICON.isNull())
     return QIcon{};
