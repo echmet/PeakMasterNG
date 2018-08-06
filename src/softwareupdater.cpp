@@ -88,6 +88,11 @@ SoftwareUpdater::SoftwareUpdater(QObject *parent) : QObject(parent),
   connect(m_autoDlg, &AutoUpdateCheckDialog::setAutoUpdate, this, &SoftwareUpdater::onSetAutoUpdate);
 }
 
+SoftwareUpdater::~SoftwareUpdater()
+{
+  delete m_autoDlg;
+}
+
 bool SoftwareUpdater::automaticCheckEnabled() const
 {
   return m_checkAutomatically;

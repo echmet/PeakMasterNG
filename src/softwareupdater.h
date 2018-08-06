@@ -34,6 +34,8 @@ class SoftwareUpdater : public QObject
   Q_OBJECT
 public:
   explicit SoftwareUpdater(QObject *parent = nullptr);
+  ~SoftwareUpdater();
+
   bool automaticCheckEnabled() const;
   void checkAutomatically();
   void checkForUpdate(const bool automatic);
