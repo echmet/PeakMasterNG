@@ -4,13 +4,18 @@
 
 #include <algorithm>
 #include <cassert>
+#include <QDir>
 #include <QString>
 
+#ifdef Q_OS_LINUX
 #ifdef PMNG_FLATPAK_BUILD
-const char *DatabaseProxy::DATABASE_PATH = "/app/share/PeakMasterNG/pmng_db.sql";
+  const char *DatabaseProxy::DATABASE_PATH = "/app/share/PeakMasterNG/pmng_db.sql";
+#else
+  const char *DatabaseProxy::DATABASE_PATH = "/etc/ECHMET/PeakMasterNG/pmng_db.sql";
+#endif // PMNG_FLATPAK_BUILD
 #else
 const char *DatabaseProxy::DATABASE_PATH = "pmng_db.sql";
-#endif // PMNG_FLATPAK_BUILD
+#endif // Q_OS_LINUX
 
 static
 DatabaseConstituent makeDatabaseConstituent(const database::Constituent &c)
@@ -74,9 +79,39 @@ std::vector<DatabaseConstituent> doSearch(database::ConstituentsDatabase *dbh,
 
 DatabaseProxy::DatabaseProxy()
 {
+  QString usableDbPath;
+
+#ifdef Q_OS_LINUX
+  static const QString locPath(".local/share/ECHMET/PeakMasterNG/");
+  QDir homeDir = QDir::home();
+  const QString editableDbPath = homeDir.absolutePath() + "/" + locPath + "pmng_db.sql";
+  if (QFileInfo::exists(editableDbPath))
+    usableDbPath = editableDbPath;
+  else {
+    if (!QFileInfo::exists(DATABASE_PATH)) {
+      m_db = nullptr;
+      return;
+    }
+
+    if (!homeDir.mkpath(locPath)) {
+      m_db = nullptr;
+      return;
+    }
+
+    if (!QFile::copy(DATABASE_PATH, editableDbPath)) {
+      m_db = nullptr;
+      return;
+    }
+
+    usableDbPath = editableDbPath;
+  }
+#else
+  usableDbPath = DATABASE_PATH;
+#endif // Q_OS_LINUX
+
   try {
-    m_db = new database::ConstituentsDatabase{DATABASE_PATH};
-  } catch (const std::runtime_error &ex) {
+    m_db = new database::ConstituentsDatabase{usableDbPath.toUtf8()};
+  } catch (const std::runtime_error &) {
     m_db = nullptr;
   }
 }
