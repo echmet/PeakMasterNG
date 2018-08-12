@@ -15,6 +15,7 @@ The following tools and libraries are required to build PeakMaster NG
 - [SQLite 3](https://www.sqlite.org/index.html)
 - [ECHMETCoreLibs](https://github.com/echmet/ECHMETCoreLibs)
 - [LEMNG](https://github.com/echmet/LEMNG)
+- [ECHMETUpdateCheck](https://github.com/echmet/ECHMETUpdateCheck)
 
 Refer to official documentation of the respective projects for details how to set them up.
 
