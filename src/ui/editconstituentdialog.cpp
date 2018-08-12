@@ -182,6 +182,7 @@ void EditConstituentDialog::setupWidget()
 
   if (h_dbProxy.isAvailable()) {
     connect(ui->qpb_pickFromDB, &QPushButton::clicked, this, &EditConstituentDialog::onPickFromDatabase);
+    connect(ui->qpb_addToDatabase, &QPushButton::clicked, this, &EditConstituentDialog::onAddToDatabase);
     ui->qpb_pickFromDB->setEnabled(true);
   } else
     ui->qpb_pickFromDB->setEnabled(false);
