@@ -79,7 +79,7 @@ private:
 
   std::vector<std::tuple<QCheckBox *, bool>> m_tracepoints;
   QString m_outputFilePath;
-  QVBoxLayout *m_qvlay_tracepoints;
+  QWidget *m_tracepointsWidget;
 
 private slots:
   void onAccepted();

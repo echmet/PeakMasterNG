@@ -13,22 +13,18 @@ ToggleTracepointsDialog::ToggleTracepointsDialog(const std::vector<CalculatorInt
 {
   ui->setupUi(this);
 
-  m_qvlay_tracepoints = new QVBoxLayout{this};
+  m_tracepointsWidget = new QWidget{this};
+  m_tracepointsWidget->setLayout(new QVBoxLayout{m_tracepointsWidget});
 
-  QWidget *w = new QWidget{this};
-  w->setLayout(m_qvlay_tracepoints);
-
-  ui->qscrArea_tracepoints->setWidget(w);
-  w->show();
+  ui->qscrArea_tracepoints->setWidget(m_tracepointsWidget);
+  m_tracepointsWidget->show();
 
   if (tracepointInformation.size() > 0)
     setupTracepointList(tracepointInformation, tracingSetup);
   else {
-    w->setLayout(new QVBoxLayout{this});
-
     QLabel *l = new QLabel{tr("No tracepoints are available.\nLEMNG library was probably built without tracing support."), this};
     l->setWordWrap(true);
-    w->layout()->addWidget(l);
+    m_tracepointsWidget->layout()->addWidget(l);
 
     connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &ToggleTracepointsDialog::reject);
   }
@@ -102,15 +98,18 @@ ToggleTracepointsDialog::TracingSetup ToggleTracepointsDialog::result() const
 
 void ToggleTracepointsDialog::setupTracepointList(const std::vector<CalculatorInterface::TracepointInfo> &tracepointInformation, const TracingSetup &tracingSetup)
 {
+  QVBoxLayout *lay = qobject_cast<QVBoxLayout *>(m_tracepointsWidget->layout());
+  Q_ASSERT(lay != nullptr);
+
   for (const auto &item : tracepointInformation) {
     QCheckBox *cbox = new QCheckBox{this};
     cbox->setText(item.description);
     cbox->setProperty("TPID", item.TPID);
     m_tracepoints.emplace_back(cbox, false);
 
-    m_qvlay_tracepoints->addWidget(cbox);
+    lay->addWidget(cbox);
   }
-  m_qvlay_tracepoints->addStretch();
+  lay->addStretch();
 
   if (tracingSetup.tracepointStates.size() > 0) {
     Q_ASSERT(tracepointInformation.size() == tracingSetup.tracepointStates.size());
