@@ -56,11 +56,29 @@
         <x>0</x>
         <y>0</y>
         <width>380</width>
-        <height>131</height>
+        <height>98</height>
        </rect>
       </property>
      </widget>
     </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QPushButton" name="qpb_enableAll">
+       <property name="text">
+        <string>Enable all</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="qpb_disableAll">
+       <property name="text">
+        <string>Disable all</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">

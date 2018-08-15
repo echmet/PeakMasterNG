@@ -30,6 +30,8 @@ ToggleTracepointsDialog::ToggleTracepointsDialog(const std::vector<CalculatorInt
   }
 
   connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &ToggleTracepointsDialog::reject);
+  connect(ui->qpb_disableAll, &QPushButton::clicked, this, &ToggleTracepointsDialog::onDisableAllClicked);
+  connect(ui->qpb_enableAll, &QPushButton::clicked, this, &ToggleTracepointsDialog::onEnableAllClicked);
 }
 
 ToggleTracepointsDialog::~ToggleTracepointsDialog()
@@ -51,6 +53,22 @@ void ToggleTracepointsDialog::onAccepted()
   }
 
   accept();
+}
+
+void ToggleTracepointsDialog::onDisableAllClicked()
+{
+  for (auto &item : m_tracepoints) {
+    const auto cbox = std::get<0>(item);
+    cbox->setChecked(false);
+  }
+}
+
+void ToggleTracepointsDialog::onEnableAllClicked()
+{
+  for (auto &item : m_tracepoints) {
+    const auto cbox = std::get<0>(item);
+    cbox->setChecked(true);
+  }
 }
 
 void ToggleTracepointsDialog::onEnableTracingToggled(const bool enabled)

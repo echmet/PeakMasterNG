@@ -83,6 +83,8 @@ private:
 
 private slots:
   void onAccepted();
+  void onDisableAllClicked();
+  void onEnableAllClicked();
   void onEnableTracingToggled(const bool enabled);
   void onFilterTextChanged(const QString &text);
   void onSetOutputFile();
