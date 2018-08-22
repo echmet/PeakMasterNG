@@ -2,6 +2,7 @@
 #define PICKCONSTITUENTFROMDBDIALOG_H
 
 #include <QDialog>
+#include <QSortFilterProxyModel>
 
 namespace Ui {
   class PickConstituentFromDBDialog;
@@ -26,8 +27,9 @@ private:
 
   DatabaseProxy &h_dbProxy;
   DatabaseConstituentsPhysPropsTableModel &m_model;
+  QSortFilterProxyModel m_proxyModel;
 
-  int m_selectedIndex;
+  QModelIndex m_selectedIndex;
 
   static QSize m_lastDlgSize;
 

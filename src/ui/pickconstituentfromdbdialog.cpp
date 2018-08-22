@@ -14,10 +14,14 @@ PickConstituentFromDBDialog::PickConstituentFromDBDialog(DatabaseConstituentsPhy
   ui{new Ui::PickConstituentFromDBDialog},
   h_dbProxy{dbProxy},
   m_model{model},
-  m_selectedIndex{-1}
+  m_selectedIndex{QModelIndex()}
 {
   ui->setupUi(this);
-  ui->qtbv_constituents->setModel(&m_model);
+
+  m_proxyModel.setSourceModel(&m_model);
+
+  ui->qtbv_constituents->setModel(&m_proxyModel);
+  ui->qtbv_constituents->setSortingEnabled(true);
 
   if (!m_lastDlgSize.isEmpty())
     resize(m_lastDlgSize);
@@ -65,21 +69,21 @@ void PickConstituentFromDBDialog::executeSearch(const QString &name, const QVari
 
 void PickConstituentFromDBDialog::onAccepted()
 {
-  m_selectedIndex = -1; /* Safety net */
+  m_selectedIndex = QModelIndex(); /* Safety net */
 
-  if (m_model.rowCount() < 1)
-    m_selectedIndex = -1;
-  else if (m_model.rowCount() == 1)
-    m_selectedIndex = 0;
+  if (m_proxyModel.rowCount() < 1)
+    m_selectedIndex = QModelIndex();
+  else if (m_proxyModel.rowCount() == 1)
+    m_selectedIndex = m_proxyModel.index(0, 0);
   else {
     const auto &mids = ui->qtbv_constituents->selectionModel()->selectedIndexes();
     if (mids.size() < 1)
-      m_selectedIndex = -1;
+      m_selectedIndex = QModelIndex();
     else {
       if (!mids.first().isValid())
-        m_selectedIndex = -1;
+        m_selectedIndex = QModelIndex();
       else
-        m_selectedIndex = mids.first().row();
+        m_selectedIndex = mids.first();
     }
   }
 
@@ -114,7 +118,7 @@ void PickConstituentFromDBDialog::onItemSelected(const int row)
   if (row < 0)
     return;
 
-  m_selectedIndex = row;
+  m_selectedIndex = m_proxyModel.index(row, 0);
   m_lastDlgSize = size();
   accept();
 }
@@ -126,12 +130,15 @@ void PickConstituentFromDBDialog::onMatchTypeActivated(const int)
 
 void PickConstituentFromDBDialog::onRejected()
 {
-  m_selectedIndex = -1;
+  m_selectedIndex = QModelIndex();
   reject();
 }
 
 int PickConstituentFromDBDialog::selectedIndex() const
 {
-  return m_selectedIndex;
+  if (!m_selectedIndex.isValid())
+    return -1;
+
+  return m_proxyModel.mapToSource(m_selectedIndex).row();
 }
 
