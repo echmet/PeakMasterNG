@@ -34,9 +34,16 @@ public:
 
     switch (role) {
     case Qt::EditRole:
+    {
+      const auto currData = this->m_data->operator[](index.column());
+      const auto newData = value.toReal();
+      if (currData == newData)
+          return false;
+
       (*(this->m_data))[index.column()] = value.toReal();
       emit this->dataChanged(this->createIndex(0, index.column()), this->createIndex(0, index.column()), { role });
       return true;
+    }
     case Qt::UserRole + 1:
       {
       bool ok;
