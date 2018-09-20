@@ -171,6 +171,11 @@ void MainControlWidget::onShowEigenzoneDetailsClicked()
 
 MainControlWidget::RunSetup MainControlWidget::runSetup() const
 {
+  /* Commit changes in any active edits */
+  ui->qle_totalLength->clearFocus();
+  ui->qle_detectorPosition->clearFocus();
+  ui->qle_drivingVoltage->clearFocus();
+
   bool positiveVoltage = (ui->qcbox_polarity->currentData().value<Polarity>() == POLARITY_POSITIVE);
   const auto corrections = m_nonidealityCorrectionsDlg->state();
 
