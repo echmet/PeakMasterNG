@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>394</width>
-    <height>417</height>
+    <height>518</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -139,6 +139,16 @@
     <widget class="QLabel" name="ql_thankYouQt">
      <property name="text">
       <string>&lt;THANK_YOU_QT&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="ql_lemngVersion">
+     <property name="text">
+      <string>&lt;LEMNG_VERSION&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
