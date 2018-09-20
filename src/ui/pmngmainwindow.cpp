@@ -36,6 +36,22 @@
 
 #define THEY_LIVE
 
+class QuickRecalcInhibitor {
+public:
+  QuickRecalcInhibitor(bool &val) :
+    h_val{val}
+  {
+    val = true;
+  }
+  ~QuickRecalcInhibitor()
+  {
+    h_val = false;
+  }
+
+private:
+  bool &h_val;
+};
+
 static
 void inputToEOFValueType(double &EOFValue, CalculatorInterface::EOFValueType &EOFvt, const double inValue, const MainControlWidget::EOF_Type type)
 {
@@ -118,6 +134,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   m_lastLoadPath{""},
   m_lastSavePath{""},
   h_dbProxy{dbProxy},
+  m_inhibitQuickRecalc{false},
   ui{new Ui::PMNGMainWindow}
 {
   ui->setupUi(this);
@@ -263,6 +280,8 @@ void PMNGMainWindow::onAbout()
 
 void PMNGMainWindow::onCalculate()
 {
+  QuickRecalcInhibitor ihb{m_inhibitQuickRecalc};
+
   EFGDisplayer displayer = makeMainWindowEFGDisplayer();
 
   const QVariant lastSelectedSignal = resetSignalItems();
@@ -498,6 +517,9 @@ void PMNGMainWindow::onRunSetupChanged(const bool invalidate)
   if (invalidate)
     onCompositionChanged();
   else {
+    if (m_inhibitQuickRecalc)
+        return;
+
     const auto plotInfo = makePlottingInfo();
 
     const MainControlWidget::RunSetup rs = m_mainCtrlWidget->runSetup();
