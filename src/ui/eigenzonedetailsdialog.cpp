@@ -38,9 +38,12 @@ QSize EigenzoneDetailsDialog::sizeHint() const
   static const auto iround = [](const auto v) {
     return static_cast<int>(std::floor(v + 0.5));
   };
+
+  const auto theme = UIHelpers::detectWindowsTheme();
   /* Arbitrarily chosen values */
-  static const qreal COL_HEIGHT_AMPL = [](){
-    switch (UIHelpers::detectWindowsTheme()) {
+
+  static const qreal COL_HEIGHT_AMPL = [theme](){
+    switch (theme) {
     case UIHelpers::WindowsTheme::WINDOWS_XP:
       return 2.36;
     case UIHelpers::WindowsTheme::WINDOWS_CLASSIC:
@@ -59,7 +62,7 @@ QSize EigenzoneDetailsDialog::sizeHint() const
   int width = 0;
   for (int idx = 0; idx < model->columnCount(); idx++) {
     const QString text = model->headerData(idx, Qt::Horizontal).toString();
-    width += fm.width(text) * 2.3;
+    width += std::floor(fm.width(text) * (theme == UIHelpers::WindowsTheme::WINDOWS_CLASSIC ? 2.42 : 2.3) + 0.5);
   }
 
   QString longestRow;
