@@ -734,7 +734,7 @@ std::vector<CalculatorInterface::TimeDependentZoneInformation> CalculatorInterfa
 
   for (size_t idx = 0; idx < m_ctx.results->eigenzones->size(); idx++) {
     const auto &ez = m_ctx.results->eigenzones->at(idx);
-    const auto env = envelopes->at(idx);
+    const auto &env = envelopes->at(idx);
     bool isSystemZone = false;
     double concentrationMax = 0.0;
     double conductivityMax = 0.0;
