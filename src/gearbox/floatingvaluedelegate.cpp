@@ -10,9 +10,13 @@ FloatingValueDelegate::FloatingValueDelegate(QObject *parent) : QItemDelegate(pa
 QWidget *FloatingValueDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
   Q_UNUSED(option);
-  Q_UNUSED(index);
 
   QLineEdit *lineEdit = new QLineEdit(parent);
+
+  const auto &current = index.model()->data(index);
+
+  lineEdit->setText(DoubleToStringConvertor::convert(current.toDouble()));
+  lineEdit->selectAll();
 
   connect(lineEdit, &QLineEdit::textChanged, this, &FloatingValueDelegate::onTextChanged);
   connect(this, &FloatingValueDelegate::editorCommit, lineEdit, &QLineEdit::clearFocus);
