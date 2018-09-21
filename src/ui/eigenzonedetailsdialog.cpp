@@ -40,9 +40,14 @@ QSize EigenzoneDetailsDialog::sizeHint() const
   };
   /* Arbitrarily chosen values */
   static const qreal COL_HEIGHT_AMPL = [](){
-    if (Globals::isZombieOS())
+    switch (UIHelpers::detectWindowsTheme()) {
+    case UIHelpers::WindowsTheme::WINDOWS_XP:
       return 2.36;
-    return 2.0;
+    case UIHelpers::WindowsTheme::WINDOWS_CLASSIC:
+      return 2.43;
+    default:
+      return 2.0;
+    }
   }();
   const int WIDTH_SPACER = 125;
   const int HEIGHT_SPACER = 75;
