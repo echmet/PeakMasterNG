@@ -17,8 +17,11 @@ class PickConstituentFromDBDialog : public QDialog
 
 public:
   explicit PickConstituentFromDBDialog(DatabaseConstituentsPhysPropsTableModel &model, DatabaseProxy &dbProxy, QWidget *parent = nullptr);
-  ~PickConstituentFromDBDialog();
+  ~PickConstituentFromDBDialog() override;
   int selectedIndex() const;
+
+protected:
+  void keyPressEvent(QKeyEvent *evt) override;
 
 private:
   void executeSearch(const QString &name, const QVariant &matchVar);

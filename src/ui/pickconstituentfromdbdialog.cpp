@@ -5,6 +5,7 @@
 #include "internal_models/databaseconstituentsphyspropstablemodel.h"
 #include "databasetableview.h"
 
+#include <QKeyEvent>
 #include <QMessageBox>
 
 QSize PickConstituentFromDBDialog::m_lastDlgSize = QSize{};
@@ -140,5 +141,21 @@ int PickConstituentFromDBDialog::selectedIndex() const
     return -1;
 
   return m_proxyModel.mapToSource(m_selectedIndex).row();
+}
+
+void PickConstituentFromDBDialog::keyPressEvent(QKeyEvent *evt)
+{
+  const auto k = evt->key();
+  const auto m = evt->modifiers();
+
+  /* Select first item in the list by pressing Ctrl+Enter */
+  if ((k == Qt::Key_Enter || k == Qt::Key_Return) && (m & Qt::ShiftModifier)) {
+      if (m_proxyModel.rowCount() > 0) {
+        m_selectedIndex = m_proxyModel.index(0, 0);
+
+        m_lastDlgSize = size();
+        accept();
+      }
+  }
 }
 
