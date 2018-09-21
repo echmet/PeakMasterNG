@@ -127,9 +127,6 @@ void SignalPlotWidget::onPointHovered(const QPoint &pos)
   const size_t cpIdx = findClosestIdx(m_signal, tx);
   const QPointF &cp = m_signal.at(cpIdx);
 
-  ui->ql_xVal->setText(DoubleToStringConvertor::convert(cp.x()));
-  ui->ql_yVal->setText(DoubleToStringConvertor::convert(cp.y()));
-
   const double x = cp.x();
   QStringList zoneNames{};
   for (const auto &z : m_tdzi) {
