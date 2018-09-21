@@ -386,6 +386,11 @@ double CalculatorInterface::minimumConcentration() noexcept
   return ECHMET::LEMNG::minimumSafeConcentration();
 }
 
+double CalculatorInterface::minimumAnalyteConcentration() noexcept
+{
+  return minimumConcentration() * 10.0;
+}
+
 double CalculatorInterface::mobilityToTime(const double totalLength, const double detectorPosition, const double drivingVoltage, const double EOFMobility, const double u) const
 {
   const double E = drivingVoltage / totalLength;

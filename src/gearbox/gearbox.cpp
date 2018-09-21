@@ -9,7 +9,7 @@ Gearbox::Gearbox() :
   m_complexMgr{m_backgroundGDM, m_sampleGDM},
   m_persistence{m_backgroundGDM, m_sampleGDM},
   m_backgroundGDMProxy{std::make_unique<BackgroundGDMProxy>(m_backgroundGDM, m_sampleGDM, CalculatorInterface::minimumConcentration())},
-  m_sampleGDMProxy{std::make_unique<SampleGDMProxy>(m_sampleGDM, CalculatorInterface::minimumConcentration())},
+  m_sampleGDMProxy{std::make_unique<SampleGDMProxy>(m_sampleGDM, CalculatorInterface::minimumAnalyteConcentration())},
   m_dbProxy{std::make_unique<DatabaseProxy>()}
 {
   connect(&m_persistence, &persistence::Persistence::deserialized, this, &Gearbox::onDeserialized);

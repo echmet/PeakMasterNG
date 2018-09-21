@@ -175,6 +175,7 @@ public:
   void calculate(const bool correctForDebyeHuckel, const bool correctForOnsagerFuoss, const bool correctForViscosity);
   void disableAllTracepoints() noexcept;
   static double minimumConcentration() noexcept;
+  static double minimumAnalyteConcentration() noexcept;
   QVector<QPointF> plotElectrophoregram(double totalLength, double detectorPosition,
                                         double drivingVoltage, const bool positiveVoltage,
                                         double EOFValue, const EOFValueType EOFvt,
