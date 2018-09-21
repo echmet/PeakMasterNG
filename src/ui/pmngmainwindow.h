@@ -78,6 +78,7 @@ private:
   QPushButton *m_qpb_calculate;
 
   QShortcut *m_calculateShortcut;
+  QShortcut *m_calculateShortcutTwo;
 
   CalculatorInterface m_calcIface;
   MainControlWidget *m_mainCtrlWidget;

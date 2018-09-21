@@ -182,8 +182,10 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   ui->mainToolBar->addWidget(m_qpb_save);
   ui->mainToolBar->addWidget(m_qpb_calculate);
 
-  m_calculateShortcut = new QShortcut(QKeySequence::Refresh, m_qpb_calculate);
+  m_calculateShortcut = new QShortcut(QKeySequence::Refresh, this);
+  m_calculateShortcutTwo = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Return), this);
   connect(m_calculateShortcut, &QShortcut::activated, this, &PMNGMainWindow::onCalculate);
+  connect(m_calculateShortcutTwo, &QShortcut::activated, this, &PMNGMainWindow::onCalculate);
 
   setControlsIcons();
 

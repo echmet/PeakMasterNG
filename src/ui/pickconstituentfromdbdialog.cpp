@@ -156,6 +156,7 @@ void PickConstituentFromDBDialog::keyPressEvent(QKeyEvent *evt)
         m_lastDlgSize = size();
         accept();
       }
-  }
+  } else
+    QDialog::keyPressEvent(evt);
 }
 
