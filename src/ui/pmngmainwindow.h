@@ -102,7 +102,7 @@ private:
 
   ToggleTracepointsDialog::TracingSetup m_tracingSetup;
 
-  bool m_inhibitQuickRecalc;
+  bool m_fullCalcInProgress;
 
   Ui::PMNGMainWindow *ui;
 

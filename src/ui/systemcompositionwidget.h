@@ -32,6 +32,7 @@ public:
   ~SystemCompositionWidget();
   AbstractConstituentsModelBase * analytesModel() noexcept;
   AbstractConstituentsModelBase * backgroundModel() noexcept;
+  void commit();
   void setViscosityCorrectionEnabled(const bool enabled);
 
 private:

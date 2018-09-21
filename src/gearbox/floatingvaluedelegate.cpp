@@ -15,8 +15,14 @@ QWidget *FloatingValueDelegate::createEditor(QWidget *parent, const QStyleOption
   QLineEdit *lineEdit = new QLineEdit(parent);
 
   connect(lineEdit, &QLineEdit::textChanged, this, &FloatingValueDelegate::onTextChanged);
+  connect(this, &FloatingValueDelegate::editorCommit, lineEdit, &QLineEdit::clearFocus);
 
   return lineEdit;
+}
+
+void FloatingValueDelegate::forceCommit()
+{
+  emit editorCommit();
 }
 
 void FloatingValueDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const

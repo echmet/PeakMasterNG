@@ -36,14 +36,14 @@
 
 #define THEY_LIVE
 
-class QuickRecalcInhibitor {
+class Inhibitor {
 public:
-  QuickRecalcInhibitor(bool &val) :
+  Inhibitor(bool &val) :
     h_val{val}
   {
     val = true;
   }
-  ~QuickRecalcInhibitor()
+  ~Inhibitor()
   {
     h_val = false;
   }
@@ -134,7 +134,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   m_lastLoadPath{""},
   m_lastSavePath{""},
   h_dbProxy{dbProxy},
-  m_inhibitQuickRecalc{false},
+  m_fullCalcInProgress{false},
   ui{new Ui::PMNGMainWindow}
 {
   ui->setupUi(this);
@@ -280,7 +280,7 @@ void PMNGMainWindow::onAbout()
 
 void PMNGMainWindow::onCalculate()
 {
-  QuickRecalcInhibitor ihb{m_inhibitQuickRecalc};
+  Inhibitor ihb{m_fullCalcInProgress};
 
   EFGDisplayer displayer = makeMainWindowEFGDisplayer();
 
@@ -288,6 +288,7 @@ void PMNGMainWindow::onCalculate()
 
   const auto plotInfo = makePlottingInfo();
   const MainControlWidget::RunSetup rs = m_mainCtrlWidget->runSetup();
+  h_scompWidget->commit();
 
   if (m_tracingSetup.tracingEnabled)
     m_calcIface.setTracepoints(m_tracingSetup.tracepointStates);
@@ -388,6 +389,9 @@ void PMNGMainWindow::onExportElectrophoregramAsCSV()
 
 void PMNGMainWindow::onCompositionChanged()
 {
+  if (m_fullCalcInProgress)
+    return;
+
   m_calcIface.onInvalidate();
   m_signalPlotWidget->clear();
 }
@@ -512,14 +516,14 @@ void PMNGMainWindow::onPlotElectrophoregram()
 
 void PMNGMainWindow::onRunSetupChanged(const bool invalidate)
 {
+  if (m_fullCalcInProgress)
+    return;
+
   h_scompWidget->setViscosityCorrectionEnabled(m_mainCtrlWidget->runSetup().correctForViscosity);
 
   if (invalidate)
     onCompositionChanged();
   else {
-    if (m_inhibitQuickRecalc)
-        return;
-
     const auto plotInfo = makePlottingInfo();
 
     const MainControlWidget::RunSetup rs = m_mainCtrlWidget->runSetup();

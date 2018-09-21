@@ -145,6 +145,12 @@ AbstractConstituentsModelBase * SystemCompositionWidget::backgroundModel() noexc
   return m_backgroundConstituentsModel;
 }
 
+void SystemCompositionWidget::commit()
+{
+  m_fltDelegateBGE->forceCommit();
+  m_fltDelegateAnalytes->forceCommit();
+}
+
 void SystemCompositionWidget::editComplexation(const QString &name)
 {
   if (!h_cpxMgr.complexes(name.toStdString()))
