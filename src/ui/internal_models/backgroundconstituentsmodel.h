@@ -54,9 +54,9 @@ public:
     return {};
   }
 
-  virtual int columnCount(const QModelIndex &index) const override
+  virtual int columnCount(const QModelIndex &parent) const override
   {
-    return ConstituentsModelImpl::columnCount(index) + 1;
+    return ConstituentsModelImpl::columnCount(parent) + 1;
   }
 
   int firstExtraInfoColumn() const

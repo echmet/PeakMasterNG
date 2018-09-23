@@ -32,7 +32,7 @@ public:
 
     const int col = index.column();
 
-    if (col < 0 || col >= this->columnCount(index))
+    if (col < 0 || col >= this->columnCount(index.parent()))
       return {};
 
     const auto constituentName = this->m_constituentNames.at(row).toStdString();

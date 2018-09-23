@@ -3,14 +3,19 @@
 
 #include "abstractconstituentsmodelbase.h"
 
+#include <QModelIndex>
+
 template <int _NConcs>
 class AbstractConstituentsModel : public AbstractConstituentsModelBase
 {
 public:
   using AbstractConstituentsModelBase::AbstractConstituentsModelBase;
 
-  virtual int columnCount(const QModelIndex &) const override
+  virtual int columnCount(const QModelIndex &parent) const override
   {
+    if (parent.isValid())
+      return 0;
+
     return 3 + NConcs();
   }
 
