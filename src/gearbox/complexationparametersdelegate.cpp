@@ -23,8 +23,14 @@ QWidget *ComplexationParametersDelegate::createEditor(QWidget *parent, const QSt
   QLineEdit *lineEdit = new QLineEdit{parent};
 
   connect(lineEdit, &QLineEdit::textChanged, this, &ComplexationParametersDelegate::onTextChanged);
+  connect(this, &ComplexationParametersDelegate::forceCommit, lineEdit, &QLineEdit::clearFocus);
 
   return lineEdit;
+}
+
+void ComplexationParametersDelegate::forceCommit()
+{
+  emit editorCommit();
 }
 
 void ComplexationParametersDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const

@@ -61,6 +61,8 @@ EditComplexationDialog::AllComplexationRelationships EditComplexationDialog::all
 
 void EditComplexationDialog::onAcceptClicked()
 {
+  _delegate->forceCommit();
+
   m_lastDlgSize = size();
   accept();
 }
