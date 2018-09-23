@@ -115,6 +115,10 @@ public:
 
     const int col = idx.column();
     if (col >= 3 && col < 3 + N) {
+      const double current = concentrations[col - 3];
+      if (v == current)
+        return false;
+
       concentrations[col - 3] = v;
       this->h_GDMProxy.setConcentrations(name, concentrations);
       emit this->dataChanged(idx, idx, { role } );
