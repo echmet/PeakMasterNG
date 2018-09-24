@@ -168,6 +168,7 @@ void SystemCompositionWidget::editConstituent(const QString &name, GDMProxy &pro
     return;
 
   connect(dlg, &EditConstituentDialog::validateInput, &manipulator, &ConstituentManipulator::onValidateConstituentInputUpdate);
+  connect(dlg, &EditConstituentDialog::addToDatabase, this, &SystemCompositionWidget::onAddToDatabase);
 
   if (dlg->exec() == QDialog::Accepted) {
     gdm::Constituent updatedCtuent = manipulator.makeConstituent(dlg);
