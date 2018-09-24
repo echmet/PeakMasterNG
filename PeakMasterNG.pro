@@ -120,7 +120,7 @@ SOURCES += \
     src/gearbox/efgdisplayer.cpp \
     src/gearbox/efgcsvexporter.cpp \
     src/ui/csvexportoptionsdialog.cpp \
-    src/ui/copiableitemsstableview.cpp \
+    src/ui/copiableitemstableview.cpp \
     src/ui/databasetableview.cpp \
     src/gearbox/results_models/analytesdissociationmodel.cpp \
     src/ui/editchargeswidget.cpp \

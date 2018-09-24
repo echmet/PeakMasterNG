@@ -24,7 +24,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QTableView" name="qtbv_backgroudConstituents"/>
+      <widget class="CopiableItemsTableView" name="qtbv_backgroudConstituents"/>
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -56,7 +56,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QTableView" name="qtbv_analytes"/>
+      <widget class="CopiableItemsTableView" name="qtbv_analytes"/>
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -80,6 +80,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CopiableItemsTableView</class>
+   <extends>QTableView</extends>
+   <header>src/ui/copiableitemstableview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
