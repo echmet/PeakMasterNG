@@ -47,5 +47,8 @@ void CopiableItemsTableView::selectionToClipboard(const QModelIndexList &indexes
   for (const auto &idx : indexes)
     out += model()->data(idx).toString() + ";";
 
+  out.chop(1); /* Yes, this is nasty and I care about as much
+                 as Rob Flynn about his Trump-voting fans */
+
   QApplication::clipboard()->setText(out);
 }
