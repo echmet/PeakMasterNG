@@ -15,7 +15,10 @@ DatabaseEditorDialog::DatabaseEditorDialog(DatabaseProxy &dbProxy, QWidget *pare
   ui->setupUi(this);
 
   m_model = new DatabaseConstituentsPhysPropsTableModel{};
-  ui->qtbv_constituents->setModel(m_model);
+  m_proxyModel.setSourceModel(m_model);
+
+  ui->qtbv_constituents->setModel(&m_proxyModel);
+  ui->qtbv_constituents->setSortingEnabled(true);
 
   ui->qcbox_matchType->addItem(tr("Name begins with..."), QVariant::fromValue(DatabaseProxy::MatchType::BEGINS_WITH));
   ui->qcbox_matchType->addItem(tr("Name contains..."), QVariant::fromValue(DatabaseProxy::MatchType::CONTAINS));
@@ -36,9 +39,17 @@ DatabaseEditorDialog::~DatabaseEditorDialog()
   delete m_model;
 }
 
-void DatabaseEditorDialog::editConstituent(const int idx)
+void DatabaseEditorDialog::editConstituent(const QModelIndex &index)
 {
-  const auto &ctuent = m_model->constituentAt(idx);
+  if (!index.isValid())
+    return;
+
+  const int row = getConstituentRow(index);
+  if (row < 0 || row >= m_model->rowCount())
+    return;
+
+  const auto &ctuent = m_model->constituentAt(row);
+
   EditDatabaseConstituentDialog dlg{ctuent.name, ctuent.pKas, ctuent.mobilities, ctuent.chargeLow, ctuent.chargeHigh, this};
 
   connect(&dlg, &EditDatabaseConstituentDialog::validateInput,
@@ -94,21 +105,29 @@ void DatabaseEditorDialog::executeSearch(const QString &name, const QVariant &ma
   }
 }
 
-int DatabaseEditorDialog::getIndex() const
+int DatabaseEditorDialog::getConstituentRow(const QModelIndex &index) const
 {
-  const auto &selection = ui->qtbv_constituents->selectionModel()->selectedIndexes();
-  if (selection.empty())
+  if (!index.isValid())
     return -1;
 
-  const auto &idx = selection.first();
-  if (!idx.isValid())
-    return -1;
-
-  const int row = idx.row();
+  const int row = m_proxyModel.mapToSource(index).row();
   if (row < 0 || row >= m_model->rowCount())
     return -1;
 
   return row;
+}
+
+QModelIndex DatabaseEditorDialog::getIndex() const
+{
+  const auto &selection = ui->qtbv_constituents->selectionModel()->selectedIndexes();
+  if (selection.empty())
+      return {};
+
+  const auto &idx = selection.first();
+  if (!idx.isValid())
+      return {};
+
+  return idx;
 }
 
 void DatabaseEditorDialog::onAddConstituent()
@@ -163,7 +182,7 @@ void DatabaseEditorDialog::onDeleteConstituent()
   if (!h_dbProxy.isAvailable())
     return;
 
-  const int idx = getIndex();
+  const int idx = getConstituentRow(getIndex());
   if (idx < 0)
     return;
 
@@ -194,11 +213,7 @@ void DatabaseEditorDialog::onEditConstituent()
   if (!h_dbProxy.isAvailable())
     return;
 
-  const int idx = getIndex();
-  if (idx < 0)
-    return;
-
-  editConstituent(idx);
+  editConstituent(getIndex());
 }
 
 void DatabaseEditorDialog::onMatchTypeActivated(const int)

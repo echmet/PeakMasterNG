@@ -16,7 +16,7 @@ private slots:
   void onSectionSelected(const int idx);
 
 signals:
-  void itemSelected(const int row);
+  void itemSelected(const QModelIndex &index);
 };
 
 #endif // DATABASETABLEVIEW_H

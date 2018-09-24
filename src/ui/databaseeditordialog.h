@@ -2,6 +2,7 @@
 #define DATABASEEDITORDIALOG_H
 
 #include <QDialog>
+#include <QSortFilterProxyModel>
 
 namespace Ui {
   class DatabaseEditorDialog;
@@ -19,14 +20,16 @@ public:
   ~DatabaseEditorDialog();
 
 private:
-  int getIndex() const;
+  QModelIndex getIndex() const;
+  int getConstituentRow(const QModelIndex &index) const;
   void executeSearch(const QString &name, const QVariant &matchVar);
-  void editConstituent(const int idx);
+  void editConstituent(const QModelIndex &index);
 
   Ui::DatabaseEditorDialog *ui;
 
   DatabaseConstituentsPhysPropsTableModel *m_model;
   DatabaseProxy &h_dbProxy;
+  QSortFilterProxyModel m_proxyModel;
 
 private slots:
   void onAddConstituent();

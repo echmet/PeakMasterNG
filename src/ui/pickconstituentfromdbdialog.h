@@ -40,7 +40,7 @@ private slots:
   void onAccepted();
   void onAllCompounds();
   void onConstituentNameChanged(const QString &name);
-  void onItemSelected(const int row);
+  void onItemSelected(const QModelIndex &index);
   void onMatchTypeActivated(const int);
   void onRejected();
 };

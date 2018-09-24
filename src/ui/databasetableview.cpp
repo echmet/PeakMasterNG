@@ -20,11 +20,14 @@ void DatabaseTableView::mouseDoubleClickEvent(QMouseEvent *evt)
   if (indices.empty())
     return;
 
-  emit itemSelected(indices.first().row());
+  emit itemSelected(indices.first());
 }
 
 void DatabaseTableView::onSectionSelected(const int idx)
 {
-  if (idx >= 0 || idx < model()->rowCount())
-    emit itemSelected(idx);
+  if (idx >= 0 || idx < model()->rowCount()) {
+    const auto midx = selectionModel()->model()->index(idx, 0);
+
+    emit itemSelected(midx);
+  }
 }

@@ -114,12 +114,12 @@ void PickConstituentFromDBDialog::onConstituentNameChanged(const QString &name)
   executeSearch(name, ui->qcbox_matchType->currentData());
 }
 
-void PickConstituentFromDBDialog::onItemSelected(const int row)
+void PickConstituentFromDBDialog::onItemSelected(const QModelIndex &index)
 {
-  if (row < 0)
+  if (!index.isValid())
     return;
 
-  m_selectedIndex = m_proxyModel.index(row, 0);
+  m_selectedIndex = index;
   m_lastDlgSize = size();
   accept();
 }
