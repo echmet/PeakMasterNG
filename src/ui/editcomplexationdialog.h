@@ -41,7 +41,6 @@ private slots:
   void onLigandChanged(const int idx);
   void onRejectClicked();
   void onRemoveLigandClicked();
-
 };
 
 #endif // EDITCOMPLEXATIONDIALOG_H

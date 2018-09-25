@@ -5,6 +5,7 @@
 
 #include <QComboBox>
 #include <QPushButton>
+#include <QLineEdit>
 
 QSize EditComplexationDialog::m_lastDlgSize = QSize{};
 
@@ -61,7 +62,27 @@ EditComplexationDialog::AllComplexationRelationships EditComplexationDialog::all
 
 void EditComplexationDialog::onAcceptClicked()
 {
-  _delegate->forceCommit();
+  /* Okay, this probably deserves some explanation.
+   * 1) QTreeView is being particularly stupid about not finishing
+   *    the editing mode when  the focus is cleared from the editor widget-
+   *     QTableView does not seem to have such a problem.
+   * 2) We can force to close the editor through delegate but its API
+   *    is making this task a living hell too
+   * 3) The only hackaround here is to grab the active widget directly
+   *    and force-feed it to the delegate
+   * 4) If we accidentally pass a wrong widget to the delegate, nasty stuff
+   *    may happen. This is why we at least check the widget's type. Yes, this
+   *    would have to be changed if the delegate's editor widget changes
+   * Anyway, it is 3 AM again and I don't want to deal with this crap anymore...
+   */
+  const auto &idx = ui->qtrv_complexation->currentIndex();
+  if (idx.isValid()) {
+    auto w = ui->qtrv_complexation->indexWidget(idx);
+    if (qobject_cast<QLineEdit *>(w) != nullptr) {
+      _delegate->commitData(w);
+      _delegate->closeEditor(w);
+    }
+  }
 
   m_lastDlgSize = size();
   accept();
