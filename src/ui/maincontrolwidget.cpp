@@ -97,7 +97,7 @@ void MainControlWidget::initRunSetupModel()
   ui->qcbox_polarity->setCurrentIndex(0);
 
   ui->qcbox_eof->addItem(tr("No EOF"), EOF_NONE);
-  ui->qcbox_eof->addItem(tr("Marker time"), EOF_MARKER_TIME);
+  ui->qcbox_eof->addItem(tr("Marker time (min)"), EOF_MARKER_TIME);
   ui->qcbox_eof->addItem(tr("Mobility"), EOF_MOBILITY);
   connect(ui->qcbox_eof, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainControlWidget::onEOFCurrentIndexChanged);
   ui->qcbox_eof->setCurrentIndex(0);
