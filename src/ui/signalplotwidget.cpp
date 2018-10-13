@@ -75,8 +75,8 @@ SignalPlotWidget::SignalPlotWidget(QWidget *parent) :
   }
   m_plot->setAxisTitle(QwtPlot::Axis::xBottom, "time (min)");
 
-  m_plot->setMinimumHeight(50);
-  this->setMinimumHeight(50);
+  m_plot->setMinimumHeight(20);
+  this->setMinimumHeight(20);
 
   connect(ui->qpb_replot, &QPushButton::clicked, this, &SignalPlotWidget::onTriggerReplotElectrophoregram);
   connect(ui->qcbox_signal, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, &SignalPlotWidget::onTriggerReplotElectrophoregram);
