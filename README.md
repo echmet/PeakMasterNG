@@ -48,6 +48,10 @@ The PeakMaster NG project is distributed under the terms of **The GNU General Pu
 
 As permitted by section 7. *Additional Terms* of The GNU GPLv3 license, the authors require that any derivative work based on PeakMaster NG clearly refers to the origin of the software and its authors. Such reference must include the address of this source code repository (https://github.com/echmet/PeakMasterNG) and names of all authors and their affiliation stated in section [Authors](#Authors) of this README file.
 
+Referenceable releases
+---
+- PeakMaster 6.0e6 [![DOI](https://zenodo.org/badge/113584203.svg)](https://zenodo.org/badge/latestdoi/113584203)
+
 <a name="Authors"></a>
 Authors
 ---
