@@ -22,7 +22,7 @@ void checkIfContains(const QString &str, const QJsonObject &obj)
 }
 
 static
-std::map<std::string, gdm::Complexation> deserializeNucleusComplexForms(const QJsonObject &obj)
+std::map<std::string, gdm::Complexation> deserializeNucleusComplexForms(const QJsonObject &obj, const int nucleusChargeLow, const int nucleusChargeHigh)
 {
   std::map<std::string, gdm::Complexation> ret{};
 
@@ -38,6 +38,9 @@ std::map<std::string, gdm::Complexation> deserializeNucleusComplexForms(const QJ
     int charge;
     checkIfContains(Persistence::CPX_NUCLEUS_CHARGE, cf);
     charge = cf[Persistence::CPX_NUCLEUS_CHARGE].toInt();
+
+    if (charge < nucleusChargeLow || charge > nucleusChargeHigh)
+      throw MalformedJSONException{"Nucleus charge in complexForm definition is outside nucleus' charge range"};
 
     /* Read ligand groups */
     checkIfContains(Persistence::CPX_LIGAND_GROUPS, cf);
@@ -172,7 +175,7 @@ std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>
     gdm::PhysicalProperties physProps{charges, pKas, mobilities, viscosityCoefficient};
 
     if (type == gdm::ConstituentType::Nucleus) {
-      auto complexForms = deserializeNucleusComplexForms(ctuent);
+      auto complexForms = deserializeNucleusComplexForms(ctuent, chargeLow, chargeHigh);
       ret.emplace_back(std::make_pair<gdm::Constituent, std::map<std::string, gdm::Complexation>>({type, name, physProps}, std::move(complexForms)));
     } else {
       if (ctuent.contains(Persistence::CPX_COMPLEX_FORMS))
