@@ -8,6 +8,12 @@
 #include <cassert>
 #include <QMessageBox>
 
+enum class Conflict {
+  NONE,
+  RESOLVED,
+  UNRESOLVED
+};
+
 static
 int calculateHue(const int step, const int lastHue)
 {
@@ -29,6 +35,82 @@ int calculateHue(const int step, const int lastHue)
     newHue = wrap(newHue);
     return shift(newHue);
   }
+}
+
+static
+gdm::ConstituentType otherType(const gdm::ConstituentType t)
+{
+  if (t == gdm::ConstituentType::Ligand)
+    return gdm::ConstituentType::Nucleus;
+  return gdm::ConstituentType::Ligand;
+}
+
+static
+QString makeOptionText(const std::string &name, const gdm::ConstituentType newType)
+{
+  const auto typeName = [newType]() -> QString {
+    if (newType == gdm::ConstituentType::Ligand)
+      return "ligand";
+    return "nucleus";
+  }();
+
+  return QString(QObject::tr("Convert \"%1\" to %2")).arg(name.c_str()).arg(typeName);
+}
+
+static
+void switchRole(gdm::GDM::iterator ctuent, gdm::GDM &backgroundGDM, gdm::GDM &sampleGDM)
+{
+  double c = sampleGDM.concentrations(ctuent).at(0);
+  auto changed = gdm::Constituent(otherType(ctuent->type()), ctuent->name(), ctuent->physicalProperties());
+
+  sampleGDM.erase(ctuent);
+  auto inserted = sampleGDM.insert(changed);
+  sampleGDM.setConcentrations(inserted.first, { c });
+
+  auto bgIt = backgroundGDM.find(changed.name());
+  if (bgIt != backgroundGDM.end()) {
+    c = backgroundGDM.concentrations(bgIt).at(0);
+    backgroundGDM.erase(bgIt);
+    inserted = backgroundGDM.insert(changed);
+    backgroundGDM.setConcentrations(inserted.first, { c });
+  }
+}
+
+static
+Conflict resolveTypeConflict(gdm::GDM::iterator first, gdm::GDM::iterator second, gdm::GDM &backgroundGDM, gdm::GDM &sampleGDM)
+{
+  if (first->type() != second->type())
+    return Conflict::NONE;
+
+  QMessageBox mbox{QMessageBox::Question, QObject::tr("Constituent types conflict"), QObject::tr("Constituents have incompatible types to form a complexation relationship. What do you want to do?")};
+
+  QPushButton *fixFirst = nullptr;
+  QPushButton *fixSecond = nullptr;
+  QPushButton *cancel;
+
+  auto cpxs = gdm::findComplexations(sampleGDM.composition(), first);
+  if (cpxs.size() == 0)
+    fixFirst = mbox.addButton(makeOptionText(first->name(), otherType(first->type())), QMessageBox::AcceptRole);
+
+  cpxs = gdm::findComplexations(sampleGDM.composition(), second);
+  if (cpxs.size() == 0)
+    fixSecond = mbox.addButton(makeOptionText(second->name(), otherType(second->type())), QMessageBox::AcceptRole);
+
+  cancel = mbox.addButton(QMessageBox::Cancel);
+
+  mbox.exec();
+
+  if (static_cast<void *>(mbox.clickedButton()) == fixFirst) {
+    assert(fixFirst != nullptr);
+    switchRole(first, backgroundGDM, sampleGDM);
+    return Conflict::RESOLVED;
+  } else if (static_cast<void *>(mbox.clickedButton()) == fixSecond) {
+    assert(fixSecond != nullptr);
+    switchRole(second, backgroundGDM, sampleGDM);
+    return Conflict::RESOLVED;
+  }
+
+  return Conflict::UNRESOLVED;
 }
 
 static
@@ -258,11 +340,21 @@ void ComplexationManager::makeComplexation(const std::string &first, const std::
   auto nucleusIt = h_sampleGDM.find(first);
   auto ligandIt = h_sampleGDM.find(second);
 
-  if (nucleusIt->type() == ligandIt->type()) {
-    QMessageBox mbox{QMessageBox::Information, QObject::tr("Invalid input"), QObject::tr("Complexations are allowed only between ligands and nuclei")};
-    mbox.exec();
+  auto conflict = resolveTypeConflict(nucleusIt, ligandIt, h_backgroundGDM, h_sampleGDM);
+  switch (conflict) {
+  case Conflict::NONE:
+    break;
+  case Conflict::UNRESOLVED:
     return;
+  case Conflict::RESOLVED:
+    /* Iterators may have been invalidated, get them again */
+    nucleusIt = h_sampleGDM.find(first);
+    ligandIt = h_sampleGDM.find(second);
+    break;
   }
+
+  assert(nucleusIt != h_sampleGDM.end() && ligandIt != h_sampleGDM.end());
+  assert(nucleusIt->type() != ligandIt->type());
 
   if (nucleusIt->type() != gdm::ConstituentType::Nucleus)
     std::swap(nucleusIt, ligandIt);
