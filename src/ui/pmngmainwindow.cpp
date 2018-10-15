@@ -20,6 +20,7 @@
 #include "hacks.h"
 #include "checkforupdatedialog.h"
 #include "../softwareupdater.h"
+#include "elementaries/uihelpers.h"
 
 #include <cassert>
 #include <QDialogButtonBox>
@@ -30,9 +31,11 @@
 #include <QPushButton>
 #include <QStandardItemModel>
 #include <QShortcut>
+#include <QScreen>
 #include <QSplitter>
 #include <QThread>
 #include <QTimer>
+#include <QWindow>
 
 #define THEY_LIVE
 
@@ -193,6 +196,8 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
 
   setWindowIcon(Globals::icon());
 
+  onScreenChanged(UIHelpers::findScreenForWidget(this));
+
 #ifdef THEY_LIVE
   setWindowTitle(QString("%1. %2").arg(QString::fromUtf8("\x49\x20\x63\x61\x6d\x65\x20\x68\x65\x72\x65\x20\x74\x6f\x20\x64\x72\x61\x77"
                                                          "\x20\x70\x65\x61\x6b\x73\x20\x61\x6e\x64\x20\x63\x68\x65\x77\x20\x62\x75\x62"
@@ -204,6 +209,8 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
 #else
   setWindowTitle(Globals::VERSION_STRING());
 #endif // THEY_LIVE
+
+  QTimer::singleShot(0, this, &PMNGMainWindow::connectOnScreenChanged); /* This must be done from the event queue after the window is created */
 }
 
 PMNGMainWindow::~PMNGMainWindow()
@@ -219,6 +226,11 @@ void PMNGMainWindow::addConstituentsSignals(const QVector<QString> &constituents
     si->setData(QVariant::fromValue<CalculatorInterface::Signal>({ CalculatorInterface::SignalTypes::CONCENTRATION, a, plotCaption }));
     m_signalTypesModel->appendRow(si);
   }
+}
+
+void PMNGMainWindow::connectOnScreenChanged()
+{
+  connect(this->window()->windowHandle(), &QWindow::screenChanged, this, &PMNGMainWindow::onScreenChanged);
 }
 
 void PMNGMainWindow::connectUpdater(SoftwareUpdater *const updater)
@@ -600,6 +612,21 @@ void PMNGMainWindow::onSave()
     QMessageBox mbox{QMessageBox::Warning, tr("Unable to save system"), ex.what()};
     mbox.exec();
   }
+}
+
+void PMNGMainWindow::onScreenChanged(QScreen *screen)
+{
+
+  if (screen == nullptr)
+    return;
+
+  const int screenHeight = screen->geometry().height();
+
+  if (screenHeight <= 900)
+    m_mainCtrlWidget->setMinimumHeight(0.7 * screenHeight);
+  else
+    m_mainCtrlWidget->setMinimumHeight(900);
+
 }
 
 void PMNGMainWindow::onSetDebuggingOutput()

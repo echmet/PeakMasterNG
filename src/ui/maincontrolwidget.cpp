@@ -21,8 +21,6 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
 {
   ui->setupUi(this);
 
-  this->setMinimumHeight(600);
-
   if (Globals::isZombieOS())
     ui->ql_resistivity->setText(tr("Resistivity (Ohm.m)"));
   else

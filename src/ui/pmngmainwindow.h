@@ -110,6 +110,7 @@ private:
   static QVector<SignalItem> s_defaultSignalItems;
 
 private slots:
+  void connectOnScreenChanged();
   void onAbout();
   void onCalculate();
   void onCompositionChanged();
@@ -123,6 +124,7 @@ private slots:
   void onPlotElectrophoregram();
   void onRunSetupChanged(const bool invalidate);
   void onSave();
+  void onScreenChanged(QScreen *screen);
   void onSetDebuggingOutput();
 
 signals:
