@@ -60,6 +60,7 @@ void IonicCompositionDialog::onAnalyteSelectionChanged(int idx)
   ui->qle_effectiveMobility->setText(DoubleToStringConvertor::convert(m_analytesModel->effectiveMobility()));
 
   ui->ql_miscalculation->setVisible(m_analytesModel->isMiscalculated()); /* This must be called after selectAnalyte() */
+  ui->qtbv_analyteDissociation->resizeColumnsToContents();
 }
 
 void IonicCompositionDialog::onAnalytesDissociationDataUpdated()
@@ -89,6 +90,7 @@ void IonicCompositionDialog::onAnalytesDissociationDataUpdated()
     }
     ui->qle_effectiveMobility->setText(DoubleToStringConvertor::convert(m_analytesModel->effectiveMobility()));
     ui->ql_miscalculation->setVisible(m_analytesModel->isMiscalculated()); /* This must be called after selectAnalyte() */
+    ui->qtbv_analyteDissociation->resizeColumnsToContents();
   } else
     ui->qle_effectiveMobility->setText("");
 }
