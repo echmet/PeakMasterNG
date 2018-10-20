@@ -8,6 +8,8 @@ OperationInProgressDialog::OperationInProgressDialog(const QString &title, QWidg
 {
   ui->setupUi(this);
   setWindowTitle(title);
+
+  ui->qprbar_inProgress->setRange(0, 0);
 }
 
 OperationInProgressDialog::~OperationInProgressDialog()
