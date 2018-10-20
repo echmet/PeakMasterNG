@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>412</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -68,6 +68,16 @@
           </widget>
          </item>
         </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="ql_miscalculation">
+         <property name="text">
+          <string>&lt;span style=&quot;color:red&quot;&gt;&lt;strong&gt;WARNING:&lt;/strong&gt; PeakMaster has detected that dissociation states and effective mobility of this analyte were not calculated correctly. This is a limitation of the current implementation of the computation engine. Eigenmobility of this analyte displayed in the main window is &lt;strong&gt;correct&lt;/strong&gt;.&lt;/span&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="CopiableItemsTableView" name="qtbv_analyteDissociation"/>

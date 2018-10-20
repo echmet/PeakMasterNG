@@ -38,6 +38,8 @@ IonicCompositionDialog::IonicCompositionDialog(QAbstractTableModel *bgeModel, An
 
   ui->qcbox_analyte->setModel(m_analytesNamesModel);
 
+  ui->ql_miscalculation->setVisible(false);
+
   connect(m_analytesModel, &AnalytesDissociationModel::analytesChanged, this, &IonicCompositionDialog::onAnalytesDissociationDataUpdated);
   connect(ui->qcbox_analyte, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, &IonicCompositionDialog::onAnalyteSelectionChanged);
 }
@@ -56,10 +58,14 @@ void IonicCompositionDialog::onAnalyteSelectionChanged(int idx)
   const QString s = m_analytesNamesModel->data(m_analytesNamesModel->index(idx, 0), Qt::UserRole + 1).toString();
   m_analytesModel->selectAnalyte(s.toStdString());
   ui->qle_effectiveMobility->setText(DoubleToStringConvertor::convert(m_analytesModel->effectiveMobility()));
+
+  ui->ql_miscalculation->setVisible(m_analytesModel->isMiscalculated()); /* This must be called after selectAnalyte() */
 }
 
 void IonicCompositionDialog::onAnalytesDissociationDataUpdated()
 {
+  ui->ql_miscalculation->setVisible(false);
+
   const auto &analytes = m_analytesModel->analytes();
   if (m_analytesNamesModel->rowCount() > 0)
     m_lastSelectedAnalyte = ui->qcbox_analyte->currentData(Qt::UserRole + 1).toString();
@@ -82,6 +88,7 @@ void IonicCompositionDialog::onAnalytesDissociationDataUpdated()
       m_analytesModel->selectAnalyte(analytes.front());
     }
     ui->qle_effectiveMobility->setText(DoubleToStringConvertor::convert(m_analytesModel->effectiveMobility()));
+    ui->ql_miscalculation->setVisible(m_analytesModel->isMiscalculated()); /* This must be called after selectAnalyte() */
   } else
     ui->qle_effectiveMobility->setText("");
 }
@@ -114,6 +121,9 @@ QSize IonicCompositionDialog::sizeHint() const
     if (height > scr->availableSize().height())
       height = scr->availableSize().height();
   }
+
+  if (ui->ql_miscalculation->isVisibleTo(this))
+    height += 2 * ui->ql_miscalculation->sizeHint().height();
 
   return QSize{width, height};
 }

@@ -41,6 +41,7 @@ public:
   QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
   double effectiveMobility() const;
   QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+  bool isMiscalculated() const;
   int rowCount(const QModelIndex &parent = QModelIndex{}) const override;
 
   void refreshData(std::map<std::string, DissociatedAnalyte> &&analytes);
@@ -49,6 +50,7 @@ public:
 private:
   std::map<std::string, DissociatedAnalyte> m_analytes;
   std::vector<std::string> m_analyteNames;
+  std::map<std::string, bool> m_miscalculated;
   std::string m_selectedAnalyte;
 
 signals:

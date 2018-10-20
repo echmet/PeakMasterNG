@@ -73,6 +73,16 @@ QVariant AnalytesDissociationModel::headerData(int section, Qt::Orientation orie
   return QString::fromStdString(it->second.ratios.at(section).name);
 }
 
+bool AnalytesDissociationModel::isMiscalculated() const
+{
+  const auto it = m_miscalculated.find(m_selectedAnalyte);
+
+  if (it == m_miscalculated.cend())
+    return false;
+
+  return it->second;
+}
+
 void AnalytesDissociationModel::refreshData(std::map<std::string, DissociatedAnalyte> &&analytes)
 {
   beginResetModel();
@@ -84,6 +94,27 @@ void AnalytesDissociationModel::refreshData(std::map<std::string, DissociatedAna
 
     return keys;
   }();
+
+  m_miscalculated = [this]() {
+    const double TOL{1.0e-9};
+    const double LOW = 1.0 - TOL;
+    const double HIGH = 1.0 + TOL;
+
+    std::map<std::string, bool> miscalc;
+
+    for (const auto &it : m_analytes) {
+      const auto &drs = it.second;
+
+      double sum = 0.0;
+      for (const auto &dr : drs.ratios)
+        sum += dr.fraction;
+
+      miscalc.emplace(it.first, (sum < LOW) || (sum > HIGH));
+    }
+
+    return miscalc;
+  }();
+
   m_selectedAnalyte = "";
   endResetModel();
 
