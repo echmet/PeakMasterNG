@@ -16,7 +16,6 @@ class ConstituentManipulator : public QObject
 
 public:
   explicit ConstituentManipulator(const GDMProxy &proxy, const bool viscosityCorrectionEnabled);
-  ConstituentManipulator(const ConstituentManipulator &other);
   EditConstituentDialog * makeEditDialog(const std::string &name, GDMProxy &proxy, DatabaseProxy &dbProxy);
 
   static gdm::Constituent makeConstituent(const IConstituentEditor *dlg);

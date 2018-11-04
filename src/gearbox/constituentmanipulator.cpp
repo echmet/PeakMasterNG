@@ -41,12 +41,6 @@ ConstituentManipulator::ConstituentManipulator(const GDMProxy &proxy, const bool
 {
 }
 
-ConstituentManipulator::ConstituentManipulator(const ConstituentManipulator &other) :
-  h_proxy{other.h_proxy},
-  m_viscosityCorrectionEnabled{other.m_viscosityCorrectionEnabled}
-{
-}
-
 gdm::Constituent ConstituentManipulator::makeConstituent(const IConstituentEditor *dlg)
 {
   const gdm::ConstituentType type = [](EditConstituentDialog::ConstituentType _type) {
