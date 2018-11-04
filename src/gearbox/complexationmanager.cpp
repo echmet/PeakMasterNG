@@ -86,7 +86,6 @@ Conflict resolveTypeConflict(gdm::GDM::iterator first, gdm::GDM::iterator second
 
   QPushButton *fixFirst = nullptr;
   QPushButton *fixSecond = nullptr;
-  QPushButton *cancel;
 
   auto cpxs = gdm::findComplexations(sampleGDM.composition(), first);
   if (cpxs.size() == 0)
@@ -95,8 +94,6 @@ Conflict resolveTypeConflict(gdm::GDM::iterator first, gdm::GDM::iterator second
   cpxs = gdm::findComplexations(sampleGDM.composition(), second);
   if (cpxs.size() == 0)
     fixSecond = mbox.addButton(makeOptionText(second->name(), otherType(second->type())), QMessageBox::AcceptRole);
-
-  cancel = mbox.addButton(QMessageBox::Cancel);
 
   mbox.exec();
 
