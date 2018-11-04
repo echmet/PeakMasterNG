@@ -16,6 +16,8 @@ void ModifyConstituentChargePushButton::setText(const int charge)
     case ChargeOperation::REMOVE:
       return tr("Remove");
     }
+
+    assert(false);
   }(m_chargeOp);
 
   text += QString{" (%1)"}.arg(charge);

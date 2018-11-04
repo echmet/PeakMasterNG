@@ -1,5 +1,7 @@
 #include "chargecombination.h"
 
+#include <cassert>
+
 bool gdm::operator==(ChargeCombination a, ChargeCombination b) noexcept
 {
     return a.nucleusCharge == b.nucleusCharge
@@ -21,6 +23,8 @@ gdm::ChargeNumber gdm::charge(ChargeCombination obj, ConstituentType type) noexc
     case ConstituentType::Ligand:
         return obj.ligandCharge;
     }
+
+    assert(false);
 }
 
 void gdm::setCharge(ChargeCombination& obj, ConstituentType type, ChargeNumber charge) noexcept
@@ -35,5 +39,7 @@ void gdm::setCharge(ChargeCombination& obj, ConstituentType type, ChargeNumber c
         obj.ligandCharge = charge;
         break;
     }
+
+    assert(false);
 }
 

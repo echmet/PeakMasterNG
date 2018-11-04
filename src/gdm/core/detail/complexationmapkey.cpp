@@ -1,5 +1,7 @@
 #include "complexationmapkey.h"
 
+#include <cassert>
+
 const std::string& gdm::detail::name(const ComplexationMapKey& obj, ConstituentType type) noexcept
 {
     switch(type) {
@@ -10,6 +12,8 @@ const std::string& gdm::detail::name(const ComplexationMapKey& obj, ConstituentT
     case ConstituentType::Ligand:
         return obj.ligandName;
     }
+
+    assert(false);
 }
 
 void gdm::detail::setName(ComplexationMapKey& obj, ConstituentType type, const std::string& name)

@@ -50,6 +50,7 @@ gdm::Constituent ConstituentManipulator::makeConstituent(const IConstituentEdito
       case EditConstituentDialog::ConstituentType::LIGAND:
         return gdm::ConstituentType::Ligand;
     }
+    assert(false);
   }(dlg->type());
   const std::string name = dlg->name().toStdString();
   auto mobilities = dlg->mobilities();
@@ -74,6 +75,7 @@ EditConstituentDialog * ConstituentManipulator::makeEditDialog(const std::string
     case gdm::ConstituentType::Ligand:
       return EditConstituentDialog::ConstituentType::LIGAND;
     }
+    assert(false);
   }(ctuent.type());
 
   const bool allowTypeChange = !proxy.complexes(name);
