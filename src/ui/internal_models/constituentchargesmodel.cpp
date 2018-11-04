@@ -4,7 +4,7 @@
 ConstituentChargesModel::ConstituentChargesModel(QObject *parent)
   : QAbstractTableModel{parent}
 {
-  m_charges.emplace_back(0, 0.0, 0.0);
+  m_charges.push_back({0, 0.0, 0.0});
 }
 
 QVariant ConstituentChargesModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -12,11 +12,9 @@ QVariant ConstituentChargesModel::headerData(int section, Qt::Orientation orient
   if (role != Qt::DisplayRole)
     return QVariant{};
 
-  const size_t usection = static_cast<size_t>(section);
-
   switch (orientation) {
   case Qt::Horizontal:
-    switch (usection) {
+    switch (section) {
     case MOBILITY:
       return QVariant{tr("Mobility")};
     case PKA:
@@ -25,10 +23,10 @@ QVariant ConstituentChargesModel::headerData(int section, Qt::Orientation orient
     return QVariant{};
   case Qt::Vertical:
   {
-    if (m_charges.size() <= usection)
+    if (m_charges.size() <= section)
       return QVariant{};
 
-    return std::get<0>(m_charges.at(usection));
+    return std::get<0>(m_charges.at(section));
   }
   }
 
@@ -66,8 +64,8 @@ QVariant ConstituentChargesModel::data(const QModelIndex &index, int role) const
   if (role != Qt::DisplayRole)
     return QVariant{};
 
-  const size_t urow = static_cast<size_t>(index.row());
-  if (m_charges.size() <= urow)
+  const int row = index.row();
+  if (m_charges.size() <= row)
     return QVariant{};
 
   const int col = index.column();
@@ -76,13 +74,13 @@ QVariant ConstituentChargesModel::data(const QModelIndex &index, int role) const
 
   switch (col) {
   case 0:
-    return std::get<1>(m_charges.at(urow));
+    return std::get<1>(m_charges.at(row));
   case 1:
   {
     if (isBaseCharge(index))
       return "-";
 
-    return std::get<2>(m_charges.at(urow));
+    return std::get<2>(m_charges.at(row));
   }
   }
 
@@ -91,14 +89,14 @@ QVariant ConstituentChargesModel::data(const QModelIndex &index, int role) const
 
 bool ConstituentChargesModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-  const size_t urow = static_cast<size_t>(index.row());
+  const int row = index.row();
 
   if (data(index, role) != value) {
-    if (m_charges.size() <= urow || index.column() > 2)
+    if (m_charges.size() <= row || index.column() > 2)
       return false;
 
     /* Properties pf zero charge are immutable */
-    if (std::get<0>(m_charges.at(urow)) == 0)
+    if (std::get<0>(m_charges.at(row)) == 0)
       return false;
 
     bool isReal;
@@ -108,10 +106,10 @@ bool ConstituentChargesModel::setData(const QModelIndex &index, const QVariant &
 
     switch (index.column()) {
     case 0:
-      std::get<1>(m_charges[urow]) = realVal;
+      std::get<1>(m_charges[row]) = realVal;
       break;
     case 1:
-      std::get<2>(m_charges[urow]) = realVal;
+      std::get<2>(m_charges[row]) = realVal;
       break;
     default:
       return false;
@@ -130,12 +128,12 @@ Qt::ItemFlags ConstituentChargesModel::flags(const QModelIndex &index) const
   if (!index.isValid())
     return Qt::NoItemFlags;
 
-  const size_t urow = static_cast<size_t>(index.row());
+  const int row = index.row();
 
-  if (m_charges.size() <= urow)
+  if (m_charges.size() <= row)
     return Qt::NoItemFlags;
 
-  if (std::get<0>(m_charges.at(urow)) == 0)
+  if (std::get<0>(m_charges.at(row)) == 0)
     return defaultFlags;
   /* Changing pKa value of the base charge makes no sense */
  if (isBaseCharge(index) && index.column() == 1)
@@ -146,15 +144,14 @@ Qt::ItemFlags ConstituentChargesModel::flags(const QModelIndex &index) const
 
 bool ConstituentChargesModel::insertRows(int row, int count, const QModelIndex &parent)
 {
-  const size_t urow = static_cast<size_t>(row);
-  if (m_charges.size() < urow)
+  if (m_charges.size() < row)
     return false;
 
   beginInsertRows(parent, row, row + count - 1);
-  const int fromCharge = [urow, this]() {
-    if (m_charges.size() == urow)
-      return std::get<0>(m_charges.at(urow - 1));
-    return std::get<0>(m_charges.at(urow));
+  const int fromCharge = [row, this]() {
+    if (m_charges.size() == row)
+      return std::get<0>(m_charges.at(row - 1));
+    return std::get<0>(m_charges.at(row));
   }();
   const int toCharge = [row, count, fromCharge]() {
     if (row == 0)
@@ -166,10 +163,10 @@ bool ConstituentChargesModel::insertRows(int row, int count, const QModelIndex &
   try {
     if (fromCharge < toCharge) {
       for (int charge = fromCharge + 1; charge <= toCharge; charge++)
-        m_charges.emplace_back(charge, 0.0, 0.0);
+        m_charges.push_back({charge, 0.0, 0.0});
     } else {
       for (int charge = fromCharge - 1; charge >= toCharge; charge--)
-        m_charges.emplace(m_charges.begin(), charge, 0.0, 0.0);
+        m_charges.push_front({charge, 0.0, 0.0});
     }
   } catch (std::bad_alloc &) {
     m_charges = backup;
@@ -217,16 +214,14 @@ bool ConstituentChargesModel::removeRows(int row, int count, const QModelIndex &
   assert(row >= 0);
   assert(count > 0);
 
-  const size_t urow = static_cast<size_t>(row);
-
-  if (m_charges.size() <= urow)
+  if (m_charges.size() <= row)
     return false;
   if (m_charges.size() == 1)
     return false;
 
   beginRemoveRows(parent, row, row + count - 1);
-  std::vector<ChargeBlock>::const_iterator from = m_charges.cbegin() + row;
-  std::vector<ChargeBlock>::const_iterator to = from + count;
+  QVector<ChargeBlock>::iterator from = m_charges.begin() + row;
+  QVector<ChargeBlock>::iterator to = from + count;
 
   m_charges.erase(from, to);
   endRemoveRows();
@@ -248,7 +243,7 @@ void ConstituentChargesModel::refreshData(const std::map<int, double> &pKas, con
     const auto &pKa = pKas.at(charge);
     const auto &mobility = mobilities.at(charge);
 
-    m_charges.emplace_back(charge, mobility, pKa);
+    m_charges.push_back({charge, mobility, pKa});
   }
 
   endResetModel();

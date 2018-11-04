@@ -3,7 +3,7 @@
 
 #include <QAbstractTableModel>
 #include <tuple>
-#include <vector>
+#include <QVector>
 
 class ConstituentChargesModel : public QAbstractTableModel
 {
@@ -50,7 +50,7 @@ public:
 private:
   bool isBaseCharge(const QModelIndex &index) const;
 
-  std::vector<ChargeBlock> m_charges;
+  QVector<ChargeBlock> m_charges;
 };
 
 #endif // CONSTITUENTCHARGESMODEL_H
