@@ -5,6 +5,8 @@
 #include <QKeyEvent>
 #include <QMenu>
 
+#include "../gearbox/doubletostringconvertor.h"
+
 CopiableItemsTableView::CopiableItemsTableView(QWidget *parent) :
   QTableView{parent}
 {
@@ -43,12 +45,21 @@ void CopiableItemsTableView::selectionToClipboard(const QModelIndexList &indexes
   if (indexes.empty())
     return;
 
-  QString out;
-  for (const auto &idx : indexes)
-    out += model()->data(idx).toString() + ";";
+  auto varToStr = [](const QVariant &var) {
+    bool ok;
+    var.toDouble(&ok);
+    if (ok)
+      return DoubleToStringConvertor::convert(var.toDouble());
+    return var.toString();
+  };
 
-  out.chop(1); /* Yes, this is nasty and I care about as much
-                 as Rob Flynn about his Trump-voting fans */
+  QString out;
+  for (int ni = 0; ni < indexes.size() - 1; ni++) {
+    const auto &idx = indexes.at(ni);
+    out += varToStr(idx.data())  + ";";
+  }
+
+  out += varToStr(indexes.back().data());
 
   QApplication::clipboard()->setText(out);
 }
