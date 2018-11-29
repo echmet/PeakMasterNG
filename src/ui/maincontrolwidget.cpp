@@ -23,7 +23,7 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
   ui->setupUi(this);
 
   auto eofcbox = ui->qcbox_eof;
-  ui->qle_eofValue->setProperty("ADDITIONAL_VALIDATORS",
+  ui->qle_eofValue->setProperty(AdditionalFloatingValidator::PROPERTY_NAME,
                                 QVariant::fromValue<AdditionalFloatingValidatorVec>({
                                   AdditionalFloatingValidator{[eofcbox](const double d) {
                                       const auto data = eofcbox->currentData();

@@ -55,6 +55,21 @@ private:
   bool &h_val;
 };
 
+class InvalidEOFMarkerTime : public std::runtime_error {
+public:
+  InvalidEOFMarkerTime() : std::runtime_error{"EOF marker time is invalid"}
+  {}
+};
+
+static
+void displayInvalidEOFMsgBox()
+{
+    QMessageBox mbox{QMessageBox::Critical, QObject::tr("Calculation failed"),
+                     QObject::tr("Value of EOF marker must be positive.")};
+
+    mbox.exec();
+}
+
 static
 void inputToEOFValueType(double &EOFValue, CalculatorInterface::EOFValueType &EOFvt, const double inValue, const MainControlWidget::EOF_Type type)
 {
@@ -62,6 +77,8 @@ void inputToEOFValueType(double &EOFValue, CalculatorInterface::EOFValueType &EO
     EOFValue = inValue;
     EOFvt = CalculatorInterface::EOFValueType::MOBILITY;
   } else if (type == MainControlWidget::EOF_MARKER_TIME) {
+    if (inValue <= 0.0)
+      throw InvalidEOFMarkerTime{};
     EOFValue = inValue * 60.0;
     EOFvt = CalculatorInterface::EOFValueType::MARKER_TIME;
   } else {
@@ -300,7 +317,14 @@ void PMNGMainWindow::onCalculate()
 
   const QVariant lastSelectedSignal = resetSignalItems();
 
-  const auto plotInfo = makePlottingInfo();
+  PlottingInfo plotInfo{};
+  try {
+    plotInfo = makePlottingInfo();
+  } catch (const InvalidEOFMarkerTime &)  {
+    displayInvalidEOFMsgBox();
+    return;
+  }
+
   const MainControlWidget::RunSetup rs = m_mainCtrlWidget->runSetup();
   h_scompWidget->commit();
 
@@ -389,6 +413,7 @@ void PMNGMainWindow::onExportElectrophoregramAsCSV()
   try {
     const MainControlWidget::RunSetup rs = m_mainCtrlWidget->runSetup();
     const auto plotInfo = makePlottingInfo();
+
     const auto tdzi =  m_calcIface.timeDependentZoneInformation(rs.totalLength, rs.detectorPosition, rs.drivingVoltage,
                                                                 plotInfo.EOFValue, plotInfo.EOFvt, rs.positiveVoltage,
                                                                 plotInfo.injZoneLength, plotInfo.plotCutoff);
@@ -398,6 +423,8 @@ void PMNGMainWindow::onExportElectrophoregramAsCSV()
   } catch (CalculatorInterfaceException &ex) {
     QMessageBox mbox{QMessageBox::Critical, tr("Failed to export electrophoregram"), ex.what()};
     mbox.exec();
+  } catch (const InvalidEOFMarkerTime &) {
+    displayInvalidEOFMsgBox();
   }
 }
 
@@ -525,6 +552,8 @@ void PMNGMainWindow::onPlotElectrophoregram()
   } catch (CalculatorInterfaceException &ex) {
     QMessageBox mbox{QMessageBox::Critical, tr("Failed to plot electrophoregram"), ex.what()};
     mbox.exec();
+  } catch (const InvalidEOFMarkerTime &) {
+    /* Do not yell at the user unnecessarily */
   }
 }
 
@@ -538,10 +567,10 @@ void PMNGMainWindow::onRunSetupChanged(const bool invalidate)
   if (invalidate)
     onCompositionChanged();
   else {
-    const auto plotInfo = makePlottingInfo();
-
-    const MainControlWidget::RunSetup rs = m_mainCtrlWidget->runSetup();
     try {
+      const auto plotInfo = makePlottingInfo();
+      const MainControlWidget::RunSetup rs = m_mainCtrlWidget->runSetup();
+
       EFGDisplayer displayer = makeMainWindowEFGDisplayer();
       m_calcIface.recalculateTimes(rs.totalLength, rs.detectorPosition,
                                    rs.drivingVoltage,
@@ -558,6 +587,8 @@ void PMNGMainWindow::onRunSetupChanged(const bool invalidate)
     } catch (const CalculatorInterfaceException &ex) {
       QMessageBox mbox{QMessageBox::Critical, tr("Failed to plot electrophoregram"), ex.what()};
       mbox.exec();
+    } catch (const InvalidEOFMarkerTime &) {
+      return; /* Do not yell at the user unnecessarily */
     }
   }
 }
