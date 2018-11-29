@@ -12,10 +12,24 @@ AdditionalFloatingValidator::AdditionalFloatingValidator() :
 {
 }
 
-AdditionalFloatingValidator::AdditionalFloatingValidator(ValidFunc &&func) :
+AdditionalFloatingValidator::AdditionalFloatingValidator(const AdditionalFloatingValidator &other) :
+  m_valid{other.m_valid},
+  m_func{other.m_func}
+{
+}
+
+AdditionalFloatingValidator::AdditionalFloatingValidator(ValidFunc &&func) noexcept :
   m_valid{true},
   m_func(std::move(func))
 {
+}
+
+AdditionalFloatingValidator & AdditionalFloatingValidator::operator=(AdditionalFloatingValidator &&other) noexcept
+{
+  const_cast<bool&>(m_valid) = other.m_valid;
+  const_cast<ValidFunc&>(m_func) = std::move(other.m_func);
+
+  return *this;
 }
 
 bool AdditionalFloatingValidator::additionalValidatorsOk(const QObject *obj, const double dv)
@@ -26,7 +40,7 @@ bool AdditionalFloatingValidator::additionalValidatorsOk(const QObject *obj, con
       auto validators = prop.value<AdditionalFloatingValidatorVec>();
 
       for (auto &&v : validators) {
-        if (!v.validate(dv))
+        if (!v->validate(dv))
           return false;
       }
     }

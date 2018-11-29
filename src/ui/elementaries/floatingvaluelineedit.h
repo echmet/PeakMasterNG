@@ -11,8 +11,10 @@ class FloatingValueLineEdit : public QLineEdit, public INumberFormatChangeable
   Q_INTERFACES(INumberFormatChangeable)
 public:
   FloatingValueLineEdit(QWidget *parent = nullptr);
-  void forceValidate();
   void onNumberFormatChanged(const QLocale *oldLocale) override;
+
+public slots:
+  void revalidate();
 
 private:
   void setNumberText(const double dv);

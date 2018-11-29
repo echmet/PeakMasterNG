@@ -4,7 +4,9 @@
 #include "../mappers/floatmappermodel.h"
 #include "../gearbox/floatingvaluedelegate.h"
 #include "../gearbox/results_models/resultsmodels.h"
+#include "../gearbox/additionalfloatingvalidator.h"
 
+#include <memory>
 #include <QWidget>
 
 namespace Ui {
@@ -84,6 +86,9 @@ private:
 
   FloatingValueDelegate m_fltDelegateRunSetup;
   FloatingValueDelegate m_fltDelegateBackgroundProps;
+
+  std::shared_ptr<AdditionalFloatingValidator> m_mustBePositiveAV;
+
 
 private slots:
   void onBGEIonicCompositionClicked();

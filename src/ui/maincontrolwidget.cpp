@@ -8,7 +8,6 @@
 #include "../globals.h"
 
 #include "../gearbox/results_models/eigenzonedetailsmodel.h"
-#include "../gearbox/additionalfloatingvalidator.h"
 
 #include <QDataWidgetMapper>
 
@@ -23,20 +22,33 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
   ui->setupUi(this);
 
   auto eofcbox = ui->qcbox_eof;
+
+  m_mustBePositiveAV = std::make_shared<AdditionalFloatingValidator>([](const double d) { return d > 0.0; });
+
   ui->qle_eofValue->setProperty(AdditionalFloatingValidator::PROPERTY_NAME,
                                 QVariant::fromValue<AdditionalFloatingValidatorVec>({
-                                  AdditionalFloatingValidator{[eofcbox](const double d) {
-                                      const auto data = eofcbox->currentData();
-                                      if (!data.canConvert<EOF_Type>())
-                                        return true;
-                                      const auto val = data.value<EOF_Type>();
-
-                                      if (val == EOF_MARKER_TIME)
-                                        return d > 0.0;
+                                  std::make_shared<AdditionalFloatingValidator>([eofcbox](const double d) {
+                                    const auto data = eofcbox->currentData();
+                                    if (!data.canConvert<EOF_Type>())
                                       return true;
-                                    }
-                                  }
-                                }));
+                                    const auto val = data.value<EOF_Type>();
+
+                                    if (val == EOF_MARKER_TIME)
+                                      return d > 0.0;
+                                    return true;
+                                  })}));
+
+  ui->qle_totalLength->setProperty(AdditionalFloatingValidator::PROPERTY_NAME,
+                                   QVariant::fromValue<AdditionalFloatingValidatorVec>({ m_mustBePositiveAV }));
+  ui->qle_detectorPosition->setProperty(AdditionalFloatingValidator::PROPERTY_NAME,
+                                        QVariant::fromValue<AdditionalFloatingValidatorVec>(
+                                          { m_mustBePositiveAV,
+                                            std::make_shared<AdditionalFloatingValidator>([this](const double d) -> bool {
+                                                const double tl = this->m_runSetupMappedData.at(m_runSetupMapperModel.indexFromItem(RunSetupItems::TOTAL_LENGTH));
+                                                return tl >= d;
+                                              }
+                                            )
+                                          }));
 
   if (Globals::isZombieOS())
     ui->ql_resistivity->setText(tr("Resistivity (Ohm.m)"));
@@ -65,6 +77,8 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
   ezdModel->displayDeltas(false);
   m_ezDetailsDlg = new EigenzoneDetailsDialog{m_eigenzoneDetailsModel, false, this};
   connect(m_ezDetailsDlg, &EigenzoneDetailsDialog::displayDeltasChanged, ezdModel, &EigenzoneDetailsModel::displayDeltas);
+
+  connect(ui->qle_totalLength, &FloatingValueLineEdit::valueChanged, ui->qle_detectorPosition, &FloatingValueLineEdit::revalidate);
 }
 
 MainControlWidget::~MainControlWidget()
@@ -152,7 +166,7 @@ void MainControlWidget::onEOFCurrentIndexChanged(const int idx)
   ui->ql_eofValue->setHidden(hide);
   ui->qle_eofValue->setHidden(hide);
 
-  ui->qle_eofValue->forceValidate();
+  ui->qle_eofValue->revalidate();
 
   switch (t) {
   case EOF_NONE:

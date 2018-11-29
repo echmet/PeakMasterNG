@@ -2,6 +2,7 @@
 #define ADDITIONALVALIDATOR_H
 
 #include <functional>
+#include <memory>
 #include <QMetaType>
 #include <QString>
 #include <QVariant>
@@ -17,8 +18,10 @@ public:
   using ValidFunc = std::function<bool (const double)>;
 
   AdditionalFloatingValidator();
-  AdditionalFloatingValidator(ValidFunc &&func);
+  AdditionalFloatingValidator(const AdditionalFloatingValidator &other);
+  AdditionalFloatingValidator(ValidFunc &&func) noexcept;
   virtual ~AdditionalFloatingValidator() = default;
+  AdditionalFloatingValidator & operator=(AdditionalFloatingValidator &&other) noexcept;
 
   virtual bool validate(const double d);
 
@@ -31,7 +34,7 @@ private:
   const ValidFunc m_func;
 
 };
-using AdditionalFloatingValidatorVec = QVector<AdditionalFloatingValidator>;
+using AdditionalFloatingValidatorVec = QVector<std::shared_ptr<AdditionalFloatingValidator>>;
 
 Q_DECLARE_METATYPE(AdditionalFloatingValidator);
 Q_DECLARE_METATYPE(AdditionalFloatingValidatorVec);

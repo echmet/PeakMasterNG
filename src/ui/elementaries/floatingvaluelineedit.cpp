@@ -32,11 +32,6 @@ void FloatingValueLineEdit::ensureSanity(QString text)
   }
 }
 
-void FloatingValueLineEdit::forceValidate()
-{
-  ensureSanity(text());
-}
-
 void FloatingValueLineEdit::onEditingFinished()
 {
   bool ok;
@@ -57,6 +52,11 @@ void FloatingValueLineEdit::onNumberFormatChanged(const QLocale *oldLocale)
   dv = oldLocale->toDouble(this->text(), &ok);
   if (ok)
     setNumberText(dv);
+}
+
+void FloatingValueLineEdit::revalidate()
+{
+  ensureSanity(text());
 }
 
 void FloatingValueLineEdit::setNumberText(const double dv)
