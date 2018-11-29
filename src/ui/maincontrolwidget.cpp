@@ -49,6 +49,8 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
                                               }
                                             )
                                           }));
+  ui->qle_drivingVoltage->setProperty(AdditionalFloatingValidator::PROPERTY_NAME,
+                                      QVariant::fromValue<AdditionalFloatingValidatorVec>({ m_mustBePositiveAV }));
 
   if (Globals::isZombieOS())
     ui->ql_resistivity->setText(tr("Resistivity (Ohm.m)"));
