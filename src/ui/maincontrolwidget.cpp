@@ -115,6 +115,8 @@ MainControlWidget::EOF_Type MainControlWidget::EOFInputType() const
 
 double MainControlWidget::EOFValue() const
 {
+  ui->qle_eofValue->clearFocus();
+
   return m_runSetupMappedData.at(m_runSetupMapperModel.indexFromItem(RunSetupItems::EOF_VALUE));
 }
 
@@ -175,6 +177,7 @@ MainControlWidget::RunSetup MainControlWidget::runSetup() const
   ui->qle_totalLength->clearFocus();
   ui->qle_detectorPosition->clearFocus();
   ui->qle_drivingVoltage->clearFocus();
+  ui->qle_eofValue->clearFocus();
 
   bool positiveVoltage = (ui->qcbox_polarity->currentData().value<Polarity>() == POLARITY_POSITIVE);
   const auto corrections = m_nonidealityCorrectionsDlg->state();
