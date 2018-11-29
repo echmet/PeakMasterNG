@@ -8,6 +8,7 @@
 #include "../globals.h"
 
 #include "../gearbox/results_models/eigenzonedetailsmodel.h"
+#include "../gearbox/additionalfloatingvalidator.h"
 
 #include <QDataWidgetMapper>
 
@@ -20,6 +21,22 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
   m_eigenzoneDetailsModel{resultsModels.eigenzoneDetailsModel()}
 {
   ui->setupUi(this);
+
+  auto eofcbox = ui->qcbox_eof;
+  ui->qle_eofValue->setProperty("ADDITIONAL_VALIDATORS",
+                                QVariant::fromValue<AdditionalFloatingValidatorVec>({
+                                  AdditionalFloatingValidator{[eofcbox](const double d) {
+                                      const auto data = eofcbox->currentData();
+                                      if (!data.canConvert<EOF_Type>())
+                                        return true;
+                                      const auto val = data.value<EOF_Type>();
+
+                                      if (val == EOF_MARKER_TIME)
+                                        return d > 0.0;
+                                      return true;
+                                    }
+                                  }
+                                }));
 
   if (Globals::isZombieOS())
     ui->ql_resistivity->setText(tr("Resistivity (Ohm.m)"));
@@ -60,7 +77,7 @@ void MainControlWidget::initBackgroundPropsModel(BackgroundPropertiesMapping::Ma
   m_backgroundPropsMapper = new QDataWidgetMapper{this};
   m_backgroundPropsMapper->setModel(model);
 
-  m_backgroundPropsMapper->setItemDelegate(&m_fltDelegate);
+  m_backgroundPropsMapper->setItemDelegate(&m_fltDelegateBackgroundProps);
 
   m_backgroundPropsMapper->addMapping(ui->qle_bufferCapacity, model->indexFromItem(BackgroundPropertiesMapping::Items::BUFFER_CAPACITY));
   m_backgroundPropsMapper->addMapping(ui->qle_conductivity, model->indexFromItem(BackgroundPropertiesMapping::Items::CONDUCTIVITY));
@@ -85,7 +102,7 @@ void MainControlWidget::initRunSetupModel()
   m_runSetupMapperModel.setUnderlyingData(&m_runSetupMappedData);
 
   m_runSetupMapper->setModel(&m_runSetupMapperModel);
-  m_runSetupMapper->setItemDelegate(&m_fltDelegate);
+  m_runSetupMapper->setItemDelegate(&m_fltDelegateRunSetup);
   m_runSetupMapper->addMapping(ui->qle_totalLength, m_runSetupMapperModel.indexFromItem(RunSetupItems::TOTAL_LENGTH));
   m_runSetupMapper->addMapping(ui->qle_detectorPosition, m_runSetupMapperModel.indexFromItem(RunSetupItems::DETECTOR_POSITION));
   m_runSetupMapper->addMapping(ui->qle_drivingVoltage, m_runSetupMapperModel.indexFromItem(RunSetupItems::DRIVING_VOLTAGE));
@@ -134,6 +151,8 @@ void MainControlWidget::onEOFCurrentIndexChanged(const int idx)
 
   ui->ql_eofValue->setHidden(hide);
   ui->qle_eofValue->setHidden(hide);
+
+  ui->qle_eofValue->forceValidate();
 
   switch (t) {
   case EOF_NONE:

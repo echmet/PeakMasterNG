@@ -1,7 +1,10 @@
 #include "floatingvaluedelegate.h"
 #include "doubletostringconvertor.h"
+#include "additionalfloatingvalidator.h"
 #include <QLineEdit>
 #include <QEvent>
+
+#include <QDebug>
 
 FloatingValueDelegate::FloatingValueDelegate(QObject *parent) : QItemDelegate(parent)
 {
@@ -88,8 +91,13 @@ void FloatingValueDelegate::onTextChanged(const QString &)
 
   QString s(lineEdit->text());
   s = s.replace(QChar::Nbsp, QString(""));
-  DoubleToStringConvertor::back(s, &ok);
-  if (ok || lineEdit->text().length() == 0)
+  const double dv = DoubleToStringConvertor::back(s, &ok);
+  ok = ok || lineEdit->text().length() == 0;
+
+  if (ok)
+    ok = AdditionalFloatingValidator::additionalValidatorsOk(lineEdit, dv);
+
+  if (ok)
     lineEdit->setPalette(QPalette());
   else {
     QPalette palette = lineEdit->palette();

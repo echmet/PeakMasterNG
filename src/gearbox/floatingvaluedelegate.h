@@ -10,13 +10,11 @@ class FloatingValueDelegate : public QItemDelegate
 public:
   FloatingValueDelegate(QObject *parent = nullptr);
 
-  QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+  virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
   void forceCommit();
-  void setEditorData(QWidget *editor, const QModelIndex &index) const;
-  void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
-  void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-
-private:
+  virtual void setEditorData(QWidget *editor, const QModelIndex &index) const override;
+  virtual void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const override;
+  virtual void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
 private slots:
   void onTextChanged(const QString &);

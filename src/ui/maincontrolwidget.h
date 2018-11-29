@@ -82,7 +82,8 @@ private:
   IonicCompositionDialog *m_bgeIonicCompDlg;
   NonidealityCorrectionsDialog *m_nonidealityCorrectionsDlg;
 
-  FloatingValueDelegate m_fltDelegate;
+  FloatingValueDelegate m_fltDelegateRunSetup;
+  FloatingValueDelegate m_fltDelegateBackgroundProps;
 
 private slots:
   void onBGEIonicCompositionClicked();

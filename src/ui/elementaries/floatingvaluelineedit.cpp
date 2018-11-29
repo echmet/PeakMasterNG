@@ -1,4 +1,5 @@
 #include "../../gearbox/doubletostringconvertor.h"
+#include "../../gearbox/additionalfloatingvalidator.h"
 #include "floatingvaluelineedit.h"
 #include <QLocale>
 
@@ -18,14 +19,22 @@ void FloatingValueLineEdit::ensureSanity(QString text)
 
   QString _text = text.replace(QChar::Nbsp, QString(""), Qt::CaseInsensitive);
 
-  DoubleToStringConvertor::back(text, &ok);
+  const double dv = DoubleToStringConvertor::back(text, &ok);
   if (ok)
-    this->setPalette(QPalette());
+    ok = AdditionalFloatingValidator::additionalValidatorsOk(this, dv);
+
+  if (ok)
+      this->setPalette(QPalette());
   else {
     QPalette palette = this->palette();
     palette.setColor(QPalette::Base, Qt::red);
     this->setPalette(palette);
   }
+}
+
+void FloatingValueLineEdit::forceValidate()
+{
+  ensureSanity(text());
 }
 
 void FloatingValueLineEdit::onEditingFinished()

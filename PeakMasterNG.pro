@@ -136,7 +136,8 @@ SOURCES += \
     src/ui/softwareupdatewidget.cpp \
     src/softwareupdater.cpp \
     src/softwareupdateresult.cpp \
-    src/ui/autoupdatecheckdialog.cpp
+    src/ui/autoupdatecheckdialog.cpp \
+    src/gearbox/additionalfloatingvalidator.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -248,7 +249,8 @@ HEADERS += \
     src/softwareupdater.h \
     src/softwareupdateresult.h \
     src/ui/autoupdatecheckdialog.h \
-    src/gearbox/results_models/backgroundpropertiesmapping.h
+    src/gearbox/results_models/backgroundpropertiesmapping.h \
+    src/gearbox/additionalfloatingvalidator.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \
