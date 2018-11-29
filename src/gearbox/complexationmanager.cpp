@@ -95,6 +95,8 @@ Conflict resolveTypeConflict(gdm::GDM::iterator first, gdm::GDM::iterator second
   if (cpxs.size() == 0)
     fixSecond = mbox.addButton(makeOptionText(second->name(), otherType(second->type())), QMessageBox::AcceptRole);
 
+  mbox.addButton(QMessageBox::Cancel);
+
   mbox.exec();
 
   if (static_cast<void *>(mbox.clickedButton()) == fixFirst) {
