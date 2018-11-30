@@ -154,6 +154,7 @@ void ToggleTracepointsDialog::setupTracepointList(const std::vector<CalculatorIn
   connect(ui->qcb_enableTracing, &QCheckBox::toggled, this, &ToggleTracepointsDialog::onEnableTracingToggled);
   connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &ToggleTracepointsDialog::onAccepted);
   connect(ui->qle_filter, &QLineEdit::textChanged, this, &ToggleTracepointsDialog::onFilterTextChanged);
+  connect(ui->qle_outputFile, &QLineEdit::editingFinished, [this]() { m_outputFilePath = ui->qle_outputFile->text();});
 }
 
 std::vector<CalculatorInterface::TracepointState> ToggleTracepointsDialog::tracepointStates() const
