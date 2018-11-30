@@ -74,6 +74,7 @@ void ToggleTracepointsDialog::onEnableAllClicked()
 void ToggleTracepointsDialog::onEnableTracingToggled(const bool enabled)
 {
   ui->qle_outputFile->setEnabled(enabled);
+  m_tracepointsWidget->setEnabled(enabled);
 }
 
 void ToggleTracepointsDialog::onFilterTextChanged(const QString &text)
