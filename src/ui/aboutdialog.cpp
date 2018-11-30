@@ -18,9 +18,9 @@ AboutDialog::AboutDialog(QWidget *parent) :
   ui->ql_cimecLink->setText(QString{"<a href=\"%1\">%1</a>"}.arg(Globals::CIMEC_WEB_LINK));
   ui->ql_echmetLink->setText(QString("<a href=\"%1\">%1</a>").arg(Globals::ECHMET_WEB_LINK.toHtmlEscaped()));
   ui->ql_thankYouQt->setText(QString("Based on Qt libraries. Version in use: %1 (%2 %3)")
-                                     .arg(QT_VERSION_STR)
-                                     .arg(QGuiApplication::platformName())
-                                     .arg(QSysInfo::buildCpuArchitecture()));
+                                     .arg(qVersion(),
+                                          QGuiApplication::platformName(),
+                                          QSysInfo::buildCpuArchitecture()));
 
   {
     m_echmetPix = QPixmap{":/images/res/ECHMET_logo_velke.png"}.scaledToWidth(100 * scaleFactor());
