@@ -95,7 +95,7 @@
      <item>
       <widget class="QPushButton" name="qpb_chooseOutputFile">
        <property name="text">
-        <string>Choose</string>
+        <string>Browse</string>
        </property>
       </widget>
      </item>
