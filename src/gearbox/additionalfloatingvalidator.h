@@ -36,9 +36,7 @@ private:
 };
 using AdditionalFloatingValidatorVec = QVector<std::shared_ptr<AdditionalFloatingValidator>>;
 
-Q_DECLARE_METATYPE(AdditionalFloatingValidator);
-Q_DECLARE_METATYPE(AdditionalFloatingValidatorVec);
-
-
+Q_DECLARE_METATYPE(AdditionalFloatingValidator)
+Q_DECLARE_METATYPE(AdditionalFloatingValidatorVec)
 
 #endif // ADDITIONALVALIDATOR_H
