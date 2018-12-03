@@ -156,7 +156,7 @@ double MainControlWidget::EOFValue() const
 void MainControlWidget::onBGEIonicCompositionClicked()
 {
   m_bgeIonicCompDlg->resize(m_bgeIonicCompDlg->sizeHint());
-  m_bgeIonicCompDlg->exec();
+  m_bgeIonicCompDlg->show();
 }
 
 void MainControlWidget::onEOFCurrentIndexChanged(const int idx)
@@ -203,7 +203,7 @@ void MainControlWidget::onRunSetupChangedInvalidate()
 void MainControlWidget::onShowEigenzoneDetailsClicked()
 {
   m_ezDetailsDlg->resize(m_ezDetailsDlg->sizeHint());
-  m_ezDetailsDlg->exec();
+  m_ezDetailsDlg->show();
 }
 
 MainControlWidget::RunSetup MainControlWidget::runSetup() const
