@@ -250,7 +250,8 @@ HEADERS += \
     src/softwareupdateresult.h \
     src/ui/autoupdatecheckdialog.h \
     src/gearbox/results_models/backgroundpropertiesmapping.h \
-    src/gearbox/additionalfloatingvalidator.h
+    src/gearbox/additionalfloatingvalidator.h \
+    src/msvc_hacks.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \

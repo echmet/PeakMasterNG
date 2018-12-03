@@ -4,8 +4,8 @@
 #include "../gdm/core/common/gdmexcept.h"
 #include "../gdm/core/constituent/physicalproperties.h"
 #include "gdmproxy.h"
+#include "../msvc_hacks.h"
 
-#include <cassert>
 #include <QMessageBox>
 
 bool ConstituentManipulator::validateConstituentProperties(const IConstituentEditor *dlg)
@@ -50,7 +50,7 @@ gdm::Constituent ConstituentManipulator::makeConstituent(const IConstituentEdito
       case EditConstituentDialog::ConstituentType::LIGAND:
         return gdm::ConstituentType::Ligand;
     }
-    assert(false);
+    IMPOSSIBLE_PATH;
   }(dlg->type());
   const std::string name = dlg->name().toStdString();
   auto mobilities = dlg->mobilities();
@@ -75,7 +75,7 @@ EditConstituentDialog * ConstituentManipulator::makeEditDialog(const std::string
     case gdm::ConstituentType::Ligand:
       return EditConstituentDialog::ConstituentType::LIGAND;
     }
-    assert(false);
+    IMPOSSIBLE_PATH;
   }(ctuent.type());
 
   const bool allowTypeChange = !proxy.complexes(name);

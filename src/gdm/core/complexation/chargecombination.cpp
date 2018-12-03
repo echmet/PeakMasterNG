@@ -1,6 +1,7 @@
 #include "chargecombination.h"
 
 #include <cassert>
+#include "../../../msvc_hacks.h"
 
 bool gdm::operator==(ChargeCombination a, ChargeCombination b) noexcept
 {
@@ -24,7 +25,7 @@ gdm::ChargeNumber gdm::charge(ChargeCombination obj, ConstituentType type) noexc
         return obj.ligandCharge;
     }
 
-    assert(false);
+    IMPOSSIBLE_PATH;
 }
 
 void gdm::setCharge(ChargeCombination& obj, ConstituentType type, ChargeNumber charge) noexcept
@@ -40,6 +41,6 @@ void gdm::setCharge(ChargeCombination& obj, ConstituentType type, ChargeNumber c
         break;
     }
 
-    assert(false);
+    IMPOSSIBLE_PATH;
 }
 

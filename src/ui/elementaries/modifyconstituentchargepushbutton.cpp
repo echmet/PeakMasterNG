@@ -1,6 +1,7 @@
 #include "modifyconstituentchargepushbutton.h"
 #include <stdexcept>
 #include <cassert>
+#include "../../msvc_hacks.h"
 
 ModifyConstituentChargePushButton::ModifyConstituentChargePushButton(const ChargeOperation op, QWidget *parent) :
   QPushButton{parent},
@@ -18,7 +19,7 @@ void ModifyConstituentChargePushButton::setText(const int charge)
       return tr("Remove");
     }
 
-    assert(false);
+    IMPOSSIBLE_PATH;
   }(m_chargeOp);
 
   text += QString{" (%1)"}.arg(charge);

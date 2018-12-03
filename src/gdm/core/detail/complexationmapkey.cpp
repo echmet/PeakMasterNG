@@ -1,6 +1,7 @@
 #include "complexationmapkey.h"
 
 #include <cassert>
+#include "../../../msvc_hacks.h"
 
 const std::string& gdm::detail::name(const ComplexationMapKey& obj, ConstituentType type) noexcept
 {
@@ -11,9 +12,10 @@ const std::string& gdm::detail::name(const ComplexationMapKey& obj, ConstituentT
 
     case ConstituentType::Ligand:
         return obj.ligandName;
+
     }
 
-    assert(false);
+    IMPOSSIBLE_PATH;
 }
 
 void gdm::detail::setName(ComplexationMapKey& obj, ConstituentType type, const std::string& name)
@@ -28,6 +30,7 @@ void gdm::detail::setName(ComplexationMapKey& obj, ConstituentType type, const s
         obj.ligandName = name;
         break;
     }
+    IMPOSSIBLE_PATH;
 }
 
 bool gdm::detail::operator==(const gdm::detail::ComplexationMapKey& a, const gdm::detail::ComplexationMapKey& b) noexcept
