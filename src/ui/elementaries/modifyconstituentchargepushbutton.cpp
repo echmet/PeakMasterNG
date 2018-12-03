@@ -1,5 +1,6 @@
 #include "modifyconstituentchargepushbutton.h"
 #include <stdexcept>
+#include <cassert>
 
 ModifyConstituentChargePushButton::ModifyConstituentChargePushButton(const ChargeOperation op, QWidget *parent) :
   QPushButton{parent},
