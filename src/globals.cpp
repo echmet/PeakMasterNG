@@ -5,6 +5,7 @@
 
 const QString Globals::CIMEC_WEB_LINK{"http://www.cimec.org.ar/twiki/bin/view/Cimec/"};
 const QString Globals::ECHMET_WEB_LINK{"http://echmet.natur.cuni.cz"};
+const QString Globals::ORG_DOMAIN{"echmet.natur.cuni.cz"};
 const QString Globals::ORG_NAME{"ECHMET"};
 const QString Globals::SOFTWARE_NAME{"PeakMaster"};
 const int Globals::VERSION_MAJ = 6;

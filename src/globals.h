@@ -27,6 +27,7 @@ public:
 
   static const QString CIMEC_WEB_LINK;
   static const QString ECHMET_WEB_LINK;
+  static const QString ORG_DOMAIN;
   static const QString ORG_NAME;
   static const QString SOFTWARE_NAME;
   static const int VERSION_MAJ;

@@ -4,6 +4,7 @@
 #include "ui/systemcompositionwidget.h"
 #include "pmngcrashhandler.h"
 #include "softwareupdater.h"
+#include "globals.h"
 
 #include <QApplication>
 
@@ -12,6 +13,12 @@ void registerMetatypes();
 int main(int argc, char *argv[])
 {
   QApplication a(argc, argv);
+
+  QCoreApplication::setOrganizationDomain(Globals::ORG_DOMAIN);
+  QCoreApplication::setOrganizationName(Globals::ORG_NAME);
+  QCoreApplication::setApplicationName(Globals::SOFTWARE_NAME);
+  QCoreApplication::setApplicationVersion(Globals::VERSION_STRING());
+
   DoubleToStringConvertor::initialize();
   SoftwareUpdater updater;
 
