@@ -155,6 +155,8 @@ void ToggleTracepointsDialog::setupTracepointList(const std::vector<CalculatorIn
   connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &ToggleTracepointsDialog::onAccepted);
   connect(ui->qle_filter, &QLineEdit::textChanged, this, &ToggleTracepointsDialog::onFilterTextChanged);
   connect(ui->qle_outputFile, &QLineEdit::editingFinished, [this]() { m_outputFilePath = ui->qle_outputFile->text();});
+
+  setMinimumHeight(minimumHeight() + m_tracepointsWidget->fontMetrics().height() *30);
 }
 
 std::vector<CalculatorInterface::TracepointState> ToggleTracepointsDialog::tracepointStates() const
