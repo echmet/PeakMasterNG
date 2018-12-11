@@ -112,7 +112,7 @@ SystemCompositionWidget::~SystemCompositionWidget()
   delete ui;
 }
 
-void SystemCompositionWidget::addConstituent(GDMProxy &proxy, AbstractConstituentsModelBase *model)
+bool SystemCompositionWidget::addConstituent(GDMProxy &proxy, AbstractConstituentsModelBase *model)
 {
   static QSize m_dlgSize{};
 
@@ -132,7 +132,11 @@ void SystemCompositionWidget::addConstituent(GDMProxy &proxy, AbstractConstituen
 
     model->addConstituent(dlg.name());
     m_dlgSize = dlg.size();
+
+    return true;
   }
+
+  return false;
 }
 
 AbstractConstituentsModelBase * SystemCompositionWidget::analytesModel() noexcept
@@ -224,12 +228,14 @@ void SystemCompositionWidget::removeConstituent(const QModelIndexList &indexes, 
 
 void SystemCompositionWidget::onAddAnalyte()
 {
-  addConstituent(h_sampleGDM, m_analytesModel);
+  if (addConstituent(h_sampleGDM, m_analytesModel))
+    ui->qtbv_analytes->resizeColumnToContents(2);
 }
 
 void SystemCompositionWidget::onAddBGE()
 {
-  addConstituent(h_backgroundGDM, m_backgroundConstituentsModel);
+  if (addConstituent(h_backgroundGDM, m_backgroundConstituentsModel))
+    ui->qtbv_backgroudConstituents->resizeColumnToContents(2);
 }
 
 void SystemCompositionWidget::onAddToDatabase(const EditConstituentDialog *dlg)

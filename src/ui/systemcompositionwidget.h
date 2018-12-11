@@ -36,7 +36,7 @@ public:
   void setViscosityCorrectionEnabled(const bool enabled);
 
 private:
-  void addConstituent(GDMProxy &proxy, AbstractConstituentsModelBase *model);
+  bool addConstituent(GDMProxy &proxy, AbstractConstituentsModelBase *model);
   void editComplexation(const QString &name);
   void editConstituent(const QString &name, GDMProxy &proxy, AbstractConstituentsModelBase *model);
   void handleDoubleClick(const int column, const QVariant &v, GDMProxy &GDM, AbstractConstituentsModelBase *model);
