@@ -480,7 +480,7 @@ void PMNGMainWindow::onLoad()
 
   persistence::System system{};
   try {
-    const auto &path = files.at(0);
+    const auto &path = QFileInfo{files.at(0)}.absoluteFilePath();
     m_persistence.deserialize(path, system);
 
     QVariant eofType{};
@@ -512,10 +512,8 @@ void PMNGMainWindow::onLoad()
     onCompositionChanged();
     m_mainCtrlWidget->setRunSetup(rs, eofType, system.eofValue);
 
-    auto absPath = QFileInfo{files.at(0)}.absoluteFilePath();
-
-    m_lastLoadPath = absPath;
-    m_activeFile = ActiveFile{absPath};
+    m_lastLoadPath = path;
+    m_activeFile = ActiveFile{path};
 
     setWindowTitle(QFileInfo{path}.fileName());
   } catch (persistence::DeserializationException &ex) {
@@ -623,7 +621,7 @@ void PMNGMainWindow::onSave()
     QMessageBox mbox{};
     makeYesNoMessagebox(mbox,
                         tr("Confim action"),
-                        QString{tr("Overwrite existing file %1?")}.arg(QFileInfo{m_lastSavePath}.fileName()));
+                        QString{tr("Overwrite existing file %1?")}.arg(QFileInfo{m_activeFile.path()}.fileName()));
 
     if (mbox.exec() == QMessageBox::Yes)
       saveSystem(m_activeFile.path());
