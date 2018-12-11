@@ -52,6 +52,10 @@ private slots:
   void onAddChargeHigh();
   void onRemoveChargeLow();
   void onRemoveChargeHigh();
+  void onReturnPressed();
+
+signals:
+  void acceptRequested();
 };
 
 #endif // EDITCHARGESWIDGET_H

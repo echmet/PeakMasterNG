@@ -39,7 +39,7 @@
     </layout>
    </item>
    <item>
-    <widget class="CopiableItemsTableView" name="qtblView_charges"/>
+    <widget class="ReturnAcceptableTableView" name="qtblView_charges"/>
    </item>
    <item>
     <layout class="QHBoxLayout" name="qhlay_highChargeButtons">
@@ -69,9 +69,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>CopiableItemsTableView</class>
+   <class>ReturnAcceptableTableView</class>
    <extends>QTableView</extends>
-   <header>src/ui/copiableitemstableview.h</header>
+   <header>src/ui/returnacceptabletableview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

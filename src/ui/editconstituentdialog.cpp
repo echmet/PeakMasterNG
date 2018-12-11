@@ -20,9 +20,10 @@ EditConstituentDialog::EditConstituentDialog(DatabaseProxy &dbProxy, const bool 
   ui{new Ui::EditConstituentDialog},
   h_dbProxy{dbProxy}
 {
+  m_editChargesWidget = new EditChargesWidget{this};
+
   setupWidget();
 
-  m_editChargesWidget = new EditChargesWidget{this};
   static_cast<QVBoxLayout *>(layout())->insertWidget(3, m_editChargesWidget);
 
   ui->qgbox_viscosity->setVisible(viscosityCorrectionEnabled);
@@ -37,9 +38,10 @@ EditConstituentDialog::EditConstituentDialog(DatabaseProxy &dbProxy,
   ui{new Ui::EditConstituentDialog},
   h_dbProxy{dbProxy}
 {
+  m_editChargesWidget = new EditChargesWidget{props, this};
+
   setupWidget();
 
-  m_editChargesWidget = new EditChargesWidget{props, this};
   static_cast<QVBoxLayout *>(layout())->insertWidget(3, m_editChargesWidget);
 
   ui->qle_name->setText(name);
@@ -175,6 +177,7 @@ void EditConstituentDialog::setupWidget()
   ui->qcbox_viscosityCoefficient->addItem(QString{"Large compound (k = %1)"}.arg(VISCOSITY_COEFF_LARGE), VISCOSITY_COEFF_LARGE);
   ui->qcbox_viscosityCoefficient->addItem(QString{"Custom compound"}, -1);
   connect(ui->qcbox_viscosityCoefficient, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &EditConstituentDialog::onViscosityCoefficientIndexChanged);
+  connect(m_editChargesWidget, &EditChargesWidget::acceptRequested, this, &EditConstituentDialog::onAccepted);
   onViscosityCoefficientIndexChanged(0);
 
   ui->qcbox_type->addItem("Nucleus", QVariant::fromValue<ConstituentType>(ConstituentType::NUCLEUS));

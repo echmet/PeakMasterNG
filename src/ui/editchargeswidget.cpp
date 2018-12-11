@@ -4,6 +4,7 @@
 #include "elementaries/modifyconstituentchargepushbutton.h"
 #include "../gdm/core/constituent/physicalproperties.h"
 #include "../gearbox/floatingvaluedelegate.h"
+#include "returnacceptabletableview.h"
 
 #include <cassert>
 
@@ -157,6 +158,7 @@ void EditChargesWidget::setupWidget()
   connect(m_qpb_removeLow, &QPushButton::clicked, this, &EditChargesWidget::onRemoveChargeLow);
   connect(m_qpb_addHigh, &QPushButton::clicked, this, &EditChargesWidget::onAddChargeHigh);
   connect(m_qpb_removeHigh, &QPushButton::clicked, this, &EditChargesWidget::onRemoveChargeHigh);
+  connect(ui->qtblView_charges, &ReturnAcceptableTableView::returnPressed, this, &EditChargesWidget::onReturnPressed);
 
   ui->qhlay_lowChargeButtons->layout()->addWidget(m_qpb_addLow);
   ui->qhlay_lowChargeButtons->layout()->addWidget(m_qpb_removeLow);
@@ -189,6 +191,11 @@ void EditChargesWidget::onRemoveChargeLow()
 {
   if (m_chargesModel.removeRows(0, 1))
     updateChargeLow();
+}
+
+void EditChargesWidget::onReturnPressed()
+{
+  emit acceptRequested();
 }
 
 void EditChargesWidget::setCharges(const std::map<int, double> &pKas, const std::map<int, double> &mobilities, const int chargeLow, const int chargeHigh)
