@@ -115,6 +115,16 @@ QVector<AnalytesExtraInfoModel::ExtraInfo> makeAnalytesExtraInfo(const std::vect
 }
 
 static
+void makeYesNoMessagebox(QMessageBox &mbox, QString title, QString text)
+{
+  mbox.setIcon(QMessageBox::Question);
+  mbox.setText(title);
+  mbox.setInformativeText(text);
+  mbox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+  mbox.setDefaultButton(QMessageBox::No);
+}
+
+static
 SignalPlotWidget::SignalStyle plotSignalStyle(const CalculatorInterface::SignalTypes type)
 {
   switch (type) {
@@ -179,6 +189,8 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   connect(m_qpb_load, &QPushButton::clicked, ui->actionLoad, &QAction::trigger);
   m_qpb_save = new QPushButton{tr("Save"), this};
   connect(m_qpb_save, &QPushButton::clicked, ui->actionSave, &QAction::trigger);
+  m_qpb_saveAs = new QPushButton{tr("Save as"), this};
+  connect(m_qpb_saveAs, &QPushButton::clicked, ui->actionSave_as, &QAction::trigger);
   m_qpb_calculate = new QPushButton{tr("Calculate!"), this};
   connect(m_qpb_calculate, &QPushButton::clicked, this, &PMNGMainWindow::onCalculate);
   connect(m_signalPlotWidget, &SignalPlotWidget::replotElectrophoregram, this, &PMNGMainWindow::onPlotElectrophoregram);
@@ -191,6 +203,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   connect(ui->actionNew, &QAction::triggered, this, &PMNGMainWindow::onNew);
   connect(ui->actionLoad, &QAction::triggered, this, &PMNGMainWindow::onLoad);
   connect(ui->actionSave, &QAction::triggered, this, &PMNGMainWindow::onSave);
+  connect(ui->actionSave_as, &QAction::triggered, this, &PMNGMainWindow::onSaveAs);
   connect(ui->actionExportEFGAsCSV, &QAction::triggered, this, &PMNGMainWindow::onExportElectrophoregramAsCSV);
   connect(ui->actionDatabase_editor, &QAction::triggered, this, &PMNGMainWindow::onDatabaseEditor);
   connect(ui->actionOpen_database, &QAction::triggered, this, &PMNGMainWindow::onOpenDatabase);
@@ -200,6 +213,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   ui->mainToolBar->addWidget(m_qpb_new);
   ui->mainToolBar->addWidget(m_qpb_load);
   ui->mainToolBar->addWidget(m_qpb_save);
+  ui->mainToolBar->addWidget(m_qpb_saveAs);
   ui->mainToolBar->addWidget(m_qpb_calculate);
 
   m_calculateShortcut = new QShortcut(QKeySequence::Refresh, this);
@@ -216,11 +230,11 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   onScreenChanged(UIHelpers::findScreenForWidget(this));
 
 #ifdef THEY_LIVE
-  setWindowTitle(QString("%1. %2").arg(QString::fromUtf8("\x49\x20\x63\x61\x6d\x65\x20\x68\x65\x72\x65\x20\x74\x6f\x20\x64\x72\x61\x77"
-                                                         "\x20\x70\x65\x61\x6b\x73\x20\x61\x6e\x64\x20\x63\x68\x65\x77\x20\x62\x75\x62"
-                                                         "\x62\x6c\x65\x67\x75\x6d\x2e\x2e\x2e\x20\x61\x6e\x64\x20\x49\x27\x6d\x20\x61"
-                                                         "\x6c\x6c\x20\x6f\x75\x74\x74\x61\x20\x67\x75\x6d"))
-                                  .arg(Globals::VERSION_STRING()));
+  QMainWindow::setWindowTitle(QString("%1 %2").arg(QString::fromUtf8("\x49\x20\x63\x61\x6d\x65\x20\x68\x65\x72\x65\x20\x74\x6f\x20\x64\x72\x61\x77"
+                                                                     "\x20\x70\x65\x61\x6b\x73\x20\x61\x6e\x64\x20\x63\x68\x65\x77\x20\x62\x75\x62"
+                                                                     "\x62\x6c\x65\x67\x75\x6d\x2e\x2e\x2e\x20\x61\x6e\x64\x20\x49\x27\x6d\x20\x61"
+                                                                     "\x6c\x6c\x20\x6f\x75\x74\x74\x61\x20\x67\x75\x6d"),
+                                                                      Globals::VERSION_STRING()));
 
   QTimer::singleShot(4466, this, [this]() { this->setWindowTitle(Globals::VERSION_STRING()); });
 #else
@@ -454,8 +468,8 @@ void PMNGMainWindow::onLoad()
   dlg.setAcceptMode(QFileDialog::AcceptOpen);
   dlg.setNameFilter("JSON file (*.json)");
 
-  if (m_lastLoadPath.length() > 0)
-    dlg.setDirectory(m_lastLoadPath);
+  if (!m_lastLoadPath.isEmpty())
+    dlg.setDirectory(QFileInfo{m_lastLoadPath}.absolutePath());
 
   if (dlg.exec() != QDialog::Accepted)
     return;
@@ -466,7 +480,8 @@ void PMNGMainWindow::onLoad()
 
   persistence::System system{};
   try {
-    m_persistence.deserialize(files.at(0), system);
+    const auto &path = files.at(0);
+    m_persistence.deserialize(path, system);
 
     QVariant eofType{};
     if (system.eofType == persistence::Persistence::SYS_EOF_TYPE_NONE)
@@ -497,7 +512,12 @@ void PMNGMainWindow::onLoad()
     onCompositionChanged();
     m_mainCtrlWidget->setRunSetup(rs, eofType, system.eofValue);
 
-    m_lastLoadPath = QFileInfo(files.at(0)).absolutePath();
+    auto absPath = QFileInfo{files.at(0)}.absoluteFilePath();
+
+    m_lastLoadPath = absPath;
+    m_activeFile = ActiveFile{absPath};
+
+    setWindowTitle(QFileInfo{path}.fileName());
   } catch (persistence::DeserializationException &ex) {
     QMessageBox mbox{QMessageBox::Warning, tr("Unable to load system"), ex.what()};
     mbox.exec();
@@ -507,13 +527,15 @@ void PMNGMainWindow::onLoad()
 void PMNGMainWindow::onNew()
 {
   QMessageBox mbox{};
-  mbox.setIcon(QMessageBox::Question);
-  mbox.setText(tr("Create new system"));
-  mbox.setInformativeText(tr("Are you sure you want to discard the current system and create a new one?"));
-  mbox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-  mbox.setDefaultButton(QMessageBox::No);
-  if (mbox.exec() == QMessageBox::Yes)
+  makeYesNoMessagebox(mbox,
+                      tr("Create new system"),
+                      tr("Are you sure you want to discard the current system and create a new one?"));
+
+  if (mbox.exec() == QMessageBox::Yes) {
     emit clearAll();
+    m_activeFile = ActiveFile{};
+    setWindowTitle();
+  }
 }
 
 void PMNGMainWindow::onOpenDatabase()
@@ -595,13 +617,28 @@ void PMNGMainWindow::onRunSetupChanged(const bool invalidate)
 
 void PMNGMainWindow::onSave()
 {
+  if (!m_activeFile.valid)
+    onSaveAs();
+  else {
+    QMessageBox mbox{};
+    makeYesNoMessagebox(mbox,
+                        tr("Confim action"),
+                        QString{tr("Overwrite existing file %1?")}.arg(QFileInfo{m_lastSavePath}.fileName()));
+
+    if (mbox.exec() == QMessageBox::Yes)
+      saveSystem(m_activeFile.path());
+  }
+}
+
+void PMNGMainWindow::onSaveAs()
+{
   QFileDialog dlg{};
   dlg.setAcceptMode(QFileDialog::AcceptSave);
   dlg.setNameFilter("JSON file (*.json)");
   dlg.setWindowTitle(tr("Save composition"));
 
-  if (m_lastSavePath.length() > 0)
-    dlg.setDirectory(m_lastSavePath);
+  if (!m_lastSavePath.isEmpty())
+    dlg.setDirectory(QFileInfo{m_lastSavePath}.absolutePath());
 
   if (dlg.exec() != QDialog::Accepted)
     return;
@@ -610,39 +647,7 @@ void PMNGMainWindow::onSave()
   if (files.size() < 1)
     return;
 
-  const MainControlWidget::RunSetup rs = m_mainCtrlWidget->runSetup();
-  const QString et = [](MainControlWidget::EOF_Type t) {
-      switch (t) {
-      case MainControlWidget::EOF_NONE:
-        return persistence::Persistence::SYS_EOF_TYPE_NONE;
-      case MainControlWidget::EOF_MOBILITY:
-        return persistence::Persistence::SYS_EOF_TYPE_MOBILITY;
-      case MainControlWidget::EOF_MARKER_TIME:
-        return persistence::Persistence::SYS_EOF_TYPE_TIME;
-      }
-      return QString{};
-    }(m_mainCtrlWidget->EOFInputType());
-
-  persistence::System sys{
-    rs.totalLength,
-    rs.detectorPosition,
-    rs.drivingVoltage,
-    rs.positiveVoltage,
-    et,
-    m_mainCtrlWidget->EOFValue(),
-    rs.correctForDebyeHuckel,
-    rs.correctForOnsagerFuoss,
-    rs.correctForViscosity,
-    m_plotParamsData.at(m_plotParamsModel.indexFromItem(SignalPlotWidget::PlotParamsItems::INJ_ZONE_LENGTH))
-  };
-
-  try {
-    m_persistence.serialize(files.at(0), sys);
-    m_lastSavePath = QFileInfo(files.at(0)).absolutePath();
-  } catch (persistence::SerializationException &ex) {
-    QMessageBox mbox{QMessageBox::Warning, tr("Unable to save system"), ex.what()};
-    mbox.exec();
-  }
+  saveSystem(files.at(0));
 }
 
 void PMNGMainWindow::onScreenChanged(QScreen *screen)
@@ -720,6 +725,46 @@ QVariant PMNGMainWindow::resetSignalItems()
   return current;
 }
 
+void PMNGMainWindow::saveSystem(const QString &m_path)
+{
+  const MainControlWidget::RunSetup rs = m_mainCtrlWidget->runSetup();
+  const QString et = [](MainControlWidget::EOF_Type t) {
+      switch (t) {
+      case MainControlWidget::EOF_NONE:
+        return persistence::Persistence::SYS_EOF_TYPE_NONE;
+      case MainControlWidget::EOF_MOBILITY:
+        return persistence::Persistence::SYS_EOF_TYPE_MOBILITY;
+      case MainControlWidget::EOF_MARKER_TIME:
+        return persistence::Persistence::SYS_EOF_TYPE_TIME;
+      }
+      return QString{};
+    }(m_mainCtrlWidget->EOFInputType());
+
+  persistence::System sys{
+    rs.totalLength,
+    rs.detectorPosition,
+    rs.drivingVoltage,
+    rs.positiveVoltage,
+    et,
+    m_mainCtrlWidget->EOFValue(),
+    rs.correctForDebyeHuckel,
+    rs.correctForOnsagerFuoss,
+    rs.correctForViscosity,
+    m_plotParamsData.at(m_plotParamsModel.indexFromItem(SignalPlotWidget::PlotParamsItems::INJ_ZONE_LENGTH))
+  };
+
+  try {
+    m_persistence.serialize(m_path, sys);
+    m_lastSavePath = m_path;
+
+    m_activeFile = ActiveFile{m_path};
+    setWindowTitle(QFileInfo{m_path}.fileName());
+  } catch (persistence::SerializationException &ex) {
+    QMessageBox mbox{QMessageBox::Warning, tr("Unable to save system"), ex.what()};
+    mbox.exec();
+  }
+}
+
 void PMNGMainWindow::selectSignalIfAvailable(const QVariant &sig)
 {
   const auto _sig = sig.value<CalculatorInterface::Signal>();
@@ -740,6 +785,7 @@ void PMNGMainWindow::setControlsIcons()
   ui->actionNew->setIcon(QIcon::fromTheme("document-new"));
   ui->actionLoad->setIcon(QIcon::fromTheme("document-open"));
   ui->actionSave->setIcon(QIcon::fromTheme("document-save"));
+  ui->actionSave_as->setIcon(QIcon::fromTheme("document-save-as"));
   ui->actionExit->setIcon(QIcon::fromTheme("application-exit"));
   ui->actionAbout->setIcon(QIcon::fromTheme("help-about"));
   ui->actionCheck_for_update->setIcon(QIcon::fromTheme("system-software-update"));
@@ -748,12 +794,14 @@ void PMNGMainWindow::setControlsIcons()
   m_qpb_new->setIcon(QIcon::fromTheme("document-new"));
   m_qpb_load->setIcon(QIcon::fromTheme("document-open"));
   m_qpb_save->setIcon(QIcon::fromTheme("document-save"));
+  m_qpb_saveAs->setIcon(QIcon::fromTheme("document-save-as"));
   m_qpb_calculate->setIcon(QIcon::fromTheme("media-playback-start"));
 #else
   /* Menu bar */
   ui->actionNew->setIcon(style()->standardIcon(QStyle::SP_FileDialogNewFolder));
   ui->actionLoad->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
   ui->actionSave->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
+  ui->actionSave_as->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
   ui->actionExit->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
   ui->actionAbout->setIcon(style()->standardIcon(QStyle::SP_DialogHelpButton));
   ui->actionCheck_for_update->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
@@ -762,6 +810,15 @@ void PMNGMainWindow::setControlsIcons()
   m_qpb_new->setIcon(style()->standardIcon(QStyle::SP_FileDialogNewFolder));
   m_qpb_load->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
   m_qpb_save->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
+  m_qpb_saveAs->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
   m_qpb_calculate->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
 #endif // Q_OS_
+}
+
+void PMNGMainWindow::setWindowTitle(QString file)
+{
+  if (file.isEmpty())
+    QMainWindow::setWindowTitle(Globals::VERSION_STRING());
+  else
+    QMainWindow::setWindowTitle(QString{"%1 - %2"}.arg(Globals::VERSION_STRING(), file));
 }

@@ -47,6 +47,45 @@ public:
   void connectUpdater(SoftwareUpdater *updater);
 
 private:
+  class ActiveFile {
+  public:
+    explicit ActiveFile() :
+      valid{false},
+      m_path{""}
+    {}
+
+    ActiveFile(QString path) :
+      valid{true},
+      m_path(std::move(path))
+    {}
+
+    ActiveFile & operator=(const ActiveFile &other)
+    {
+      const_cast<bool&>(valid) = other.valid;
+      const_cast<QString&>(m_path) = other.m_path;
+
+      return  *this;
+    }
+
+    ActiveFile & operator=(ActiveFile &&other) noexcept
+    {
+      const_cast<bool&>(valid) = other.valid;
+      const_cast<QString&>(m_path) = std::move(other.m_path);
+
+      return  *this;
+    }
+
+    const QString & path() const noexcept
+    {
+      return m_path;
+    }
+
+    const bool valid;
+
+  private:
+    QString m_path;
+  };
+
   class PlottingInfo {
   public:
     double EOFValue;
@@ -69,12 +108,15 @@ private:
   void plotElectrophoregram(const EFGDisplayer &displayer, const std::vector<CalculatorInterface::TimeDependentZoneInformation> &tdzi,
                             const double EOFValue, CalculatorInterface::EOFValueType EOFvt, const double izLen, const double plotCutoff);
   QVariant resetSignalItems();
+  void saveSystem(const QString &m_path);
   void selectSignalIfAvailable(const QVariant &sig);
   void setControlsIcons();
+  void setWindowTitle(QString file = {});
 
   QPushButton *m_qpb_new;
   QPushButton *m_qpb_load;
   QPushButton *m_qpb_save;
+  QPushButton *m_qpb_saveAs;
   QPushButton *m_qpb_calculate;
 
   QShortcut *m_calculateShortcut;
@@ -105,6 +147,8 @@ private:
 
   bool m_fullCalcInProgress;
 
+  ActiveFile m_activeFile;
+
   Ui::PMNGMainWindow *ui;
 
   static QVector<SignalItem> s_defaultSignalItems;
@@ -124,6 +168,7 @@ private slots:
   void onPlotElectrophoregram();
   void onRunSetupChanged(const bool invalidate);
   void onSave();
+  void onSaveAs();
   void onScreenChanged(QScreen *screen);
   void onSetDebuggingOutput();
 
