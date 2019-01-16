@@ -34,11 +34,11 @@ void gdm::setCharge(ChargeCombination& obj, ConstituentType type, ChargeNumber c
 
     case ConstituentType::Nucleus:
         obj.nucleusCharge = charge;
-        break;
+        return;
 
     case ConstituentType::Ligand:
         obj.ligandCharge = charge;
-        break;
+        return;
     }
 
     IMPOSSIBLE_PATH;

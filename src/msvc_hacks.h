@@ -5,7 +5,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-inline
+[[noreturn]] inline
 void __IMPOSSIBLE_PATH() {
 #ifdef NDEBUG
     fputs("Impossible execution path", stderr);

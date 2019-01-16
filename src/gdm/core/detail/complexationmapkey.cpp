@@ -24,12 +24,13 @@ void gdm::detail::setName(ComplexationMapKey& obj, ConstituentType type, const s
 
     case ConstituentType::Nucleus:
         obj.nucleusName = name;
-        break;
+        return;
 
     case ConstituentType::Ligand:
         obj.ligandName = name;
-        break;
+        return;
     }
+
     IMPOSSIBLE_PATH;
 }
 
