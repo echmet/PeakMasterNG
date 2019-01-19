@@ -25,14 +25,18 @@ void CopiableItemsTableView::keyPressEvent(QKeyEvent *evt)
 
 void CopiableItemsTableView::mousePressEvent(QMouseEvent *evt)
 {
-  QTableView::mousePressEvent(evt);
-
   if (evt->button() == Qt::RightButton) {
     if (selectedIndexes().empty())
       return;
 
     m_rightClickMenu->exec(evt->globalPos());
+  } else if (evt->button() == Qt::LeftButton) {
+        const auto &idx = indexAt(evt->pos());
+    if (idx.isValid())
+      edit(idx);
   }
+
+  QTableView::mousePressEvent(evt);
 }
 
 void CopiableItemsTableView::onCopyActionTriggered()
