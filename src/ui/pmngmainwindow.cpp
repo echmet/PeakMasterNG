@@ -23,6 +23,7 @@
 #include "elementaries/uihelpers.h"
 
 #include <cassert>
+#include <QCloseEvent>
 #include <QDialogButtonBox>
 #include <QFileDialog>
 #include <QHBoxLayout>
@@ -257,6 +258,16 @@ void PMNGMainWindow::addConstituentsSignals(const QVector<QString> &constituents
     si->setData(QVariant::fromValue<CalculatorInterface::Signal>({ CalculatorInterface::SignalTypes::CONCENTRATION, a, plotCaption }));
     m_signalTypesModel->appendRow(si);
   }
+}
+
+void PMNGMainWindow::closeEvent(QCloseEvent *evt)
+{
+  QMessageBox mbox{QMessageBox::Question, tr("Confirm action"),
+                   QString{"Do you really want to exit %1?\nAll unsaved data will be lost."}.arg(Globals::SOFTWARE_NAME),
+                   QMessageBox::Yes | QMessageBox::No};
+
+  if (mbox.exec() != QMessageBox::Yes)
+    evt->ignore();
 }
 
 void PMNGMainWindow::connectOnScreenChanged()

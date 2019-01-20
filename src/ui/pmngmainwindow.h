@@ -43,8 +43,11 @@ public:
                           DatabaseProxy &dbProxy,
                           AnalytesExtraInfoModel * const analytesEXIModel, const QAbstractTableModel * const eigenzoneDetailsModel,
                           QWidget *parent = nullptr);
-  ~PMNGMainWindow();
+  ~PMNGMainWindow() override;
   void connectUpdater(SoftwareUpdater *updater);
+
+protected:
+  void closeEvent(QCloseEvent *evt) override;
 
 private:
   class ActiveFile {
