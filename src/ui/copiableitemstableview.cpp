@@ -20,8 +20,8 @@ CopiableItemsTableView::CopiableItemsTableView(QWidget *parent) :
 void CopiableItemsTableView::keyPressEvent(QKeyEvent *evt)
 {
   auto isArrowKey = [](const int key) {
-    return key == Qt::LeftArrow || key == Qt::RightArrow ||
-                  Qt::UpArrow || key == Qt::DownArrow;
+    return (key == Qt::LeftArrow) || (key == Qt::RightArrow) ||
+           (key == Qt::UpArrow)|| (key == Qt::DownArrow);
   };
 
   auto moveSelection = [&](const QModelIndex &idx, const int right, const int down) {
@@ -37,7 +37,7 @@ void CopiableItemsTableView::keyPressEvent(QKeyEvent *evt)
     selectionToClipboard(selectedIndexes());
   else if (isArrowKey(key)) {
     auto selIdxs = selectedIndexes();
-    if (selIdxs.size() > 0) {
+    if (selIdxs.size() > 0 && selIdxs.at(0).isValid()) {
       auto sel = selIdxs[0];
 
       switch (key) {
@@ -59,6 +59,10 @@ void CopiableItemsTableView::keyPressEvent(QKeyEvent *evt)
         break;
       }
     }
+  } else if (key == Qt::Key_Return || key == Qt::Key_Enter) {
+    auto selIdxs = selectedIndexes();
+    if (selIdxs.size() > 0 && selIdxs.at(0).isValid())
+      edit(selIdxs[0]);
   }
 
   QTableView::keyPressEvent(evt);
