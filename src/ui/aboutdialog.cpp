@@ -22,24 +22,21 @@ AboutDialog::AboutDialog(QWidget *parent) :
                                           QGuiApplication::platformName(),
                                           QSysInfo::buildCpuArchitecture()));
 
-  {
-    m_echmetPix = QPixmap{":/images/res/ECHMET_logo_velke.png"}.scaledToWidth(100 * scaleFactor());
-    ui->ql_echmetLogo->setText("");
-    ui->ql_echmetLogo->setPixmap(m_echmetPix);
+  m_echmetPix = QPixmap{":/images/res/ECHMET_logo_velke.png"}.scaledToWidth(100 * scaleFactor());
+  ui->ql_echmetLogo->setText("");
+  ui->ql_echmetLogo->setPixmap(m_echmetPix);
 
-    m_cimecPix = QPixmap{":/images/res/cimectransp3.png"}.scaledToWidth(100 * scaleFactor());
-    ui->ql_cimecLogo->setText("");
-    ui->ql_cimecLogo->setPixmap(m_cimecPix);
-  }
-  {
-    for (const Globals::DeveloperID &dev : Globals::DEVELOPERS) {
-      const QString s = dev.linkString();
+  m_cimecPix = QPixmap{":/images/res/cimectransp3.png"}.scaledToWidth(100 * scaleFactor());
+  ui->ql_cimecLogo->setText("");
+  ui->ql_cimecLogo->setPixmap(m_cimecPix);
 
-      QLabel *l = new QLabel(s, this);
-      l->setAlignment(Qt::AlignHCenter);
-      l->setOpenExternalLinks(true);
-      ui->qvlay_authors->addWidget(l);
-    }
+  for (const Globals::DeveloperID &dev : Globals::DEVELOPERS) {
+    const QString s = dev.linkString();
+
+    QLabel *l = new QLabel(s, this);
+    l->setAlignment(Qt::AlignHCenter);
+    l->setOpenExternalLinks(true);
+    ui->qvlay_authors->addWidget(l);
   }
 
   {
@@ -49,17 +46,12 @@ AboutDialog::AboutDialog(QWidget *parent) :
 
   ui->ql_lemngVersion->setText(QString{"LEMNG library version: %1"}.arg(ECHMET::LEMNG::versionString()));
 
-  connect(ui->qpb_close, &QPushButton::clicked, this, &AboutDialog::onCloseClicked);
+  connect(ui->qpb_close, &QPushButton::clicked, this, &AboutDialog::accept);
 }
 
 AboutDialog::~AboutDialog()
 {
   delete ui;
-}
-
-void AboutDialog::onCloseClicked()
-{
-  accept();
 }
 
 qreal AboutDialog::scaleFactor()
