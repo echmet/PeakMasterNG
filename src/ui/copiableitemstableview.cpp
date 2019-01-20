@@ -19,8 +19,49 @@ CopiableItemsTableView::CopiableItemsTableView(QWidget *parent) :
 
 void CopiableItemsTableView::keyPressEvent(QKeyEvent *evt)
 {
-  if (evt->key() == Qt::Key_C && evt->modifiers() == Qt::ControlModifier)
+  auto isArrowKey = [](const int key) {
+    return key == Qt::LeftArrow || key == Qt::RightArrow ||
+                  Qt::UpArrow || key == Qt::DownArrow;
+  };
+
+  auto moveSelection = [&](const QModelIndex &idx, const int right, const int down) {
+    auto newIdx = idx.model()->index(idx.row() + right , idx.column() + down);
+
+    selectionModel()->clearSelection();
+    selectionModel()->select(newIdx, QItemSelectionModel::Select);
+  };
+
+  const int key = evt->key();
+
+  if (key == Qt::Key_C && evt->modifiers() == Qt::ControlModifier)
     selectionToClipboard(selectedIndexes());
+  else if (isArrowKey(key)) {
+    auto selIdxs = selectedIndexes();
+    if (selIdxs.size() > 0) {
+      auto sel = selIdxs[0];
+
+      switch (key) {
+      case Qt::LeftArrow:
+        if (sel.column() > 1)
+          moveSelection(sel, -1, 0);
+        break;
+      case Qt::RightArrow:
+        if (sel.column() < model()->columnCount() - 1)
+          moveSelection(sel, 1, 0);
+        break;
+      case Qt::UpArrow:
+        if (sel.row() > 1)
+          moveSelection(sel, 0, -1);
+        break;
+      case Qt::DownArrow:
+        if (sel.row() <  model()->rowCount() - 1)
+          moveSelection(sel, 0, 1);
+        break;
+      }
+    }
+  }
+
+  QTableView::keyPressEvent(evt);
 }
 
 void CopiableItemsTableView::mousePressEvent(QMouseEvent *evt)
