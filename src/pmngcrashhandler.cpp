@@ -2,6 +2,8 @@
 #include "crashevent.h"
 #include "crasheventcatcher.h"
 #include "crashhandling/crashhandlingprovider.h"
+
+#include "globals.h"
 #include <fstream>
 #include <sstream>
 #include <cstdio>
@@ -17,6 +19,14 @@
   #include "crashhandling/nullcrashhandler.h"
   #define CrashHandlerPlatform NullCrashHandler
 #endif // Q_OS_
+
+inline
+std::string mkSWStr(const std::string &tail)
+{
+  static const std::string swname = Globals::SOFTWARE_NAME.toStdString();
+
+  return swname + "_" + tail;
+}
 
 class UICrashFinalizer : public CrashHandlerFinalizer<CrashHandlerPlatform>
 {
@@ -52,7 +62,7 @@ public:
 
 UICrashFinalizer * PMNGCrashHandler::s_uiFinalizer(nullptr);
 CrashEventCatcher * PMNGCrashHandler::s_catcher(nullptr);
-const std::string PMNGCrashHandler::s_textCrashDumpFile("PeakMaster_crashDump.txt");
+const std::string PMNGCrashHandler::s_textCrashDumpFile(mkSWStr("crashDump.txt"));
 
 void PMNGCrashHandler::checkForCrash()
 {
@@ -79,9 +89,9 @@ bool PMNGCrashHandler::installCrashHandler()
 {
 #ifndef USE_CRASHHANDLER
   return true;
-#endif // USE_CRASHHANDLER;
+#else
 
-  if (!CrashHandlingProvider<CrashHandlerPlatform>::initialize("PeakMaster_minidump.mdmp"))
+  if (!CrashHandlingProvider<CrashHandlerPlatform>::initialize(mkSWStr("minidump.mdmp")))
     return false;
 
   try {
@@ -102,13 +112,14 @@ bool PMNGCrashHandler::installCrashHandler()
   qApp->installEventFilter(s_catcher);
 
   return true;
+#endif // USE_CRASHHANDLER;
 }
 
 void PMNGCrashHandler::uninstallCrashHandler()
 {
 #ifndef USE_CRASHHANDLER
   return;
-#endif // USE_CRASHHANDLER;
+#else
 
   if (s_catcher != nullptr)
     qApp->removeEventFilter(s_catcher);
@@ -118,4 +129,5 @@ void PMNGCrashHandler::uninstallCrashHandler()
   delete s_uiFinalizer;
   s_uiFinalizer = nullptr;
   s_catcher = nullptr;
+#endif // USE_CRASHHANDLER;
 }
