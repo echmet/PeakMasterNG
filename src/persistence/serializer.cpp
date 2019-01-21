@@ -37,7 +37,7 @@ QJsonObject generateFromNucleusComplexForm(const std::string &ligandName, gdm::C
 }
 
 static
-QJsonObject serializeComposition(const gdm::GDM gdm)
+QJsonObject serializeComposition(const gdm::GDM &gdm)
 {
    QJsonArray constituents{};
 

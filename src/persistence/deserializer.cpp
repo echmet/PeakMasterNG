@@ -283,6 +283,8 @@ void deserializeSystem(System &system, const QJsonObject &obj)
   } catch (const MalformedJSONException &) {
     system.injectionZoneLength = 1.0;
   }
+  if (system.injectionZoneLength <= 0.0)
+    throw MalformedJSONException{"Invalid value of \"injectionZoneLength\""};
 }
 
 void Deserializer::deserialize(const QString &filepath, gdm::GDM &gdmBGE, gdm::GDM &gdmSample,
