@@ -89,8 +89,11 @@ std::map<std::string, gdm::Complexation> deserializeNucleusComplexForms(const QJ
       QJsonArray inpBs = lig[Persistence::CPX_PBS].toArray();
       if (inpBs.size() != maxCount)
         throw MalformedJSONException{"Invalid size of \"pBs\" array"};
-      for (const auto &b : inpBs)
+      for (const auto b : inpBs) {
+        if (b.type() != QJsonValue::Double)
+          throw MalformedJSONException{"Unexpected type of pBs value"};
         pBs.emplace_back(b.toDouble());
+      }
 
       /* Read mobilities */
       std::vector<double> mobilities{};
@@ -98,8 +101,11 @@ std::map<std::string, gdm::Complexation> deserializeNucleusComplexForms(const QJ
       QJsonArray inMobilities = lig[Persistence::CPX_MOBILITIES].toArray();
       if (inMobilities.size() != maxCount)
         throw MalformedJSONException{"Invalid size of complex \"mobilities\" array"};
-      for (const auto &u : inMobilities)
+      for (const auto u : inMobilities) {
+        if (u.type() != QJsonValue::Double)
+          throw MalformedJSONException{"Unexpected type of mobility value"};
         mobilities.emplace_back(u.toDouble());
+      }
 
       gdm::ChargeCombination charges{charge, ligandCharge};
 
@@ -169,8 +175,11 @@ std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>
     QJsonArray inpKas = ctuent[Persistence::CTUENT_PKAS].toArray();
     if (inpKas.size() != chargeHigh - chargeLow)
       throw MalformedJSONException{"Invalid pKa array size"};
-    for (const auto &d : inpKas)
+    for (const auto d : inpKas) {
+      if (d.type() != QJsonValue::Double)
+        throw MalformedJSONException{"Unexpected type of pKa value"};
       pKas.emplace_back(d.toDouble());
+    }
 
     /* Read mobilities */
     std::vector<double> mobilities{};
@@ -178,8 +187,11 @@ std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>
     QJsonArray inMobilities = ctuent[Persistence::CTUENT_MOBILITIES].toArray();
     if (inMobilities.size() != chargeHigh - chargeLow + 1)
       throw MalformedJSONException{"Invalid mobilities array size"};
-    for (const auto &u : inMobilities)
+    for (const auto u : inMobilities) {
+      if (u.type() != QJsonValue::Double)
+        throw MalformedJSONException{"Unexpected type of mobility value"};
       mobilities.emplace_back(u.toDouble());
+    }
 
     gdm::ChargeInterval charges{chargeLow, chargeHigh};
     gdm::PhysicalProperties physProps{charges, pKas, mobilities, viscosityCoefficient};
@@ -245,6 +257,9 @@ void deserializeConcentrations(gdm::GDM &gdm, const QJsonObject &obj)
     QJsonArray arr = obj[name].toArray();
     if (arr.size() != 1)
       throw MalformedJSONException{"Invalid concentrations array size"};
+
+    if (arr.first().type() != QJsonValue::Double)
+      throw MalformedJSONException{"Unexpected type of concentration value"};
 
     gdm.setConcentrations(ctuentIt, { arr.first().toDouble() });
   }
