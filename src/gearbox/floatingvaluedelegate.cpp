@@ -68,6 +68,8 @@ void FloatingValueDelegate::setModelData(QWidget *editor, QAbstractItemModel *mo
   value = DoubleToStringConvertor::back(s, &ok);
   if (!ok)
     return;
+  if (!AdditionalFloatingValidator::additionalValidatorsOk(this, value))
+    return;
 
   const int prec  = DoubleToStringConvertor::decimalDigits(s);
   /* Calling order matters. See FloatingMapperModel::setData() for details */
@@ -96,6 +98,8 @@ void FloatingValueDelegate::onTextChanged(const QString &)
 
   if (ok)
     ok = AdditionalFloatingValidator::additionalValidatorsOk(lineEdit, dv);
+  if (ok)
+    ok = AdditionalFloatingValidator::additionalValidatorsOk(this, dv);
 
   if (ok)
     lineEdit->setPalette(QPalette());
