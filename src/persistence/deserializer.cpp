@@ -5,17 +5,27 @@
 #include "../gdm/core/complexation/complexform.h"
 #include "persistence.h"
 
-#include <cassert>
-#include <map>
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <cassert>
+#include <map>
 
 namespace persistence {
 
 static
-void checkIfContains(const QString &str, const QJsonObject &obj)
+void checkIfContains(const QString &str, const QJsonObject &obj, const QJsonValue::Type type)
+{
+  if (!obj.contains(str))
+    throw MalformedJSONException{std::string{"Missing "} + str.toStdString()};
+
+  if (obj[str].type() != type)
+    throw MalformedJSONException{std::string{"Unexpected type of field "} + str.toStdString()};
+}
+
+static
+void checkIfContainsInt(const QString &str, const QJsonObject &obj)
 {
   if (!obj.contains(str))
     throw MalformedJSONException{std::string{"Missing "} + str.toStdString()};
@@ -26,7 +36,7 @@ std::map<std::string, gdm::Complexation> deserializeNucleusComplexForms(const QJ
 {
   std::map<std::string, gdm::Complexation> ret{};
 
-  checkIfContains(Persistence::CPX_COMPLEX_FORMS, obj);
+  checkIfContains(Persistence::CPX_COMPLEX_FORMS, obj, QJsonValue::Array);
   const QJsonArray cforms = obj[Persistence::CPX_COMPLEX_FORMS].toArray();
 
   for (const auto &item : cforms) {
@@ -36,18 +46,18 @@ std::map<std::string, gdm::Complexation> deserializeNucleusComplexForms(const QJ
 
     /* Read nucleus charge */
     int charge;
-    checkIfContains(Persistence::CPX_NUCLEUS_CHARGE, cf);
+    checkIfContainsInt(Persistence::CPX_NUCLEUS_CHARGE, cf);
     charge = cf[Persistence::CPX_NUCLEUS_CHARGE].toInt();
 
     if (charge < nucleusChargeLow || charge > nucleusChargeHigh)
       throw MalformedJSONException{"Nucleus charge in complexForm definition is outside nucleus' charge range"};
 
     /* Read ligand groups */
-    checkIfContains(Persistence::CPX_LIGAND_GROUPS, cf);
+    checkIfContains(Persistence::CPX_LIGAND_GROUPS, cf, QJsonValue::Array);
     const QJsonArray ligandGroups = cf[Persistence::CPX_LIGAND_GROUPS].toArray();
     for (const auto &lg : ligandGroups) {
       QJsonObject lgObj = lg.toObject();
-      checkIfContains(Persistence::CPX_LIGANDS, lgObj);
+      checkIfContains(Persistence::CPX_LIGANDS, lgObj, QJsonValue::Array);
       const QJsonArray ligands = lgObj[Persistence::CPX_LIGANDS].toArray();
       if (ligands.size() != 1)
         throw DeserializationException{"Invalid number of ligands in \"ligands\" array"};
@@ -58,24 +68,24 @@ std::map<std::string, gdm::Complexation> deserializeNucleusComplexForms(const QJ
 
       /* Read ligand name */
       std::string name{};
-      checkIfContains(Persistence::CPX_NAME, lig);
+      checkIfContains(Persistence::CPX_NAME, lig, QJsonValue::String);
       name = lig[Persistence::CPX_NAME].toString().toStdString();
       if (name.length() < 1)
         throw MalformedJSONException{"Invalid ligand name"};
 
       /* Read ligand charge */
       int ligandCharge;
-      checkIfContains(Persistence::CPX_CHARGE, lig);
+      checkIfContainsInt(Persistence::CPX_CHARGE, lig);
       ligandCharge = lig[Persistence::CPX_CHARGE].toInt();
 
       /* Read maxCount */
       size_t maxCount;
-      checkIfContains(Persistence::CPX_MAX_COUNT, lig);
+      checkIfContainsInt(Persistence::CPX_MAX_COUNT, lig);
       maxCount = lig[Persistence::CPX_MAX_COUNT].toInt();
 
       /* Read pBs */
       std::vector<double> pBs{};
-      checkIfContains(Persistence::CPX_PBS, lig);
+      checkIfContains(Persistence::CPX_PBS, lig, QJsonValue::Array);
       QJsonArray inpBs = lig[Persistence::CPX_PBS].toArray();
       if (inpBs.size() != maxCount)
         throw MalformedJSONException{"Invalid size of \"pBs\" array"};
@@ -84,7 +94,7 @@ std::map<std::string, gdm::Complexation> deserializeNucleusComplexForms(const QJ
 
       /* Read mobilities */
       std::vector<double> mobilities{};
-      checkIfContains(Persistence::CPX_MOBILITIES, lig);
+      checkIfContains(Persistence::CPX_MOBILITIES, lig, QJsonValue::Array);
       QJsonArray inMobilities = lig[Persistence::CPX_MOBILITIES].toArray();
       if (inMobilities.size() != maxCount)
         throw MalformedJSONException{"Invalid size of complex \"mobilities\" array"};
@@ -117,7 +127,7 @@ std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>
 
     /* Read type */
     gdm::ConstituentType type;
-    checkIfContains(Persistence::CTUENT_TYPE, ctuent);
+    checkIfContains(Persistence::CTUENT_TYPE, ctuent, QJsonValue::String);
 
     auto inType = ctuent[Persistence::CTUENT_TYPE];
     if (inType == Persistence::CTUENT_TYPE_NUCLEUS)
@@ -129,7 +139,7 @@ std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>
 
     /* Read name */
     std::string name{};
-    checkIfContains(Persistence::CTUENT_NAME, ctuent);
+    checkIfContains(Persistence::CTUENT_NAME, ctuent, QJsonValue::String);
     QString inName = ctuent[Persistence::CTUENT_NAME].toString();
     if (inName.isNull())
       throw MalformedJSONException{"Invalid \"name\""};
@@ -137,17 +147,17 @@ std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>
 
     /* Read chargeLow */
     int chargeLow;
-    checkIfContains(Persistence::CTUENT_CHARGE_LOW, ctuent);
+    checkIfContainsInt(Persistence::CTUENT_CHARGE_LOW, ctuent);
     chargeLow = ctuent[Persistence::CTUENT_CHARGE_LOW].toInt();
 
     /* Read chargeHigh */
     int chargeHigh;
-    checkIfContains(Persistence::CTUENT_CHARGE_HIGH, ctuent);
+    checkIfContainsInt(Persistence::CTUENT_CHARGE_HIGH, ctuent);
     chargeHigh = ctuent[Persistence::CTUENT_CHARGE_HIGH].toInt();
 
     /* Read viscosityCoefficient */
     double viscosityCoefficient;
-    checkIfContains(Persistence::CTUENT_VISCOSITY_COEFFICIENT, ctuent);
+    checkIfContains(Persistence::CTUENT_VISCOSITY_COEFFICIENT, ctuent, QJsonValue::Double);
     viscosityCoefficient = ctuent[Persistence::CTUENT_VISCOSITY_COEFFICIENT].toDouble();
 
     if (chargeLow > chargeHigh)
@@ -155,7 +165,7 @@ std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>
 
     /* Read pKas */
     std::vector<double> pKas{};
-    checkIfContains(Persistence::CTUENT_PKAS, ctuent);
+    checkIfContains(Persistence::CTUENT_PKAS, ctuent, QJsonValue::Array);
     QJsonArray inpKas = ctuent[Persistence::CTUENT_PKAS].toArray();
     if (inpKas.size() != chargeHigh - chargeLow)
       throw MalformedJSONException{"Invalid pKa array size"};
@@ -164,7 +174,7 @@ std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>
 
     /* Read mobilities */
     std::vector<double> mobilities{};
-    checkIfContains(Persistence::CTUENT_MOBILITIES, ctuent);
+    checkIfContains(Persistence::CTUENT_MOBILITIES, ctuent, QJsonValue::Array);
     QJsonArray inMobilities = ctuent[Persistence::CTUENT_MOBILITIES].toArray();
     if (inMobilities.size() != chargeHigh - chargeLow + 1)
       throw MalformedJSONException{"Invalid mobilities array size"};
@@ -191,7 +201,7 @@ std::vector<std::pair<gdm::Constituent, std::map<std::string, gdm::Complexation>
 static
 void deserializeComposition(gdm::GDM &gdm, const QJsonObject &obj)
 {
-  checkIfContains(Persistence::CTUENT_CTUENTS, obj);
+  checkIfContains(Persistence::CTUENT_CTUENTS, obj, QJsonValue::Array);
   try {
     const auto constituents = deserializeConstituents(obj[Persistence::CTUENT_CTUENTS].toArray());
 
@@ -230,7 +240,7 @@ void deserializeConcentrations(gdm::GDM &gdm, const QJsonObject &obj)
 {
   for (auto ctuentIt = gdm.begin(); ctuentIt != gdm.end(); ctuentIt++) {
     const QString name = QString::fromStdString(ctuentIt->name());
-    checkIfContains(name, obj);
+    checkIfContains(name, obj, QJsonValue::Array);
 
     QJsonArray arr = obj[name].toArray();
     if (arr.size() != 1)
@@ -245,7 +255,7 @@ static
 void deserializeSystem(System &system, const QJsonObject &obj)
 {
   const auto readDouble = [&](const QString &name, double &v, bool check = true) {
-    checkIfContains(name, obj);
+    checkIfContains(name, obj, QJsonValue::Double);
     v = obj[name].toDouble();
     if (v <= 0 && check)
       throw MalformedJSONException{QString{"Invalid %1 value"}.arg(name).toStdString()};
@@ -257,7 +267,7 @@ void deserializeSystem(System &system, const QJsonObject &obj)
   readDouble(Persistence::SYS_EOF_VALUE, system.eofValue, false);
 
   /* Read EOF type */
-  checkIfContains(Persistence::SYS_EOF_TYPE, obj);
+  checkIfContains(Persistence::SYS_EOF_TYPE, obj, QJsonValue::String);
   QString t = obj[Persistence::SYS_EOF_TYPE].toString();
   if (!(t == Persistence::SYS_EOF_TYPE_NONE ||
         t == Persistence::SYS_EOF_TYPE_MOBILITY ||
@@ -266,19 +276,19 @@ void deserializeSystem(System &system, const QJsonObject &obj)
   system.eofType = t;
 
   /* Read positive voltage */
-  checkIfContains(Persistence::SYS_POSITIVE_VOLTAGE, obj);
+  checkIfContains(Persistence::SYS_POSITIVE_VOLTAGE, obj, QJsonValue::Bool);
   system.positiveVoltage = obj[Persistence::SYS_POSITIVE_VOLTAGE].toBool();
 
   /* Read nonideality corrections */
-  checkIfContains(Persistence::SYS_CORRECT_FOR_DEBYE_HUCKEL, obj);
+  checkIfContains(Persistence::SYS_CORRECT_FOR_DEBYE_HUCKEL, obj, QJsonValue::Bool);
   system.correctForDebyeHuckel = obj[Persistence::SYS_CORRECT_FOR_DEBYE_HUCKEL].toBool();
-  checkIfContains(Persistence::SYS_CORRECT_FOR_ONSAGER_FUOSS, obj);
+  checkIfContains(Persistence::SYS_CORRECT_FOR_ONSAGER_FUOSS, obj, QJsonValue::Bool);
   system.correctForOnsagerFuoss = obj[Persistence::SYS_CORRECT_FOR_ONSAGER_FUOSS].toBool();
-  checkIfContains(Persistence::SYS_CORRECT_FOR_VISCOSITY, obj);
+  checkIfContains(Persistence::SYS_CORRECT_FOR_VISCOSITY, obj, QJsonValue::Bool);
   system.correctForViscosity = obj[Persistence::SYS_CORRECT_FOR_VISCOSITY].toBool();
 
   try {
-    checkIfContains(Persistence::SYS_INJECTION_ZONE_LENGTH, obj);
+    checkIfContains(Persistence::SYS_INJECTION_ZONE_LENGTH, obj, QJsonValue::Double);
     system.injectionZoneLength = obj[Persistence::SYS_INJECTION_ZONE_LENGTH].toDouble();
   } catch (const MalformedJSONException &) {
     system.injectionZoneLength = 1.0;
@@ -304,19 +314,19 @@ void Deserializer::deserialize(const QString &filepath, gdm::GDM &gdmBGE, gdm::G
   if (obj.isEmpty())
     throw MalformedJSONException{"Bad root object"};
 
-  checkIfContains(Persistence::ROOT_COMPOSITION_BGE, obj);
+  checkIfContains(Persistence::ROOT_COMPOSITION_BGE, obj, QJsonValue::Object);
   deserializeComposition(gdmBGE, obj[Persistence::ROOT_COMPOSITION_BGE].toObject());
 
-  checkIfContains(Persistence::ROOT_COMPOSITION_SAMPLE, obj);
+  checkIfContains(Persistence::ROOT_COMPOSITION_SAMPLE, obj, QJsonValue::Object);
   deserializeComposition(gdmSample, obj[Persistence::ROOT_COMPOSITION_SAMPLE].toObject());
 
-  checkIfContains(Persistence::ROOT_CONCENTRATIONS_BGE, obj);
+  checkIfContains(Persistence::ROOT_CONCENTRATIONS_BGE, obj, QJsonValue::Object);
   deserializeConcentrations(gdmBGE, obj[Persistence::ROOT_CONCENTRATIONS_BGE].toObject());
 
-  checkIfContains(Persistence::ROOT_CONCENTRATIONS_SAMPLE, obj);
+  checkIfContains(Persistence::ROOT_CONCENTRATIONS_SAMPLE, obj, QJsonValue::Object);
   deserializeConcentrations(gdmSample, obj[Persistence::ROOT_CONCENTRATIONS_SAMPLE].toObject());
 
-  checkIfContains(Persistence::ROOT_SYSTEM, obj);
+  checkIfContains(Persistence::ROOT_SYSTEM, obj, QJsonValue::Object);
   deserializeSystem(system, obj[Persistence::ROOT_SYSTEM].toObject());
 }
 
