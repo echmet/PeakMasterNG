@@ -10,6 +10,9 @@
 #include "../gearbox/results_models/eigenzonedetailsmodel.h"
 
 #include <QDataWidgetMapper>
+#include <QScreen>
+#include <QTimer>
+#include <QWindow>
 
 MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *parent) :
   QWidget{parent},
@@ -81,6 +84,10 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
   connect(m_ezDetailsDlg, &EigenzoneDetailsDialog::displayDeltasChanged, ezdModel, &EigenzoneDetailsModel::displayDeltas);
 
   connect(ui->qle_totalLength, &FloatingValueLineEdit::valueChanged, ui->qle_detectorPosition, &FloatingValueLineEdit::revalidate);
+
+  QTimer::singleShot(0, this, [this]() { connect(this->window()->windowHandle()->screen(), &QScreen::logicalDotsPerInchChanged,
+                                                 this, &MainControlWidget::onDpiChanged); });
+  QTimer::singleShot(0, this, [this]() { this->onDpiChanged(); });
 }
 
 MainControlWidget::~MainControlWidget()
@@ -157,6 +164,19 @@ void MainControlWidget::onBGEIonicCompositionClicked()
 {
   m_bgeIonicCompDlg->resize(m_bgeIonicCompDlg->sizeHint());
   m_bgeIonicCompDlg->show();
+}
+
+void MainControlWidget::onDpiChanged()
+{
+  auto wh = window()->windowHandle();
+  if (wh == nullptr)
+    return;
+  auto screen = wh->screen();
+  if (screen == nullptr)
+    return;
+
+  int h = fontMetrics().height() * 4;
+  ui->qtbv_systemEigenzones->setMinimumHeight(h);
 }
 
 void MainControlWidget::onEOFCurrentIndexChanged(const int idx)

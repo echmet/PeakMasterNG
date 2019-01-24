@@ -228,8 +228,6 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
 
   setWindowIcon(Globals::icon());
 
-  onScreenChanged(UIHelpers::findScreenForWidget(this));
-
 #ifdef THEY_LIVE
   QMainWindow::setWindowTitle(QString("%1 %2").arg(QString::fromUtf8("\x49\x20\x63\x61\x6d\x65\x20\x68\x65\x72\x65\x20\x74\x6f\x20\x64\x72\x61\x77"
                                                                      "\x20\x70\x65\x61\x6b\x73\x20\x61\x6e\x64\x20\x63\x68\x65\x77\x20\x62\x75\x62"
@@ -243,6 +241,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
 #endif // THEY_LIVE
 
   QTimer::singleShot(0, this, &PMNGMainWindow::connectOnScreenChanged); /* This must be done from the event queue after the window is created */
+  QTimer::singleShot(0, this, [this]() { onScreenChanged(UIHelpers::findScreenForWidget(this)); });
 }
 
 PMNGMainWindow::~PMNGMainWindow()
@@ -661,17 +660,21 @@ void PMNGMainWindow::onSaveAs()
 
 void PMNGMainWindow::onScreenChanged(QScreen *screen)
 {
+  static const int MIN_SIZE{800};
 
   if (screen == nullptr)
     return;
 
-  const int screenHeight = screen->geometry().height();
+  const qreal dpi = screen->logicalDotsPerInch();
+  int screenHeight = screen->geometry().height();
 
-  if (screenHeight <= 900)
-    m_mainCtrlWidget->setMinimumHeight(0.7 * screenHeight);
-  else
-    m_mainCtrlWidget->setMinimumHeight(900);
-
+  screenHeight = qRound(screenHeight * dpi / 96.0);
+  if (screenHeight <= MIN_SIZE) {
+    const int adjSize = qRound(0.7 * screenHeight);
+    setMinimumHeight(adjSize);
+  } else {
+    setMinimumHeight(MIN_SIZE);
+  }
 }
 
 void PMNGMainWindow::onSetDebuggingOutput()

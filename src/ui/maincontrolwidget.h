@@ -93,6 +93,7 @@ private:
 private slots:
   void onBGEIonicCompositionClicked();
   void onEOFCurrentIndexChanged(const int idx);
+  void onDpiChanged();
   void onNonidealityCorrectionsClicked();
   void onRunSetupChanged();
   void onRunSetupChangedInvalidate();
