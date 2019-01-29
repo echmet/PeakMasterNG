@@ -780,20 +780,12 @@ std::vector<CalculatorInterface::TimeDependentZoneInformation> CalculatorInterfa
 
 std::vector<CalculatorInterface::TracepointInfo> CalculatorInterface::tracepointInformation() const
 {
-  ECHMET::LEMNG::CZESystem *czeSystemRaw;
   ECHMET::LEMNG::TracepointInfoVec *tpiVec;
   std::vector<TracepointInfo> tracepointInfo{};
 
-  auto backgroundIcVec = ECHMET::SysComp::createInConstituentVec(0);
-  auto sampleIcVec = ECHMET::SysComp::createInConstituentVec(0);
-
-  ECHMET::LEMNG::RetCode tRet = ECHMET::LEMNG::makeCZESystem(backgroundIcVec, sampleIcVec, czeSystemRaw);
-  if (tRet != ECHMET::LEMNG::RetCode::OK)
-    goto out;
-
   tpiVec = ECHMET::LEMNG::tracepointInfo();
   if (tpiVec == nullptr)
-    goto out_2;
+    return tracepointInfo;
 
   for (size_t idx = 0; idx < tpiVec->size(); idx++) {
     const auto &tpi = tpiVec->at(idx);
@@ -806,12 +798,6 @@ std::vector<CalculatorInterface::TracepointInfo> CalculatorInterface::tracepoint
     tpi.description->destroy();
   }
   tpiVec->destroy();
-
-out_2:
-  ECHMET::LEMNG::releaseCZESystem(czeSystemRaw);
-out:
-  backgroundIcVec->destroy();
-  sampleIcVec->destroy();
 
   return tracepointInfo;
 }
