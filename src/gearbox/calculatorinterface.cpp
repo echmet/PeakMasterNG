@@ -805,7 +805,12 @@ std::vector<CalculatorInterface::TracepointInfo> CalculatorInterface::tracepoint
 bool CalculatorInterface::writeTrace(const std::string &traceOutputFile) noexcept
 {
   if (traceOutputFile.size() > 0) {
-    const auto trace = std::string{ECHMET::LEMNG::trace()->c_str()};
+    auto traceRaw = ECHMET::LEMNG::trace();
+    if (traceRaw == nullptr)
+      return false;
+
+    const auto trace = std::string{traceRaw->c_str()};
+    traceRaw->destroy();
 
     std::ofstream ofs{traceOutputFile};
     ofs << trace;
