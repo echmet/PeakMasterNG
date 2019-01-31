@@ -41,7 +41,7 @@ public:
           return false;
 
       (*(this->m_data))[index.column()] = value.toReal();
-      emit this->dataChanged(this->createIndex(0, index.column()), this->createIndex(0, index.column()), { role });
+      emit this->dataChanged(index, index, { role });
       return true;
     }
     case Qt::UserRole + 1:
