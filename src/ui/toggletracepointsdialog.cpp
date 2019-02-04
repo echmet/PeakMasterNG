@@ -101,7 +101,13 @@ void ToggleTracepointsDialog::onSetOutputFile()
     return;
 
   m_outputFilePath = dlg.selectedFiles()[0];
-  ui->qle_outputFile->setText(m_outputFilePath);
+  ui->qle_outputFile->setText([](QString s) {
+#ifdef Q_OS_WIN
+    return s.replace('/', '\\');
+#else
+    return s;
+#endif // Q_OS_WIN
+  }(m_outputFilePath));
 }
 
 ToggleTracepointsDialog::TracingSetup ToggleTracepointsDialog::result() const
