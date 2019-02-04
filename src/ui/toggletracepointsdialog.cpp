@@ -74,6 +74,7 @@ void ToggleTracepointsDialog::onEnableAllClicked()
 void ToggleTracepointsDialog::onEnableTracingToggled(const bool enabled)
 {
   ui->qle_outputFile->setEnabled(enabled);
+  ui->qpb_chooseOutputFile->setEnabled(enabled);
   m_tracepointsWidget->setEnabled(enabled);
 }
 
@@ -161,6 +162,8 @@ void ToggleTracepointsDialog::setupTracepointList(const std::vector<CalculatorIn
   connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &ToggleTracepointsDialog::onAccepted);
   connect(ui->qle_filter, &QLineEdit::textChanged, this, &ToggleTracepointsDialog::onFilterTextChanged);
   connect(ui->qle_outputFile, &QLineEdit::editingFinished, [this]() { m_outputFilePath = ui->qle_outputFile->text();});
+
+  onEnableTracingToggled(ui->qcb_enableTracing->checkState() == Qt::Checked);
 
   setMinimumHeight(minimumHeight() + m_tracepointsWidget->fontMetrics().height() *30);
 }
