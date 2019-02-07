@@ -17,16 +17,18 @@ RefocuserWorker::RefocuserWorker() :
 
 void RefocuserWorker::schedule()
 {
-  QWidget *target = [this]() {
-    if (m_focused != nullptr)
-      return m_focused;
-    return qobject_cast<QWidget *>(m_focusedParent);
-  }();
+  QTimer::singleShot(0, nullptr, [this]() {
+    QWidget *target = [this]() {
+      if (m_focused != nullptr)
+        return m_focused;
+      return qobject_cast<QWidget *>(m_focusedParent);
+    }();
 
-  if (target != nullptr)
-    QTimer::singleShot(0, nullptr, [this, target] { target->setFocus(); this->deleteLater(); });
-  else
+    if (target != nullptr)
+      target->setFocus();
+
     this->deleteLater();
+  });
 }
 
 void RefocuserWorker::onFocusedDestroyed()

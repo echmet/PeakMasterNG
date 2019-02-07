@@ -21,8 +21,7 @@ private slots:
   void onFocusedParentDestroyed();
 };
 
-class Refocuser : public QObject {
-  Q_OBJECT
+class Refocuser {
 public:
   Refocuser();
   ~Refocuser();
