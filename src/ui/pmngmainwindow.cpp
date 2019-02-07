@@ -21,6 +21,7 @@
 #include "checkforupdatedialog.h"
 #include "../softwareupdater.h"
 #include "elementaries/uihelpers.h"
+#include "refocuser.h"
 
 #include <cassert>
 #include <QCloseEvent>
@@ -336,6 +337,7 @@ void PMNGMainWindow::onAbout()
 void PMNGMainWindow::onCalculate()
 {
   Inhibitor ihb{m_fullCalcInProgress};
+  Refocuser refoc{};
 
   EFGDisplayer displayer = makeMainWindowEFGDisplayer();
 

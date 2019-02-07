@@ -138,7 +138,8 @@ SOURCES += \
     src/softwareupdateresult.cpp \
     src/ui/autoupdatecheckdialog.cpp \
     src/gearbox/additionalfloatingvalidator.cpp \
-    src/ui/returnacceptabletableview.cpp
+    src/ui/returnacceptabletableview.cpp \
+    src/ui/refocuser.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -253,7 +254,8 @@ HEADERS += \
     src/gearbox/results_models/backgroundpropertiesmapping.h \
     src/gearbox/additionalfloatingvalidator.h \
     src/msvc_hacks.h \
-    src/ui/returnacceptabletableview.h
+    src/ui/returnacceptabletableview.h \
+    src/ui/refocuser.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \
