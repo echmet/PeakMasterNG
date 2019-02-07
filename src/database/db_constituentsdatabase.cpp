@@ -1053,7 +1053,7 @@ out_2:
 
 void ConstituentsDatabase::sqliteBoundStringDestructor(void *str)
 {
-  delete static_cast<char *>(str);
+  free(str);
 }
 
 } // namespace database
