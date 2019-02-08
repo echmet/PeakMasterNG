@@ -76,7 +76,7 @@ void CopiableItemsTableView::mousePressEvent(QMouseEvent *evt)
 
     m_rightClickMenu->exec(evt->globalPos());
   } else if (evt->button() == Qt::LeftButton) {
-        const auto &idx = indexAt(evt->pos());
+    const auto &idx = indexAt(evt->pos());
     if (idx.isValid()) {
       selectionModel()->clearSelection();
       setCurrentIndex(idx);
