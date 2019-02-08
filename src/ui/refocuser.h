@@ -10,7 +10,7 @@ public:
   RefocuserWorker();
 
 public slots:
-  void schedule();
+  void refocus();
 
 private:
   QWidget *m_focused;

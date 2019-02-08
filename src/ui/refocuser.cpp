@@ -15,7 +15,7 @@ RefocuserWorker::RefocuserWorker() :
   }
 }
 
-void RefocuserWorker::schedule()
+void RefocuserWorker::refocus()
 {
   QTimer::singleShot(0, nullptr, [this]() {
     QWidget *target = [this]() {
@@ -49,5 +49,5 @@ Refocuser::Refocuser()
 
 Refocuser::~Refocuser()
 {
-  QTimer::singleShot(0, m_worker, &RefocuserWorker::schedule);
+  QTimer::singleShot(0, m_worker, &RefocuserWorker::refocus);
 }
