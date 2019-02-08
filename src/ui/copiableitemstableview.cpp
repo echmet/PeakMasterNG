@@ -28,7 +28,7 @@ void CopiableItemsTableView::keyPressEvent(QKeyEvent *evt)
     auto newIdx = idx.model()->index(idx.row() + right , idx.column() + down);
 
     selectionModel()->clearSelection();
-    selectionModel()->select(newIdx, QItemSelectionModel::Select);
+    setCurrentIndex(newIdx);
   };
 
   const int key = evt->key();
@@ -79,7 +79,7 @@ void CopiableItemsTableView::mousePressEvent(QMouseEvent *evt)
         const auto &idx = indexAt(evt->pos());
     if (idx.isValid()) {
       selectionModel()->clearSelection();
-      selectionModel()->select(idx, QItemSelectionModel::Select);
+      setCurrentIndex(idx);
       edit(idx);
     }
   }
