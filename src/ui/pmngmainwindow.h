@@ -103,7 +103,7 @@ private:
     CalculatorInterface::Signal signal;
   };
 
-  void addConstituentsSignals(const QVector<QString> &analytes);
+  void addConstituentsSignals(const CalculatorInterface::ConstituentPackVec &constituents);
   EFGDisplayer makeMainWindowEFGDisplayer();
   void initPlotParams();
   void initSignalItems();

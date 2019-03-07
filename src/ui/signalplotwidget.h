@@ -44,7 +44,8 @@ public:
   int selectedSignalIndex() const noexcept;
   void setPlotParamsMapper(FloatMapperModel<PlotParamsItems> *model);
   void setSignal(const QVector<QPointF> &signal, const SignalStyle style, const QString &yAxisText,
-                 const std::vector<CalculatorInterface::TimeDependentZoneInformation> &tdzi);
+                 const std::vector<CalculatorInterface::TimeDependentZoneInformation> &tdzi,
+                 const bool signalIsAnalyte);
   void setSignalIndex(const int idx);
   void setSignalItemsModel(QStandardItemModel *model);
 
@@ -58,6 +59,7 @@ private:
   QwtPlotPicker *m_plotPicker;
   QwtPlotZoomer *m_plotZoomer;
   std::vector<QPointF> m_signal;
+  bool m_showingAnalyteSignal;
 
   std::vector<CalculatorInterface::TimeDependentZoneInformation> m_tdzi;
 

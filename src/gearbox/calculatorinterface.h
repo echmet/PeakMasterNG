@@ -8,6 +8,7 @@
 #include <stdexcept>
 
 namespace gdm {
+  class Constituent;
   class GDM;
 }
 
@@ -28,6 +29,9 @@ class CalculatorInterface : public QObject {
   Q_OBJECT
 
 public:
+  using ConstituentPack = std::pair<QString, bool>; // { Constituent name, is constituent analyte? }
+  using ConstituentPackVec = QVector<ConstituentPack>;
+
   enum class SignalTypes {
     CONDUCTIVITY,
     PH_RESPONSE,
@@ -47,11 +51,13 @@ public:
     SignalTypes type;
     QString constituentName;
     QString signalName;
+    bool isAnalyteSignal;
 
     bool operator==(const Signal &other) const noexcept {
       return type == other.type &&
              constituentName == other.constituentName &&
-             signalName == other.signalName;
+             signalName == other.signalName &&
+             isAnalyteSignal == other.isAnalyteSignal;
     }
 
     bool operator!=(const Signal &other) const noexcept {
@@ -170,8 +176,8 @@ public:
   CalculatorInterface(const CalculatorInterface &other);
   CalculatorInterface(CalculatorInterface &&other) noexcept;
   ~CalculatorInterface() noexcept;
-  QVector<QString> allConstituents() const;
-  QVector<QString> analytes() const;
+  ConstituentPackVec allConstituents() const;
+  ConstituentPackVec analytes() const;
   void calculate(const bool correctForDebyeHuckel, const bool correctForOnsagerFuoss, const bool correctForViscosity);
   void disableAllTracepoints() noexcept;
   static double minimumConcentration() noexcept;
@@ -198,6 +204,7 @@ public slots:
   void onInvalidate();
 
 private:
+  bool constituentIsAnalyte(const gdm::Constituent &c) const;
   void fillAnalytesList();
   void mapResultsAnalytesDissociation();
   void mapResultsBGE(const double totalLength, const double detectorPosition, const double drivingVoltage, const double EOFMobility);

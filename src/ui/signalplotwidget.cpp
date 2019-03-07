@@ -41,7 +41,8 @@ size_t findClosestIdx(const std::vector<QPointF> &data, const double currentX)
 
 SignalPlotWidget::SignalPlotWidget(QWidget *parent) :
   QWidget(parent),
-  ui(new Ui::SignalPlotWidget)
+  ui(new Ui::SignalPlotWidget),
+  m_showingAnalyteSignal(false)
 {
   ui->setupUi(this);
 
@@ -130,8 +131,12 @@ void SignalPlotWidget::onPointHovered(const QPoint &pos)
   const double x = cp.x();
   QStringList zoneNames{};
   for (const auto &z : m_tdzi) {
-    if (x >= z.beginsAt && x <= z.endsAt)
+    if (x >= z.beginsAt && x <= z.endsAt) {
+      if (m_showingAnalyteSignal && z.isSystemZone)
+        continue;
+
       zoneNames << z.name;
+    }
   }
 
   if (zoneNames.isEmpty()) {
@@ -195,11 +200,14 @@ void SignalPlotWidget::setPlotParamsMapper(FloatMapperModel<PlotParamsItems> *mo
 }
 
 void SignalPlotWidget::setSignal(const QVector<QPointF> &signal, const SignalStyle style, const QString &yAxisText,
-                                 const std::vector<CalculatorInterface::TimeDependentZoneInformation> &tdzi)
+                                 const std::vector<CalculatorInterface::TimeDependentZoneInformation> &tdzi,
+                                 const bool signalIsAnalyte)
 {
   m_plotCurve->setSamples(signal);
   setBrush(style);
   m_signal = signal.toStdVector();
+
+  m_showingAnalyteSignal = signalIsAnalyte;
 
   m_tdzi = tdzi;
 

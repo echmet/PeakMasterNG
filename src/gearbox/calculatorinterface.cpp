@@ -241,28 +241,31 @@ CalculatorInterface::~CalculatorInterface() noexcept
 {
 }
 
-QVector<QString> CalculatorInterface::allConstituents() const
+CalculatorInterface::ConstituentPackVec CalculatorInterface::allConstituents() const
 {
-  QVector<QString> _ctuents{};
+  ConstituentPackVec _ctuents{};
 
   if (m_ctx.isValid() == CalculatorContext::CompleteResultsValidity::INVALID)
     return _ctuents;
 
-  for (const auto &c : m_sampleGDM)
-    _ctuents.append(QString::fromStdString(c.name()));
+  for (const auto &c : m_sampleGDM) {
+    const bool isAnalyte = constituentIsAnalyte(c);
+
+    _ctuents.append({ QString::fromStdString(c.name()), isAnalyte });
+  }
 
   return _ctuents;
 }
 
-QVector<QString> CalculatorInterface::analytes() const
+CalculatorInterface::ConstituentPackVec CalculatorInterface::analytes() const
 {
-  QVector<QString> _analytes{};
+  ConstituentPackVec _analytes{};
 
   if (m_ctx.isValid() == CalculatorContext::CompleteResultsValidity::INVALID)
     return _analytes;
 
   for (const auto &a : m_ctx.analytes)
-    _analytes.append(QString::fromStdString(a));
+    _analytes.append({ QString::fromStdString(a), true });
 
   return _analytes;
 }
@@ -312,6 +315,11 @@ void CalculatorInterface::calculate(const bool correctForDebyeHuckel, const bool
   m_ctx.makeValid(true);
 }
 
+bool CalculatorInterface::constituentIsAnalyte(const gdm::Constituent &c) const
+{
+  return m_backgroundGDM.find(c.name()) == m_backgroundGDM.cend();
+}
+
 void CalculatorInterface::disableAllTracepoints() noexcept
 {
   ECHMET::LEMNG::toggleAllTracepoints(false);
@@ -320,7 +328,7 @@ void CalculatorInterface::disableAllTracepoints() noexcept
 void CalculatorInterface::fillAnalytesList()
 {
   for (const auto &it : m_sampleGDM) {
-    if (m_backgroundGDM.find(it.name()) == m_backgroundGDM.cend())
+    if (constituentIsAnalyte(it))
       m_ctx.analytes.emplace_back(it.name());
   }
 }
@@ -732,6 +740,15 @@ std::vector<CalculatorInterface::TimeDependentZoneInformation> CalculatorInterfa
   std::vector<TimeDependentZoneInformation> zinfo{};
   const auto _analytes = analytes();
 
+  auto isContained = [&_analytes](const QString &name) {
+    for (const auto &item : _analytes) {
+      if (std::get<0>(item) == name)
+        return true;
+    }
+
+    return false;
+  };
+
   for (size_t idx = 0; idx < m_ctx.results->eigenzones->size(); idx++) {
     const auto &ez = m_ctx.results->eigenzones->at(idx);
     const auto &env = envelopes->at(idx);
@@ -747,7 +764,7 @@ std::vector<CalculatorInterface::TimeDependentZoneInformation> CalculatorInterfa
         continue;
       while (it->hasNext()) {
         const auto c = it->value();
-        if (c.concentration >= ECHMET::LEMNG::minimumSafeConcentration() && _analytes.contains(it->key())) {
+        if (c.concentration >= ECHMET::LEMNG::minimumSafeConcentration() && isContained(it->key())) {
           const double conductivityBGE = m_ctx.results->BGEProperties.conductivity;
 
           zoneName = QString{it->key()};

@@ -144,9 +144,9 @@ SignalPlotWidget::SignalStyle plotSignalStyle(const CalculatorInterface::SignalT
 }
 
 QVector<PMNGMainWindow::SignalItem> PMNGMainWindow::s_defaultSignalItems{
-                                                                         { "Conductivity", { CalculatorInterface::SignalTypes::CONDUCTIVITY, "" , "Conductivity (S/m)" }},
-                                                                         { "pH response", { CalculatorInterface::SignalTypes::PH_RESPONSE, "" , QString::fromUtf8("\xCE\x94 pH") }},
-                                                                         { "All analytes", { CalculatorInterface::SignalTypes::ALL_ANALYTES, "", "Concentration (mM)" }}
+                                                                         { "Conductivity", { CalculatorInterface::SignalTypes::CONDUCTIVITY, "" , "Conductivity (S/m)", false }},
+                                                                         { "pH response", { CalculatorInterface::SignalTypes::PH_RESPONSE, "" , QString::fromUtf8("\xCE\x94 pH"), false }},
+                                                                         { "All analytes", { CalculatorInterface::SignalTypes::ALL_ANALYTES, "", "Concentration (mM)", true }}
                                                                         };
 
 PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
@@ -250,12 +250,13 @@ PMNGMainWindow::~PMNGMainWindow()
   delete ui;
 }
 
-void PMNGMainWindow::addConstituentsSignals(const QVector<QString> &constituents)
+void PMNGMainWindow::addConstituentsSignals(const CalculatorInterface::ConstituentPackVec &constituents)
 {
   for (const auto &a : constituents) {
-    QStandardItem *si = new QStandardItem{QString{tr("c (%1)")}.arg(a)};
-    QString plotCaption = QString{"c %1 (mM)"}.arg(a);
-    si->setData(QVariant::fromValue<CalculatorInterface::Signal>({ CalculatorInterface::SignalTypes::CONCENTRATION, a, plotCaption }));
+    QString ctuentName = std::get<0>(a);
+    QStandardItem *si = new QStandardItem{QString{tr("c (%1)")}.arg(ctuentName)};
+    QString signalName = QString{"c %1 (mM)"}.arg(ctuentName);
+    si->setData(QVariant::fromValue<CalculatorInterface::Signal>({ CalculatorInterface::SignalTypes::CONCENTRATION, ctuentName, signalName, std::get<1>(a) }));
     m_signalTypesModel->appendRow(si);
   }
 }
@@ -306,7 +307,7 @@ void PMNGMainWindow::initSignalItems()
 EFGDisplayer PMNGMainWindow::makeMainWindowEFGDisplayer()
 {
   auto dispExecutor = [this](const QVector<QPointF> &data, const std::vector<CalculatorInterface::TimeDependentZoneInformation> &tdzi, const CalculatorInterface::Signal &signal) {
-    m_signalPlotWidget->setSignal(data, plotSignalStyle(signal.type), signal.signalName, tdzi);
+    m_signalPlotWidget->setSignal(data, plotSignalStyle(signal.type), signal.signalName, tdzi, signal.isAnalyteSignal);
   };
 
   return EFGDisplayer(dispExecutor);
