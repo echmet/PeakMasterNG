@@ -69,6 +69,7 @@ EFGDisplayer EFGCSVExporter::make()
     ostr.setRealNumberNotation(QTextStream::ScientificNotation);
     ostr.setRealNumberPrecision(17);
 
+    ostr << "time (min)" << opts.fieldDelimiter << sig.signalName << "\n";
     for (const auto &pt : data)
       ostr << pt.x() << opts.fieldDelimiter << pt.y() << "\n";
 
