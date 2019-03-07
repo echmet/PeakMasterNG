@@ -306,7 +306,7 @@ void PMNGMainWindow::initSignalItems()
 EFGDisplayer PMNGMainWindow::makeMainWindowEFGDisplayer()
 {
   auto dispExecutor = [this](const QVector<QPointF> &data, const std::vector<CalculatorInterface::TimeDependentZoneInformation> &tdzi, const CalculatorInterface::Signal &signal) {
-    m_signalPlotWidget->setSignal(data, plotSignalStyle(signal.type), signal.plotCaption, tdzi);
+    m_signalPlotWidget->setSignal(data, plotSignalStyle(signal.type), signal.signalName, tdzi);
   };
 
   return EFGDisplayer(dispExecutor);

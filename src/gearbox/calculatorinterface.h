@@ -46,12 +46,12 @@ public:
   public:
     SignalTypes type;
     QString constituentName;
-    QString plotCaption;
+    QString signalName;
 
     bool operator==(const Signal &other) const noexcept {
       return type == other.type &&
              constituentName == other.constituentName &&
-             plotCaption == other.plotCaption;
+             signalName == other.signalName;
     }
 
     bool operator!=(const Signal &other) const noexcept {
