@@ -14,7 +14,7 @@ QWidget *FloatingValueDelegate::createEditor(QWidget *parent, const QStyleOption
 {
   Q_UNUSED(option);
 
-  QLineEdit *lineEdit = new QLineEdit(parent);
+  auto lineEdit = new QLineEdit(parent);
 
   const auto &current = index.model()->data(index);
 
@@ -46,7 +46,7 @@ void FloatingValueDelegate::setEditorData(QWidget *editor, const QModelIndex &in
   if (!ok)
     return;
 
-  QLineEdit *lineEdit = qobject_cast<QLineEdit *>(editor);
+  auto lineEdit = qobject_cast<QLineEdit *>(editor);
   if (lineEdit == nullptr)
     return;
 
@@ -59,7 +59,7 @@ void FloatingValueDelegate::setModelData(QWidget *editor, QAbstractItemModel *mo
 {
   double value;
   bool ok;
-  QLineEdit *lineEdit = qobject_cast<QLineEdit *>(editor);
+  auto lineEdit = qobject_cast<QLineEdit *>(editor);
   if (lineEdit == nullptr)
     return;
 
@@ -87,7 +87,7 @@ void FloatingValueDelegate::updateEditorGeometry(QWidget *editor, const QStyleOp
 void FloatingValueDelegate::onTextChanged(const QString &)
 {
   bool ok;
-  QLineEdit *lineEdit = qobject_cast<QLineEdit *>(QObject::sender());
+  auto lineEdit = qobject_cast<QLineEdit *>(QObject::sender());
   if (lineEdit == nullptr)
     return;
 

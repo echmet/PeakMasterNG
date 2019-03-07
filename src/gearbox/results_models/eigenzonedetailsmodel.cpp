@@ -13,7 +13,8 @@ const QVector<int> EigenzoneDetailsModel::s_untaintableRows{ 0, 1, 2 };
 
 
 EigenzoneDetailsModel::EigenzoneDetailsModel(QObject *parent)
-  : QAbstractTableModel(parent)
+  : QAbstractTableModel{parent},
+    m_displayDeltas{false}
 {
   if (Globals::isZombieOS()) {
     m_mobilityStr = QString{tr("Mobility (. 1e-9)")};
@@ -44,7 +45,7 @@ void EigenzoneDetailsModel::displayDeltas(const bool status)
 {
   m_displayDeltas = status;
 
-  if (m_eigenzones.size() > 0)
+  if (!m_eigenzones.empty())
     emit dataChanged(index(6, 0), index(rowCount(), columnCount()));
 }
 

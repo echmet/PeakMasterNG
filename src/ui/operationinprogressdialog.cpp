@@ -36,6 +36,4 @@ void OperationInProgressDialog::reject()
 {
   if (!m_isExecable)
     QDialog::reject();
-
-  return;
 }

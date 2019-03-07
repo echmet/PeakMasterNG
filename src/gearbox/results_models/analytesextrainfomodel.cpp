@@ -11,10 +11,10 @@ AnalytesExtraInfoModel::ExtraInfo::ExtraInfo() :
   valid{false}
 {}
 
-AnalytesExtraInfoModel::ExtraInfo::ExtraInfo(const QString &analyte, const double uEff, const double time, const double uEMD,
+AnalytesExtraInfoModel::ExtraInfo::ExtraInfo(QString analyte, const double uEff, const double time, const double uEMD,
                                              const double concentrationMax, const double conductivityMax,
                                              const bool detected) :
-  analyte{analyte},
+  analyte{std::move(analyte)},
   uEff{uEff},
   time{time},
   uEMD{uEMD},

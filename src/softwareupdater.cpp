@@ -119,8 +119,8 @@ void SoftwareUpdater::checkForUpdate(const bool automatic)
     return;
   m_checkInProgress = true;
 
-  QThread *thr = new QThread();
-  SoftwareUpdateWorker *worker = new SoftwareUpdateWorker(UPDATE_LINKS, automatic);
+  auto thr = new QThread();
+  auto worker = new SoftwareUpdateWorker(UPDATE_LINKS, automatic);
 
   worker->moveToThread(thr);
 

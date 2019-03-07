@@ -19,7 +19,7 @@ void FloatingValueLineEdit::ensureSanity(QString text)
 
   QString _text = text.replace(QChar::Nbsp, QString(""), Qt::CaseInsensitive);
 
-  const double dv = DoubleToStringConvertor::back(text, &ok);
+  const double dv = DoubleToStringConvertor::back(_text, &ok);
   if (ok)
     ok = AdditionalFloatingValidator::additionalValidatorsOk(this, dv);
 

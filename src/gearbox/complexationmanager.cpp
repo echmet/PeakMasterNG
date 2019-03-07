@@ -54,7 +54,7 @@ QString makeOptionText(const std::string &name, const gdm::ConstituentType newTy
     return "nucleus";
   }();
 
-  return QString(QObject::tr("Convert \"%1\" to %2")).arg(name.c_str()).arg(typeName);
+  return QString(QObject::tr("Convert \"%1\" to %2")).arg(name.c_str(), typeName);
 }
 
 static
@@ -88,11 +88,11 @@ Conflict resolveTypeConflict(gdm::GDM::iterator first, gdm::GDM::iterator second
   QPushButton *fixSecond = nullptr;
 
   auto cpxs = gdm::findComplexations(sampleGDM.composition(), first);
-  if (cpxs.size() == 0)
+  if (cpxs.empty())
     fixFirst = mbox.addButton(makeOptionText(first->name(), otherType(first->type())), QMessageBox::AcceptRole);
 
   cpxs = gdm::findComplexations(sampleGDM.composition(), second);
-  if (cpxs.size() == 0)
+  if (cpxs.empty())
     fixSecond = mbox.addButton(makeOptionText(second->name(), otherType(second->type())), QMessageBox::AcceptRole);
 
   mbox.addButton(QMessageBox::Cancel);
@@ -115,7 +115,7 @@ Conflict resolveTypeConflict(gdm::GDM::iterator first, gdm::GDM::iterator second
 static
 EditComplexationDialog * makeComplexationDialog(const gdm::GDM::const_iterator nucleusIt, const gdm::GDM::const_iterator ligandIt, ComplexationRelationshipsModel *model, const gdm::GDM &gdm)
 {
-  EditComplexationDialog *dlg = new EditComplexationDialog{};
+  auto dlg = new EditComplexationDialog{};
   dlg->setComplexationModel(model);
 
   const auto nucleusCharges = nucleusIt->physicalProperties().charges();
@@ -137,12 +137,8 @@ EditComplexationDialog * makeComplexationDialog(const gdm::GDM::const_iterator n
         gdm::ChargeCombination chargesCombo{nucleusCharge, _ligandCharge};
 
         auto complexFormIt = _cpxn.find(chargesCombo);
-        if (complexFormIt != _cpxn.cend()) {
-          QVector<double> _mobilities;
-          QVector<double> _pBs;
-
+        if (complexFormIt != _cpxn.cend())
           rel.addComplexForm(nucleusCharge, _ligandCharge, QVector<double>::fromStdVector(complexFormIt->mobilities()), QVector<double>::fromStdVector(complexFormIt->pBs()));
-        }
       }
     }
 
@@ -211,7 +207,7 @@ bool processComplexationsForGDM(const std::string &nucleus, gdm::GDM &GDM,
           return false;
         }
 
-        if (mobilities.size() == 0)
+        if (mobilities.empty())
           continue;
 
         try {
@@ -233,7 +229,7 @@ bool processComplexationsForGDM(const std::string &nucleus, gdm::GDM &GDM,
     const auto ligandIt = it->first;
     auto &&complexations = it->second;
 
-    if (complexations.size() > 0) {
+    if (!complexations.empty()) {
       try {
         GDM.setComplexation(nucleusIt, ligandIt, std::move(complexations));
       } catch (gdm::InvalidArgument &ex) {
@@ -284,7 +280,7 @@ bool ComplexationManager::complexes(const std::string &name)
     return false;
 
   const auto found = gdm::findComplexations(h_sampleGDM.composition(), it);
-  return found.size() > 0;
+  return !found.empty();
 }
 
 void ComplexationManager::editComplexation(const std::string &name)
@@ -300,7 +296,7 @@ void ComplexationManager::editComplexation(const std::string &name)
     return;
   }
 
-  ComplexationRelationshipsModel *model = new ComplexationRelationshipsModel{};
+  auto model = new ComplexationRelationshipsModel{};
   auto dlg = makeComplexationDialog(it, h_sampleGDM.cend(), model, h_sampleGDM);
   handleUserInput(dlg, name, "");
 
@@ -360,7 +356,7 @@ void ComplexationManager::makeComplexation(const std::string &first, const std::
 
   assert(nucleusIt->type() == gdm::ConstituentType::Nucleus && ligandIt->type() == gdm::ConstituentType::Ligand);
 
-  ComplexationRelationshipsModel *model = new ComplexationRelationshipsModel{};
+  auto model = new ComplexationRelationshipsModel{};
   auto dlg = makeComplexationDialog(nucleusIt, ligandIt, model, h_sampleGDM);
   handleUserInput(dlg, nucleusIt->name(), ligandIt->name());
 
@@ -385,7 +381,7 @@ void ComplexationManager::updateComplexingNuclei()
       continue;
 
     const auto found = gdm::findComplexations(h_sampleGDM.composition(), it);
-    if (found.size() > 0) {
+    if (!found.empty()) {
       map[it->name()] = hue;
       hue = calculateHue(ctr++, hue);
     }

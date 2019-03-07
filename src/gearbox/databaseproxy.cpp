@@ -118,8 +118,7 @@ DatabaseProxy::DatabaseProxy()
 
 DatabaseProxy::~DatabaseProxy() noexcept
 {
-  if (m_db != nullptr)
-    delete m_db;
+  delete m_db;
 }
 
 bool DatabaseProxy::addConstituent(const std::string &name, const std::vector<double> &pKas, const std::vector<double> &mobilities, const int chargeLow, const int chargeHigh)
@@ -158,8 +157,7 @@ bool DatabaseProxy::isAvailable() const
 
 bool DatabaseProxy::openDatabase(const QString &path)
 {
-  if (m_db != nullptr)
-    delete m_db;
+  delete m_db;
 
   try {
     m_db = new database::ConstituentsDatabase{path.toLocal8Bit()};

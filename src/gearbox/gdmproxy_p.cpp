@@ -22,7 +22,5 @@ bool GDMProxy_p::typeChangeOk(const gdm::Constituent &newCtuent, const gdm::Cons
 
   const auto found = gdm::findComplexations(_gdm.composition(), it);
 
-  if (found.size() > 0 && (oldCtuent.type() != newCtuent.type()))
-    return false;
-  return true;
+  return !(!found.empty() && (oldCtuent.type() != newCtuent.type()));
 }

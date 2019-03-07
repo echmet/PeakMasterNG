@@ -13,7 +13,7 @@ public:
   class ExtraInfo {
   public:
     ExtraInfo();
-    explicit ExtraInfo(const QString &analyte, const double uEff, const double time, const double uEMD,
+    explicit ExtraInfo(QString analyte, const double uEff, const double time, const double uEMD,
                        const double concentrationMax, const double conductivityMax,
                        const bool detected);
     ExtraInfo(const ExtraInfo &other);

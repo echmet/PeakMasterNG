@@ -117,7 +117,7 @@ QVector<AnalytesExtraInfoModel::ExtraInfo> makeAnalytesExtraInfo(const std::vect
 }
 
 static
-void makeYesNoMessagebox(QMessageBox &mbox, QString title, QString text)
+void makeYesNoMessagebox(QMessageBox &mbox, const QString &title, const QString &text)
 {
   mbox.setIcon(QMessageBox::Question);
   mbox.setText(title);
@@ -171,7 +171,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
 {
   ui->setupUi(this);
 
-  QSplitter *splitter = new QSplitter{Qt::Vertical, this};
+  auto splitter = new QSplitter{Qt::Vertical, this};
   hacks::makeSplitterAppear(splitter);
   ui->qvlay_compositionEFG->insertWidget(0, splitter);
 
@@ -487,7 +487,7 @@ void PMNGMainWindow::onLoad()
     return;
 
   const auto &files = dlg.selectedFiles();
-  if (files.size() < 1)
+  if (files.empty())
     return;
 
   persistence::System system{};
@@ -654,7 +654,7 @@ void PMNGMainWindow::onSaveAs()
     return;
 
   const auto &files = dlg.selectedFiles();
-  if (files.size() < 1)
+  if (files.empty())
     return;
 
   saveSystem(files.at(0));
@@ -731,7 +731,7 @@ QVariant PMNGMainWindow::resetSignalItems()
   m_signalTypesModel->clear();
 
   for (const auto &item : s_defaultSignalItems) {
-    QStandardItem *si = new QStandardItem{item.name};
+    auto si = new QStandardItem{item.name};
     si->setData(QVariant::fromValue<CalculatorInterface::Signal>(item.signal));
     m_signalTypesModel->appendRow(si);
   }
@@ -829,7 +829,7 @@ void PMNGMainWindow::setControlsIcons()
 #endif // Q_OS_
 }
 
-void PMNGMainWindow::setWindowTitle(QString file)
+void PMNGMainWindow::setWindowTitle(const QString &file)
 {
   if (file.isEmpty())
     QMainWindow::setWindowTitle(Globals::VERSION_STRING());

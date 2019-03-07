@@ -1,7 +1,7 @@
 #include "efgdisplayer.h"
 
-EFGDisplayer::EFGDisplayer(const Executor &executor) :
-  m_executor{executor}
+EFGDisplayer::EFGDisplayer(Executor executor) :
+  m_executor{std::move(executor)}
 {
 }
 

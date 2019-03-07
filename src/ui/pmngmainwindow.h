@@ -114,7 +114,7 @@ private:
   void saveSystem(const QString &m_path);
   void selectSignalIfAvailable(const QVariant &sig);
   void setControlsIcons();
-  void setWindowTitle(QString file = {});
+  void setWindowTitle(const QString &file = {});
 
   QPushButton *m_qpb_new;
   QPushButton *m_qpb_load;

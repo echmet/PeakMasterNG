@@ -27,11 +27,7 @@ bool LigandIonicForm::matches(const int charge, const QString &ligandName) const
   if (_ligand == nullptr)
     return false;
 
-  if (this->charge == charge &&
-      _ligand->name == ligandName)
-    return true;
-
-  return false;
+  return this->charge == charge && _ligand->name == ligandName;
 }
 
 LigandIonicForm & LigandIonicForm::operator=(const LigandIonicForm &other)
@@ -47,11 +43,7 @@ bool LigandIonicForm::operator==(const LigandIonicForm &other) const
   if (_ligand == nullptr)
     return false;
 
-  if (charge == other.charge &&
-      ligandName() == other.ligandName())
-    return true;
-
-  return false;
+  return charge == other.charge && ligandName() == other.ligandName();
 }
 
 bool LigandIonicForm::operator!=(const LigandIonicForm &other) const

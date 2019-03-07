@@ -260,7 +260,7 @@ QModelIndex ComplexationRelationshipsModel::index(int row, int column, const QMo
   TreeItem *childItem = item->childAt(row);
 
   if (childItem == nullptr)
-    return QModelIndex();
+    return {};
 
   return createIndex(row, column, childItem);
 }

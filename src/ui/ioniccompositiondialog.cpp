@@ -79,7 +79,7 @@ void IonicCompositionDialog::onAnalytesDissociationDataUpdated()
     m_analytesNamesModel->appendRow(item);
   }
 
-  if (analytes.size() > 0) {
+  if (!analytes.empty()) {
     const int idx = isContained(m_analytesNamesModel, m_lastSelectedAnalyte);
     if (idx >= 0) {
       ui->qcbox_analyte->setCurrentIndex(idx);

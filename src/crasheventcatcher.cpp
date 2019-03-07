@@ -10,7 +10,7 @@ CrashEventCatcher::CrashEventCatcher() :
 bool CrashEventCatcher::eventFilter(QObject *watched, QEvent *event)
 {
   if (event->type() == m_crashEventId) {
-    CrashEvent *crashEvt = static_cast<CrashEvent *>(event);
+    auto crashEvt = static_cast<CrashEvent *>(event);
     handleCrash(crashEvt);
 
     /* We should never get here */

@@ -27,7 +27,7 @@ size_t findClosestIdx(const std::vector<QPointF> &data, const double currentX)
 
   const double span = lastX - firstX;
   const double region = (currentX - firstX) / span;
-  const size_t regionIdx = static_cast<size_t>(std::floor(region * data.size()));
+  const auto regionIdx = static_cast<size_t>(std::floor(region * data.size()));
   if (regionIdx >= data.size()) /* Safety net */
     return static_cast<size_t>(data.size()) - 1;
 
@@ -69,7 +69,7 @@ SignalPlotWidget::SignalPlotWidget(QWidget *parent) :
   connect(filter, &PlotEventFilter::mouseMoved, this, &SignalPlotWidget::onPointHovered);
 
   {
-    QVBoxLayout *lay = qobject_cast<QVBoxLayout *>(this->layout());
+    auto lay = qobject_cast<QVBoxLayout *>(this->layout());
     if (lay != nullptr)
       lay->insertWidget(1, m_plot);
   }

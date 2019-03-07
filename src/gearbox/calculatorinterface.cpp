@@ -154,7 +154,7 @@ void fillBackgroundIonicComposition(ResultsData &rData, const ECHMET::LEMNG::RCo
   }
   it->destroy();
 
-  if (constituents.size() < 1) {
+  if (constituents.empty()) {
     totalHighest = 0;
     totalLowest = 0;
   }
@@ -439,7 +439,7 @@ QVector<QPointF> CalculatorInterface::plotAllAnalytes(const double totalLength, 
     if (tRet != ECHMET::LEMNG::RetCode::OK)
       throw CalculatorInterfaceException{ECHMET::LEMNG::LEMNGerrorToString(tRet)};
 
-    if (plot.size() < 1)
+    if (plot.empty())
       plot.resize(efg->size());
 
     for (size_t idx = 0; idx < efg->size(); idx++) {
@@ -804,7 +804,7 @@ std::vector<CalculatorInterface::TracepointInfo> CalculatorInterface::tracepoint
 
 bool CalculatorInterface::writeTrace(const std::string &traceOutputFile) noexcept
 {
-  if (traceOutputFile.size() > 0) {
+  if (!traceOutputFile.empty()) {
     auto traceRaw = ECHMET::LEMNG::trace();
     if (traceRaw == nullptr)
       return false;

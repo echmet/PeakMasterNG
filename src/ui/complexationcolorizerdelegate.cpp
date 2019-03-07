@@ -46,7 +46,7 @@ void ComplexationColorizerDelegate::paint(QPainter *painter, const QStyleOptionV
     return;
 
   const auto list = qvariant_cast<QList<QColor>>(vList);
-  assert(list.size() > 0);
+  assert(!list.empty());
 
   QVariant vType = h_model->data(h_model->index(index.row(), 1));
   const QString type = vType.toString();

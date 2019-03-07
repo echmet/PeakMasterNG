@@ -15,7 +15,7 @@ SystemEigenzonesTableModel::SystemEigenzonesTableModel(QObject *parent)
 
 QVariant SystemEigenzonesTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-  const size_t usection = static_cast<size_t>(section);
+  const auto usection = static_cast<size_t>(section);
 
   if (role != Qt::DisplayRole)
     return QVariant{};
@@ -55,7 +55,7 @@ QVariant SystemEigenzonesTableModel::data(const QModelIndex &index, int role) co
   if (!index.isValid())
     return QVariant();
 
-  const size_t urow = static_cast<size_t>(index.row());
+  const auto urow = static_cast<size_t>(index.row());
 
   if (role == Qt::ForegroundRole) {
     const QPalette p{};

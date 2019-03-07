@@ -47,7 +47,7 @@ void EditComplexationDialog::addRelationship(const ComplexationRelationship &rel
 
   ui->qcbox_ligands->addItem(relationship.ligand()->name, relationship.ligand()->name);
   ui->qcbox_ligands->setCurrentIndex(ui->qcbox_ligands->count() - 1);
-  ui->qcbox_ligands->activated(ui->qcbox_ligands->count() - 1);
+  emit ui->qcbox_ligands->activated(ui->qcbox_ligands->count() - 1);
 }
 
 EditComplexationDialog::AllComplexationRelationships EditComplexationDialog::allRelationships() const
@@ -79,8 +79,8 @@ void EditComplexationDialog::onAcceptClicked()
   if (idx.isValid()) {
     auto w = ui->qtrv_complexation->indexWidget(idx);
     if (qobject_cast<QLineEdit *>(w) != nullptr) {
-      _delegate->commitData(w);
-      _delegate->closeEditor(w);
+      emit _delegate->commitData(w);
+      emit _delegate->closeEditor(w);
     }
   }
 
@@ -120,7 +120,7 @@ void EditComplexationDialog::onRemoveLigandClicked()
   }
 
   int newIdx = (idx > 1) ? idx - 1 : 0;
-  ui->qcbox_ligands->activated(newIdx);
+  emit ui->qcbox_ligands->activated(newIdx);
 }
 
 ComplexationRelationship::RelationshipsMap EditComplexationDialog::relationshipsForTree(const std::shared_ptr<ComplexationRelationshipsModel::RootTreeItem> &root) const
@@ -128,10 +128,10 @@ ComplexationRelationship::RelationshipsMap EditComplexationDialog::relationships
   ComplexationRelationship::RelationshipsMap relMap{};
 
   for (int idx = 0; idx < root->childrenCount(); idx++) {
-    ComplexationRelationshipsModel::NucleusTreeItem *nti = static_cast<ComplexationRelationshipsModel::NucleusTreeItem *>(root->childAt(idx));
+    auto nti = static_cast<ComplexationRelationshipsModel::NucleusTreeItem *>(root->childAt(idx));
 
     for (int jdx = 0; jdx < nti->childrenCount(); jdx++) {
-      const ComplexationRelationshipsModel::LigandTreeItem *lti = static_cast<const ComplexationRelationshipsModel::LigandTreeItem *>(nti->childAt(jdx));
+      auto lti = static_cast<const ComplexationRelationshipsModel::LigandTreeItem *>(nti->childAt(jdx));
 
       relMap[nti->charge][lti->charge] = {lti->mobilities, lti->pBs};
     }
@@ -142,7 +142,7 @@ ComplexationRelationship::RelationshipsMap EditComplexationDialog::relationships
 
 void EditComplexationDialog::setComplexationModel(QAbstractItemModel *model)
 {
-  ComplexationRelationshipsModel *_model = qobject_cast<ComplexationRelationshipsModel *>(model);
+  auto _model = qobject_cast<ComplexationRelationshipsModel *>(model);
   if (_model == nullptr)
     return;
 
@@ -156,7 +156,7 @@ void EditComplexationDialog::showLigand(const QString &name)
   for (int idx = 0; idx < ui->qcbox_ligands->count(); idx++) {
     if (ui->qcbox_ligands->itemData(idx) == name) {
       ui->qcbox_ligands->setCurrentIndex(idx);
-      ui->qcbox_ligands->activated(idx);
+      emit ui->qcbox_ligands->activated(idx);
       return;
     }
   }

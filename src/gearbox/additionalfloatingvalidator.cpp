@@ -27,7 +27,7 @@ AdditionalFloatingValidator::AdditionalFloatingValidator(ValidFunc &&func) noexc
 AdditionalFloatingValidator & AdditionalFloatingValidator::operator=(AdditionalFloatingValidator &&other) noexcept
 {
   const_cast<bool&>(m_valid) = other.m_valid;
-  const_cast<ValidFunc&>(m_func) = std::move(other.m_func);
+  const_cast<ValidFunc&>(m_func) = std::move(const_cast<ValidFunc&>(other.m_func));
 
   return *this;
 }

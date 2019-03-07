@@ -137,7 +137,7 @@ void DoubleToStringConvertor::notifyOnFormatChanged(QObject *o)
   s_me->m_listeners.push_back(nco);
 }
 
-void DoubleToStringConvertor::setParameters(const char type, const int digits, const QString locName)
+void DoubleToStringConvertor::setParameters(const char type, const int digits, const QString &locName)
 {
   s_me->m_type = type;
   s_me->m_digits = digits;

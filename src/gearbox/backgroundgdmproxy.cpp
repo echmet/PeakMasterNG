@@ -23,7 +23,7 @@ bool BackgroundGDMProxy::complexes(const std::string &name) const noexcept
   assert(it != h_sampleGDM.cend());
 
   const auto found = gdm::findComplexations(h_sampleGDM.composition(), it);
-  return (found.size() > 0);
+  return !found.empty();
 }
 
 std::vector<double> BackgroundGDMProxy::concentrations(const std::string &name) const noexcept

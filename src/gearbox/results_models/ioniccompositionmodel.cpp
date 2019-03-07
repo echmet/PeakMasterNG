@@ -52,7 +52,7 @@ int IonicCompositionModel::columnCount(const QModelIndex &parent) const
 {
   Q_UNUSED(parent);
 
-  if (m_constituents.size() < 1)
+  if (m_constituents.empty())
     return 0;
 
   return m_chargeSpan + m_complexForms.size();

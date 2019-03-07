@@ -22,7 +22,7 @@ public:
   static const QLocale &locale();
   static void notifyOnFormatChanged(QObject *o);
   static QVariant saveUserSettings();
-  static void setParameters(const char type, int digits, const QString locName);
+  static void setParameters(const char type, int digits, const QString &locName);
   static char type();
 
 private:

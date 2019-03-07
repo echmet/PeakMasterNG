@@ -12,7 +12,7 @@ class EFGDisplayer
 public:
   typedef std::function<void (const QVector<QPointF> &, const std::vector<CalculatorInterface::TimeDependentZoneInformation> &, const CalculatorInterface::Signal &)> Executor;
 
-  explicit EFGDisplayer(const Executor &executor);
+  explicit EFGDisplayer(Executor executor);
 
   void operator()(const QVector<QPointF> &data, const std::vector<CalculatorInterface::TimeDependentZoneInformation> &szi, const CalculatorInterface::Signal &sig) const;
 

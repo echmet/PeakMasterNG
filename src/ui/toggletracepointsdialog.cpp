@@ -19,7 +19,7 @@ ToggleTracepointsDialog::ToggleTracepointsDialog(const std::vector<CalculatorInt
   ui->qscrArea_tracepoints->setWidget(m_tracepointsWidget);
   m_tracepointsWidget->show();
 
-  if (tracepointInformation.size() > 0)
+  if (!tracepointInformation.empty())
     setupTracepointList(tracepointInformation, tracingSetup);
   else {
     QLabel *l = new QLabel{tr("No tracepoints are available.\nLEMNG library was probably built without tracing support."), this};
@@ -101,7 +101,7 @@ void ToggleTracepointsDialog::onSetOutputFile()
   if (dlg.exec() != QDialog::Accepted)
     return;
 
-  m_outputFilePath = dlg.selectedFiles()[0];
+  m_outputFilePath = dlg.selectedFiles().constFirst();
   ui->qle_outputFile->setText([](QString s) {
 #ifdef Q_OS_WIN
     return s.replace('/', '\\');
@@ -124,11 +124,11 @@ ToggleTracepointsDialog::TracingSetup ToggleTracepointsDialog::result() const
 
 void ToggleTracepointsDialog::setupTracepointList(const std::vector<CalculatorInterface::TracepointInfo> &tracepointInformation, const TracingSetup &tracingSetup)
 {
-  QVBoxLayout *lay = qobject_cast<QVBoxLayout *>(m_tracepointsWidget->layout());
+  auto lay = qobject_cast<QVBoxLayout *>(m_tracepointsWidget->layout());
   Q_ASSERT(lay != nullptr);
 
   for (const auto &item : tracepointInformation) {
-    QCheckBox *cbox = new QCheckBox{this};
+    auto cbox = new QCheckBox{this};
     cbox->setText(item.description);
     cbox->setProperty("TPID", item.TPID);
     m_tracepoints.emplace_back(cbox, false);
@@ -137,7 +137,7 @@ void ToggleTracepointsDialog::setupTracepointList(const std::vector<CalculatorIn
   }
   lay->addStretch();
 
-  if (tracingSetup.tracepointStates.size() > 0) {
+  if (!tracingSetup.tracepointStates.empty()) {
     Q_ASSERT(tracepointInformation.size() == tracingSetup.tracepointStates.size());
 
     for (size_t idx = 0; idx < tracingSetup.tracepointStates.size(); idx++) {
@@ -161,7 +161,7 @@ void ToggleTracepointsDialog::setupTracepointList(const std::vector<CalculatorIn
   connect(ui->qcb_enableTracing, &QCheckBox::toggled, this, &ToggleTracepointsDialog::onEnableTracingToggled);
   connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &ToggleTracepointsDialog::onAccepted);
   connect(ui->qle_filter, &QLineEdit::textChanged, this, &ToggleTracepointsDialog::onFilterTextChanged);
-  connect(ui->qle_outputFile, &QLineEdit::editingFinished, [this]() { m_outputFilePath = ui->qle_outputFile->text();});
+  connect(ui->qle_outputFile, &QLineEdit::editingFinished, this, [this]() { m_outputFilePath = ui->qle_outputFile->text();});
 
   onEnableTracingToggled(ui->qcb_enableTracing->checkState() == Qt::Checked);
 
@@ -176,7 +176,7 @@ std::vector<CalculatorInterface::TracepointState> ToggleTracepointsDialog::trace
 
   for (size_t idx = 0; idx < m_tracepoints.size(); idx++) {
     const auto item = m_tracepoints.at(idx);
-    const int32_t TPID = std::get<0>(item)->property("TPID").value<int32_t>();
+    const auto TPID = std::get<0>(item)->property("TPID").value<int32_t>();
 
     states.emplace_back(TPID, std::get<1>(item));
   }

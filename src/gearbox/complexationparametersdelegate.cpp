@@ -20,7 +20,7 @@ QWidget *ComplexationParametersDelegate::createEditor(QWidget *parent, const QSt
     return QItemDelegate::createEditor(parent, option, index);
   }
 
-  QLineEdit *lineEdit = new QLineEdit{parent};
+  auto lineEdit = new QLineEdit{parent};
 
   connect(lineEdit, &QLineEdit::textChanged, this, &ComplexationParametersDelegate::onTextChanged);
 
@@ -36,7 +36,7 @@ void ComplexationParametersDelegate::setEditorData(QWidget *editor, const QModel
   if (!v.isValid())
     return;
 
-  QLineEdit *lineEdit = qobject_cast<QLineEdit *>(editor);
+  auto lineEdit = qobject_cast<QLineEdit *>(editor);
   if (lineEdit == nullptr)
     return;
 
@@ -45,7 +45,7 @@ void ComplexationParametersDelegate::setEditorData(QWidget *editor, const QModel
 
 void ComplexationParametersDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
-  QLineEdit *lineEdit = qobject_cast<QLineEdit *>(editor);
+  auto lineEdit = qobject_cast<QLineEdit *>(editor);
   if (lineEdit == nullptr)
     return;
 
@@ -61,7 +61,7 @@ void ComplexationParametersDelegate::updateEditorGeometry(QWidget *editor, const
 
 void ComplexationParametersDelegate::onTextChanged(const QString &)
 {
-  QLineEdit *lineEdit = qobject_cast<QLineEdit *>(QObject::sender());
+  auto lineEdit = qobject_cast<QLineEdit *>(QObject::sender());
   if (lineEdit == nullptr)
     return;
 

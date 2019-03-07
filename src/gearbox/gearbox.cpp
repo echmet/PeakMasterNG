@@ -17,7 +17,7 @@ Gearbox::Gearbox() :
 
 GDMProxy & Gearbox::backgroundGDMProxy()
 {
-  return *m_backgroundGDMProxy.get();
+  return *m_backgroundGDMProxy;
 }
 
 CalculatorInterface Gearbox::calculatorInterface()
@@ -32,7 +32,7 @@ ComplexationManager & Gearbox::complexationManager()
 
 DatabaseProxy & Gearbox::databaseProxy()
 {
-  return *m_dbProxy.get();
+  return *m_dbProxy;
 }
 
 void Gearbox::onClearAll()
@@ -80,7 +80,7 @@ persistence::Persistence & Gearbox::persistence()
 
 GDMProxy & Gearbox::sampleGDMProxy()
 {
-  return *m_sampleGDMProxy.get();
+  return *m_sampleGDMProxy;
 }
 
 void Gearbox::setUICompositionModels(AbstractConstituentsModelBase *analytesUIModel, AbstractConstituentsModelBase *backgroundUIModel)

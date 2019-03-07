@@ -82,14 +82,14 @@ SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMPro
   ui->qtbv_backgroudConstituents->setMinimumHeight(100);
   ui->qtbv_analytes->setMinimumHeight(100);
 
-  BackgroundConstituentsHeader *bch = new BackgroundConstituentsHeader{Qt::Horizontal, ui->qtbv_backgroudConstituents};
+  auto bch = new BackgroundConstituentsHeader{Qt::Horizontal, ui->qtbv_backgroudConstituents};
   ui->qtbv_backgroudConstituents->setHorizontalHeader(bch);
   for (int col= 0; col < m_backgroundConstituentsModel->firstExtraInfoColumn(); col++)
     ui->qtbv_backgroudConstituents->horizontalHeader()->setSectionResizeMode(col, QHeaderView::ResizeToContents);
   for (int col = m_backgroundConstituentsModel->firstExtraInfoColumn(); col < m_backgroundConstituentsModel->columnCount(QModelIndex{}); col++)
     ui->qtbv_backgroudConstituents->setColumnWidth(col, bch->sizeHintForColumn(col));
 
-  AnalytesConstituentsHeader *ach = new AnalytesConstituentsHeader{Qt::Horizontal, ui->qtbv_analytes};
+  auto ach = new AnalytesConstituentsHeader{Qt::Horizontal, ui->qtbv_analytes};
   ui->qtbv_analytes->setHorizontalHeader(ach);
 
   for (int col = 0; col < m_analytesModel->firstExtraInfoColumn(); col++)
@@ -97,7 +97,7 @@ SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMPro
   for (int col = m_analytesModel->firstExtraInfoColumn(); col < m_analytesModel->columnCount(QModelIndex{}); col++)
     ui->qtbv_analytes->setColumnWidth(col, ach->sizeHintForColumn(col));
 
-  QBoxLayout *layout = qobject_cast<QBoxLayout *>(this->layout());
+  auto layout = qobject_cast<QBoxLayout *>(this->layout());
   if (layout == nullptr)
     throw std::runtime_error{"Layout of SystemCompositionWidget is expected to be a QBoxLayout"};
 
