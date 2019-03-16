@@ -9,6 +9,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QTextStream>
 #include <cassert>
 #include <map>
 
@@ -317,11 +318,14 @@ void Deserializer::deserialize(const QString &filepath, gdm::GDM &gdmBGE, gdm::G
 {
   QFile input{filepath};
 
-  if (!input.open(QIODevice::ReadOnly))
+  if (!input.open(QIODevice::ReadOnly | QIODevice::Text))
     throw DeserializationException{"Cannot open input file"};
 
+  QTextStream stm{&input};
+  stm.setCodec("UTF-8");
+
   QJsonParseError parseError{};
-  QJsonDocument doc = QJsonDocument::fromJson(input.readAll(), &parseError);
+  QJsonDocument doc = QJsonDocument::fromJson(stm.readAll().toUtf8(), &parseError);
   if (doc.isNull())
     throw DeserializationException{parseError.errorString().toStdString()};
 
