@@ -51,6 +51,12 @@ const QString Persistence::ROOT_CONCENTRATIONS_BGE{"concentrationsBGE"};
 const QString Persistence::ROOT_CONCENTRATIONS_SAMPLE{"concentrationsSample"};
 const QString Persistence::ROOT_SYSTEM{"system"};
 
+Target::Target(const Type _type, QString _path) :
+    type{_type},
+    path{std::move(_path)}
+{
+}
+
 Persistence::Persistence(gdm::GDM &bgeGDM, gdm::GDM &sampleGDM) :
   m_bgeGDM{bgeGDM},
   m_sampleGDM{sampleGDM}
@@ -70,9 +76,9 @@ void Persistence::deserialize(const QString &filepath, System &system)
   emit deserialized();
 }
 
-void Persistence::serialize(const QString &filepath, const System &system)
+void Persistence::serialize(const Target &target, const System &system)
 {
-  Serializer::serialize(filepath, m_bgeGDM, m_sampleGDM, system);
+  Serializer::serialize(target, m_bgeGDM, m_sampleGDM, system);
 }
 
 } // namespace persistence

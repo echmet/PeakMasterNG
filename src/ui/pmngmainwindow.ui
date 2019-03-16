@@ -33,7 +33,7 @@
      <x>0</x>
      <y>0</y>
      <width>1148</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -44,6 +44,7 @@
     <addaction name="actionLoad"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_as"/>
+    <addaction name="actionSystem_to_clipboard"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
@@ -152,6 +153,11 @@
   <action name="actionSave_as">
    <property name="text">
     <string>Save as</string>
+   </property>
+  </action>
+  <action name="actionSystem_to_clipboard">
+   <property name="text">
+    <string>System to clipboard</string>
    </property>
   </action>
  </widget>

@@ -5,10 +5,13 @@
 #include "persistence.h"
 
 #include <cassert>
+#include <QApplication>
+#include <QClipboard>
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QTextStream>
 
 namespace persistence {
 
@@ -153,17 +156,41 @@ QJsonObject serializeSystem(const System &system)
   return sys;
 }
 
-void Serializer::serialize(QString filepath, const gdm::GDM &gdmBGE, const gdm::GDM &gdmSample,
+static
+void writeToTarget(const Target &target, const QByteArray &data)
+{
+  QTextStream stm{};
+  stm.setCodec("UTF-8");
+
+  if (target.type == Target::TT_FILE) {
+    QString path = target.path;
+
+    if (!path.endsWith(".json", Qt::CaseInsensitive))
+      path.append(".json");
+
+    QFile fh{path};
+
+    if (!fh.open(QIODevice::WriteOnly | QIODevice::Text))
+      throw SerializationException{"Cannot open output file"};
+
+    stm.setDevice(&fh);
+    stm << data;
+  } else if (target.type == Target::TT_CLIPBOARD) {
+    QString buf{};
+
+    stm.setString(&buf, QIODevice::WriteOnly | QIODevice::Text);
+    stm << data;
+
+    auto clp = QApplication::clipboard();
+    if (clp != nullptr)
+        clp->setText(buf);
+  } else
+        assert(false); /* Invalid target type */
+}
+
+void Serializer::serialize(const Target &target, const gdm::GDM &gdmBGE, const gdm::GDM &gdmSample,
                            const System &system)
 {
-  if (!filepath.endsWith(".json", Qt::CaseInsensitive))
-    filepath.append(".json");
-
-  QFile out{filepath};
-
-  if (!out.open(QIODevice::WriteOnly | QIODevice::Text))
-    throw SerializationException{"Cannot open output file"};
-
   QJsonObject compositionBGE = serializeComposition(gdmBGE);
   QJsonObject compositionSample = serializeComposition(gdmSample);
   QJsonObject concentrationsBGE = serializeConcentrations(gdmBGE);
@@ -179,7 +206,7 @@ void Serializer::serialize(QString filepath, const gdm::GDM &gdmBGE, const gdm::
 
   QByteArray str = doc.toJson();
 
-  out.write(str);
+  writeToTarget(target, str);
 }
 
 } // namespace persistence

@@ -42,13 +42,26 @@ public:
   double injectionZoneLength;
 };
 
+class Target {
+public:
+  enum Type {
+    TT_FILE,
+    TT_CLIPBOARD
+  };
+
+  Target(const Type _type, QString _path);
+
+  const Type type;
+  const QString path;
+};
+
 class Persistence : public QObject {
   Q_OBJECT
 
 public:
   Persistence(gdm::GDM &bgeGDM, gdm::GDM &sampleGDM);
   void deserialize(const QString &filepath, System &system);
-  void serialize(const QString &filepath, const System &system);
+  void serialize(const Target &target, const System &system);
 
   static const QString CTUENT_CTUENTS;
   static const QString CTUENT_TYPE;

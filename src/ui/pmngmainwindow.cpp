@@ -211,6 +211,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   connect(ui->actionOpen_database, &QAction::triggered, this, &PMNGMainWindow::onOpenDatabase);
   connect(ui->actionSet_debugging_output, &QAction::triggered, this, &PMNGMainWindow::onSetDebuggingOutput);
   connect(ui->actionCheck_for_update, &QAction::triggered, this, &PMNGMainWindow::onOpenUpdateDialog);
+  connect(ui->actionSystem_to_clipboard, &QAction::triggered, this, [this]() { this->saveSystem("", true); });
 
   ui->mainToolBar->addWidget(m_qpb_new);
   ui->mainToolBar->addWidget(m_qpb_load);
@@ -637,7 +638,7 @@ void PMNGMainWindow::onSave()
                         QString{tr("Overwrite existing file %1?")}.arg(QFileInfo{m_activeFile.path()}.fileName()));
 
     if (mbox.exec() == QMessageBox::Yes)
-      saveSystem(m_activeFile.path());
+      saveSystem(m_activeFile.path(), false);
   }
 }
 
@@ -658,7 +659,7 @@ void PMNGMainWindow::onSaveAs()
   if (files.empty())
     return;
 
-  saveSystem(files.at(0));
+  saveSystem(files.at(0), false);
 }
 
 void PMNGMainWindow::onScreenChanged(QScreen *screen)
@@ -740,7 +741,7 @@ QVariant PMNGMainWindow::resetSignalItems()
   return current;
 }
 
-void PMNGMainWindow::saveSystem(const QString &m_path)
+void PMNGMainWindow::saveSystem(const QString &m_path, const bool toClipboard)
 {
   const MainControlWidget::RunSetup rs = m_mainCtrlWidget->runSetup();
   const QString et = [](MainControlWidget::EOF_Type t) {
@@ -769,11 +770,15 @@ void PMNGMainWindow::saveSystem(const QString &m_path)
   };
 
   try {
-    m_persistence.serialize(m_path, sys);
-    m_lastSavePath = m_path;
+    auto target = toClipboard ? persistence::Target::TT_CLIPBOARD : persistence::Target::TT_FILE;
+    m_persistence.serialize({target, m_path}, sys);
 
-    m_activeFile = ActiveFile{m_path};
-    setWindowTitle(QFileInfo{m_path}.fileName());
+    if (!toClipboard) {
+      m_lastSavePath = m_path;
+
+      m_activeFile = ActiveFile{m_path};
+      setWindowTitle(QFileInfo{m_path}.fileName());
+    }
   } catch (persistence::SerializationException &ex) {
     QMessageBox mbox{QMessageBox::Warning, tr("Unable to save system"), ex.what()};
     mbox.exec();
@@ -804,6 +809,7 @@ void PMNGMainWindow::setControlsIcons()
   ui->actionExit->setIcon(QIcon::fromTheme("application-exit"));
   ui->actionAbout->setIcon(QIcon::fromTheme("help-about"));
   ui->actionCheck_for_update->setIcon(QIcon::fromTheme("system-software-update"));
+  ui->actionSystem_to_clipboard->setIcon(QIcon::fromTheme("edit-copy"));
 
   /* Button bar */
   m_qpb_new->setIcon(QIcon::fromTheme("document-new"));

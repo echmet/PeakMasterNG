@@ -111,7 +111,7 @@ private:
   void plotElectrophoregram(const EFGDisplayer &displayer, const std::vector<CalculatorInterface::TimeDependentZoneInformation> &tdzi,
                             const double EOFValue, CalculatorInterface::EOFValueType EOFvt, const double izLen, const double plotCutoff);
   QVariant resetSignalItems();
-  void saveSystem(const QString &m_path);
+  void saveSystem(const QString &m_path, const bool toClipboard);
   void selectSignalIfAvailable(const QVariant &sig);
   void setControlsIcons();
   void setWindowTitle(const QString &file = {});
