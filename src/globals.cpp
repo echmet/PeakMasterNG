@@ -10,7 +10,7 @@ const QString Globals::ORG_NAME{"ECHMET"};
 const QString Globals::SOFTWARE_NAME{"PeakMaster"};
 const int Globals::VERSION_MAJ = 6;
 const int Globals::VERSION_MIN = 0;
-const QString Globals::VERSION_REV{"f1"};
+const QString Globals::VERSION_REV{"f2"};
 
 const QVector<Globals::DeveloperID> Globals::DEVELOPERS = {
                                                             Globals::DeveloperID{"Michal Jaro\xC5\xA1", "michal.jaros@gmail.com", false},
