@@ -826,6 +826,7 @@ void PMNGMainWindow::setControlsIcons()
   ui->actionExit->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
   ui->actionAbout->setIcon(style()->standardIcon(QStyle::SP_DialogHelpButton));
   ui->actionCheck_for_update->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
+  ui->actionSystem_to_clipboard->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
 
   /* Button bar */
   m_qpb_new->setIcon(style()->standardIcon(QStyle::SP_FileDialogNewFolder));
