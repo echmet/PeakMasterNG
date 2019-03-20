@@ -93,7 +93,7 @@ static
 QVector<AnalytesExtraInfoModel::ExtraInfo> makeAnalytesExtraInfo(const std::vector<CalculatorInterface::TimeDependentZoneInformation> &tdzi,
                                                                  const QAbstractTableModel * const ezDetailsModelBase)
 {
-  const EigenzoneDetailsModel *ezDetailsModel = static_cast<const EigenzoneDetailsModel *>(ezDetailsModelBase);
+  const auto ezDetailsModel = static_cast<const EigenzoneDetailsModel *>(ezDetailsModelBase);
   QVector<AnalytesExtraInfoModel::ExtraInfo> data{};
 
   assert(tdzi.size() == static_cast<size_t>(ezDetailsModel->columnCount()));
@@ -254,9 +254,9 @@ PMNGMainWindow::~PMNGMainWindow()
 void PMNGMainWindow::addConstituentsSignals(const CalculatorInterface::ConstituentPackVec &constituents)
 {
   for (const auto &a : constituents) {
-    QString ctuentName = std::get<0>(a);
-    QStandardItem *si = new QStandardItem{QString{tr("c (%1)")}.arg(ctuentName)};
-    QString signalName = QString{"c %1 (mM)"}.arg(ctuentName);
+    auto &ctuentName = std::get<0>(a);
+    auto si = new QStandardItem{QString{tr("c (%1)")}.arg(ctuentName)};
+    auto signalName = QString{"c %1 (mM)"}.arg(ctuentName);
     si->setData(QVariant::fromValue<CalculatorInterface::Signal>({ CalculatorInterface::SignalTypes::CONCENTRATION, ctuentName, signalName, std::get<1>(a) }));
     m_signalTypesModel->appendRow(si);
   }
