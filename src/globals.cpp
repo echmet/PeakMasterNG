@@ -39,12 +39,12 @@ QIcon Globals::icon()
 
 QString Globals::DeveloperID::linkString() const
 {
-  return QString("%1 (<a href=\"mailto:%2\">%2</a>)").arg(name).arg(mail.toHtmlEscaped());
+  return QString("%1 (<a href=\"mailto:%2\">%2</a>)").arg(name, mail.toHtmlEscaped());
 }
 
 QString Globals::DeveloperID::prettyString() const
 {
-  return QString("%1 (%2)").arg(name).arg(mail);
+  return QString("%1 (%2)").arg(name, mail);
 }
 
 bool Globals::isZombieOS()
