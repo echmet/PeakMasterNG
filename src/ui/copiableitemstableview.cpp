@@ -17,6 +17,18 @@ CopiableItemsTableView::CopiableItemsTableView(QWidget *parent) :
   m_rightClickMenu->addAction(a);
 }
 
+void CopiableItemsTableView::editItem(const QModelIndex &idx)
+{
+  if (state() == EditingState)
+    return;
+
+  if (idx.isValid()) {
+    selectionModel()->clearSelection();
+    setCurrentIndex(idx);
+    edit(idx);
+  }
+}
+
 void CopiableItemsTableView::keyPressEvent(QKeyEvent *evt)
 {
   auto isArrowKey = [](const int key) {
@@ -62,7 +74,7 @@ void CopiableItemsTableView::keyPressEvent(QKeyEvent *evt)
   } else if (key == Qt::Key_Return || key == Qt::Key_Enter) {
     auto selIdxs = selectedIndexes();
     if (selIdxs.size() > 0 && selIdxs.at(0).isValid())
-      edit(selIdxs[0]);
+      editItem(selIdxs.first());
   }
 
   QTableView::keyPressEvent(evt);
@@ -77,11 +89,7 @@ void CopiableItemsTableView::mousePressEvent(QMouseEvent *evt)
     m_rightClickMenu->exec(evt->globalPos());
   } else if (evt->button() == Qt::LeftButton) {
     const auto &idx = indexAt(evt->pos());
-    if (idx.isValid()) {
-      selectionModel()->clearSelection();
-      setCurrentIndex(idx);
-      edit(idx);
-    }
+    editItem(idx);
   }
 
   QTableView::mousePressEvent(evt);

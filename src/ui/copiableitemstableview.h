@@ -13,6 +13,7 @@ protected:
   virtual void mousePressEvent(QMouseEvent *evt) override;
 
 private:
+  void editItem(const QModelIndex &idx);
   void selectionToClipboard(const QModelIndexList &indexes);
   QMenu *m_rightClickMenu;
 
