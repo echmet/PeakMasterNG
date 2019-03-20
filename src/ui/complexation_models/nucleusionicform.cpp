@@ -23,7 +23,7 @@ bool NucleusIonicForm::addLigandIon(const LigandIonicForm &ligandIF)
   return true;
 }
 
-bool NucleusIonicForm::removeLigandIon(const QString ligandName, const int charge)
+bool NucleusIonicForm::removeLigandIon(const QString &ligandName, const int charge)
 {
   for (int idx = 0; idx < _ligandIonicForms.size(); idx++) {
     const LigandIonicForm &ligIF = _ligandIonicForms.at(idx);

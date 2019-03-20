@@ -12,7 +12,7 @@ public:
 
   const int charge;
   bool addLigandIon(const LigandIonicForm &ligandIF);
-  bool removeLigandIon(const QString ligandName, const int charge);
+  bool removeLigandIon(const QString &ligandName, const int charge);
 
 private:
   QVector<LigandIonicForm> _ligandIonicForms;
