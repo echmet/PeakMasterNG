@@ -10,7 +10,9 @@ inline
 QString pathToNative(const QString &path)
 {
 #ifdef Q_OS_WIN
-  return path.replace('/', '\\');
+  QString native{path};
+  native.replace('/', '\\');
+  return native;
 #else
   return path;
 #endif // Q_OS_WIN
