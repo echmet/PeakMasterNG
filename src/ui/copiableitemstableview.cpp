@@ -73,8 +73,10 @@ void CopiableItemsTableView::keyPressEvent(QKeyEvent *evt)
     }
   } else if (key == Qt::Key_Return || key == Qt::Key_Enter) {
     auto selIdxs = selectedIndexes();
-    if (selIdxs.size() > 0 && selIdxs.at(0).isValid())
-      editItem(selIdxs.first());
+    if (!selIdxs.empty() && selIdxs.first().isValid()) {
+      if (state() != EditingState)
+        edit(selIdxs.first());
+    }
   }
 
   QTableView::keyPressEvent(evt);
