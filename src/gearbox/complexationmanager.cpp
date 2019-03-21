@@ -335,6 +335,15 @@ void ComplexationManager::makeComplexation(const std::string &first, const std::
   auto nucleusIt = h_sampleGDM.find(first);
   auto ligandIt = h_sampleGDM.find(second);
 
+  if (nucleusIt == ligandIt) {
+    QMessageBox mbox{QMessageBox::Information,
+                     tr("Invalid input"),
+                     tr("Constituent cannot form a complex with itself")};
+    mbox.exec();
+
+    return;
+  }
+
   auto conflict = resolveTypeConflict(nucleusIt, ligandIt, h_backgroundGDM, h_sampleGDM);
   switch (conflict) {
   case Conflict::NONE:
@@ -350,6 +359,7 @@ void ComplexationManager::makeComplexation(const std::string &first, const std::
 
   assert(nucleusIt != h_sampleGDM.end() && ligandIt != h_sampleGDM.end());
   assert(nucleusIt->type() != ligandIt->type());
+  assert(nucleusIt != ligandIt);
 
   if (nucleusIt->type() != gdm::ConstituentType::Nucleus)
     std::swap(nucleusIt, ligandIt);
