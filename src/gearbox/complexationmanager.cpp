@@ -335,6 +335,9 @@ void ComplexationManager::makeComplexation(const std::string &first, const std::
   auto nucleusIt = h_sampleGDM.find(first);
   auto ligandIt = h_sampleGDM.find(second);
 
+  if (nucleusIt == h_sampleGDM.end() || ligandIt == h_sampleGDM.end())
+    return;
+
   if (nucleusIt == ligandIt) {
     QMessageBox mbox{QMessageBox::Information,
                      tr("Invalid input"),
