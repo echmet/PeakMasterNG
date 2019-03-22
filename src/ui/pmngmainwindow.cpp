@@ -427,7 +427,7 @@ void PMNGMainWindow::onCalculate()
   }
 
   if (m_tracingSetup.tracingEnabled) {
-    const bool ret = m_calcIface.writeTrace(m_tracingSetup.outputFilePath.toStdString());
+    const bool ret = m_calcIface.writeTrace(m_tracingSetup.outputFilePath);
 
     if (!ret) {
       QMessageBox errBox{QMessageBox::Warning, tr("Trace"), tr("Failed to write trace file")};

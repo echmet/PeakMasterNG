@@ -198,7 +198,7 @@ public:
                                                                          const double EOFValue, const EOFValueType EOFvt, bool positiveVoltage,
                                                                          const double injectionZoneLength, const double plotToTime) const;
   std::vector<TracepointInfo> tracepointInformation() const;
-  bool writeTrace(const std::string &traceOutputFile) noexcept;
+  bool writeTrace(const QString &traceOutputFile) noexcept;
 
 public slots:
   void onInvalidate();

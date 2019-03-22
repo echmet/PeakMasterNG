@@ -7,8 +7,9 @@
 #include <limits>
 #include <lemng.h>
 #include <memory>
+#include <QFile>
 #include <QPointF>
-#include <fstream>
+#include <QTextStream>
 
 Q_STATIC_ASSERT(sizeof(CalculatorInterface::TracepointInfo::TPID) == sizeof(ECHMET::LEMNG::TracepointInfo::id));
 Q_STATIC_ASSERT(sizeof(CalculatorInterface::TracepointState::TPID) == sizeof(ECHMET::LEMNG::TracepointInfo::id));
@@ -819,19 +820,25 @@ std::vector<CalculatorInterface::TracepointInfo> CalculatorInterface::tracepoint
   return tracepointInfo;
 }
 
-bool CalculatorInterface::writeTrace(const std::string &traceOutputFile) noexcept
+bool CalculatorInterface::writeTrace(const QString &traceOutputFile) noexcept
 {
-  if (!traceOutputFile.empty()) {
+  if (!traceOutputFile.isEmpty()) {
     auto traceRaw = ECHMET::LEMNG::trace();
     if (traceRaw == nullptr)
       return false;
 
-    const auto trace = std::string{traceRaw->c_str()};
+    const auto trace = QString::fromUtf8(traceRaw->c_str());
     traceRaw->destroy();
 
-    std::ofstream ofs{traceOutputFile};
-    ofs << trace;
-    return ofs.good();
+    QFile fh{traceOutputFile};
+    if (!fh.open(QIODevice::WriteOnly | QIODevice::Text))
+      return false;
+
+    QTextStream stm{&fh};
+    stm.setCodec("UTF-8");
+
+    stm << trace;
+    return stm.status() == QTextStream::Ok;
   }
 
   return true;
