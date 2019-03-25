@@ -52,7 +52,7 @@ void DatabaseEditorDialog::editConstituent(const QModelIndex &index)
 
   EditDatabaseConstituentDialog dlg{ctuent.name, ctuent.pKas, ctuent.mobilities, ctuent.chargeLow, ctuent.chargeHigh, this};
 
-  connect(&dlg, &EditDatabaseConstituentDialog::validateInput,
+  connect(&dlg, &EditDatabaseConstituentDialog::validateInput, this,
           [](const EditDatabaseConstituentDialog *me, bool *ok) {
             *ok = ConstituentManipulator::validateConstituentProperties(me);
           }

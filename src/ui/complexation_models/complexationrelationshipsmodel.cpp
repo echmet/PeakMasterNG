@@ -351,7 +351,7 @@ int ComplexationRelationshipsModel::rowCount(const QModelIndex &parent) const
   if (!parent.isValid())
     _currentRoot->childrenCount();
 
-  TreeItem *item = static_cast<TreeItem *>(parent.internalPointer());
+  auto item = static_cast<TreeItem *>(parent.internalPointer());
   if (item == nullptr) {
     if (_currentRoot == nullptr)
         return 0;
@@ -396,7 +396,7 @@ bool ComplexationRelationshipsModel::setData(const QModelIndex &index, const QVa
   if (item->itype != TreeItem::Type::LIGAND)
     return false;
 
-  LigandTreeItem *ligandItem = static_cast<LigandTreeItem *>(item);
+  auto ligandItem = static_cast<LigandTreeItem *>(item);
 
   switch (index.column()) {
   case 2:
