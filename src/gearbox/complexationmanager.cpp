@@ -21,7 +21,7 @@ int calculateHue(const int step, const int lastHue)
   static const int ROT_BASE{120};
   static const int ROT_STEPS{360 / ROT_BASE};
   static_assert(360 % ROT_BASE == 0, "Invalid color rotation parameters");
-  static_assert(ROT_STEPS > 1, "There has to be at least two rotation steps");
+  static_assert(ROT_STEPS > 1, "There have to be at least two rotation steps");
 
   static const auto wrap = [](const int v) {
     return v % 360;
