@@ -390,7 +390,7 @@ void ComplexationManager::notifyConstituentRemoved()
 void ComplexationManager::updateComplexingNuclei()
 {
   int ctr = 0;
-  int hue = 225;
+  int hue = 45;
   ComplexingNucleiMap map{};
   std::vector<int> excludeHues{};
 
