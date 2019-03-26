@@ -18,24 +18,22 @@ enum class Conflict {
 static
 int calculateHue(const int step, const int lastHue)
 {
-  auto wrap = [](const int v) {
-    if (v < 0)
-      return 360 + v;
-    return v;
-  };
-  auto shift = [&wrap](const int hue) {
-    int newHue = hue - 180;
-    return wrap(newHue);
+  static const int ROT_BASE{120};
+  static const int ROT_STEPS{360 / ROT_BASE};
+  static_assert(360 % ROT_BASE == 0, "Invalid color rotation parameters");
+  static_assert(ROT_STEPS > 1, "There has to be at least two rotation steps");
+
+  static const auto wrap = [](const int v) {
+    return v % 360;
   };
 
-  if (step % 2 == 0) {
-    return shift(lastHue);
-  } else {
-    const int rot = 180 / (step + 1);
-    int newHue = lastHue - rot;
-    newHue = wrap(newHue);
-    return shift(newHue);
-  }
+  int newHue;
+  if (step % ROT_STEPS == 0 && step > 0)
+    newHue = lastHue + ROT_BASE / (2 * step / ROT_STEPS);
+  else
+    newHue = lastHue + ROT_BASE;
+
+  return wrap(newHue);
 }
 
 static
@@ -390,7 +388,7 @@ void ComplexationManager::notifyConstituentRemoved()
 void ComplexationManager::updateComplexingNuclei()
 {
   int ctr = 0;
-  int hue = 45;
+  int hue = 105;
   ComplexingNucleiMap map{};
   std::vector<int> excludeHues{};
 
