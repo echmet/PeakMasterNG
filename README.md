@@ -5,6 +5,8 @@ Introduction
 ---
 PeakMaster NG is a graphical user interface for [LEMNG](https://github.com/echmet/LEMNG) model for simulations of capillary zone electrophoresis experiments. PeakMaster NG provides convenient means to enter input data for the LEMNG model and display the results of LEMNG's calculations. PeakMaster NG binaries and a user guide can be downloaded from the [ECHMET research group website](https://echmet.natur.cuni.cz/peakmaster).
 
+In case the primary ECHMET group site is down you may download PeakMaster binaries from a [backup site](https://devoid-pointer.net/echmet_fallback)
+
 Building
 ---
 The following tools and libraries are required to build PeakMaster NG
