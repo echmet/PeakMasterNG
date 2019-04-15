@@ -30,8 +30,20 @@ public:
   void refreshAll();
 
 private:
-  typedef std::map<std::string, std::vector<int>> ComplexationStatusMap;
-  typedef std::map<std::string, int> ComplexingNucleiMap;
+  class Hue {
+  public:
+    Hue() = default;
+    Hue(int _hue, int _ctr) :
+      hue{_hue}, ctr{_ctr}
+    {}
+    Hue(const Hue &other) = default;
+
+    int hue;
+    int ctr;
+  };
+
+  using ComplexationStatusMap = std::map<std::string, std::vector<int>>;
+  using ComplexingNucleiMap = std::map<std::string, Hue>;
 
   void addNucleus(const std::string &nucleusName);
   void updateComplexingNuclei();

@@ -6,6 +6,7 @@
 #include "../ui/editcomplexationdialog.h"
 
 #include <cassert>
+#include <algorithm>
 #include <QMessageBox>
 
 enum class Conflict {
@@ -17,24 +18,22 @@ enum class Conflict {
 static
 int calculateHue(const int step, const int lastHue)
 {
-  auto wrap = [](const int v) {
-    if (v < 0)
-      return 360 + v;
-    return v;
-  };
-  auto shift = [&wrap](const int hue) {
-    int newHue = hue - 180;
-    return wrap(newHue);
+  static const int ROT_BASE{120};
+  static const int ROT_STEPS{360 / ROT_BASE};
+  static_assert(360 % ROT_BASE == 0, "Invalid color rotation parameters");
+  static_assert(ROT_STEPS > 1, "There have to be at least two rotation steps");
+
+  static const auto wrap = [](const int v) {
+    return v % 360;
   };
 
-  if (step % 2 == 0) {
-    return shift(lastHue);
-  } else {
-    const int rot = 180 / (step + 1);
-    int newHue = lastHue - rot;
-    newHue = wrap(newHue);
-    return shift(newHue);
-  }
+  int newHue;
+  if (step % ROT_STEPS == 0 && step > 0)
+    newHue = lastHue + ROT_BASE / (2 * step / ROT_STEPS);
+  else
+    newHue = lastHue + ROT_BASE;
+
+  return wrap(newHue);
 }
 
 static
@@ -247,13 +246,16 @@ void ComplexationManager::addNucleus(const std::string &nucleusName)
   if (m_complexingNuclei.find(nucleusName) != m_complexingNuclei.cend())
     return;
 
-  int max = 0;
+  int maxHue = 0;
+  int maxCtr = 0;
   for (auto it = m_complexingNuclei.cbegin(); it != m_complexingNuclei.cend(); it++) {
-    if (it->second > max)
-      max = it->second;
+    if (it->second.hue > maxHue) {
+      maxHue = it->second.hue;
+      maxCtr = it->second.ctr;
+    }
   }
 
-  m_complexingNuclei.emplace(nucleusName, max + 1);
+  m_complexingNuclei.emplace(nucleusName, Hue{maxHue + 1, maxCtr + 1});
 }
 
 ComplexationManager::ComplexationManager(gdm::GDM &backgroundGDM, gdm::GDM &sampleGDM, QObject *parent) :
@@ -386,8 +388,10 @@ void ComplexationManager::notifyConstituentRemoved()
 void ComplexationManager::updateComplexingNuclei()
 {
   int ctr = 0;
-  int hue = 225;
+  int hue = 105;
   ComplexingNucleiMap map{};
+  std::vector<int> excludeHues{};
+
 
   for (auto it = h_sampleGDM.cbegin(); it != h_sampleGDM.cend(); it++) {
     if (it->type() != gdm::ConstituentType::Nucleus)
@@ -395,8 +399,30 @@ void ComplexationManager::updateComplexingNuclei()
 
     const auto found = gdm::findComplexations(h_sampleGDM.composition(), it);
     if (!found.empty()) {
-      map[it->name()] = hue;
-      hue = calculateHue(ctr++, hue);
+      const auto mit = m_complexingNuclei.find(it->name());
+      if (mit != m_complexingNuclei.cend()) {
+        map[it->name()] =  mit->second;
+        excludeHues.emplace_back(mit->second.ctr);
+      }
+    }
+  }
+
+  /* This needs a double pass */
+  for (auto it = h_sampleGDM.cbegin(); it != h_sampleGDM.cend(); it++) {
+    if (it->type() != gdm::ConstituentType::Nucleus)
+      continue;
+
+    const auto found = gdm::findComplexations(h_sampleGDM.composition(), it);
+    if (!found.empty()) {
+    const auto mit = m_complexingNuclei.find(it->name());
+      if (mit == m_complexingNuclei.cend()) {
+        while (std::any_of(excludeHues.cbegin(), excludeHues.cend(), [ctr](const int v){ return v == ctr;}))
+          hue = calculateHue(ctr++, hue);
+
+        hue = calculateHue(ctr, hue);
+        map[it->name()] = {hue, ctr};
+        ctr++;
+      }
     }
   }
 
@@ -405,19 +431,19 @@ void ComplexationManager::updateComplexingNuclei()
 
 void ComplexationManager::updateComplexationStatus()
 {
-  ComplexationStatusMap map;
+  ComplexationStatusMap map{};
 
   for (auto it = h_sampleGDM.cbegin(); it != h_sampleGDM.cend(); it++) {
     if (it->type() == gdm::ConstituentType::Nucleus) {
       const auto _it = m_complexingNuclei.find(it->name());
       if (_it != m_complexingNuclei.cend())
-        map[it->name()] = { _it->second };
+        map[it->name()] = { _it->second.hue };
     } else {
       std::vector<int> nucleiIDs{};
 
       const auto found = gdm::findComplexations(h_sampleGDM.composition(), it);
       for (auto _it = found.cbegin(); _it != found.cend(); _it++)
-        nucleiIDs.emplace_back(m_complexingNuclei.at(_it->first->name()));
+        nucleiIDs.emplace_back(m_complexingNuclei.at(_it->first->name()).hue);
 
       map[it->name()] = std::move(nucleiIDs);
     }
