@@ -57,7 +57,6 @@ void IonicCompositionDialog::onAnalyteSelectionChanged(int idx)
 
   const QString s = m_analytesNamesModel->data(m_analytesNamesModel->index(idx, 0), Qt::UserRole + 1).toString();
   m_analytesModel->selectAnalyte(s.toStdString());
-  ui->qle_effectiveMobility->setText(DoubleToStringConvertor::convert(m_analytesModel->effectiveMobility()));
 
   ui->ql_miscalculation->setVisible(m_analytesModel->isMiscalculated()); /* This must be called after selectAnalyte() */
   ui->qtbv_analyteDissociation->resizeColumnsToContents();
@@ -88,11 +87,9 @@ void IonicCompositionDialog::onAnalytesDissociationDataUpdated()
       ui->qcbox_analyte->setCurrentIndex(0);
       m_analytesModel->selectAnalyte(analytes.front());
     }
-    ui->qle_effectiveMobility->setText(DoubleToStringConvertor::convert(m_analytesModel->effectiveMobility()));
     ui->ql_miscalculation->setVisible(m_analytesModel->isMiscalculated()); /* This must be called after selectAnalyte() */
     ui->qtbv_analyteDissociation->resizeColumnsToContents();
-  } else
-    ui->qle_effectiveMobility->setText("");
+  }
 }
 
 QSize IonicCompositionDialog::sizeHint() const
@@ -105,7 +102,7 @@ QSize IonicCompositionDialog::sizeHint() const
   auto fm = ui->qtbv_bgeIonicComposition->fontMetrics();
   const auto model = ui->qtbv_bgeIonicComposition->model();
 
-  int width = fm.width(FILL_TO_STRING) * model->columnCount() * 1.2;
+  int width = qRound(fm.width(FILL_TO_STRING) * model->columnCount() * 1.2);
 
   QString longestRow;
   for (int idx = 0; idx < model->rowCount(); idx++) {

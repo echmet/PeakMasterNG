@@ -24,12 +24,10 @@ public:
 
   class DissociatedAnalyte {
   public:
-    DissociatedAnalyte(const double effectiveMobility, std::vector<DissociationRatio> &&ratios) :
-      effectiveMobility{effectiveMobility},
+    DissociatedAnalyte(std::vector<DissociationRatio> &&ratios) :
       ratios(std::move(ratios))
     {}
 
-    const double effectiveMobility;
     const std::vector<DissociationRatio> ratios;
   };
 
@@ -39,7 +37,6 @@ public:
   void clear();
   int columnCount(const QModelIndex &parent = QModelIndex{}) const override;
   QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-  double effectiveMobility() const;
   QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
   bool isMiscalculated() const;
   int rowCount(const QModelIndex &parent = QModelIndex{}) const override;

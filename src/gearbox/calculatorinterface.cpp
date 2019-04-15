@@ -351,7 +351,7 @@ void CalculatorInterface::mapResultsAnalytesDissociation()
       ratios.emplace_back(std::string{r.name->c_str()}, r.fraction);
     }
 
-    analytes.emplace(std::string{dA.name->c_str()}, AnalytesDissociationModel::DissociatedAnalyte{dA.effectiveMobility, std::move(ratios)});
+    analytes.emplace(std::string{dA.name->c_str()}, AnalytesDissociationModel::DissociatedAnalyte{std::move(ratios)});
   }
 
   m_resultsData.analytesDissociationRefresh(std::move(analytes));

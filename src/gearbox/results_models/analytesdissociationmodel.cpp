@@ -46,15 +46,6 @@ QVariant AnalytesDissociationModel::data(const QModelIndex &index, int role) con
   return it->second.ratios.at(col).fraction;
 }
 
-double AnalytesDissociationModel::effectiveMobility() const
-{
-  const auto it = m_analytes.find(m_selectedAnalyte);
-  if (it == m_analytes.cend())
-    return 0;
-
-  return it->second.effectiveMobility;
-}
-
 QVariant AnalytesDissociationModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
   if (orientation != Qt::Horizontal)
