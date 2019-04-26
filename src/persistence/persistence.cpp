@@ -63,12 +63,12 @@ Persistence::Persistence(gdm::GDM &bgeGDM, gdm::GDM &sampleGDM) :
 {
 }
 
-void Persistence::deserialize(const QString &filepath, System &system)
+void Persistence::deserialize(const Target &target, System &system)
 {
   gdm::GDM bgeGDM;
   gdm::GDM sampleGDM;
 
-  Deserializer::deserialize(filepath, bgeGDM, sampleGDM, system);
+  Deserializer::deserialize(target, bgeGDM, sampleGDM, system);
 
   m_bgeGDM = bgeGDM;
   m_sampleGDM = sampleGDM;

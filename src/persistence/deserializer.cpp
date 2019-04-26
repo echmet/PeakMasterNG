@@ -5,6 +5,8 @@
 #include "../gdm/core/complexation/complexform.h"
 #include "persistence.h"
 
+#include <QClipboard>
+#include <QGuiApplication>
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -313,21 +315,37 @@ void deserializeSystem(System &system, const QJsonObject &obj)
     throw MalformedJSONException{"Invalid value of \"injectionZoneLength\""};
 }
 
-void Deserializer::deserialize(const QString &filepath, gdm::GDM &gdmBGE, gdm::GDM &gdmSample,
+void Deserializer::deserialize(const Target &target, gdm::GDM &gdmBGE, gdm::GDM &gdmSample,
                                System &system)
 {
-  QFile input{filepath};
+  auto doc = [&]() {
+    QJsonParseError parseError{};
 
-  if (!input.open(QIODevice::ReadOnly | QIODevice::Text))
-    throw DeserializationException{"Cannot open input file"};
+    if (target.type == Target::TT_FILE) {
+      QFile input{target.path};
 
-  QTextStream stm{&input};
-  stm.setCodec("UTF-8");
+      if (!input.open(QIODevice::ReadOnly | QIODevice::Text))
+        throw DeserializationException{"Cannot open input file"};
 
-  QJsonParseError parseError{};
-  QJsonDocument doc = QJsonDocument::fromJson(stm.readAll().toUtf8(), &parseError);
-  if (doc.isNull())
-    throw DeserializationException{parseError.errorString().toStdString()};
+      QTextStream stm{&input};
+      stm.setCodec("UTF-8");
+
+      auto doc = QJsonDocument::fromJson(stm.readAll().toUtf8(), &parseError);
+      if (doc.isNull())
+        throw DeserializationException{parseError.errorString().toStdString()};
+
+      return doc;
+    } else {
+      auto clipboard = QGuiApplication::clipboard();
+      auto str = clipboard->text();
+
+      auto doc = QJsonDocument::fromJson(str.toUtf8(), &parseError);
+      if (doc.isNull())
+        throw DeserializationException{parseError.errorString().toStdString()};
+
+      return doc;
+    }
+  }();
 
   QJsonObject obj = doc.object();
   if (obj.isEmpty())

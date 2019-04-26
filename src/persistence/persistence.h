@@ -60,7 +60,7 @@ class Persistence : public QObject {
 
 public:
   Persistence(gdm::GDM &bgeGDM, gdm::GDM &sampleGDM);
-  void deserialize(const QString &filepath, System &system);
+  void deserialize(const Target &target, System &system);
   void serialize(const Target &target, const System &system);
 
   static const QString CTUENT_CTUENTS;

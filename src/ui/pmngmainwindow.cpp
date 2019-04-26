@@ -211,6 +211,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   connect(ui->actionOpen_database, &QAction::triggered, this, &PMNGMainWindow::onOpenDatabase);
   connect(ui->actionSet_debugging_output, &QAction::triggered, this, &PMNGMainWindow::onSetDebuggingOutput);
   connect(ui->actionCheck_for_update, &QAction::triggered, this, &PMNGMainWindow::onOpenUpdateDialog);
+  connect(ui->actionSystem_from_clipboard, &QAction::triggered, this, [this]() { this->loadSystem("", true); });
   connect(ui->actionSystem_to_clipboard, &QAction::triggered, this, [this]() { this->saveSystem("", true); });
 
   ui->mainToolBar->addWidget(m_qpb_new);
@@ -303,6 +304,63 @@ void PMNGMainWindow::initSignalItems()
 
   m_signalPlotWidget->setSignalItemsModel(m_signalTypesModel);
   resetSignalItems();
+}
+
+void PMNGMainWindow::loadSystem(const QString &path, const bool fromClipboard)
+{
+  persistence::System system{};
+  try {
+    const auto target = [&]() {
+      if (fromClipboard)
+        return persistence::Target{persistence::Target::TT_CLIPBOARD, ""};
+      else
+        return persistence::Target{persistence::Target::TT_FILE,
+                                   QFileInfo{path}.absoluteFilePath()};
+    }();
+
+    m_persistence.deserialize(target, system);
+
+    QVariant eofType{};
+    if (system.eofType == persistence::Persistence::SYS_EOF_TYPE_NONE)
+      eofType = QVariant::fromValue<MainControlWidget::EOF_Type>(MainControlWidget::EOF_NONE);
+    else if (system.eofType == persistence::Persistence::SYS_EOF_TYPE_MOBILITY)
+      eofType = QVariant::fromValue<MainControlWidget::EOF_Type>(MainControlWidget::EOF_MOBILITY);
+    else if (system.eofType == persistence::Persistence::SYS_EOF_TYPE_TIME)
+      eofType = QVariant::fromValue<MainControlWidget::EOF_Type>(MainControlWidget::EOF_MARKER_TIME);
+    else {
+      QMessageBox mbox{QMessageBox::Warning, tr("Loading error"), tr("Invalid value of EOF type")};
+      mbox.exec();
+      return;
+    }
+
+    MainControlWidget::RunSetup rs{
+      system.totalLength,
+      system.detectorPosition,
+      system.drivingVoltage,
+      system.positiveVoltage,
+      system.correctForDebyeHuckel,
+      system.correctForOnsagerFuoss,
+      system.correctForViscosity
+    };
+
+    m_plotParamsData[m_plotParamsModel.indexFromItem(SignalPlotWidget::PlotParamsItems::INJ_ZONE_LENGTH)] = system.injectionZoneLength;
+    m_plotParamsModel.notifyDataChanged(SignalPlotWidget::PlotParamsItems::INJ_ZONE_LENGTH, SignalPlotWidget::PlotParamsItems::INJ_ZONE_LENGTH);
+
+    onCompositionChanged();
+    m_mainCtrlWidget->setRunSetup(rs, eofType, system.eofValue);
+
+    if (fromClipboard) {
+      m_activeFile = ActiveFile{};
+    } else {
+      m_lastLoadPath = path;
+      m_activeFile = ActiveFile{path};
+    }
+
+    setWindowTitle(QFileInfo{path}.fileName());
+  } catch (persistence::DeserializationException &ex) {
+    QMessageBox mbox{QMessageBox::Warning, tr("Unable to load system"), ex.what()};
+    mbox.exec();
+  }
 }
 
 EFGDisplayer PMNGMainWindow::makeMainWindowEFGDisplayer()
@@ -492,48 +550,7 @@ void PMNGMainWindow::onLoad()
   if (files.empty())
     return;
 
-  persistence::System system{};
-  try {
-    const auto &path = QFileInfo{files.at(0)}.absoluteFilePath();
-    m_persistence.deserialize(path, system);
-
-    QVariant eofType{};
-    if (system.eofType == persistence::Persistence::SYS_EOF_TYPE_NONE)
-      eofType = QVariant::fromValue<MainControlWidget::EOF_Type>(MainControlWidget::EOF_NONE);
-    else if (system.eofType == persistence::Persistence::SYS_EOF_TYPE_MOBILITY)
-      eofType = QVariant::fromValue<MainControlWidget::EOF_Type>(MainControlWidget::EOF_MOBILITY);
-    else if (system.eofType == persistence::Persistence::SYS_EOF_TYPE_TIME)
-      eofType = QVariant::fromValue<MainControlWidget::EOF_Type>(MainControlWidget::EOF_MARKER_TIME);
-    else {
-      QMessageBox mbox{QMessageBox::Warning, tr("Loading error"), tr("Invalid value of EOF type")};
-      mbox.exec();
-      return;
-    }
-
-    MainControlWidget::RunSetup rs{
-      system.totalLength,
-      system.detectorPosition,
-      system.drivingVoltage,
-      system.positiveVoltage,
-      system.correctForDebyeHuckel,
-      system.correctForOnsagerFuoss,
-      system.correctForViscosity
-    };
-
-    m_plotParamsData[m_plotParamsModel.indexFromItem(SignalPlotWidget::PlotParamsItems::INJ_ZONE_LENGTH)] = system.injectionZoneLength;
-    m_plotParamsModel.notifyDataChanged(SignalPlotWidget::PlotParamsItems::INJ_ZONE_LENGTH, SignalPlotWidget::PlotParamsItems::INJ_ZONE_LENGTH);
-
-    onCompositionChanged();
-    m_mainCtrlWidget->setRunSetup(rs, eofType, system.eofValue);
-
-    m_lastLoadPath = path;
-    m_activeFile = ActiveFile{path};
-
-    setWindowTitle(QFileInfo{path}.fileName());
-  } catch (persistence::DeserializationException &ex) {
-    QMessageBox mbox{QMessageBox::Warning, tr("Unable to load system"), ex.what()};
-    mbox.exec();
-  }
+  loadSystem(files.constFirst(), false);
 }
 
 void PMNGMainWindow::onNew()
@@ -809,6 +826,7 @@ void PMNGMainWindow::setControlsIcons()
   ui->actionExit->setIcon(QIcon::fromTheme("application-exit"));
   ui->actionAbout->setIcon(QIcon::fromTheme("help-about"));
   ui->actionCheck_for_update->setIcon(QIcon::fromTheme("system-software-update"));
+  ui->actionSystem_from_clipboard->setIcon(QIcon::fromTheme("edit-copy"));
   ui->actionSystem_to_clipboard->setIcon(QIcon::fromTheme("edit-copy"));
 
   /* Button bar */
@@ -826,6 +844,7 @@ void PMNGMainWindow::setControlsIcons()
   ui->actionExit->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
   ui->actionAbout->setIcon(style()->standardIcon(QStyle::SP_DialogHelpButton));
   ui->actionCheck_for_update->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
+  ui->actionSystem_from_clipboard->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
   ui->actionSystem_to_clipboard->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
 
   /* Button bar */

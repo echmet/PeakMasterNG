@@ -107,6 +107,7 @@ private:
   EFGDisplayer makeMainWindowEFGDisplayer();
   void initPlotParams();
   void initSignalItems();
+  void loadSystem(const QString &path, const bool fromClipboard);
   PlottingInfo makePlottingInfo();
   void plotElectrophoregram(const EFGDisplayer &displayer, const std::vector<CalculatorInterface::TimeDependentZoneInformation> &tdzi,
                             const double EOFValue, CalculatorInterface::EOFValueType EOFvt, const double izLen, const double plotCutoff);

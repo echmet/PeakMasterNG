@@ -11,7 +11,7 @@ class Deserializer
 {
 public:
   Deserializer() = delete;
-  static void deserialize(const QString &filepath, gdm::GDM &gdmBGE, gdm::GDM &gdmSample,
+  static void deserialize(const Target &target, gdm::GDM &gdmBGE, gdm::GDM &gdmSample,
                           System &system);
 };
 
