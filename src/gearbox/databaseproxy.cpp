@@ -2,6 +2,7 @@
 
 #include "../database/db_constituentsdatabase.h"
 #include "../persistence/swsettings.h"
+#include "../globals.h"
 
 #include <algorithm>
 #include <cassert>
@@ -10,9 +11,9 @@
 
 #ifdef Q_OS_LINUX
 #ifdef PMNG_FLATPAK_BUILD
-  const char *DatabaseProxy::DATABASE_PATH = "/app/share/PeakMasterNG/pmng_db.sql";
+  const char *DatabaseProxy::DATABASE_PATH = "/app/share/" SOFTWARE_NAME_INTERNAL_S "/pmng_db.sql";
 #else
-  const char *DatabaseProxy::DATABASE_PATH = "/etc/ECHMET/PeakMasterNG/pmng_db.sql";
+  const char *DatabaseProxy::DATABASE_PATH = "/etc/ECHMET/" SOFTWARE_NAME_INTERNAL_S "/pmng_db.sql";
 #endif // PMNG_FLATPAK_BUILD
 #else
 const char *DatabaseProxy::DATABASE_PATH = "pmng_db.sql";
@@ -85,7 +86,7 @@ DatabaseProxy::DatabaseProxy()
 #ifdef Q_OS_LINUX
   const auto userPath = persistence::SWSettings::get<QString>(persistence::SWSettings::KEY_USER_DB_PATH);
   if (userPath.isEmpty()) {
-    static const QString locPath(".local/share/ECHMET/PeakMasterNG/");
+    static const QString locPath(".local/share/ECHMET/" + Globals::SOFTWARE_NAME_INTERNAL + "/");
 
     QDir homeDir = QDir::home();
     const QString editableDbPath = homeDir.absolutePath() + "/" + locPath + "pmng_db.sql";

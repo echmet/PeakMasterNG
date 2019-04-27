@@ -16,7 +16,7 @@ void SoftwareUpdateWorker::process()
   EUPDResult res;
 
   EUPDInSoftware inSw;
-  strncpy(inSw.name, "PeakMasterNG", sizeof(EUPDInSoftware::name));
+  strncpy(inSw.name, SOFTWARE_NAME_INTERNAL_S, sizeof(EUPDInSoftware::name));
   inSw.version.major = Globals::VERSION_MAJ;
   inSw.version.minor = Globals::VERSION_MIN;
   strncpy(inSw.version.revision, Globals::VERSION_REV.toLatin1(), sizeof(EUPDVersion::revision));

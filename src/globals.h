@@ -6,6 +6,8 @@
 #include <QVector>
 #include <QIcon>
 
+#define SOFTWARE_NAME_INTERNAL_S "PeakMasterNG"
+
 class Globals
 {
 public:
@@ -30,6 +32,7 @@ public:
   static const QString ORG_DOMAIN;
   static const QString ORG_NAME;
   static const QString SOFTWARE_NAME;
+  static const QString SOFTWARE_NAME_INTERNAL;
   static const int VERSION_MAJ;
   static const int VERSION_MIN;
   static const QString VERSION_REV;

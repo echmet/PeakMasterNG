@@ -8,6 +8,7 @@ const QString Globals::ECHMET_WEB_LINK{"http://echmet.natur.cuni.cz"};
 const QString Globals::ORG_DOMAIN{"echmet.natur.cuni.cz"};
 const QString Globals::ORG_NAME{"ECHMET"};
 const QString Globals::SOFTWARE_NAME{"PeakMaster"};
+const QString Globals::SOFTWARE_NAME_INTERNAL{SOFTWARE_NAME_INTERNAL_S};
 const int Globals::VERSION_MAJ = 6;
 const int Globals::VERSION_MIN = 0;
 const QString Globals::VERSION_REV{"f5"};
