@@ -8,7 +8,8 @@ namespace persistence {
 
 class SWSettings {
 public:
-  static const QString KEY_AUTOUPDATE_ENABLED;
+  static const QString KEY_AUTOUPDATE_ENABLED; /* int: 0 = disabled, 1 = enabled */
+  static const QString KEY_USER_DB_PATH;       /* QString: "" = No user database */
 
   static void destroy();
   static void initialize();

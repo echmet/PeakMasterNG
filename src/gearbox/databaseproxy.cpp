@@ -1,6 +1,7 @@
 #include "databaseproxy.h"
 
 #include "../database/db_constituentsdatabase.h"
+#include "../persistence/swsettings.h"
 
 #include <algorithm>
 #include <cassert>
@@ -82,29 +83,34 @@ DatabaseProxy::DatabaseProxy()
   QString usableDbPath;
 
 #ifdef Q_OS_LINUX
-  static const QString locPath(".local/share/ECHMET/PeakMasterNG/");
-  QDir homeDir = QDir::home();
-  const QString editableDbPath = homeDir.absolutePath() + "/" + locPath + "pmng_db.sql";
-  if (QFileInfo::exists(editableDbPath))
-    usableDbPath = editableDbPath;
-  else {
-    if (!QFileInfo::exists(DATABASE_PATH)) {
-      m_db = nullptr;
-      return;
-    }
+  const auto userPath = persistence::SWSettings::get<QString>(persistence::SWSettings::KEY_USER_DB_PATH);
+  if (userPath.isEmpty()) {
+    static const QString locPath(".local/share/ECHMET/PeakMasterNG/");
 
-    if (!homeDir.mkpath(locPath)) {
-      m_db = nullptr;
-      return;
-    }
+    QDir homeDir = QDir::home();
+    const QString editableDbPath = homeDir.absolutePath() + "/" + locPath + "pmng_db.sql";
+    if (QFileInfo::exists(editableDbPath))
+      usableDbPath = editableDbPath;
+    else {
+      if (!QFileInfo::exists(DATABASE_PATH)) {
+        m_db = nullptr;
+        return;
+      }
 
-    if (!QFile::copy(DATABASE_PATH, editableDbPath)) {
-      m_db = nullptr;
-      return;
-    }
+      if (!homeDir.mkpath(locPath)) {
+        m_db = nullptr;
+        return;
+      }
 
-    usableDbPath = editableDbPath;
-  }
+      if (!QFile::copy(DATABASE_PATH, editableDbPath)) {
+        m_db = nullptr;
+        return;
+      }
+
+      usableDbPath = editableDbPath;
+    }
+  } else
+    usableDbPath = userPath;
 #else
   usableDbPath = DATABASE_PATH;
 #endif // Q_OS_LINUX

@@ -22,6 +22,7 @@
 #include "../softwareupdater.h"
 #include "elementaries/uihelpers.h"
 #include "refocuser.h"
+#include "../persistence/swsettings.h"
 
 #include <cassert>
 #include <QCloseEvent>
@@ -575,9 +576,24 @@ void PMNGMainWindow::onOpenDatabase()
   dlg.setNameFilter("SQLite3 database (*.sql)");
 
   if (dlg.exec() == QDialog::Accepted) {
-    if (!h_dbProxy.openDatabase(dlg.selectedFiles().at(0))) {
+    if (dlg.selectedFiles().empty())
+      return;
+
+    QString path = dlg.selectedFiles().at(0);
+
+    if (!h_dbProxy.openDatabase(path)) {
       QMessageBox errBox{QMessageBox::Warning, tr("Database error"), tr("Cannot open selected database file")};
       errBox.exec();
+    } else {
+      QMessageBox mbox{QMessageBox::Question, tr("Question"), tr("Do you want to set this database as default database?"),
+                       QMessageBox::Yes | QMessageBox::No};
+
+      const int answer = mbox.exec();
+      if (answer == QMessageBox::Yes) {
+        const auto absPath = QFileInfo{path}.absoluteFilePath();
+
+        persistence::SWSettings::set(persistence::SWSettings::KEY_USER_DB_PATH, absPath);
+      }
     }
   }
 }
