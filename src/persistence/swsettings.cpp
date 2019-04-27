@@ -4,15 +4,10 @@
 
 namespace persistence {
 
-const QString SWSettings::KEY_AUTOUPDATE_ENABLED{"autoUpdateEnabled"};
-const QString SWSettings::KEY_USER_DB_PATH{"userDbPath"};
+const SWSItem<int> SWSettings::KEY_AUTOUPDATE_ENABLED{"autoUpdateEnabled", 1};
+const SWSItem<QString> SWSettings::KEY_USER_DB_PATH{"userDbPath", ""};
 
 SWSettings *SWSettings::s_me{nullptr};
-
-QMap<QString, QVariant> SWSettings::s_defaults = {
-  { KEY_AUTOUPDATE_ENABLED, 1 },
-  { KEY_USER_DB_PATH, "" }
-};
 
 SWSettings::SWSettings() :
   m_settings{QSettings::IniFormat, QSettings::UserScope, Globals::ORG_NAME, Globals::SOFTWARE_NAME}
