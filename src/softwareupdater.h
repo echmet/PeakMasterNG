@@ -36,18 +36,14 @@ public:
   explicit SoftwareUpdater(QObject *parent = nullptr);
   ~SoftwareUpdater();
 
-  bool automaticCheckEnabled() const;
   void checkAutomatically();
   void checkForUpdate(const bool automatic);
-  void loadUserSettings(const QVariant &settings);
-  QVariant saveUserSettings() const;
 
 private:
   void automaticCheckComplete(const SoftwareUpdateResult &result);
 
   AutoUpdateCheckDialog *m_autoDlg;
 
-  bool m_checkAutomatically;
   std::mutex m_checkInProgressLock;
   bool m_checkInProgress;
 
@@ -55,12 +51,10 @@ private:
   static const QString CHECK_AUTOMATICALLY_SETTINGS_TAG;
 
 signals:
-  void autoUpdateChanged(const bool enabled);
   void checkComplete(const SoftwareUpdateResult &result);
 
 public slots:
   void onCheckForUpdate();
-  void onSetAutoUpdate(const bool enabled);
 
 private slots:
   void onUpdateCheckComplete(const bool automatic, const SoftwareUpdateResult &result);
