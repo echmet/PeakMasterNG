@@ -30,7 +30,6 @@ signals:
 
 public slots:
   void onCheckComplete(const SoftwareUpdateResult &result);
-  void onAutoUpdateChanged(const bool enabled);
 
 private slots:
   void onCheckNowClicked();

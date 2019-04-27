@@ -2,6 +2,7 @@
 #include "ui_checkforupdatedialog.h"
 #include "softwareupdatewidget.h"
 #include "../softwareupdateresult.h"
+#include "../persistence/swsettings.h"
 
 CheckForUpdateDialog::CheckForUpdateDialog(QWidget *parent) :
   QDialog(parent),
@@ -15,7 +16,8 @@ CheckForUpdateDialog::CheckForUpdateDialog(QWidget *parent) :
   connect(ui->qpb_check, &QPushButton::clicked, this, &CheckForUpdateDialog::onCheckNowClicked);
   connect(ui->qpb_close, &QPushButton::clicked, this, &CheckForUpdateDialog::onCloseClicked);
 
-  ui->qcb_checkOnStartup->setVisible(false); /* FIXME: Unsupported at the moment */
+  const auto autoUpdateEnabled = persistence::SWSettings::get<int>(persistence::SWSettings::KEY_AUTOUPDATE_ENABLED);
+  ui->qcb_checkOnStartup->setChecked(autoUpdateEnabled > 0);
 }
 
 CheckForUpdateDialog::~CheckForUpdateDialog()
@@ -28,11 +30,6 @@ void CheckForUpdateDialog::closeEvent(QCloseEvent *ev)
   Q_UNUSED(ev);
 
   emit closed();
-}
-
-void CheckForUpdateDialog::onAutoUpdateChanged(const bool enabled)
-{
-  ui->qcb_checkOnStartup->setChecked(enabled);
 }
 
 void CheckForUpdateDialog::onCheckComplete(const SoftwareUpdateResult &result)
@@ -49,7 +46,9 @@ void CheckForUpdateDialog::onCheckNowClicked()
 
 void CheckForUpdateDialog::onCheckOnStartupClicked()
 {
-  emit setAutoUpdate(ui->qcb_checkOnStartup->checkState() == Qt::Checked);
+  const bool enabled = ui->qcb_checkOnStartup->checkState() == Qt::Checked;
+
+  persistence::SWSettings::set(persistence::SWSettings::KEY_AUTOUPDATE_ENABLED, int(enabled));
 }
 
 void CheckForUpdateDialog::onCloseClicked()

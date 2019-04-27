@@ -22,9 +22,14 @@ public:
     if (s_me->m_settings.contains(key)) {
       const auto &v = s_me->m_settings.value(key);
 
-      assert(v.canConvert<T>());
+      if (v.canConvert<T>())
+        return v.value<T>();
+    }
 
-      return v.value<T>();
+    if (s_defaults.contains(key)) {
+      const auto &v = s_defaults[key];
+      if (v.canConvert<T>())
+        return v.value<T>();
     }
 
     return {};
@@ -48,6 +53,7 @@ private:
 
   QSettings m_settings;
 
+  static QMap<QString, QVariant> s_defaults;
   static SWSettings *s_me;
 };
 
