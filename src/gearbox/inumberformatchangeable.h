@@ -1,6 +1,8 @@
 #ifndef INUMBERFORMATCHANGEABLE_H
 #define INUMBERFORMATCHANGEABLE_H
 
+#include "../globals.h"
+
 class QLocale;
 
 class INumberFormatChangeable {
@@ -10,6 +12,6 @@ public:
 
 };
 
-Q_DECLARE_INTERFACE(INumberFormatChangeable, "PeakMasterNG.INumberFormatChangeable/1.0")
+Q_DECLARE_INTERFACE(INumberFormatChangeable, SOFTWARE_NAME_INTERNAL_S ".INumberFormatChangeable/1.0")
 
 #endif // INUMBERFORMATCHANGEABLE_H
