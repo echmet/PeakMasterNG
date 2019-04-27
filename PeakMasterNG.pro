@@ -139,7 +139,8 @@ SOURCES += \
     src/ui/autoupdatecheckdialog.cpp \
     src/gearbox/additionalfloatingvalidator.cpp \
     src/ui/returnacceptabletableview.cpp \
-    src/ui/refocuser.cpp
+    src/ui/refocuser.cpp \
+    src/persistence/swsettings.cpp
 
 HEADERS += \
         src/ui/pmngmainwindow.h \
@@ -255,7 +256,8 @@ HEADERS += \
     src/gearbox/additionalfloatingvalidator.h \
     src/msvc_hacks.h \
     src/ui/returnacceptabletableview.h \
-    src/ui/refocuser.h
+    src/ui/refocuser.h \
+    src/persistence/swsettings.h
 
 FORMS += \
         src/ui/pmngmainwindow.ui \

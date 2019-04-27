@@ -5,6 +5,7 @@
 #include "pmngcrashhandler.h"
 #include "softwareupdater.h"
 #include "globals.h"
+#include "persistence/swsettings.h"
 
 #include <QApplication>
 
@@ -18,6 +19,8 @@ int main(int argc, char *argv[])
   QCoreApplication::setOrganizationName(Globals::ORG_NAME);
   QCoreApplication::setApplicationName(Globals::SOFTWARE_NAME);
   QCoreApplication::setApplicationVersion(Globals::VERSION_STRING());
+
+  persistence::SWSettings::initialize();
 
   DoubleToStringConvertor::initialize();
   SoftwareUpdater updater;
@@ -45,6 +48,8 @@ int main(int argc, char *argv[])
   w->show();
 
   int ret = a.exec();
+
+  persistence::SWSettings::destroy();
 
   PMNGCrashHandler::uninstallCrashHandler();
 
