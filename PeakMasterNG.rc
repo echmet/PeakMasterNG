@@ -18,6 +18,8 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 // remains consistent on all systems.
 IDI_ICON1               ICON                    "res\\PeakMaster_icon.ico"
 
+1                       24                      "PeakMasterNG.exe.manifest"
+
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 

@@ -313,6 +313,7 @@ RESOURCES += \
 
 win32 {
     RC_FILE = PeakMasterNG.rc
+    CONFIG += embed_manifest_exe
 }
 
 flatpak_build {
