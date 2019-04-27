@@ -246,6 +246,14 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
 
   QTimer::singleShot(0, this, &PMNGMainWindow::connectOnScreenChanged); /* This must be done from the event queue after the window is created */
   QTimer::singleShot(0, this, [this]() { onScreenChanged(UIHelpers::findScreenForWidget(this)); });
+  QTimer::singleShot(0, this, [this]() {
+    if (!this->h_dbProxy.isAvailable()) {
+      QMessageBox mbox{QMessageBox::Warning, tr("Database error"),
+                       QString{tr("%1 failed to load database of constituents. You may want to try to load a database file manually.")}.arg(Globals::SOFTWARE_NAME)
+                      };
+      mbox.exec();
+    }
+  });
 }
 
 PMNGMainWindow::~PMNGMainWindow()
