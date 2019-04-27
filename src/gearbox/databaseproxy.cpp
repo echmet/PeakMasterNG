@@ -83,8 +83,8 @@ DatabaseProxy::DatabaseProxy()
 {
   QString usableDbPath;
 
-#ifdef Q_OS_LINUX
   const auto userPath = persistence::SWSettings::get<QString>(persistence::SWSettings::KEY_USER_DB_PATH);
+#ifdef Q_OS_LINUX
   if (userPath.isEmpty()) {
     static const QString locPath(".local/share/ECHMET/" + Globals::SOFTWARE_NAME_INTERNAL + "/");
 
@@ -113,7 +113,10 @@ DatabaseProxy::DatabaseProxy()
   } else
     usableDbPath = userPath;
 #else
-  usableDbPath = DATABASE_PATH;
+  if (userPath.isEmpty())
+    usableDbPath = DATABASE_PATH;
+  else
+    usableDbPath = userPath;
 #endif // Q_OS_LINUX
 
   try {
