@@ -41,6 +41,11 @@ CONFIG(release, debug|release) {
 
     QMAKE_CXXFLAGS_RELEASE = $$QMAKE_CXXFLAGS_RELEASE_WITH_DEBUGINFO
     QMAKE_LFLAGS_RELEASE = $$QMAKE_LFLAGS_RELEASE_WITH_DEBUGINFO
+
+    win32-msvc2015 {
+        QMAKE_CXXFLAGS_RELEASE += /GL
+        QMAKE_LFLAGS_RELEASE += /LTCG
+    }
 }
 CONFIG(debug, debug|release) {
     # Configuration specific for "debug" build
