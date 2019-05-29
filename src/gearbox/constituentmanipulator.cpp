@@ -26,6 +26,16 @@ bool ConstituentManipulator::validateConstituentProperties(const IConstituentEdi
   /* Try to create physical properties of constituent */
   try {
     gdm::PhysicalProperties props{gdm::ChargeInterval{chargeLow, chargeHigh}, pKas, mobilities, viscosityCoefficient};
+
+    for (size_t idx = 1; idx < pKas.size(); idx++) {
+      if (pKas.at(idx-1) <= pKas.at(idx)) {
+        QMessageBox mbox{QMessageBox::Warning,
+                         QObject::tr("Invalid constituent properties"),
+                         QObject::tr("pKa values must be descending from lowest to highest charge")};
+        mbox.exec();
+        return false;
+      }
+    }
   } catch (gdm::InvalidArgument &ex) {
     QMessageBox mbox{QMessageBox::Warning, QObject::tr("Invalid constituent properties"), ex.what()};
     mbox.exec();
