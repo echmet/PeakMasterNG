@@ -236,12 +236,12 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   QMainWindow::setWindowTitle(QString("%1 %2").arg(QString::fromUtf8("\x49\x20\x63\x61\x6d\x65\x20\x68\x65\x72\x65\x20\x74\x6f\x20\x64\x72\x61\x77"
                                                                      "\x20\x70\x65\x61\x6b\x73\x20\x61\x6e\x64\x20\x63\x68\x65\x77\x20\x62\x75\x62"
                                                                      "\x62\x6c\x65\x67\x75\x6d\x2e\x2e\x2e\x20\x61\x6e\x64\x20\x49\x27\x6d\x20\x61"
-                                                                     "\x6c\x6c\x20\x6f\x75\x74\x74\x61\x20\x67\x75\x6d"),
+                                                                     "\x6c\x6c\x20\x6f\x75\x74\x74\x61\x20\x67\x75\x6d\x20\x2d\x20"),
                                                                       Globals::VERSION_STRING()));
 
-  QTimer::singleShot(4466, this, [this]() { this->setWindowTitle(Globals::VERSION_STRING()); });
+  QTimer::singleShot(4466, this, [this]() { this->setWindowTitle(); });
 #else
-  setWindowTitle(Globals::VERSION_STRING());
+  setWindowTitle();
 #endif // THEY_LIVE
 
   QTimer::singleShot(0, this, &PMNGMainWindow::connectOnScreenChanged); /* This must be done from the event queue after the window is created */
