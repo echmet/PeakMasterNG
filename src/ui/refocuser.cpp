@@ -4,43 +4,26 @@
 #include <QTimer>
 
 RefocuserWorker::RefocuserWorker() :
-  m_focused(qApp->focusWidget())
+  m_focused{QPointer<QWidget>{qApp->focusWidget()}}
 {
-  if (m_focused != nullptr) {
-    m_focusedParent = m_focused->parent();
-
-    connect(m_focused, &QWidget::destroyed, this, &RefocuserWorker::onFocusedDestroyed);
-    if (m_focusedParent != nullptr)
-      connect(m_focusedParent, &QObject::destroyed, this, &RefocuserWorker::onFocusedParentDestroyed);
-  }
 }
 
 void RefocuserWorker::refocus()
 {
-  QTimer::singleShot(0, nullptr, [this]() {
-    QWidget *target = [this]() {
-      if (m_focused != nullptr)
-        return m_focused;
-      return qobject_cast<QWidget *>(m_focusedParent);
-    }();
+  QWidget *target = [this]() {
+    if (!m_focused.isNull())
+      return m_focused.data();
+    if (!m_focusedParent.isNull())
+      return qobject_cast<QWidget *>(m_focusedParent.data());
+    return static_cast<QWidget *>(nullptr);
+  }();
 
-    if (target != nullptr)
-      target->setFocus();
+  if (target != nullptr)
+    target->setFocus();
 
-    this->deleteLater();
-  });
+  this->deleteLater();
 }
 
-void RefocuserWorker::onFocusedDestroyed()
-{
-  m_focused = nullptr;
-}
-
-void RefocuserWorker::onFocusedParentDestroyed()
-{
-  m_focusedParent = nullptr;
-  m_focused = nullptr;
-}
 
 Refocuser::Refocuser()
 {
