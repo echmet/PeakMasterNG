@@ -4,6 +4,7 @@
 #include "eigenzonedetailsdialog.h"
 #include "ioniccompositiondialog.h"
 #include "nonidealitycorrectionsdialog.h"
+#include "elementaries/uihelpers.h"
 
 #include "../globals.h"
 
@@ -85,14 +86,20 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
 
   connect(ui->qle_totalLength, &FloatingValueLineEdit::valueChanged, ui->qle_detectorPosition, &FloatingValueLineEdit::revalidate);
 
-  QTimer::singleShot(0, this, [this]() { connect(this->window()->windowHandle()->screen(), &QScreen::logicalDotsPerInchChanged,
-                                                 this, &MainControlWidget::onDpiChanged); });
-  QTimer::singleShot(0, this, [this]() { this->onDpiChanged(); });
+  QTimer::singleShot(0, this, &MainControlWidget::connectOnScreenChanged);
+  QTimer::singleShot(0, this, [this]() { onScreenChanged(UIHelpers::findScreenForWidget(this)); });
 }
 
 MainControlWidget::~MainControlWidget()
 {
   delete ui;
+}
+
+void MainControlWidget::connectOnScreenChanged()
+{
+  auto wh = this->window()->windowHandle();
+  if (wh != nullptr)
+    connect(wh, &QWindow::screenChanged, this, &MainControlWidget::onScreenChanged);
 }
 
 void MainControlWidget::initBackgroundPropsModel(BackgroundPropertiesMapping::MapperModel *model)
@@ -166,19 +173,6 @@ void MainControlWidget::onBGEIonicCompositionClicked()
   m_bgeIonicCompDlg->show();
 }
 
-void MainControlWidget::onDpiChanged()
-{
-  auto wh = window()->windowHandle();
-  if (wh == nullptr)
-    return;
-  auto screen = wh->screen();
-  if (screen == nullptr)
-    return;
-
-  int h = fontMetrics().height() * 4;
-  ui->qtbv_systemEigenzones->setMinimumHeight(h);
-}
-
 void MainControlWidget::onEOFCurrentIndexChanged(const int idx)
 {
   const EOF_Type t = ui->qcbox_eof->itemData(idx).value<EOF_Type>();
@@ -218,6 +212,21 @@ void MainControlWidget::onRunSetupChanged()
 void MainControlWidget::onRunSetupChangedInvalidate()
 {
   emit runSetupChanged(true);
+}
+
+void MainControlWidget::onScreenChanged(QScreen *screen)
+{
+  if (screen == nullptr)
+    return;
+  /* Yes, this check seems extremely wierd but there is no telling
+   * what the fontMetrics() function might do when there is no screen
+   * associated with the widget.
+   * This is an odd attempt to work around some mind-boggling
+   * crashes that apparently occur only on multi-head Windows systems.
+   */
+
+  int h = fontMetrics().height() * 4;
+  ui->qtbv_systemEigenzones->setMinimumHeight(h);
 }
 
 void MainControlWidget::onShowEigenzoneDetailsClicked()

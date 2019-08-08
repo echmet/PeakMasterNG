@@ -65,6 +65,7 @@ signals:
   void runSetupChanged(bool invalidate);
 
 private:
+  void connectOnScreenChanged();
   void initBackgroundPropsModel(BackgroundPropertiesMapping::MapperModel *model);
   void initRunSetupModel();
 
@@ -93,10 +94,10 @@ private:
 private slots:
   void onBGEIonicCompositionClicked();
   void onEOFCurrentIndexChanged(const int idx);
-  void onDpiChanged();
   void onNonidealityCorrectionsClicked();
   void onRunSetupChanged();
   void onRunSetupChangedInvalidate();
+  void onScreenChanged(QScreen *screen);
   void onShowEigenzoneDetailsClicked();
 };
 
