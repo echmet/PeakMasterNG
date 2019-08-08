@@ -284,6 +284,14 @@ void PMNGMainWindow::closeEvent(QCloseEvent *evt)
 
 void PMNGMainWindow::connectOnScreenChanged()
 {
+  auto wnd = this->window();
+  if (wnd == nullptr)
+    return;
+
+  auto wh = wnd->windowHandle();
+  if (wh == nullptr)
+    return;
+
   connect(this->window()->windowHandle(), &QWindow::screenChanged, this, &PMNGMainWindow::onScreenChanged);
 }
 

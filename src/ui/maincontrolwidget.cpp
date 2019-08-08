@@ -97,7 +97,11 @@ MainControlWidget::~MainControlWidget()
 
 void MainControlWidget::connectOnScreenChanged()
 {
-  auto wh = this->window()->windowHandle();
+  auto wnd = this->window();
+  if (wnd == nullptr)
+    return;
+
+  auto wh = wnd->windowHandle();
   if (wh != nullptr)
     connect(wh, &QWindow::screenChanged, this, &MainControlWidget::onScreenChanged);
 }
