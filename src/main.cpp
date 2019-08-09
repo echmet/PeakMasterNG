@@ -41,11 +41,11 @@ int main(int argc, char *argv[])
   QObject::connect(w, &PMNGMainWindow::clearAll, &gbox, &Gearbox::onClearAll);
   w->connectUpdater(&updater);
 
-  PMNGCrashHandler::checkForCrash();
-
   updater.checkAutomatically();
 
   w->show();
+
+  PMNGCrashHandler::checkForCrash();
 
   int ret = a.exec();
 
