@@ -29,7 +29,7 @@ CrashHandlerDialog::CrashHandlerDialog(const bool postCrash, QWidget *parent) :
     m_apologyMessage = m_apologyMessagePartOneDuring;
   }
 
-  m_apologyMessage += m_apologyMessagePartTwo.arg(postCrash ? QObject::tr("last") : QObject::tr("current"));
+  m_apologyMessage += m_apologyMessagePartTwo;
 
   connect(ui->qpb_ok, &QPushButton::clicked, this, &CrashHandlerDialog::onOkClicked);
   connect(ui->qpb_reportToDevelopers, &QPushButton::clicked, this, &CrashHandlerDialog::onReportToDevelopersClicked);
