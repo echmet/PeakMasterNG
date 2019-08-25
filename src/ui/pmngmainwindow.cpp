@@ -215,6 +215,11 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   connect(ui->actionSystem_from_clipboard, &QAction::triggered, this, [this]() { this->loadSystem("", true); });
   connect(ui->actionSystem_to_clipboard, &QAction::triggered, this, [this]() { this->saveSystem("", true); });
 
+#ifdef PMNG_TEST_CRASHHANDLER
+  auto crashAction = ui->menuAdvanced->addAction("Crash me!");
+  connect(crashAction, &QAction::triggered, this, []() { abort(); });
+#endif // PMNG_TEST_CRASHHANDLER
+
   ui->mainToolBar->addWidget(m_qpb_new);
   ui->mainToolBar->addWidget(m_qpb_load);
   ui->mainToolBar->addWidget(m_qpb_save);

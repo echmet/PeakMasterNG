@@ -8,6 +8,7 @@
 #include <sstream>
 #include <cstdio>
 #include <QApplication>
+#include <QStandardPaths>
 
 #ifdef Q_OS_WIN
   #include "crashhandling/crashhandlerwindows.h"
@@ -23,9 +24,14 @@
 inline
 std::string mkSWStr(const std::string &tail)
 {
+#ifdef PMNG_FLATPAK_BUILD
+  static const std::string prefix{QStandardPaths::writableLocation(QStandardPaths::CacheLocation).toStdString() + "/"};
+#else
+  static const std::string prefix{};
+#endif // PMNG_FLATPAK_BUILD
   static const std::string swname = Globals::SOFTWARE_NAME.toStdString();
 
-  return swname + "_" + tail;
+  return prefix + swname + "_" + tail;
 }
 
 class UICrashFinalizer : public CrashHandlerFinalizer<CrashHandlerPlatform>
