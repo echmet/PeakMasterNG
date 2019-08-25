@@ -48,6 +48,9 @@ CONFIG(release, debug|release) {
         QMAKE_CXXFLAGS_RELEASE += /GL
         QMAKE_LFLAGS_RELEASE += /LTCG
     }
+    linux {
+        QMAKE_LFLAGS_RELEASE += "-rdynamic"
+    }
 }
 CONFIG(debug, debug|release) {
     # Configuration specific for "debug" build
