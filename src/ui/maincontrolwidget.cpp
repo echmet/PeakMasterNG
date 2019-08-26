@@ -85,9 +85,6 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
   connect(m_ezDetailsDlg, &EigenzoneDetailsDialog::displayDeltasChanged, ezdModel, &EigenzoneDetailsModel::displayDeltas);
 
   connect(ui->qle_totalLength, &FloatingValueLineEdit::valueChanged, ui->qle_detectorPosition, &FloatingValueLineEdit::revalidate);
-
-  QTimer::singleShot(0, this, &MainControlWidget::connectOnScreenChanged);
-  QTimer::singleShot(0, this, [this]() { onScreenChanged(UIHelpers::findScreenForWidget(this)); });
 }
 
 MainControlWidget::~MainControlWidget()

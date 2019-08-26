@@ -296,6 +296,8 @@ void PMNGMainWindow::connectOnScreenChanged()
   auto wh = wnd->windowHandle();
   if (wh != nullptr)
     connect(this->window()->windowHandle(), &QWindow::screenChanged, this, &PMNGMainWindow::onScreenChanged);
+
+  m_mainCtrlWidget->connectOnScreenChanged();
 }
 
 void PMNGMainWindow::connectUpdater(SoftwareUpdater *const updater)

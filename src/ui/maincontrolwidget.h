@@ -56,6 +56,8 @@ public:
 
   explicit MainControlWidget(ResultsModels &resultsModels, QWidget *parent = nullptr);
   ~MainControlWidget();
+
+  void connectOnScreenChanged();
   EOF_Type EOFInputType() const;
   double EOFValue() const;
   RunSetup runSetup() const;
@@ -65,7 +67,6 @@ signals:
   void runSetupChanged(bool invalidate);
 
 private:
-  void connectOnScreenChanged();
   void initBackgroundPropsModel(BackgroundPropertiesMapping::MapperModel *model);
   void initRunSetupModel();
 
