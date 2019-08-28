@@ -168,6 +168,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   m_lastSavePath{""},
   h_dbProxy{dbProxy},
   m_fullCalcInProgress{false},
+  m_unsaved{false},
   ui{new Ui::PMNGMainWindow}
 {
   ui->setupUi(this);
@@ -196,7 +197,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   connect(m_qpb_saveAs, &QPushButton::clicked, ui->actionSave_as, &QAction::trigger);
   m_qpb_calculate = new QPushButton{tr("Calculate!"), this};
   connect(m_qpb_calculate, &QPushButton::clicked, this, &PMNGMainWindow::onCalculate);
-  connect(m_signalPlotWidget, &SignalPlotWidget::replotElectrophoregram, this, &PMNGMainWindow::onPlotElectrophoregram);
+  connect(m_signalPlotWidget, &SignalPlotWidget::replotElectrophoregram, this, &PMNGMainWindow::onReplotElectrophoregram);
 
   connect(h_scompWidget, &SystemCompositionWidget::compositionChanged, this, &PMNGMainWindow::onCompositionChanged);
   connect(m_mainCtrlWidget, &MainControlWidget::runSetupChanged, this, &PMNGMainWindow::onRunSetupChanged);
@@ -279,8 +280,14 @@ void PMNGMainWindow::addConstituentsSignals(const CalculatorInterface::Constitue
 
 void PMNGMainWindow::closeEvent(QCloseEvent *evt)
 {
+  const auto msg = [&]() {
+    if (this->m_unsaved)
+      return QString{"Do you really want to exit %1?\nAll unsaved data will be lost."}.arg(Globals::SOFTWARE_NAME);
+    return QString{"Do you really want to exit %1?"}.arg(Globals::SOFTWARE_NAME);
+  }();
+
   QMessageBox mbox{QMessageBox::Question, tr("Confirm action"),
-                   QString{"Do you really want to exit %1?\nAll unsaved data will be lost."}.arg(Globals::SOFTWARE_NAME),
+                   msg,
                    QMessageBox::Yes | QMessageBox::No};
 
   if (mbox.exec() != QMessageBox::Yes)
@@ -538,6 +545,8 @@ void PMNGMainWindow::onExportElectrophoregramAsCSV()
 
 void PMNGMainWindow::onCompositionChanged()
 {
+  m_unsaved = true;
+
   if (m_fullCalcInProgress)
     return;
 
@@ -632,8 +641,10 @@ void PMNGMainWindow::onOpenUpdateDialog()
   m_checkForUpdateDlg->exec();
 }
 
-void PMNGMainWindow::onPlotElectrophoregram()
+void PMNGMainWindow::onReplotElectrophoregram()
 {
+  m_unsaved = true; /* Assume that the replot was triggered by a parameters change */
+
   try {
     EFGDisplayer displayer = makeMainWindowEFGDisplayer();
 
@@ -655,6 +666,8 @@ void PMNGMainWindow::onPlotElectrophoregram()
 
 void PMNGMainWindow::onRunSetupChanged(const bool invalidate)
 {
+  m_unsaved = true;
+
   if (m_fullCalcInProgress)
     return;
 
@@ -699,8 +712,11 @@ void PMNGMainWindow::onSave()
                         tr("Confim action"),
                         QString{tr("Overwrite existing file %1?")}.arg(QFileInfo{m_activeFile.path()}.fileName()));
 
-    if (mbox.exec() == QMessageBox::Yes)
+    if (mbox.exec() == QMessageBox::Yes) {
       saveSystem(m_activeFile.path(), false);
+
+      m_unsaved = false;
+    }
   }
 }
 
@@ -722,6 +738,8 @@ void PMNGMainWindow::onSaveAs()
     return;
 
   saveSystem(files.at(0), false);
+
+  m_unsaved = false;
 }
 
 void PMNGMainWindow::onScreenChanged(QScreen *screen)

@@ -152,6 +152,7 @@ private:
   bool m_fullCalcInProgress;
 
   ActiveFile m_activeFile;
+  bool m_unsaved;
 
   Ui::PMNGMainWindow *ui;
 
@@ -169,7 +170,7 @@ private slots:
   void onNew();
   void onOpenDatabase();
   void onOpenUpdateDialog();
-  void onPlotElectrophoregram();
+  void onReplotElectrophoregram();
   void onRunSetupChanged(const bool invalidate);
   void onSave();
   void onSaveAs();
