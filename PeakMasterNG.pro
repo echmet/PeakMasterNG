@@ -59,6 +59,8 @@ CONFIG(debug, debug|release) {
 
 SOURCES += \
         src/main.cpp \
+    src/ui/adjustphdialog.cpp \
+    src/ui/internal_models/adjustphtablemodel.cpp \
         src/ui/pmngmainwindow.cpp \
     src/gdm/conversion/conversion.cpp \
     src/gdm/core/common/chargeinterval.cpp \
@@ -159,6 +161,8 @@ SOURCES += \
     src/persistence/swsettings.cpp
 
 HEADERS += \
+    src/ui/adjustphdialog.h \
+    src/ui/internal_models/adjustphtablemodel.h \
         src/ui/pmngmainwindow.h \
     src/gdm/conversion/conversion.h \
     src/gdm/core/common/chargeinterval.h \
@@ -276,6 +280,7 @@ HEADERS += \
     src/persistence/swsettings.h
 
 FORMS += \
+    src/ui/adjustphdialog.ui \
         src/ui/pmngmainwindow.ui \
     src/ui/editconstituentdialog.ui \
     src/ui/signalplotwidget.ui \

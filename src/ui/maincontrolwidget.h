@@ -13,6 +13,7 @@ namespace Ui {
   class MainControlWidget;
 }
 
+class AdjustpHDialog;
 class AnalytesDissociationModel;
 class EigenzoneDetailsDialog;
 class IonicCompositionDialog;
@@ -85,6 +86,7 @@ private:
   EigenzoneDetailsDialog *m_ezDetailsDlg;
   IonicCompositionDialog *m_bgeIonicCompDlg;
   NonidealityCorrectionsDialog *m_nonidealityCorrectionsDlg;
+  AdjustpHDialog *m_adjustpHDialog;
 
   FloatingValueDelegate m_fltDelegateRunSetup;
   FloatingValueDelegate m_fltDelegateBackgroundProps;

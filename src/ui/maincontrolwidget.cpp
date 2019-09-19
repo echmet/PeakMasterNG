@@ -5,6 +5,7 @@
 #include "ioniccompositiondialog.h"
 #include "nonidealitycorrectionsdialog.h"
 #include "elementaries/uihelpers.h"
+#include "adjustphdialog.h"
 
 #include "../globals.h"
 
@@ -69,6 +70,7 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
   m_bgeIonicCompDlg = new IonicCompositionDialog{m_bgeIonicCompositionModel, m_analytesDissociationModel, this};
   m_bgeIonicCompDlg->setWindowTitle(tr("BGE ionic composition"));
   m_nonidealityCorrectionsDlg = new NonidealityCorrectionsDialog{this};
+  m_adjustpHDialog = new AdjustpHDialog{this};
   connect(ui->qpb_nonidealityCorrections, &QPushButton::clicked, this, &MainControlWidget::onNonidealityCorrectionsClicked);
 
   connect(&m_runSetupMapperModel, &FloatMapperModel<double>::dataChanged, this, &MainControlWidget::onRunSetupChanged);
@@ -76,6 +78,7 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
   connect(ui->qcbox_eof, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainControlWidget::onRunSetupChanged);
   connect(ui->qpb_details, &QPushButton::clicked, this, &MainControlWidget::onShowEigenzoneDetailsClicked);
   connect(ui->qpb_bgeIonicComposition, &QPushButton::clicked, this, &MainControlWidget::onBGEIonicCompositionClicked);
+  connect(ui->qpb_adjustpH, &QPushButton::clicked, [this]() { m_adjustpHDialog->exec(); });
 
   EigenzoneDetailsModel *ezdModel = qobject_cast<EigenzoneDetailsModel *>(m_eigenzoneDetailsModel);
   if (ezdModel == nullptr)
