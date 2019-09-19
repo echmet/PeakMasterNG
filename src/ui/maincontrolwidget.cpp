@@ -12,17 +12,19 @@
 #include "../gearbox/results_models/eigenzonedetailsmodel.h"
 
 #include <QDataWidgetMapper>
+#include <QMessageBox>
 #include <QScreen>
 #include <QTimer>
 #include <QWindow>
 
-MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *parent) :
+MainControlWidget::MainControlWidget(const GDMProxy &GDMProxy, ResultsModels &resultsModels, QWidget *parent) :
   QWidget{parent},
   ui{new Ui::MainControlWidget},
   m_runSetupMapperModel{this},
   m_analytesDissociationModel{resultsModels.analytesDissociationModel()},
   m_bgeIonicCompositionModel{resultsModels.bgeIonicCompositionModel()},
-  m_eigenzoneDetailsModel{resultsModels.eigenzoneDetailsModel()}
+  m_eigenzoneDetailsModel{resultsModels.eigenzoneDetailsModel()},
+  h_GDMProxy{GDMProxy}
 {
   ui->setupUi(this);
 
@@ -70,7 +72,6 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
   m_bgeIonicCompDlg = new IonicCompositionDialog{m_bgeIonicCompositionModel, m_analytesDissociationModel, this};
   m_bgeIonicCompDlg->setWindowTitle(tr("BGE ionic composition"));
   m_nonidealityCorrectionsDlg = new NonidealityCorrectionsDialog{this};
-  m_adjustpHDialog = new AdjustpHDialog{this};
   connect(ui->qpb_nonidealityCorrections, &QPushButton::clicked, this, &MainControlWidget::onNonidealityCorrectionsClicked);
 
   connect(&m_runSetupMapperModel, &FloatMapperModel<double>::dataChanged, this, &MainControlWidget::onRunSetupChanged);
@@ -78,7 +79,16 @@ MainControlWidget::MainControlWidget(ResultsModels &resultsModels, QWidget *pare
   connect(ui->qcbox_eof, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainControlWidget::onRunSetupChanged);
   connect(ui->qpb_details, &QPushButton::clicked, this, &MainControlWidget::onShowEigenzoneDetailsClicked);
   connect(ui->qpb_bgeIonicComposition, &QPushButton::clicked, this, &MainControlWidget::onBGEIonicCompositionClicked);
-  connect(ui->qpb_adjustpH, &QPushButton::clicked, [this]() { m_adjustpHDialog->exec(); });
+  connect(ui->qpb_adjustpH, &QPushButton::clicked,
+          [this]() {
+            try {
+              AdjustpHDialog dlg{h_GDMProxy, this};
+              dlg.exec();
+            } catch (const std::bad_cast &) {
+              QMessageBox mbox{QMessageBox::Critical, "Internal error", "Invalid GDMProxy reference passed to AdjustpHDialog"};
+              mbox.exec();
+            }
+         });
 
   EigenzoneDetailsModel *ezdModel = qobject_cast<EigenzoneDetailsModel *>(m_eigenzoneDetailsModel);
   if (ezdModel == nullptr)

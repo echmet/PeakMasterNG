@@ -13,8 +13,8 @@ namespace Ui {
   class MainControlWidget;
 }
 
-class AdjustpHDialog;
 class AnalytesDissociationModel;
+class GDMProxy;
 class EigenzoneDetailsDialog;
 class IonicCompositionDialog;
 class NonidealityCorrectionsDialog;
@@ -55,7 +55,7 @@ public:
     bool correctForViscosity;
   };
 
-  explicit MainControlWidget(ResultsModels &resultsModels, QWidget *parent = nullptr);
+  explicit MainControlWidget(const GDMProxy &GDMProxy, ResultsModels &resultsModels, QWidget *parent = nullptr);
   ~MainControlWidget();
 
   void connectOnScreenChanged();
@@ -83,10 +83,11 @@ private:
   QAbstractTableModel *m_bgeIonicCompositionModel;
   QAbstractTableModel *m_eigenzoneDetailsModel;
 
+  const GDMProxy &h_GDMProxy;
+
   EigenzoneDetailsDialog *m_ezDetailsDlg;
   IonicCompositionDialog *m_bgeIonicCompDlg;
   NonidealityCorrectionsDialog *m_nonidealityCorrectionsDlg;
-  AdjustpHDialog *m_adjustpHDialog;
 
   FloatingValueDelegate m_fltDelegateRunSetup;
   FloatingValueDelegate m_fltDelegateBackgroundProps;

@@ -22,6 +22,7 @@ class CalculatorInterface;
 class CheckForUpdateDialog;
 class DatabaseProxy;
 class EFGDisplayer;
+class GDMProxy;
 class MainControlWidget;
 class ResultsModels;
 class QPushButton;
@@ -42,6 +43,7 @@ public:
                           persistence::Persistence &persistence,
                           DatabaseProxy &dbProxy,
                           AnalytesExtraInfoModel * const analytesEXIModel, const QAbstractTableModel * const eigenzoneDetailsModel,
+                          const GDMProxy &GDMProxy,
                           QWidget *parent = nullptr);
   ~PMNGMainWindow() override;
   void connectUpdater(SoftwareUpdater *updater);

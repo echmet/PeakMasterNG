@@ -1,7 +1,11 @@
 #include "adjustphtablemodel.h"
 
-AdjustpHTableModel::AdjustpHTableModel(QObject *parent)
-  : QAbstractTableModel{parent}
+#include "../../gearbox/gdmproxy.h"
+
+AdjustpHTableModel::AdjustpHTableModel(std::vector<std::string> names, const GDMProxy &GDMProxy, QObject *parent)
+  : QAbstractTableModel{parent},
+    m_names{std::move(names)},
+    h_GDMProxy{GDMProxy}
 {
 }
 
@@ -28,7 +32,7 @@ int AdjustpHTableModel::rowCount(const QModelIndex &parent) const
   if (parent.isValid())
     return 0;
 
-  // FIXME: Implement me!
+  return m_names.size();
 }
 
 int AdjustpHTableModel::columnCount(const QModelIndex &parent) const
@@ -42,8 +46,25 @@ int AdjustpHTableModel::columnCount(const QModelIndex &parent) const
 QVariant AdjustpHTableModel::data(const QModelIndex &index, int role) const
 {
   if (!index.isValid())
-    return QVariant();
+    return {};
 
-  // FIXME: Implement me!
-  return QVariant();
+  if (role != Qt::DisplayRole)
+    return {};
+
+  const int row = index.row();
+  const int col = index.column();
+
+  if (row < 0 || row >= rowCount())
+    return {};
+  if (col < 0 || col >= columnCount())
+    return {};
+
+  const auto &name = m_names.at(row);
+
+  if (col == 0)
+    return QString::fromStdString(name);
+  else if (col == 1)
+    return h_GDMProxy.concentrations(name).at(0);
+
+  return {};
 }

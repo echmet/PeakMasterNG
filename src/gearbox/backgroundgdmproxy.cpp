@@ -16,6 +16,28 @@ BackgroundGDMProxy::~BackgroundGDMProxy()
 {
 }
 
+std::vector<std::string> BackgroundGDMProxy::allBackgroundNames() const noexcept
+{
+  std::vector<std::string> names{};
+
+  for (auto it = h_backgroundGDM.cbegin(); it != h_backgroundGDM.cend(); it++) {
+    names.emplace_back(it->name());
+  }
+
+  return names;
+}
+
+std::vector<std::string> BackgroundGDMProxy::allSampleNames() const noexcept
+{
+  std::vector<std::string> names{};
+
+  for (auto it = h_sampleGDM.cbegin(); it != h_sampleGDM.cend(); it++) {
+    names.emplace_back(it->name());
+  }
+
+  return names;
+}
+
 bool BackgroundGDMProxy::complexes(const std::string &name) const noexcept
 {
   const auto it = h_sampleGDM.find(name);

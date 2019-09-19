@@ -155,6 +155,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
                                persistence::Persistence &persistence,
                                DatabaseProxy &dbProxy,
                                AnalytesExtraInfoModel * const analytesEXIModel, const QAbstractTableModel * const eigenzoneDetailsModel,
+                               const GDMProxy &GDMProxy,
                                QWidget *parent) :
   QMainWindow{parent},
   m_calcIface{calcIface},
@@ -180,7 +181,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   splitter->addWidget(h_scompWidget);
   splitter->addWidget(m_signalPlotWidget);
 
-  m_mainCtrlWidget = new MainControlWidget{resultsModels, this};
+  m_mainCtrlWidget = new MainControlWidget{GDMProxy, resultsModels, this};
   ui->qvlay_leftPane->addWidget(m_mainCtrlWidget);
 
   m_checkForUpdateDlg = new CheckForUpdateDialog{this};

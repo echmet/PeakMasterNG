@@ -2,13 +2,17 @@
 #define ADJUSTPHTABLEMODEL_H
 
 #include <QAbstractTableModel>
+#include <string>
+#include <vector>
+
+class GDMProxy;
 
 class AdjustpHTableModel : public QAbstractTableModel
 {
   Q_OBJECT
 
 public:
-  explicit AdjustpHTableModel(QObject *parent = nullptr);
+  explicit AdjustpHTableModel(std::vector<std::string> names, const GDMProxy &GDMProxy, QObject *parent = nullptr);
 
   // Header:
   QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
@@ -20,6 +24,9 @@ public:
   QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
 private:
+  std::vector<std::string> m_names;
+
+  const GDMProxy &h_GDMProxy;
 };
 
 #endif // ADJUSTPHTABLEMODEL_H

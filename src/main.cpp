@@ -37,7 +37,8 @@ int main(int argc, char *argv[])
   gbox.setUICompositionModels(scompWidget->analytesModel(), scompWidget->backgroundModel());
 
   PMNGMainWindow *w = new PMNGMainWindow{scompWidget, gbox.calculatorInterface(), gbox.resultsModels(), gbox.persistence(), gbox.databaseProxy(),
-                                         gbox.resultsModels().analytesExtraInfoModel(), gbox.resultsModels().eigenzoneDetailsModel()};
+                                         gbox.resultsModels().analytesExtraInfoModel(), gbox.resultsModels().eigenzoneDetailsModel(),
+                                         gbox.backgroundGDMProxy()};
   QObject::connect(w, &PMNGMainWindow::clearAll, &gbox, &Gearbox::onClearAll);
   w->connectUpdater(&updater);
 
