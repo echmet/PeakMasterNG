@@ -26,6 +26,8 @@ AdjustpHDialog::AdjustpHDialog(GDMProxy &GDMProxy, const bool debyeHuckel, const
     ui->qtbv_bgeConstituents->setColumnWidth(col, hdr->sizeHintForColumn(col));
   }
 
+  ui->qtbv_bgeConstituents->setSelectionMode(QAbstractItemView::SingleSelection);
+
   connect(ui->qpb_adjust, &QPushButton::clicked, this, &AdjustpHDialog::onAdjustClicked);
 }
 
@@ -72,10 +74,7 @@ QString AdjustpHDialog::selectedConstituent()
   if (indexes.empty())
     return {};
 
-  for (const auto &idx : indexes) {
-    if (idx.column() == 0)
-      return m_model->data(idx).toString();
-  }
+  const auto &idx = indexes.constFirst();
 
-  return {};
+  return m_model->data(m_model->index(idx.row(), 0)).toString();
 }

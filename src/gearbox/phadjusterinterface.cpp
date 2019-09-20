@@ -13,11 +13,13 @@
 void releaseChemicalSystem(ECHMET::SysComp::ChemicalSystem *p)
 {
   ECHMET::SysComp::releaseChemicalSystem(*p);
+  delete p;
 }
 
 void releaseCalculateProperties(ECHMET::SysComp::CalculatedProperties *p)
 {
   ECHMET::SysComp::releaseCalculatedProperties(*p);
+  delete p;
 }
 
 void releaseSolverContext(ECHMET::CAES::SolverContext *p)
