@@ -23,6 +23,8 @@ public:
 
   QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
+  void updateConcentration(const QString &name);
+
 private:
   std::vector<std::string> m_names;
 

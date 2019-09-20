@@ -68,3 +68,11 @@ QVariant AdjustpHTableModel::data(const QModelIndex &index, int role) const
 
   return {};
 }
+
+void AdjustpHTableModel::updateConcentration(const QString &name)
+{
+  for (int row = 0; row < rowCount(); row++) {
+    if (data(index(row, 0)) == name)
+      emit dataChanged(index(row, 1), index(row, 1));
+  }
+}

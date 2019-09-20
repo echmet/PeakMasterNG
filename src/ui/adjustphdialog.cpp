@@ -61,6 +61,7 @@ void AdjustpHDialog::onAdjustClicked()
 
   try {
     iface.adjustpH(pH);
+    m_model->updateConcentration(ctuent);
   } catch (const pHAdjusterInterface::Exception &ex) {
     QMessageBox mbox{QMessageBox::Warning, tr("Failed to adjust pH"), ex.what()};
 
