@@ -94,17 +94,23 @@ void pHAdjusterInterface::adjustpH(const double targetpH)
   };
 
   const bool acidic = [&]() {
-    cVec[0] = cLeft;
-    h_GDMProxy.setConcentrations(m_constituentName, cVec);
+    try {
+      cVec[0] = cLeft;
+      h_GDMProxy.setConcentrations(m_constituentName, cVec);
 
-    const double pHLeft = calculatepH(corrs);
+      const double pHLeft = calculatepH(corrs);
 
-    cVec[0] = cRight;
-    h_GDMProxy.setConcentrations(m_constituentName, cVec);
+      cVec[0] = cRight;
+      h_GDMProxy.setConcentrations(m_constituentName, cVec);
 
-    const double pHRight = calculatepH(corrs);
+      const double pHRight = calculatepH(corrs);
 
-    return pHRight < pHLeft;
+      return pHRight < pHLeft;
+    } catch (Exception &) {
+      restoreConc();
+
+      throw;
+    }
   }();
 
   size_t iters{0};
@@ -130,23 +136,24 @@ void pHAdjusterInterface::adjustpH(const double targetpH)
     return targetpH + CCORR_PREC > pH && targetpH - CCORR_PREC < pH;
   };
 
-  h_GDMProxy.setConcentrations(m_constituentName, cVec);
-  double pH = calculatepH(corrs);
-  while (!pHMatches(pH) && iters < MAX_ITERS) {
-    adjustCNow(pH);
-    cNow = (cRight - cLeft) / 2.0 + cLeft;
-    cVec[0] = cNow;
+  try {
     h_GDMProxy.setConcentrations(m_constituentName, cVec);
+    double pH = calculatepH(corrs);
 
-    try {
+    while (!pHMatches(pH) && iters < MAX_ITERS) {
+      adjustCNow(pH);
+      cNow = (cRight - cLeft) / 2.0 + cLeft;
+      cVec[0] = cNow;
+      h_GDMProxy.setConcentrations(m_constituentName, cVec);
+
       pH = calculatepH(corrs);
-    } catch (Exception &) {
-      restoreConc();
 
-      throw;
+      iters++;
     }
+  } catch (Exception &) {
+    restoreConc();
 
-    iters++;
+    throw;
   }
 
   if (iters >= MAX_ITERS) {
