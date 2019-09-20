@@ -43,7 +43,7 @@ public:
                           persistence::Persistence &persistence,
                           DatabaseProxy &dbProxy,
                           AnalytesExtraInfoModel * const analytesEXIModel, const QAbstractTableModel * const eigenzoneDetailsModel,
-                          const GDMProxy &GDMProxy,
+                          GDMProxy &GDMProxy,
                           QWidget *parent = nullptr);
   ~PMNGMainWindow() override;
   void connectUpdater(SoftwareUpdater *updater);
@@ -172,6 +172,7 @@ private slots:
   void onNew();
   void onOpenDatabase();
   void onOpenUpdateDialog();
+  void onpHAdjusted();
   void onReplotElectrophoregram();
   void onRunSetupChanged(const bool invalidate);
   void onSave();

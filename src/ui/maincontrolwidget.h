@@ -55,7 +55,7 @@ public:
     bool correctForViscosity;
   };
 
-  explicit MainControlWidget(const GDMProxy &GDMProxy, ResultsModels &resultsModels, QWidget *parent = nullptr);
+  explicit MainControlWidget(GDMProxy &GDMProxy, ResultsModels &resultsModels, QWidget *parent = nullptr);
   ~MainControlWidget();
 
   void connectOnScreenChanged();
@@ -65,6 +65,7 @@ public:
   void setRunSetup(const RunSetup &rs, const QVariant &eofType, const double EOFValue);
 
 signals:
+  void pHAdjusted();
   void runSetupChanged(bool invalidate);
 
 private:
@@ -83,7 +84,7 @@ private:
   QAbstractTableModel *m_bgeIonicCompositionModel;
   QAbstractTableModel *m_eigenzoneDetailsModel;
 
-  const GDMProxy &h_GDMProxy;
+  GDMProxy &h_GDMProxy;
 
   EigenzoneDetailsDialog *m_ezDetailsDlg;
   IonicCompositionDialog *m_bgeIonicCompDlg;

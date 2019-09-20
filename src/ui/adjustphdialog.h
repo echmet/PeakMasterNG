@@ -15,14 +15,21 @@ class AdjustpHDialog : public QDialog
 {
   Q_OBJECT
 public:
-  explicit AdjustpHDialog(const GDMProxy &GDMProxy, QWidget *parent = nullptr);
+  explicit AdjustpHDialog(GDMProxy &GDMProxy,
+                          const bool debyeHuckel, const bool onsagerFuoss,
+                          QWidget *parent = nullptr);
   ~AdjustpHDialog();
 
 private:
+  void onAdjustClicked();
+  QString selectedConstituent();
+
   Ui::AdjustpHDialog *ui;
 
-  const BackgroundGDMProxy &h_GDMProxy;
+  BackgroundGDMProxy &h_GDMProxy;
   AdjustpHTableModel *m_model;
+  const bool m_debyeHuckel;
+  const bool m_onsagerFuoss;
 };
 
 #endif // ADJUSTPHDIALOG_H

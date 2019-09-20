@@ -17,7 +17,7 @@
 #include <QTimer>
 #include <QWindow>
 
-MainControlWidget::MainControlWidget(const GDMProxy &GDMProxy, ResultsModels &resultsModels, QWidget *parent) :
+MainControlWidget::MainControlWidget(GDMProxy &GDMProxy, ResultsModels &resultsModels, QWidget *parent) :
   QWidget{parent},
   ui{new Ui::MainControlWidget},
   m_runSetupMapperModel{this},
@@ -82,11 +82,14 @@ MainControlWidget::MainControlWidget(const GDMProxy &GDMProxy, ResultsModels &re
   connect(ui->qpb_adjustpH, &QPushButton::clicked,
           [this]() {
             try {
-              AdjustpHDialog dlg{h_GDMProxy, this};
+              const auto corrections = m_nonidealityCorrectionsDlg->state();
+
+              AdjustpHDialog dlg{h_GDMProxy, corrections.debyeHuckel, corrections.onsagerFuoss, this};
               dlg.exec();
+
+              emit pHAdjusted();
             } catch (const std::bad_cast &) {
-              QMessageBox mbox{QMessageBox::Critical, "Internal error", "Invalid GDMProxy reference passed to AdjustpHDialog"};
-              mbox.exec();
+              assert(false);
             }
          });
 

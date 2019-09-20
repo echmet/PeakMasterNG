@@ -155,7 +155,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
                                persistence::Persistence &persistence,
                                DatabaseProxy &dbProxy,
                                AnalytesExtraInfoModel * const analytesEXIModel, const QAbstractTableModel * const eigenzoneDetailsModel,
-                               const GDMProxy &GDMProxy,
+                               GDMProxy &GDMProxy,
                                QWidget *parent) :
   QMainWindow{parent},
   m_calcIface{calcIface},
@@ -202,6 +202,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
 
   connect(h_scompWidget, &SystemCompositionWidget::compositionChanged, this, &PMNGMainWindow::onCompositionChanged);
   connect(m_mainCtrlWidget, &MainControlWidget::runSetupChanged, this, &PMNGMainWindow::onRunSetupChanged);
+  connect(m_mainCtrlWidget, &MainControlWidget::pHAdjusted, this, &PMNGMainWindow::onpHAdjusted);
 
   connect(ui->actionExit, &QAction::triggered, this, &PMNGMainWindow::onExit);
   connect(ui->actionAbout, &QAction::triggered, this, &PMNGMainWindow::onAbout);
@@ -597,6 +598,11 @@ void PMNGMainWindow::onNew()
     m_activeFile = ActiveFile{};
     setWindowTitle();
   }
+}
+
+void PMNGMainWindow::onpHAdjusted()
+{
+  onCompositionChanged();
 }
 
 void PMNGMainWindow::onOpenDatabase()

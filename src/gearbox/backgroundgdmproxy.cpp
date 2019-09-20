@@ -89,6 +89,26 @@ void BackgroundGDMProxy::erase(const std::string &name) noexcept
   }
 }
 
+gdm::GDM & BackgroundGDMProxy::gdmBackground()
+{
+  return h_backgroundGDM;
+}
+
+const gdm::GDM & BackgroundGDMProxy::gdmBackground() const
+{
+  return h_backgroundGDM;
+}
+
+gdm::GDM & BackgroundGDMProxy::gdmSample()
+{
+  return h_sampleGDM;
+}
+
+const gdm::GDM & BackgroundGDMProxy::gdmSample() const
+{
+  return h_sampleGDM;
+}
+
 gdm::Constituent BackgroundGDMProxy::get(const std::string &name)
 {
   auto it = h_sampleGDM.find(name);

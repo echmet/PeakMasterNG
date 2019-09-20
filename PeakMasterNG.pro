@@ -58,6 +58,7 @@ CONFIG(debug, debug|release) {
 }
 
 SOURCES += \
+    src/gearbox/phadjusterinterface.cpp \
         src/main.cpp \
     src/ui/adjustphdialog.cpp \
     src/ui/internal_models/adjustphtablemodel.cpp \
@@ -161,6 +162,7 @@ SOURCES += \
     src/persistence/swsettings.cpp
 
 HEADERS += \
+    src/gearbox/phadjusterinterface.h \
     src/ui/adjustphdialog.h \
     src/ui/internal_models/adjustphtablemodel.h \
         src/ui/pmngmainwindow.h \
