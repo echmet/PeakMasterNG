@@ -11,6 +11,7 @@
 
 #include "../gearbox/results_models/eigenzonedetailsmodel.h"
 
+#include <cassert>
 #include <QDataWidgetMapper>
 #include <QMessageBox>
 #include <QScreen>
