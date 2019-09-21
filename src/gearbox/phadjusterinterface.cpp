@@ -10,32 +10,115 @@
 #include <cassert>
 #include <functional>
 
+inline
 void releaseChemicalSystem(ECHMET::SysComp::ChemicalSystem *p)
 {
   ECHMET::SysComp::releaseChemicalSystem(*p);
   delete p;
 }
 
-void releaseCalculateProperties(ECHMET::SysComp::CalculatedProperties *p)
+inline
+void releaseCalculatedProperties(ECHMET::SysComp::CalculatedProperties *p)
 {
   ECHMET::SysComp::releaseCalculatedProperties(*p);
   delete p;
 }
 
+inline
 void releaseSolverContext(ECHMET::CAES::SolverContext *p)
 {
-  p->destroy();
+  if (p != nullptr)
+    p->destroy();
 }
 
+inline
 void releaseSolver(ECHMET::CAES::Solver *p)
 {
-  p->destroy();
+  if (p != nullptr)
+    p->destroy();
 }
 
+inline
 void releaseIonPropsContext(ECHMET::IonProps::ComputationContext *p)
 {
-  p->destroy();
+  if (p != nullptr)
+    p->destroy();
 }
+
+using ChemicalSystemPtr = std::unique_ptr<ECHMET::SysComp::ChemicalSystem, decltype(&releaseChemicalSystem)>;
+using CalculatedPropertiesPtr = std::unique_ptr<ECHMET::SysComp::CalculatedProperties, decltype(&releaseCalculatedProperties)>;
+using IonPropsCompPtr = std::unique_ptr<ECHMET::IonProps::ComputationContext, decltype(&releaseIonPropsContext)>;
+using SolverContextPtr = std::unique_ptr<ECHMET::CAES::SolverContext, decltype(&releaseSolverContext)>;
+using SolverPtr = std::unique_ptr<ECHMET::CAES::Solver, decltype(&releaseSolver)>;
+
+class CalculationContext {
+public:
+  CalculationContext(const BackgroundGDMProxy &GDMProxy,
+                     const ECHMET::NonidealityCorrections _corrs) :
+    chemSystem{nullptr, releaseChemicalSystem},
+    calcProps{nullptr, releaseCalculatedProperties},
+    ctx{nullptr, releaseSolverContext},
+    solver{nullptr, releaseSolver},
+    ionPropsCtx{nullptr, releaseIonPropsContext},
+    corrs{_corrs}
+  {
+    auto makeSolverContext = [](auto &chemSystem) {
+      ECHMET::CAES::SolverContext *_ctx;
+      ECHMET::CAES::createSolverContext(_ctx, *chemSystem);
+
+      return std::unique_ptr<ECHMET::CAES::SolverContext, decltype(&releaseSolverContext)>{_ctx, releaseSolverContext};
+    };
+
+    chemSystem = std::unique_ptr<ECHMET::SysComp::ChemicalSystem, decltype(&releaseChemicalSystem)>{new ECHMET::SysComp::ChemicalSystem{},
+                                                                                                   releaseChemicalSystem};
+    calcProps = std::unique_ptr<ECHMET::SysComp::CalculatedProperties, decltype(&releaseCalculatedProperties)>{new ECHMET::SysComp::CalculatedProperties{},
+                                                                                                               releaseCalculatedProperties};
+    auto backgroundIcVec = conversion::makeECHMETInConstituentVec(GDMProxy.gdmBackground());
+
+    auto tRet = ECHMET::SysComp::makeComposition(*chemSystem, *calcProps, backgroundIcVec.get());
+    if (tRet != ECHMET::RetCode::OK)
+      throw pHAdjusterInterface::Exception{ECHMET::errorToString(tRet)};
+
+    ctx = makeSolverContext(chemSystem);
+    if (ctx == nullptr)
+      throw pHAdjusterInterface::Exception{"Cannot create solver context"};
+
+    solver = std::unique_ptr<ECHMET::CAES::Solver, decltype(&releaseSolver)>{ECHMET::CAES::createSolver(ctx.get(),
+                                                                                                        ECHMET::CAES::Solver::DISABLE_THREAD_SAFETY,
+                                                                                                        corrs),
+                                                                             releaseSolver};
+    if (solver == nullptr)
+      throw pHAdjusterInterface::Exception{"Cannot create solver"};
+
+    ionPropsCtx = std::unique_ptr<ECHMET::IonProps::ComputationContext, decltype(&releaseIonPropsContext)>{ECHMET::IonProps::makeComputationContext(*chemSystem,
+                                                                                                                                                     ECHMET::IonProps::ComputationContext::DISABLE_THREAD_SAFETY),
+                                                                                                           releaseIonPropsContext};
+  }
+
+  ChemicalSystemPtr chemSystem;
+  CalculatedPropertiesPtr calcProps;
+  SolverContextPtr ctx;
+  SolverPtr solver;
+  IonPropsCompPtr ionPropsCtx;
+  ECHMET::NonidealityCorrections corrs;
+};
+
+inline
+double calculatepH(const BackgroundGDMProxy &GDMProxy, CalculationContext *ctx)
+{
+  auto backgroundAcVec = conversion::makeECHMETAnalyticalConcentrationsVec(GDMProxy.gdmBackground(), 0, ctx->chemSystem->constituents);
+
+  auto tRet = ctx->solver->estimateDistributionSafe(backgroundAcVec.get(), *ctx->calcProps);
+  if (tRet != ECHMET::RetCode::OK)
+    throw pHAdjusterInterface::Exception{"Estimator failure: " + std::string{ECHMET::errorToString(tRet)}};
+
+  tRet = ctx->solver->solve(backgroundAcVec.get(), *ctx->calcProps, 1000);
+  if (tRet != ECHMET::RetCode::OK)
+    throw pHAdjusterInterface::Exception{"Solver failure: " + std::string{ECHMET::errorToString(tRet)}};
+
+  return ECHMET::IonProps::calculatepH(ctx->ionPropsCtx.get(), ctx->corrs, *ctx->calcProps);
+}
+
 
 pHAdjusterInterface::pHAdjusterInterface(std::string constituentName, BackgroundGDMProxy &GDMProxy,
                                          const bool debyeHuckel, const bool onsagerFuoss) :
@@ -44,19 +127,25 @@ pHAdjusterInterface::pHAdjusterInterface(std::string constituentName, Background
   m_debyeHuckel{debyeHuckel},
   m_onsagerFuoss{onsagerFuoss}
 {
-}
-
-void pHAdjusterInterface::adjustpH(const double targetpH)
-{
-  static const size_t MAX_ITERS{300};
-  static const double CCORR_PREC{1.0e-6};
-
   ECHMET::NonidealityCorrections corrs = ECHMET::defaultNonidealityCorrections();
 
   if (m_debyeHuckel)
     ECHMET::nonidealityCorrectionSet(corrs, ECHMET::NonidealityCorrectionsItems::CORR_DEBYE_HUCKEL);
   if (m_onsagerFuoss)
     ECHMET::nonidealityCorrectionSet(corrs, ECHMET::NonidealityCorrectionsItems::CORR_ONSAGER_FUOSS);
+
+  m_ctx = new CalculationContext{h_GDMProxy, corrs};
+}
+
+pHAdjusterInterface::~pHAdjusterInterface()
+{
+  delete m_ctx;
+}
+
+void pHAdjusterInterface::adjustpH(const double targetpH)
+{
+  static const size_t MAX_ITERS{300};
+  static const double CCORR_PREC{1.0e-6};
 
   const double cSample = h_GDMProxy.concentrations(m_constituentName).at(1);
 
@@ -98,12 +187,12 @@ void pHAdjusterInterface::adjustpH(const double targetpH)
       cVec[0] = cLeft;
       h_GDMProxy.setConcentrations(m_constituentName, cVec);
 
-      const double pHLeft = calculatepH(corrs);
+      const double pHLeft = calculatepH(h_GDMProxy, m_ctx);
 
       cVec[0] = cRight;
       h_GDMProxy.setConcentrations(m_constituentName, cVec);
 
-      const double pHRight = calculatepH(corrs);
+      const double pHRight = calculatepH(h_GDMProxy, m_ctx);
 
       return pHRight < pHLeft;
     } catch (Exception &) {
@@ -138,7 +227,7 @@ void pHAdjusterInterface::adjustpH(const double targetpH)
 
   try {
     h_GDMProxy.setConcentrations(m_constituentName, cVec);
-    double pH = calculatepH(corrs);
+    double pH = calculatepH(h_GDMProxy, m_ctx);
 
     while (!pHMatches(pH) && iters < MAX_ITERS) {
       adjustCNow(pH);
@@ -146,7 +235,7 @@ void pHAdjusterInterface::adjustpH(const double targetpH)
       cVec[0] = cNow;
       h_GDMProxy.setConcentrations(m_constituentName, cVec);
 
-      pH = calculatepH(corrs);
+      pH = calculatepH(h_GDMProxy, m_ctx);
 
       iters++;
     }
@@ -161,50 +250,4 @@ void pHAdjusterInterface::adjustpH(const double targetpH)
 
     throw Exception{"Maximum number of iterations exceeded"};
   }
-}
-
-double pHAdjusterInterface::calculatepH(const ECHMET::NonidealityCorrections corrs)
-{
-  auto makeSolverContext = [](auto &chemSystem) {
-    ECHMET::CAES::SolverContext *ctx;
-    ECHMET::CAES::createSolverContext(ctx, *chemSystem);
-
-    return std::unique_ptr<ECHMET::CAES::SolverContext, decltype(&releaseSolverContext)>{ctx, releaseSolverContext};
-  };
-
-  auto chemSystem = std::unique_ptr<ECHMET::SysComp::ChemicalSystem, decltype(&releaseChemicalSystem)>{new ECHMET::SysComp::ChemicalSystem{},
-                                                                                                       releaseChemicalSystem};
-  auto calcProps = std::unique_ptr<ECHMET::SysComp::CalculatedProperties, decltype(&releaseCalculateProperties)>{new ECHMET::SysComp::CalculatedProperties{},
-                                                                                                                 releaseCalculateProperties};
-  auto backgroundIcVec = conversion::makeECHMETInConstituentVec(h_GDMProxy.gdmBackground());
-
-  auto tRet = ECHMET::SysComp::makeComposition(*chemSystem, *calcProps, backgroundIcVec.get());
-  if (tRet != ECHMET::RetCode::OK)
-    throw Exception{ECHMET::errorToString(tRet)};
-
-  auto backgroundAcVec = conversion::makeECHMETAnalyticalConcentrationsVec(h_GDMProxy.gdmBackground(), 0, chemSystem->constituents);
-
-  auto ctx = makeSolverContext(chemSystem);
-  if (ctx == nullptr)
-    throw Exception{"Cannot create solver context"};
-
-  auto solver = std::unique_ptr<ECHMET::CAES::Solver, decltype(&releaseSolver)>{ECHMET::CAES::createSolver(ctx.get(),
-                                                                                                           ECHMET::CAES::Solver::DISABLE_THREAD_SAFETY,
-                                                                                                           corrs),
-                                                                                releaseSolver};
-  if (solver == nullptr)
-    throw Exception{"Cannot create solver"};
-
-  tRet = solver->estimateDistributionSafe(backgroundAcVec.get(), *calcProps);
-  if (tRet != ECHMET::RetCode::OK)
-    throw Exception{"Estimator failure: " + std::string{ECHMET::errorToString(tRet)}};
-
-  tRet = solver->solve(backgroundAcVec.get(), *calcProps, 1000);
-  if (tRet != ECHMET::RetCode::OK)
-    throw Exception{"Solver failure: " + std::string{ECHMET::errorToString(tRet)}};
-
-  auto ionPropsCtx = std::unique_ptr<ECHMET::IonProps::ComputationContext, decltype(&releaseIonPropsContext)>{ECHMET::IonProps::makeComputationContext(*chemSystem,
-                                                                                                                                                       ECHMET::IonProps::ComputationContext::DISABLE_THREAD_SAFETY),
-                                                                                                              releaseIonPropsContext};
-  return ECHMET::IonProps::calculatepH(ionPropsCtx.get(), corrs, *calcProps);
 }

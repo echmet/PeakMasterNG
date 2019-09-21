@@ -1,12 +1,11 @@
 #ifndef PHADJUSTERINTERFACE_H
 #define PHADJUSTERINTERFACE_H
 
-#include <echmetelems.h>
-
 #include <stdexcept>
 #include <string>
 
 class BackgroundGDMProxy;
+class CalculationContext;
 
 class pHAdjusterInterface {
 public:
@@ -17,16 +16,23 @@ public:
 
   pHAdjusterInterface(std::string constituentName, BackgroundGDMProxy &GDMProxy,
                       const bool debyeHuckel, const bool onsagerFuoss);
+  pHAdjusterInterface(const pHAdjusterInterface &) = delete;
+  pHAdjusterInterface(pHAdjusterInterface &&) = delete;
+  ~pHAdjusterInterface();
 
   void adjustpH(const double targetpH);
 
+  pHAdjusterInterface & operator=(const pHAdjusterInterface &) = delete;
+  pHAdjusterInterface & operator=(pHAdjusterInterface &&) = delete;
+
 private:
-  double calculatepH(const ECHMET::NonidealityCorrections corrs);
+  CalculationContext *m_ctx;
 
   const std::string m_constituentName;
   BackgroundGDMProxy &h_GDMProxy;
   const bool m_debyeHuckel;
   const bool m_onsagerFuoss;
+
 };
 
 #endif // PHADJUSTERINTERFACE_H
