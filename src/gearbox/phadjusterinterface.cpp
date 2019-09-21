@@ -142,7 +142,7 @@ pHAdjusterInterface::~pHAdjusterInterface()
   delete m_ctx;
 }
 
-void pHAdjusterInterface::adjustpH(const double targetpH)
+double pHAdjusterInterface::adjustpH(const double targetpH)
 {
   static const size_t MAX_ITERS{300};
   static const double CCORR_PREC{1.0e-6};
@@ -239,15 +239,14 @@ void pHAdjusterInterface::adjustpH(const double targetpH)
 
       iters++;
     }
+
+    if (iters >= MAX_ITERS)
+      throw Exception{"Maximum number of iterations exceeded"};
+
+    return pH;
   } catch (Exception &) {
     restoreConc();
 
     throw;
-  }
-
-  if (iters >= MAX_ITERS) {
-    restoreConc();
-
-    throw Exception{"Maximum number of iterations exceeded"};
   }
 }

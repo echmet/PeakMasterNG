@@ -17,6 +17,7 @@ class AdjustpHDialog : public QDialog
 public:
   explicit AdjustpHDialog(GDMProxy &GDMProxy,
                           const bool debyeHuckel, const bool onsagerFuoss,
+                          const double currentpH,
                           QWidget *parent = nullptr);
   ~AdjustpHDialog();
 

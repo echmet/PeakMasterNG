@@ -8,7 +8,8 @@
 
 #include <QMessageBox>
 
-AdjustpHDialog::AdjustpHDialog(GDMProxy &GDMProxy, const bool debyeHuckel, const bool onsagerFuoss, QWidget *parent) :
+AdjustpHDialog::AdjustpHDialog(GDMProxy &GDMProxy, const bool debyeHuckel, const bool onsagerFuoss,
+                               const double currentpH, QWidget *parent) :
   QDialog{parent},
   ui{new Ui::AdjustpHDialog},
   h_GDMProxy{dynamic_cast<BackgroundGDMProxy&>(GDMProxy)},
@@ -27,6 +28,8 @@ AdjustpHDialog::AdjustpHDialog(GDMProxy &GDMProxy, const bool debyeHuckel, const
   }
 
   ui->qtbv_bgeConstituents->setSelectionMode(QAbstractItemView::SingleSelection);
+
+  ui->qle_currentpH->setText(DoubleToStringConvertor::convert(currentpH));
 
   connect(ui->qpb_adjust, &QPushButton::clicked, this, &AdjustpHDialog::onAdjustClicked);
 }
@@ -60,8 +63,10 @@ void AdjustpHDialog::onAdjustClicked()
   pHAdjusterInterface iface{ctuent.toStdString(), h_GDMProxy, m_debyeHuckel, m_onsagerFuoss};
 
   try {
-    iface.adjustpH(pH);
+    const double adjustedpH = iface.adjustpH(pH);
     m_model->updateConcentration(ctuent);
+
+    ui->qle_currentpH->setText(DoubleToStringConvertor::convert(adjustedpH));
   } catch (const pHAdjusterInterface::Exception &ex) {
     QMessageBox mbox{QMessageBox::Warning, tr("Failed to adjust pH"), ex.what()};
 

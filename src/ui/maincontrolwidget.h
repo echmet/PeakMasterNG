@@ -84,6 +84,7 @@ private:
   QAbstractTableModel *m_bgeIonicCompositionModel;
   QAbstractTableModel *m_eigenzoneDetailsModel;
 
+  BackgroundPropertiesMapping::MapperModel *m_bgePropsMapperModel;
   GDMProxy &h_GDMProxy;
 
   EigenzoneDetailsDialog *m_ezDetailsDlg;

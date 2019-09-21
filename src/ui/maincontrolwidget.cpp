@@ -25,6 +25,7 @@ MainControlWidget::MainControlWidget(GDMProxy &GDMProxy, ResultsModels &resultsM
   m_analytesDissociationModel{resultsModels.analytesDissociationModel()},
   m_bgeIonicCompositionModel{resultsModels.bgeIonicCompositionModel()},
   m_eigenzoneDetailsModel{resultsModels.eigenzoneDetailsModel()},
+  m_bgePropsMapperModel{resultsModels.backgroundMapperModel()},
   h_GDMProxy{GDMProxy}
 {
   ui->setupUi(this);
@@ -65,7 +66,7 @@ MainControlWidget::MainControlWidget(GDMProxy &GDMProxy, ResultsModels &resultsM
   else
     ui->ql_resistivity->setText(tr("Resistivity (Ohm\xE2\x8B\x85m)"));
 
-  initBackgroundPropsModel(resultsModels.backgroundMapperModel());
+  initBackgroundPropsModel(m_bgePropsMapperModel);
   initRunSetupModel();
   ui->qtbv_systemEigenzones->setModel(resultsModels.systemEigenzonesModel());
   ui->qtbv_systemEigenzones->resizeColumnsToContents();
@@ -85,7 +86,13 @@ MainControlWidget::MainControlWidget(GDMProxy &GDMProxy, ResultsModels &resultsM
             try {
               const auto corrections = m_nonidealityCorrectionsDlg->state();
 
-              AdjustpHDialog dlg{h_GDMProxy, corrections.debyeHuckel, corrections.onsagerFuoss, this};
+              const int idx = m_bgePropsMapperModel->indexFromItem(BackgroundPropertiesMapping::Items::PH);
+              double pH = m_bgePropsMapperModel->data(m_bgePropsMapperModel->index(idx, 0), Qt::EditRole).toDouble();
+
+              AdjustpHDialog dlg{h_GDMProxy,
+                                 corrections.debyeHuckel, corrections.onsagerFuoss,
+                                 pH,
+                                 this};
               dlg.exec();
 
               emit pHAdjusted();

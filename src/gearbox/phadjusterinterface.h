@@ -20,7 +20,7 @@ public:
   pHAdjusterInterface(pHAdjusterInterface &&) = delete;
   ~pHAdjusterInterface();
 
-  void adjustpH(const double targetpH);
+  double adjustpH(const double targetpH);
 
   pHAdjusterInterface & operator=(const pHAdjusterInterface &) = delete;
   pHAdjusterInterface & operator=(pHAdjusterInterface &&) = delete;
