@@ -165,7 +165,7 @@ double pHAdjusterInterface::adjustpH(const double targetpH)
     }
 
     double max = 50.0 * cMax;
-    return max > 3000 ? 3000 : max;
+    return max > 2000 ? 2000 : max;
   }();
 
   const double cOriginal{h_GDMProxy.concentrations(m_constituentName).front()};
