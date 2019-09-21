@@ -68,7 +68,9 @@ void AdjustpHDialog::onAdjustClicked()
 
     ui->qle_currentpH->setText(DoubleToStringConvertor::convert(adjustedpH));
   } catch (const pHAdjusterInterface::Exception &ex) {
-    QMessageBox mbox{QMessageBox::Warning, tr("Failed to adjust pH"), ex.what()};
+    const auto msg = ex.what() + QString{"\n\nNote that it may not be possible to achieve the target pH "
+                                         "by adjusting the concentration of %1."}.arg(ctuent);
+    QMessageBox mbox{QMessageBox::Warning, tr("Failed to adjust pH"), msg};
 
     mbox.exec();
   }
