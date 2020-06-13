@@ -205,7 +205,7 @@ void SignalPlotWidget::setSignal(const QVector<QPointF> &signal, const SignalSty
 {
   m_plotCurve->setSamples(signal);
   setBrush(style);
-  m_signal = signal.toStdVector();
+  m_signal = std::vector<QPointF>(signal.cbegin(), signal.cend());
 
   m_showingAnalyteSignal = signalIsAnalyte;
 

@@ -62,7 +62,7 @@ QSize EigenzoneDetailsDialog::sizeHint() const
   int width = 0;
   for (int idx = 0; idx < model->columnCount(); idx++) {
     const QString text = model->headerData(idx, Qt::Horizontal).toString();
-    width += std::floor(fm.width(text) * (theme != UIHelpers::WindowsTheme::NOT_WINDOWS ? 2.7 : 2.3) + 0.5);
+    width += std::floor(fm.horizontalAdvance(text) * (theme != UIHelpers::WindowsTheme::NOT_WINDOWS ? 2.7 : 2.3) + 0.5);
   }
 
   QString longestRow;
@@ -71,7 +71,7 @@ QSize EigenzoneDetailsDialog::sizeHint() const
     if (text.length() > longestRow.length())
       longestRow = text;
   }
-  width += fm.width(longestRow) + WIDTH_SPACER;
+  width += fm.horizontalAdvance(longestRow) + WIDTH_SPACER;
 
   int height = iround(fm.height() * (model->rowCount() + 1) * COL_HEIGHT_AMPL + HEIGHT_SPACER);
 

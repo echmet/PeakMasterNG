@@ -55,6 +55,12 @@ CONFIG(release, debug|release) {
 CONFIG(debug, debug|release) {
     # Configuration specific for "debug" build
 
+    xsanitize {
+        CONFIG += sanitizer
+        CONFIG += sanitize_address
+        CONFIG += sanitize_undefined
+        CONFIG += sanitize_leak
+    }
 }
 
 SOURCES += \
