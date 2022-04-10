@@ -5,6 +5,7 @@
 #include "qwt_plot_curve.h"
 #include "qwt_plot_picker.h"
 #include "qwt_picker_machine.h"
+#include "qwt_scale_map.h"
 #include "doubleclickableqwtplotzoomer.h"
 #include "ploteventfilter.h"
 #include "../gearbox/doubletostringconvertor.h"
