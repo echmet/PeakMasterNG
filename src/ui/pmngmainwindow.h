@@ -2,6 +2,7 @@
 #define PMNGMAINWINDOW_H
 
 #include "../gearbox/calculatorinterface.h"
+#include "../gearbox/results_models/resultsmodels.h"
 #include "../mappers/floatmappermodel.h"
 #include "signalplotwidget.h"
 #include "toggletracepointsdialog.h"

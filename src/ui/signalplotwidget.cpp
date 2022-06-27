@@ -15,6 +15,8 @@
 #include <QToolTip>
 #include <QVBoxLayout>
 
+#include <cmath>
+
 static
 size_t findClosestIdx(const std::vector<QPointF> &data, const double currentX)
 {

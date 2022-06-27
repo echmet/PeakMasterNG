@@ -10,7 +10,7 @@ const SWSItem<QString> SWSettings::KEY_USER_DB_PATH{"userDbPath", ""};
 SWSettings *SWSettings::s_me{nullptr};
 
 SWSettings::SWSettings() :
-  m_settings{QSettings::IniFormat, QSettings::UserScope, Globals::ORG_NAME, Globals::SOFTWARE_NAME_INTERNAL}
+  m_settings{QSettings::IniFormat, QSettings::UserScope, Globals::ORG_NAME(), Globals::SOFTWARE_NAME_INTERNAL()}
 {
 }
 

@@ -15,8 +15,8 @@ AboutDialog::AboutDialog(QWidget *parent) :
   ui->ql_echmetLink->setOpenExternalLinks(true);
 
   ui->ql_sotfwareName->setText(Globals::VERSION_STRING());
-  ui->ql_cimecLink->setText(QString{"<a href=\"%1\">%1</a>"}.arg(Globals::CIMEC_WEB_LINK));
-  ui->ql_echmetLink->setText(QString("<a href=\"%1\">%1</a>").arg(Globals::ECHMET_WEB_LINK.toHtmlEscaped()));
+  ui->ql_cimecLink->setText(QString{"<a href=\"%1\">%1</a>"}.arg(Globals::CIMEC_WEB_LINK()));
+  ui->ql_echmetLink->setText(QString("<a href=\"%1\">%1</a>").arg(Globals::ECHMET_WEB_LINK().toHtmlEscaped()));
   ui->ql_thankYouQt->setText(QString("Based on Qt libraries. Version in use: %1 (%2 %3)")
                                      .arg(qVersion(),
                                           QGuiApplication::platformName(),

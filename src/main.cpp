@@ -15,9 +15,9 @@ int main(int argc, char *argv[])
 {
   QApplication a(argc, argv);
 
-  QCoreApplication::setOrganizationDomain(Globals::ORG_DOMAIN);
-  QCoreApplication::setOrganizationName(Globals::ORG_NAME);
-  QCoreApplication::setApplicationName(Globals::SOFTWARE_NAME);
+  QCoreApplication::setOrganizationDomain(Globals::ORG_DOMAIN());
+  QCoreApplication::setOrganizationName(Globals::ORG_NAME());
+  QCoreApplication::setApplicationName(Globals::SOFTWARE_NAME());
   QCoreApplication::setApplicationVersion(Globals::VERSION_STRING());
 
   persistence::SWSettings::initialize();

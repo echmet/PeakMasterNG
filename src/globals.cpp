@@ -3,15 +3,15 @@
 #include <QPixmap>
 #include <QSysInfo>
 
-const QString Globals::CIMEC_WEB_LINK{"http://www.cimec.org.ar/twiki/bin/view/Cimec/"};
-const QString Globals::ECHMET_WEB_LINK{"http://echmet.natur.cuni.cz"};
-const QString Globals::ORG_DOMAIN{"echmet.natur.cuni.cz"};
-const QString Globals::ORG_NAME{"ECHMET"};
-const QString Globals::SOFTWARE_NAME{"PeakMaster"};
-const QString Globals::SOFTWARE_NAME_INTERNAL{SOFTWARE_NAME_INTERNAL_S};
+const std::string Globals::_CIMEC_WEB_LINK{"http://www.cimec.org.ar/twiki/bin/view/Cimec/"};
+const std::string Globals::_ECHMET_WEB_LINK{"http://echmet.natur.cuni.cz"};
+const std::string Globals::_ORG_DOMAIN{"echmet.natur.cuni.cz"};
+const std::string Globals::_ORG_NAME{"ECHMET"};
+const std::string Globals::_SOFTWARE_NAME{"PeakMaster"};
+const std::string Globals::_SOFTWARE_NAME_INTERNAL{SOFTWARE_NAME_INTERNAL_S};
 const int Globals::VERSION_MAJ = 6;
 const int Globals::VERSION_MIN = 0;
-const QString Globals::VERSION_REV{"f8"};
+const std::string Globals::_VERSION_REV{"f8"};
 
 const QVector<Globals::DeveloperID> Globals::DEVELOPERS = {
                                                             Globals::DeveloperID{"Michal Jaro\xC5\xA1", "michal.jaros@gmail.com", false},
@@ -65,10 +65,18 @@ bool Globals::isZombieOS()
 
 QString Globals::VERSION_STRING()
 {
-  QString s = QString("%1 %2.%3%4").arg(SOFTWARE_NAME).arg(VERSION_MAJ).arg(VERSION_MIN).arg(VERSION_REV);
+  QString s = QString("%1 %2.%3%4").arg(_SOFTWARE_NAME.c_str()).arg(VERSION_MAJ).arg(VERSION_MIN).arg(_VERSION_REV.c_str());
 #ifdef UNSTABLE_VERSION
   s.append(" Build date: [" + QString(__DATE__) + " - " + QString(__TIME__)  + "]");
 #endif // UNSTABLE_VERSION
 
   return s;
 }
+
+QString Globals::CIMEC_WEB_LINK() { return QString::fromStdString(_CIMEC_WEB_LINK); }
+QString Globals::ECHMET_WEB_LINK() { return QString::fromStdString(_ECHMET_WEB_LINK); }
+QString Globals::ORG_DOMAIN() { return QString::fromStdString(_ORG_DOMAIN); }
+QString Globals::ORG_NAME() { return QString::fromStdString(_ORG_NAME); }
+QString Globals::SOFTWARE_NAME() { return QString::fromStdString(_SOFTWARE_NAME); }
+QString Globals::SOFTWARE_NAME_INTERNAL() { return QString::fromStdString(_SOFTWARE_NAME_INTERNAL); }
+QString Globals::VERSION_REV() { return QString::fromStdString(_VERSION_REV); }

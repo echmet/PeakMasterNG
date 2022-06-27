@@ -11,7 +11,7 @@ SoftwareUpdateWidget::SoftwareUpdateWidget(QWidget *parent) :
 
   ui->ql_extraInfo->setText("");
 
-  const QString installedVersionTag = QString("%1.%2%3").arg(Globals::VERSION_MAJ).arg(Globals::VERSION_MIN).arg(Globals::VERSION_REV);
+  const QString installedVersionTag = QString("%1.%2%3").arg(Globals::VERSION_MAJ).arg(Globals::VERSION_MIN).arg(Globals::VERSION_REV());
   ui->ql_result->setText(tr("Check was not performed yet"));
   ui->ql_installedVersion->setText(installedVersionTag);
   ui->ql_newVersion->setText("");
@@ -47,10 +47,10 @@ void SoftwareUpdateWidget::setDisplay(const SoftwareUpdateResult &result)
     return;
   case SoftwareUpdateResult::State::OK:
     if (!result.updateAvailable) {
-      ui->ql_result->setText(QString(tr("%1 is up to date")).arg(Globals::SOFTWARE_NAME));
+      ui->ql_result->setText(QString(tr("%1 is up to date")).arg(Globals::SOFTWARE_NAME()));
       ui->ql_newVersion->setText("(none available)");
     } else {
-      ui->ql_result->setText(QString(tr("Update for %1 is available")).arg(Globals::SOFTWARE_NAME));
+      ui->ql_result->setText(QString(tr("Update for %1 is available")).arg(Globals::SOFTWARE_NAME()));
       ui->ql_newVersion->setText(QString("%1.%2%3").arg(result.verMajor).arg(result.verMinor).arg(result.revision));
       ui->ql_link->setText(QString("Download new version from:<br /><a href=\"%1\">%1</a>").arg(result.downloadLink.toHtmlEscaped()));
       ui->ql_link->setOpenExternalLinks(true);
@@ -65,7 +65,7 @@ void SoftwareUpdateWidget::setDisplay(const SoftwareUpdateResult &result)
       case SoftwareUpdateResult::Severity::REQUIRED:
         ui->ql_extraInfo->setText(
               QString(tr("New version contains fixes for critical problems that may lead to incorrect calculations or other major malfunction. "
-                         "%1 must be updated immediately.")).arg(Globals::SOFTWARE_NAME));
+                         "%1 must be updated immediately.")).arg(Globals::SOFTWARE_NAME()));
         break;
       }
     }

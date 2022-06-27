@@ -86,7 +86,7 @@ DatabaseProxy::DatabaseProxy()
   const auto userPath = persistence::SWSettings::get<QString>(persistence::SWSettings::KEY_USER_DB_PATH);
 #ifdef Q_OS_LINUX
   if (userPath.isEmpty()) {
-    static const QString locPath(".local/share/ECHMET/" + Globals::SOFTWARE_NAME_INTERNAL + "/");
+    static const QString locPath(".local/share/ECHMET/" + Globals::SOFTWARE_NAME_INTERNAL() + "/");
 
     QDir homeDir = QDir::home();
     const QString editableDbPath = homeDir.absolutePath() + "/" + locPath + "pmng_db.sql";

@@ -257,7 +257,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   QTimer::singleShot(0, this, [this]() {
     if (!this->h_dbProxy.isAvailable()) {
       QMessageBox mbox{QMessageBox::Warning, tr("Database error"),
-                       QString{tr("%1 failed to load database of constituents. You may want to try to load a database file manually.")}.arg(Globals::SOFTWARE_NAME)
+                       QString{tr("%1 failed to load database of constituents. You may want to try to load a database file manually.")}.arg(Globals::SOFTWARE_NAME())
                       };
       mbox.exec();
     }
@@ -284,8 +284,8 @@ void PMNGMainWindow::closeEvent(QCloseEvent *evt)
 {
   const auto msg = [&]() {
     if (this->m_unsaved)
-      return QString{"Do you really want to exit %1?\nAll unsaved data will be lost."}.arg(Globals::SOFTWARE_NAME);
-    return QString{"Do you really want to exit %1?"}.arg(Globals::SOFTWARE_NAME);
+      return QString{"Do you really want to exit %1?\nAll unsaved data will be lost."}.arg(Globals::SOFTWARE_NAME());
+    return QString{"Do you really want to exit %1?"}.arg(Globals::SOFTWARE_NAME());
   }();
 
   QMessageBox mbox{QMessageBox::Question, tr("Confirm action"),

@@ -29,7 +29,7 @@ std::string mkSWStr(const std::string &tail)
 #else
   static const std::string prefix{};
 #endif // PMNG_FLATPAK_BUILD
-  static const std::string swname = Globals::SOFTWARE_NAME.toStdString();
+  static const std::string swname = Globals::_SOFTWARE_NAME;
 
   return prefix + swname + "_" + tail;
 }
