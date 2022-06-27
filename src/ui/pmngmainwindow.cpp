@@ -168,6 +168,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   m_lastLoadPath{""},
   m_lastSavePath{""},
   h_dbProxy{dbProxy},
+  m_resultsModels{resultsModels},
   m_fullCalcInProgress{false},
   m_unsaved{false},
   ui{new Ui::PMNGMainWindow}

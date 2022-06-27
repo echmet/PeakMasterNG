@@ -149,6 +149,7 @@ private:
   QString m_lastSavePath;
 
   DatabaseProxy &h_dbProxy;
+  const ResultsModels m_resultsModels;
 
   ToggleTracepointsDialog::TracingSetup m_tracingSetup;
 
