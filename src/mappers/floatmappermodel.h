@@ -1,7 +1,6 @@
 #ifndef FLOATMAPPERMODEL_H
 #define FLOATMAPPERMODEL_H
 
-#include "userroles.h"
 #include "abstractmappermodel.h"
 #include "../gearbox/doubletostringconvertor.h"
 
@@ -16,7 +15,7 @@ public:
 
   virtual QVariant data(const QModelIndex &index, int role) const override
   {
-    if (!this->isParametersValid(index, role, { Qt::EditRole, UserRoles::PrecissionRole }))
+    if (!this->isParametersValid(index, role, { Qt::EditRole, UserRoles::PrecissionRole, UserRoles::ReadRole }))
       return false;
 
     if (role == UserRoles::PrecissionRole)

@@ -1,6 +1,7 @@
 #ifndef ABSTRACTMAPPERMODEL_H
 #define ABSTRACTMAPPERMODEL_H
 
+#include "userroles.h"
 #include <QAbstractItemModel>
 
 template<typename T, typename I>
@@ -108,7 +109,7 @@ public:
   }
 
 protected:
-  virtual bool isParametersValid(const QModelIndex &index, const int role, QVector<int> allowedRoles = { Qt::EditRole }) const
+  virtual bool isParametersValid(const QModelIndex &index, const int role, QVector<int> allowedRoles = { Qt::EditRole, UserRoles::ReadRole }) const
   {
     if (index.row() != 0)
       return false;
