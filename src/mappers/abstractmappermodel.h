@@ -33,6 +33,11 @@ public:
     return m_data->at(index.column());
   }
 
+  QVariant dataItem(I item, int role) const
+  {
+      return data(index(0, indexFromItem(item)), role);
+  }
+
   QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override
   {
     Q_UNUSED(parent);

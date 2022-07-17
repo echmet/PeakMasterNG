@@ -23,7 +23,7 @@
 #include "elementaries/uihelpers.h"
 #include "refocuser.h"
 #include "../persistence/swsettings.h"
-#include "../mappers/userroles.h"
+#include "../mappers/floatmappermodel.h"
 
 #include <cassert>
 #include <QCloseEvent>
@@ -93,7 +93,7 @@ void inputToEOFValueType(double &EOFValue, CalculatorInterface::EOFValueType &EO
 
 static
 QVector<AnalytesExtraInfoModel::ExtraInfo> makeAnalytesExtraInfo(const std::vector<CalculatorInterface::TimeDependentZoneInformation> &tdzi,
-                                                                 const QAbstractTableModel * const ezDetailsModelBase)
+                                                                 const QAbstractTableModel * const ezDetailsModelBase, double kBGE)
 {
   const auto ezDetailsModel = static_cast<const EigenzoneDetailsModel *>(ezDetailsModelBase);
   QVector<AnalytesExtraInfoModel::ExtraInfo> data{};
@@ -112,7 +112,7 @@ QVector<AnalytesExtraInfoModel::ExtraInfo> makeAnalytesExtraInfo(const std::vect
       return tdInfo.timeMax > 0.0 && tdInfo.beginsAt > 0.0;
     }();
 
-    data.append(AnalytesExtraInfoModel::ExtraInfo{tdInfo.name, uEff, tdInfo.timeMax, uEMD, tdInfo.concentrationMax, tdInfo.conductivityMax, detected});
+    data.append(AnalytesExtraInfoModel::ExtraInfo{tdInfo.name, uEff, kBGE, tdInfo.timeMax, uEMD, tdInfo.concentrationMax, tdInfo.conductivityMax, detected});
   }
 
   return data;
@@ -480,7 +480,13 @@ void PMNGMainWindow::onCalculate()
       const auto tdzi =  m_calcIface.timeDependentZoneInformation(rs.totalLength, rs.detectorPosition, rs.drivingVoltage,
                                                                   plotInfo.EOFValue, plotInfo.EOFvt, rs.positiveVoltage,
                                                                   plotInfo.injZoneLength, plotInfo.plotCutoff);
-      const auto exInfo = makeAnalytesExtraInfo(tdzi, h_eigenzoneDetailsModel);
+      // Accepting kBGE == 0.0 in case of an error
+      const double kBGE = m_resultsModels.backgroundMapperModel()->dataItem(BackgroundPropertiesMapping::Items::CONDUCTIVITY, UserRoles::ReadRole).toDouble();
+      const auto exInfo = makeAnalytesExtraInfo(
+                  tdzi,
+                  h_eigenzoneDetailsModel,
+                  kBGE
+              );
 
       addConstituentsSignals(m_calcIface.allConstituents());
       selectSignalIfAvailable(lastSelectedSignal);
@@ -505,7 +511,9 @@ void PMNGMainWindow::onCalculate()
       const auto tdzi =  m_calcIface.timeDependentZoneInformation(rs.totalLength, rs.detectorPosition, rs.drivingVoltage,
                                                                   plotInfo.EOFValue, plotInfo.EOFvt, rs.positiveVoltage,
                                                                   plotInfo.injZoneLength, plotInfo.plotCutoff);
-      const auto exInfo = makeAnalytesExtraInfo(tdzi, h_eigenzoneDetailsModel);
+      // Accepting kBGE == 0.0 in case of an error
+      const double kBGE = m_resultsModels.backgroundMapperModel()->dataItem(BackgroundPropertiesMapping::Items::CONDUCTIVITY, UserRoles::ReadRole).toDouble();
+      const auto exInfo = makeAnalytesExtraInfo(tdzi, h_eigenzoneDetailsModel, kBGE);
 
       addConstituentsSignals(m_calcIface.allConstituents());
       selectSignalIfAvailable(lastSelectedSignal);
@@ -698,7 +706,9 @@ void PMNGMainWindow::onRunSetupChanged(const bool invalidate)
       const auto tdzi = m_calcIface.timeDependentZoneInformation(rs.totalLength, rs.detectorPosition, rs.drivingVoltage,
                                                                  plotInfo.EOFValue, plotInfo.EOFvt, rs.positiveVoltage,
                                                                  plotInfo.injZoneLength, plotInfo.plotCutoff);
-      const auto exInfo = makeAnalytesExtraInfo(tdzi, h_eigenzoneDetailsModel);
+      // Accepting kBGE == 0.0 in case of an error
+      const double kBGE = m_resultsModels.backgroundMapperModel()->dataItem(BackgroundPropertiesMapping::Items::CONDUCTIVITY, UserRoles::ReadRole).toDouble();
+      const auto exInfo = makeAnalytesExtraInfo(tdzi, h_eigenzoneDetailsModel, kBGE);
 
       plotElectrophoregram(displayer, tdzi, plotInfo.EOFValue, plotInfo.EOFvt, plotInfo.injZoneLength, plotInfo.plotCutoff);
       h_analytesEXIModel->setData(exInfo);
@@ -810,7 +820,9 @@ void PMNGMainWindow::plotElectrophoregram(const EFGDisplayer &displayer, const s
                                                             EOFValue, EOFvt, izLen, plotCutoff,
                                                             signal);
 
-  const auto exInfo = makeAnalytesExtraInfo(tdzi, h_eigenzoneDetailsModel);
+  // Accepting kBGE == 0.0 in case of an error
+  const double kBGE = m_resultsModels.backgroundMapperModel()->dataItem(BackgroundPropertiesMapping::Items::CONDUCTIVITY, UserRoles::ReadRole).toDouble();
+  const auto exInfo = makeAnalytesExtraInfo(tdzi, h_eigenzoneDetailsModel, kBGE);
   h_analytesEXIModel->setData(exInfo);
   displayer(signalTrace, tdzi, signal);
 }
