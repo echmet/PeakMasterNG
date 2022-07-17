@@ -22,6 +22,14 @@ public:
   QAbstractTableModel * eigenzoneDetailsModel();
   SystemEigenzonesTableModel * systemEigenzonesModel();
 
+  const AnalytesDissociationModel * analytesDissociationModel() const;
+  const AnalytesExtraInfoModel * analytesExtraInfoModel() const;
+  const BackgroundEffectiveMobilitiesModel * backgroundEffectiveMobilitiesModel() const;
+  const BackgroundPropertiesMapping::MapperModel * backgroundMapperModel() const;
+  const QAbstractTableModel * bgeIonicCompositionModel() const;
+  const QAbstractTableModel * eigenzoneDetailsModel() const;
+  const SystemEigenzonesTableModel * systemEigenzonesModel() const;
+
 private:
   ResultsContainer &m_container;
 };

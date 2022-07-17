@@ -41,3 +41,38 @@ SystemEigenzonesTableModel * ResultsModels::systemEigenzonesModel()
 {
   return m_container.m_systemEigenzonesTableModel.get();
 }
+
+const AnalytesDissociationModel *ResultsModels::analytesDissociationModel() const
+{
+  return m_container.m_analytesDissociationModel.get();
+}
+
+const AnalytesExtraInfoModel * ResultsModels::analytesExtraInfoModel() const
+{
+  return m_container.m_analytesExtraInfoModel.get();
+}
+
+const BackgroundEffectiveMobilitiesModel * ResultsModels::backgroundEffectiveMobilitiesModel() const
+{
+  return m_container.m_backgroundEffMobilitiesModel.get();
+}
+
+const BackgroundPropertiesMapping::MapperModel * ResultsModels::backgroundMapperModel() const
+{
+  return m_container.m_backgroundPropsModel.get();
+}
+
+const QAbstractTableModel * ResultsModels::bgeIonicCompositionModel() const
+{
+  return m_container.m_bgeIonicComposition.get();
+}
+
+const QAbstractTableModel * ResultsModels::eigenzoneDetailsModel() const
+{
+  return m_container.m_eigenzoneDetailsModel.get();
+}
+
+const SystemEigenzonesTableModel * ResultsModels::systemEigenzonesModel() const
+{
+  return m_container.m_systemEigenzonesTableModel.get();
+}
