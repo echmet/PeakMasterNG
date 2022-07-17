@@ -169,6 +169,7 @@ SOURCES += \
 
 HEADERS += \
     src/gearbox/phadjusterinterface.h \
+  src/mappers/userroles.h \
     src/ui/adjustphdialog.h \
     src/ui/internal_models/adjustphtablemodel.h \
         src/ui/pmngmainwindow.h \

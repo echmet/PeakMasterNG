@@ -23,6 +23,7 @@
 #include "elementaries/uihelpers.h"
 #include "refocuser.h"
 #include "../persistence/swsettings.h"
+#include "../mappers/userroles.h"
 
 #include <cassert>
 #include <QCloseEvent>
@@ -816,8 +817,8 @@ void PMNGMainWindow::plotElectrophoregram(const EFGDisplayer &displayer, const s
 
 QVariant PMNGMainWindow::resetSignalItems()
 {
-  //const QVariant current = ui->qcbox_signal->currentData(Qt::UserRole + 1);
-  const QVariant current = m_signalTypesModel->data(m_signalTypesModel->index(m_signalPlotWidget->selectedSignalIndex(), 0), Qt::UserRole + 1);
+  //const QVariant current = ui->qcbox_signal->currentData(UserRoles::PrecissionRole);
+  const QVariant current = m_signalTypesModel->data(m_signalTypesModel->index(m_signalPlotWidget->selectedSignalIndex(), 0), UserRoles::PrecissionRole);
   m_signalTypesModel->clear();
 
   for (const auto &item : s_defaultSignalItems) {
@@ -878,7 +879,7 @@ void PMNGMainWindow::selectSignalIfAvailable(const QVariant &sig)
   const auto _sig = sig.value<CalculatorInterface::Signal>();
 
   for (int idx = 0; idx < m_signalTypesModel->rowCount(); idx++) {
-    const auto _csig = m_signalTypesModel->data(m_signalTypesModel->index(idx, 0), Qt::UserRole + 1).value<CalculatorInterface::Signal>();
+    const auto _csig = m_signalTypesModel->data(m_signalTypesModel->index(idx, 0), UserRoles::PrecissionRole).value<CalculatorInterface::Signal>();
     if (_sig == _csig) {
       m_signalPlotWidget->setSignalIndex(idx);
       return;

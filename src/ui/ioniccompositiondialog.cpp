@@ -1,3 +1,4 @@
+#include "../mappers/userroles.h"
 #include "ioniccompositiondialog.h"
 #include "ui_ioniccompositiondialog.h"
 #include "../gearbox/results_models/analytesdissociationmodel.h"
@@ -14,7 +15,7 @@ static
 int isContained(const QStandardItemModel *model, const QString &s)
 {
   for (int idx = 0; idx < model->rowCount(); idx++) {
-    const auto &item = model->data(model->index(idx, 0), Qt::UserRole + 1);
+    const auto &item = model->data(model->index(idx, 0), UserRoles::PrecissionRole);
     if (item == s)
       return idx;
   }
@@ -55,7 +56,7 @@ void IonicCompositionDialog::onAnalyteSelectionChanged(int idx)
   if (idx < 0)
     return;
 
-  const QString s = m_analytesNamesModel->data(m_analytesNamesModel->index(idx, 0), Qt::UserRole + 1).toString();
+  const QString s = m_analytesNamesModel->data(m_analytesNamesModel->index(idx, 0), UserRoles::PrecissionRole).toString();
   m_analytesModel->selectAnalyte(s.toStdString());
 
   ui->ql_miscalculation->setVisible(m_analytesModel->isMiscalculated()); /* This must be called after selectAnalyte() */
@@ -68,7 +69,7 @@ void IonicCompositionDialog::onAnalytesDissociationDataUpdated()
 
   const auto &analytes = m_analytesModel->analytes();
   if (m_analytesNamesModel->rowCount() > 0)
-    m_lastSelectedAnalyte = ui->qcbox_analyte->currentData(Qt::UserRole + 1).toString();
+    m_lastSelectedAnalyte = ui->qcbox_analyte->currentData(UserRoles::PrecissionRole).toString();
   m_analytesNamesModel->clear();
 
   for (const auto &a : analytes) {

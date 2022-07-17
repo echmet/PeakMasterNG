@@ -1,6 +1,7 @@
 #ifndef FLOATMAPPERMODEL_H
 #define FLOATMAPPERMODEL_H
 
+#include "userroles.h"
 #include "abstractmappermodel.h"
 #include "../gearbox/doubletostringconvertor.h"
 
@@ -15,10 +16,10 @@ public:
 
   virtual QVariant data(const QModelIndex &index, int role) const override
   {
-    if (!this->isParametersValid(index, role, { Qt::EditRole, Qt::UserRole + 1 }))
+    if (!this->isParametersValid(index, role, { Qt::EditRole, UserRoles::PrecissionRole }))
       return false;
 
-    if (role == Qt::UserRole + 1)
+    if (role == UserRoles::PrecissionRole)
       return this->m_decimalDigits.at(index.column());
 
     return AbstractMapperModel<double, I>::data(index, role);
@@ -26,7 +27,7 @@ public:
 
   virtual bool setData(const QModelIndex &index, const QVariant &value, int role) override
   {
-    if (!this->isParametersValid(index, role, { Qt::EditRole, Qt::UserRole + 1 }))
+    if (!this->isParametersValid(index, role, { Qt::EditRole, UserRoles::PrecissionRole }))
       return false;
 
     if (this->m_data == nullptr)
@@ -44,7 +45,7 @@ public:
       emit this->dataChanged(index, index, { role });
       return true;
     }
-    case Qt::UserRole + 1:
+    case UserRoles::PrecissionRole:
       {
       bool ok;
       const int prec = value.toInt(&ok);

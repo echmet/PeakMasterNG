@@ -1,6 +1,7 @@
 #ifndef CONSTITUENTSMODELIMPL_H
 #define CONSTITUENTSMODELIMPL_H
 
+#include "../../mappers/userroles.h"
 #include "abstractconstituentsmodel.h"
 #include "../../gearbox/gdmproxy.h"
 
@@ -22,7 +23,7 @@ public:
   // Basic functionality:
   virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override
   {
-    if (!(role == Qt::DisplayRole || role == Qt::UserRole || role == Qt::UserRole + 1))
+    if (!(role == Qt::DisplayRole || role == Qt::UserRole || role == UserRoles::PrecissionRole))
       return {};
 
     const int row = index.row();
@@ -44,7 +45,7 @@ public:
 
     switch (col) {
     case 0:
-      if (role == Qt::UserRole + 1)
+      if (role == UserRoles::PrecissionRole)
         return QVariant::fromValue(this->complexationStatus(constituentName));
       return {};
     case 1:
