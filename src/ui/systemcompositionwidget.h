@@ -12,7 +12,7 @@ class AbstractConstituentsModelBase;
 class AnalytesConstituentsModel;
 class AnalytesExtraInfoModel;
 class BackgroundConstituentsModel;
-class BackgroundEffectiveMobilitiesModel;
+class BGEExtraInfoModel;
 class ComplexationColorizerDelegate;
 class ComplexationManager;
 class EditConstituentDialog;
@@ -27,7 +27,7 @@ class SystemCompositionWidget : public QWidget
 public:
   explicit SystemCompositionWidget(GDMProxy &backgroundGDM, GDMProxy &sampleGDM, ComplexationManager &cpxMgr, DatabaseProxy &dbProxy,
                                    const AnalytesExtraInfoModel * const analytesEXIModel,
-                                   const BackgroundEffectiveMobilitiesModel * const BGEEffMobsModel,
+                                   const BGEExtraInfoModel * const bgeEXIModel,
                                    QWidget *parent = nullptr);
   ~SystemCompositionWidget();
   AbstractConstituentsModelBase * analytesModel() noexcept;

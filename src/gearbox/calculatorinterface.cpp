@@ -164,9 +164,9 @@ void fillBackgroundIonicComposition(ResultsData &rData, const ECHMET::LEMNG::RCo
 }
 
 static
-void fillBackgroundEffectiveMobs(ResultsData &rData, const ECHMET::LEMNG::RConstituentMap *composition)
+void fillBackgroundExtraInfo(ResultsData &rData, const ECHMET::LEMNG::RConstituentMap *composition)
 {
-  QMap<QString, double> data;
+  QVector<BGEExtraInfoModel::ExtraInfo> data;
 
   auto it = composition->begin();
   if (it == nullptr)
@@ -175,14 +175,15 @@ void fillBackgroundEffectiveMobs(ResultsData &rData, const ECHMET::LEMNG::RConst
   while (it->hasNext()) {
     const QString name = QString::fromUtf8(it->key());
     const double uEff = it->value().effectiveMobility;
+    const double kBGE = rData.backgroundPropsData()[rData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::CONDUCTIVITY)];
 
-    data[name] = uEff;
+    data.push_back(BGEExtraInfoModel::ExtraInfo{name, uEff, kBGE});
 
     it->next();
   }
   it->destroy();
 
-  rData.backgroundEffectiveMobilitiesRefresh(data);
+  rData.backgroundExtraInfoRefresh(data);
 }
 
 static
@@ -360,6 +361,7 @@ void CalculatorInterface::mapResultsAnalytesDissociation()
 void CalculatorInterface::mapResultsBGE(const double totalLength, const double detectorPosition, const double drivingVoltage,
                                         const double EOFMobility)
 {
+  /* Fill BGE physical properties */
   auto &data = m_resultsData.backgroundPropsData();
 
   data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::BUFFER_CAPACITY)] = m_ctx.results->BGEProperties.bufferCapacity;
@@ -374,7 +376,9 @@ void CalculatorInterface::mapResultsBGE(const double totalLength, const double d
   /* Fill background ionic composition */
   fillBackgroundIonicComposition(m_resultsData, m_ctx.results->BGEProperties.composition);
 
-  fillBackgroundEffectiveMobs(m_resultsData, m_ctx.results->BGEProperties.composition);
+  /* Fill background constituents extra info */
+  /* !! Depends on BGE physical prooerties !! */
+  fillBackgroundExtraInfo(m_resultsData, m_ctx.results->BGEProperties.composition);
 }
 
 void CalculatorInterface::mapResults(const double totalLength, const double detectorPosition, const double drivingVoltage,
@@ -413,7 +417,7 @@ void CalculatorInterface::onInvalidate()
 
   m_resultsData.analytesDissociationRefresh({});
   m_resultsData.analytesExtraInfoRefresh({});
-  m_resultsData.backgroundEffectiveMobilitiesRefresh({});
+  m_resultsData.backgroundExtraInfoRefresh({});
 
   auto &data = m_resultsData.backgroundPropsData();
   data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::BUFFER_CAPACITY)] = 0.0;

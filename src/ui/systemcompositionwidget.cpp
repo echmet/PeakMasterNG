@@ -29,7 +29,7 @@ void enableDragDrop(QTableView *v)
 
 SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMProxy &sampleGDM, ComplexationManager &cpxMgr, DatabaseProxy &dbProxy,
                                                  const AnalytesExtraInfoModel * const analytesEXIModel,
-                                                 const BackgroundEffectiveMobilitiesModel * const BGEEffMobsModel,
+                                                 const BGEExtraInfoModel * const bgeEXIModel,
                                                  QWidget *parent) :
   QWidget{parent},
   ui{new Ui::SystemCompositionWidget},
@@ -41,7 +41,7 @@ SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMPro
 {
   ui->setupUi(this);
 
-  m_backgroundConstituentsModel = new BackgroundConstituentsModel{BGEEffMobsModel, { "BGE", "Sample" }, backgroundGDM, cpxMgr, this};
+  m_backgroundConstituentsModel = new BackgroundConstituentsModel{bgeEXIModel, { "BGE", "Sample" }, backgroundGDM, cpxMgr, this};
   ui->qtbv_backgroudConstituents->setModel(m_backgroundConstituentsModel);
   enableDragDrop(ui->qtbv_backgroudConstituents);
   m_ccDelegateBGE = new ComplexationColorizerDelegate{m_backgroundConstituentsModel, this};

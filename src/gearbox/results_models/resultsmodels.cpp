@@ -17,9 +17,9 @@ AnalytesExtraInfoModel * ResultsModels::analytesExtraInfoModel()
   return m_container.m_analytesExtraInfoModel.get();
 }
 
-BackgroundEffectiveMobilitiesModel * ResultsModels::backgroundEffectiveMobilitiesModel()
+BGEExtraInfoModel * ResultsModels::bgeExtraInfoModel()
 {
-  return m_container.m_backgroundEffMobilitiesModel.get();
+  return m_container.m_bgeExtraInfoModel.get();
 }
 
 BackgroundPropertiesMapping::MapperModel * ResultsModels::backgroundMapperModel()
@@ -52,9 +52,9 @@ const AnalytesExtraInfoModel * ResultsModels::analytesExtraInfoModel() const
   return m_container.m_analytesExtraInfoModel.get();
 }
 
-const BackgroundEffectiveMobilitiesModel * ResultsModels::backgroundEffectiveMobilitiesModel() const
+const BGEExtraInfoModel * ResultsModels::bgeExtraInfoModel() const
 {
-  return m_container.m_backgroundEffMobilitiesModel.get();
+  return m_container.m_bgeExtraInfoModel.get();
 }
 
 const BackgroundPropertiesMapping::MapperModel * ResultsModels::backgroundMapperModel() const

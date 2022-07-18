@@ -3,7 +3,7 @@
 
 #include "analytesdissociationmodel.h"
 #include "analytesextrainfomodel.h"
-#include "backgroundeffectivemobilitiesmodel.h"
+#include "bgeextrainfomodel.h"
 #include "backgroundpropertiesmapping.h"
 #include "eigenzonedetailsmodel.h"
 #include "ioniccompositionmodel.h"
@@ -20,7 +20,7 @@ public:
 
   std::unique_ptr<AnalytesDissociationModel> m_analytesDissociationModel;
   std::unique_ptr<AnalytesExtraInfoModel> m_analytesExtraInfoModel;
-  std::unique_ptr<BackgroundEffectiveMobilitiesModel> m_backgroundEffMobilitiesModel;
+  std::unique_ptr<BGEExtraInfoModel> m_bgeExtraInfoModel;
   std::unique_ptr<BackgroundPropertiesMapping::MapperModel> m_backgroundPropsModel;
   std::unique_ptr<EigenzoneDetailsModel> m_eigenzoneDetailsModel;
   std::unique_ptr<IonicCompositionModel> m_bgeIonicComposition;

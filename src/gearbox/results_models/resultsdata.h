@@ -3,6 +3,7 @@
 
 #include "analytesdissociationmodel.h"
 #include "analytesextrainfomodel.h"
+#include "bgeextrainfomodel.h"
 #include "backgroundpropertiesmapping.h"
 #include "eigenzonedetailsmodel.h"
 #include "ioniccompositionmodel.h"
@@ -26,7 +27,7 @@ public:
                                     QVector<QString> &&complex,
                                     QVector<IonicCompositionModel::ConstituentConcentrations> &&concentrations) noexcept;
 
-  void backgroundEffectiveMobilitiesRefresh(const QMap<QString, double> &dataMap);
+  void backgroundExtraInfoRefresh(const QVector<BGEExtraInfoModel::ExtraInfo> &dataVec);
 
   QVector<double> & backgroundPropsData();
   int backgroundPropsIndex(const BackgroundPropertiesMapping::Items item) const;

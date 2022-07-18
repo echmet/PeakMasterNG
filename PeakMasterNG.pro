@@ -65,6 +65,7 @@ CONFIG(debug, debug|release) {
 
 SOURCES += \
     src/gearbox/phadjusterinterface.cpp \
+  src/gearbox/results_models/bgeextrainfomodel.cpp \
         src/main.cpp \
     src/ui/adjustphdialog.cpp \
     src/ui/internal_models/adjustphtablemodel.cpp \
@@ -154,7 +155,6 @@ SOURCES += \
     src/ui/toggletracepointsdialog.cpp \
     src/gearbox/results_models/analytesextrainfomodel.cpp \
     src/ui/analytesconstituentsheader.cpp \
-    src/gearbox/results_models/backgroundeffectivemobilitiesmodel.cpp \
     src/ui/backgroundconstituentsheader.cpp \
     src/ui/elementaries/uihelpers.cpp \
     src/ui/checkforupdatedialog.cpp \
@@ -169,6 +169,7 @@ SOURCES += \
 
 HEADERS += \
     src/gearbox/phadjusterinterface.h \
+  src/gearbox/results_models/bgeextrainfomodel.h \
   src/mappers/userroles.h \
     src/ui/adjustphdialog.h \
     src/ui/internal_models/adjustphtablemodel.h \
@@ -273,7 +274,6 @@ HEADERS += \
     src/ui/analytesconstituentsheader.h \
     src/ui/hacks.h \
     src/ui/internal_models/backgroundconstituentsmodel.h \
-    src/gearbox/results_models/backgroundeffectivemobilitiesmodel.h \
     src/ui/backgroundconstituentsheader.h \
     src/ui/elementaries/uihelpers.h \
     src/ui/checkforupdatedialog.h \

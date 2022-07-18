@@ -2,11 +2,12 @@
 #define RESULTSMODELS_H
 
 #include "analytesextrainfomodel.h"
+#include "bgeextrainfomodel.h"
 #include "backgroundpropertiesmapping.h"
 #include "systemeigenzonestablemodel.h"
 
 class AnalytesDissociationModel;
-class BackgroundEffectiveMobilitiesModel;
+class BGEExtraInfoModel;
 class ResultsContainer;
 
 class ResultsModels
@@ -16,7 +17,7 @@ public:
   ResultsModels(ResultsContainer &container);
   AnalytesDissociationModel * analytesDissociationModel();
   AnalytesExtraInfoModel * analytesExtraInfoModel();
-  BackgroundEffectiveMobilitiesModel * backgroundEffectiveMobilitiesModel();
+  BGEExtraInfoModel * bgeExtraInfoModel();
   BackgroundPropertiesMapping::MapperModel * backgroundMapperModel();
   QAbstractTableModel * bgeIonicCompositionModel();
   QAbstractTableModel * eigenzoneDetailsModel();
@@ -24,7 +25,7 @@ public:
 
   const AnalytesDissociationModel * analytesDissociationModel() const;
   const AnalytesExtraInfoModel * analytesExtraInfoModel() const;
-  const BackgroundEffectiveMobilitiesModel * backgroundEffectiveMobilitiesModel() const;
+  const BGEExtraInfoModel * bgeExtraInfoModel() const;
   const BackgroundPropertiesMapping::MapperModel * backgroundMapperModel() const;
   const QAbstractTableModel * bgeIonicCompositionModel() const;
   const QAbstractTableModel * eigenzoneDetailsModel() const;

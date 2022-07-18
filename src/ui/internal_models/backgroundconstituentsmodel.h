@@ -2,24 +2,24 @@
 #define BACKGROUNDCONSTITUENTSMODEL_H
 
 #include "constituentsmodelimpl.h"
-#include "../../gearbox/results_models/backgroundeffectivemobilitiesmodel.h"
+#include "../../gearbox/results_models/bgeextrainfomodel.h"
 
 #include "../../globals.h"
 
 class BackgroundConstituentsModel : public ConstituentsModelImpl<2>
 {
 public:
-  explicit BackgroundConstituentsModel(const BackgroundEffectiveMobilitiesModel * const BGEEffMobsModel,
+  explicit BackgroundConstituentsModel(const BGEExtraInfoModel * const bgeEXIModel,
                                        const QVector<QString> &concentrationHeaders, GDMProxy &GDMProxy, ComplexationManager &cpxMgr, QObject *parent = nullptr) :
     ConstituentsModelImpl{concentrationHeaders, GDMProxy, cpxMgr, parent},
-    h_BGEEffMobsModel{BGEEffMobsModel}
+    h_bgeEXIModel{bgeEXIModel}
   {
     if (Globals::isZombieOS())
       m_uEffStr = QObject::tr("u Eff (. 1e-9)");
     else
       m_uEffStr = QObject::tr("\xCE\xBC Eff (\xE2\x8B\x85 1e-9)");
 
-    connect(BGEEffMobsModel, &BackgroundEffectiveMobilitiesModel::dataChanged, this, &BackgroundConstituentsModel::onEffectiveMobilitiesChanged);
+    connect(bgeEXIModel, &BGEExtraInfoModel::dataChanged, this, &BackgroundConstituentsModel::onEffectiveMobilitiesChanged);
   }
 
   virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override
@@ -35,8 +35,9 @@ public:
 
     const QString name = ConstituentsModelImpl::data(createIndex(index.row(), 2)).toString();
 
+    const auto &exInfo = h_bgeEXIModel->info(name);
     if (col == baseColumnCount)
-      return h_BGEEffMobsModel->effectiveMobility(name);
+      return exInfo.uEff;
 
     return {};
   }
@@ -65,7 +66,7 @@ public:
   }
 
 private:
-  const BackgroundEffectiveMobilitiesModel * const h_BGEEffMobsModel;
+  const BGEExtraInfoModel * const h_bgeEXIModel;
 
   QString m_uEffStr;
 
