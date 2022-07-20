@@ -65,7 +65,7 @@ CONFIG(debug, debug|release) {
 
 SOURCES += \
     src/gearbox/phadjusterinterface.cpp \
-  src/gearbox/results_models/bgeextrainfomodel.cpp \
+  src/gearbox/results_models/analytesextrainfo.cpp \
         src/main.cpp \
     src/ui/adjustphdialog.cpp \
     src/ui/internal_models/adjustphtablemodel.cpp \
@@ -153,7 +153,6 @@ SOURCES += \
     src/ui/databaseeditordialog.cpp \
     src/ui/editdatabaseconstituentdialog.cpp \
     src/ui/toggletracepointsdialog.cpp \
-    src/gearbox/results_models/analytesextrainfomodel.cpp \
     src/ui/analytesconstituentsheader.cpp \
     src/ui/backgroundconstituentsheader.cpp \
     src/ui/elementaries/uihelpers.cpp \
@@ -169,10 +168,15 @@ SOURCES += \
 
 HEADERS += \
     src/gearbox/phadjusterinterface.h \
+  src/gearbox/results_models/analytesextrainfo.h \
+  src/gearbox/results_models/bgeextrainfo.h \
   src/gearbox/results_models/bgeextrainfomodel.h \
+  src/gearbox/results_models/extrainfobase.h \
+  src/gearbox/results_models/extrainfomodelbase.h \
   src/mappers/userroles.h \
     src/ui/adjustphdialog.h \
     src/ui/internal_models/adjustphtablemodel.h \
+  src/ui/internal_models/constituentsmodelbase.h \
         src/ui/pmngmainwindow.h \
     src/gdm/conversion/conversion.h \
     src/gdm/core/common/chargeinterval.h \

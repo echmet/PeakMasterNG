@@ -108,11 +108,21 @@ QVector<AnalytesExtraInfoModel::ExtraInfo> makeAnalytesExtraInfo(const std::vect
 
     const double uEff = ezProps.mobility;
     const double uEMD = ezProps.uEMD;
-    const bool detected = [&tdInfo]() {
-      return tdInfo.timeMax > 0.0 && tdInfo.beginsAt > 0.0;
-    }();
 
-    data.append(AnalytesExtraInfoModel::ExtraInfo{tdInfo.name, uEff, kBGE, tdInfo.timeMax, uEMD, tdInfo.concentrationMax, tdInfo.conductivityMax, detected});
+    const bool detected = (tdInfo.timeMax > 0.0 && tdInfo.beginsAt > 0.0);
+    QVariant timeMax, cMax, cndMax;
+    if (detected)
+    {
+      timeMax = tdInfo.timeMax;
+      cMax = tdInfo.concentrationMax;
+      cndMax = tdInfo.conductivityMax;
+    }
+
+#ifdef __cpp_designated_initializers
+    data.append({tdInfo.name, {.uEff = uEff, .kappaBGE = kBGE, .time = std::move(timeMax), .uEMD = uEMD, .cMax = std::move(cMax), .cndMax = std::move(cndMax)}});
+#else
+    data.append({tdInfo.name, {uEff, kBGE, std::move(timeMax), uEMD, std::move(cMax), std::move(cndMax)}});
+#endif
   }
 
   return data;

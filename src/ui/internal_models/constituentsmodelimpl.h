@@ -129,6 +129,14 @@ public:
     return false;
   }
 
+  // Helpers:
+  QString name(int row) const noexcept
+  {
+    if (row < 0 || row >= this->m_constituentNames.size()) return {};
+
+    return this->m_constituentNames[row];
+  }
+
 private:
   QVariant concentrationFromIndex(const std::vector<double> &concs, const int idx) const
   {

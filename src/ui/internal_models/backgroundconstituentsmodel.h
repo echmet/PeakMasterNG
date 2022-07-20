@@ -1,84 +1,9 @@
 #ifndef BACKGROUNDCONSTITUENTSMODEL_H
 #define BACKGROUNDCONSTITUENTSMODEL_H
 
-#include "constituentsmodelimpl.h"
+#include "constituentsmodelbase.h"
 #include "../../gearbox/results_models/bgeextrainfomodel.h"
 
-#include "../../globals.h"
-
-class BackgroundConstituentsModel : public ConstituentsModelImpl<2>
-{
-public:
-  explicit BackgroundConstituentsModel(const BGEExtraInfoModel * const bgeEXIModel,
-                                       const QVector<QString> &concentrationHeaders, GDMProxy &GDMProxy, ComplexationManager &cpxMgr, QObject *parent = nullptr) :
-    ConstituentsModelImpl{concentrationHeaders, GDMProxy, cpxMgr, parent},
-    h_bgeEXIModel{bgeEXIModel}
-  {
-    if (Globals::isZombieOS())
-      m_uEffStr = QObject::tr("u Eff (. 1e-9)");
-    else
-      m_uEffStr = QObject::tr("\xCE\xBC Eff (\xE2\x8B\x85 1e-9)");
-
-    connect(bgeEXIModel, &BGEExtraInfoModel::dataChanged, this, &BackgroundConstituentsModel::onEffectiveMobilitiesChanged);
-  }
-
-  virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override
-  {
-    const int baseColumnCount = ConstituentsModelImpl::columnCount(QModelIndex{});
-    const int col = index.column();
-
-    if (col < baseColumnCount)
-      return ConstituentsModelImpl::data(index, role);
-
-    if (role != Qt::DisplayRole)
-      return {};
-
-    const QString name = ConstituentsModelImpl::data(createIndex(index.row(), 2)).toString();
-
-    const auto &exInfo = h_bgeEXIModel->info(name);
-    if (col == baseColumnCount)
-      return exInfo.uEff;
-
-    return {};
-  }
-
-  virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const override
-  {
-    const int baseColumnCount = ConstituentsModelImpl::columnCount(QModelIndex{});
-
-    if (section < baseColumnCount)
-      return ConstituentsModelImpl::headerData(section, orientation, role);
-
-    if (section == baseColumnCount)
-      return m_uEffStr;
-
-    return {};
-  }
-
-  virtual int columnCount(const QModelIndex &parent) const override
-  {
-    return ConstituentsModelImpl::columnCount(parent) + 1;
-  }
-
-  int firstExtraInfoColumn() const
-  {
-    return ConstituentsModelImpl::columnCount(QModelIndex{});
-  }
-
-private:
-  const BGEExtraInfoModel * const h_bgeEXIModel;
-
-  QString m_uEffStr;
-
-private slots:
-  void onEffectiveMobilitiesChanged()
-  {
-    const int bcc = ConstituentsModelImpl::columnCount(QModelIndex{});
-    const QModelIndex topLeft = createIndex(0, bcc);
-    const QModelIndex bottomRight = createIndex(rowCount() - 1, bcc + 1);
-
-    emit dataChanged(topLeft, bottomRight, { Qt::DisplayRole });
-  }
-};
+using BackgroundConstituentsModel = ConstituentsModelBase<BGEExtraInfoModel, 2>;
 
 #endif // BACKGROUNDCONSTITUENTSMODEL_H

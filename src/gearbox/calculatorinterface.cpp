@@ -177,7 +177,11 @@ void fillBackgroundExtraInfo(ResultsData &rData, const ECHMET::LEMNG::RConstitue
     const double uEff = it->value().effectiveMobility;
     const double kBGE = rData.backgroundPropsData()[rData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::CONDUCTIVITY)];
 
-    data.push_back(BGEExtraInfoModel::ExtraInfo{name, uEff, kBGE});
+#ifdef __cpp_designated_initializers
+    data.push_back({name, {.uEff = uEff, .kappaBGE = kBGE}});
+#else
+    data.push_back({name, {uEff, kBGE}});
+#endif
 
     it->next();
   }

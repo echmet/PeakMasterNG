@@ -4,15 +4,14 @@
 #include <QModelIndexList>
 #include <QWidget>
 
+#include "internal_models/analytesconstituentsmodel.h"
+#include "internal_models/backgroundconstituentsmodel.h"
+
 namespace Ui {
   class SystemCompositionWidget;
 }
 
 class AbstractConstituentsModelBase;
-class AnalytesConstituentsModel;
-class AnalytesExtraInfoModel;
-class BackgroundConstituentsModel;
-class BGEExtraInfoModel;
 class ComplexationColorizerDelegate;
 class ComplexationManager;
 class EditConstituentDialog;

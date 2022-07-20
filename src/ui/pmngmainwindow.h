@@ -18,7 +18,6 @@ namespace persistence {
   class Persistence;
 }
 
-class AnalytesExtraInfoModel;
 class CalculatorInterface;
 class CheckForUpdateDialog;
 class DatabaseProxy;

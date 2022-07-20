@@ -7,7 +7,6 @@
 #include "systemeigenzonestablemodel.h"
 
 class AnalytesDissociationModel;
-class BGEExtraInfoModel;
 class ResultsContainer;
 
 class ResultsModels
