@@ -26,15 +26,23 @@ public:
   };
 
   struct Initializer {
+    Initializer() = default;
+    Initializer(const Initializer &) = delete;
+    Initializer(Initializer &&) = default;
+
     QVariant uEff;
     QVariant kappaBGE;
+
+  private:
+    // preventing brace-initialization
+    Initializer(QVariant, QVariant);
   };
 
   ExtraInfoBase() = delete;
   ExtraInfoBase(const ExtraInfoBase &) = default;
   ExtraInfoBase(ExtraInfoBase &&) = default;
 
-  ExtraInfoBase(QString name, Initializer data);
+  ExtraInfoBase(QString name, Initializer &&data);
 
   ExtraInfoBase & operator=(const ExtraInfoBase &) = default;
   ExtraInfoBase & operator=(ExtraInfoBase &&) = default;
@@ -74,7 +82,7 @@ private:
 // DEF
 
 template<class CRTPINFO>
-ExtraInfoBase<CRTPINFO>::ExtraInfoBase(QString name, Initializer data)
+ExtraInfoBase<CRTPINFO>::ExtraInfoBase(QString name, Initializer &&data)
   : m_name{name}
 {
   m_data.reserve(CRTPINFO::_CUSTOM_END);

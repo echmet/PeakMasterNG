@@ -2,12 +2,8 @@
 
 #include "../../globals.h"
 
-AnalytesExtraInfo::AnalytesExtraInfo(QString name, Initializer data)
-#ifdef __cpp_designated_initializers
-  : ExtraInfoBase(std::move(name), {.uEff = std::move(data.uEff), .kappaBGE = std::move(data.kappaBGE)})
-#else
-  : ExtraInfoBase(std::move(name), {std::move(data.uEff), std::move(data.kappaBGE)})
-#endif
+AnalytesExtraInfo::AnalytesExtraInfo(QString name, Initializer &&data)
+  : ExtraInfoBase(std::move(name), static_cast<ExtraInfoBase::Initializer &&>(data))
 {
   set(TIME, std::move(data.time));
   set(U_EMD, std::move(data.uEMD));

@@ -14,9 +14,7 @@ public:
     _CUSTOM_END
   };
 
-  struct Initializer {
-    QVariant uEff;
-    QVariant kappaBGE;
+  struct Initializer : ExtraInfoBase<AnalytesExtraInfo>::Initializer {
     QVariant time;
     QVariant uEMD;
     QVariant cMax;
@@ -30,7 +28,7 @@ public:
   AnalytesExtraInfo &operator=(AnalytesExtraInfo &) = default;
   AnalytesExtraInfo &operator=(AnalytesExtraInfo &&) = default;
 
-  AnalytesExtraInfo(QString name, Initializer data);
+  AnalytesExtraInfo(QString name, Initializer &&data);
 
   static const QString &customHeader(int index) noexcept;
 

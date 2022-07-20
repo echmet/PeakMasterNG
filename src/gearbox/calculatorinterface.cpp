@@ -174,14 +174,12 @@ void fillBackgroundExtraInfo(ResultsData &rData, const ECHMET::LEMNG::RConstitue
 
   while (it->hasNext()) {
     const QString name = QString::fromUtf8(it->key());
-    const double uEff = it->value().effectiveMobility;
-    const double kBGE = rData.backgroundPropsData()[rData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::CONDUCTIVITY)];
 
-#ifdef __cpp_designated_initializers
-    data.push_back({name, {.uEff = uEff, .kappaBGE = kBGE}});
-#else
-    data.push_back({name, {uEff, kBGE}});
-#endif
+    BGEExtraInfoModel::ExtraInfo::Initializer init;
+    init.uEff = it->value().effectiveMobility;
+    init.kappaBGE = rData.backgroundPropsData()[rData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::CONDUCTIVITY)];
+
+    data.push_back({name, std::move(init)});
 
     it->next();
   }
