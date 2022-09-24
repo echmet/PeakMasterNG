@@ -110,7 +110,7 @@ const QString &ExtraInfoBase<CRTPINFO>::header(int index) noexcept
   {
     strings.resize(_CUSTOM_BEGIN);
     strings[U_EFF] = Globals::isZombieOS() ? QObject::tr("u Eff (. 1e-9)") : QObject::tr("\xCE\xBC Eff (\xE2\x8B\x85 1e-9)");
-    strings[U_EFF_OVER_KAPPA_BGE] = Globals::isZombieOS() ? QObject::tr("u Eff / kappa BGE (1/A)") : QObject::tr("\xCE\xBC Eff/\xCE\xBA BGE (A\xE2\x81\xBB\xC2\xB9)");
+    strings[U_EFF_OVER_KAPPA_BGE] = Globals::isZombieOS() ? QObject::tr("u Eff / kappa BGE (1/C)") : QObject::tr("\xCE\xBC Eff/\xCE\xBA BGE (C\xE2\x81\xBB\xC2\xB9)");
   }
 
   if (index < 0 || index >= CRTPINFO::_CUSTOM_END) return null;
