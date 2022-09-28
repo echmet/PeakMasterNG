@@ -31,8 +31,14 @@ AdjustuEffOverkBGEDialog::AdjustuEffOverkBGEDialog(GDMProxy &backgroundGDMProxy,
 
   m_model = new AdjustuEffOverkBGETableModel{this};
 
-  uEffOverkBGECalculatorInterface iface{h_backgroundGDMProxy, m_debyeHuckel, m_onsagerFuoss};
-  fillModel(iface.currentuEkBs());
+  try {
+    uEffOverkBGECalculatorInterface iface{h_backgroundGDMProxy, m_debyeHuckel, m_onsagerFuoss};
+    auto uEkBs = iface.currentuEkBs();
+    fillModel(std::move(uEkBs));
+  } catch (const uEffOverkBGECalculatorInterface::Exception &) {
+    QMessageBox::warning(this, tr("Calculation error"), "Failed to calculate initial " + uEffOverkBGEText() + ". Is your background composition sensible?");
+    fillModel({});
+  }
 
   ui->qtbv_allConstituents->setModel(m_model);
   ui->qtbv_allConstituents->setSelectionMode(QAbstractItemView::SingleSelection);
