@@ -242,23 +242,28 @@ double uEffOverkBGECalculatorInterface::findConcentration(const std::string &con
   auto backgroundAcVec = conversion::makeECHMETAnalyticalConcentrationsVec(h_GDMProxy.gdmBackground(), 0, m_ctx->chemSystem->constituents);
 
   size_t iters{0};
-  double cActual = h_GDMProxy.concentrations(constituentName).front();
+  double cActual = h_GDMProxy.concentrations(constituentName).at(0);
   while (iters < MAX_ITERS) {
     (*backgroundAcVec)[ctuentIdx] = cActual;
-    double uEkB = calculateuEffOverkBGE(backgroundAcVec, m_ctx, ctuentIdx);
+    const double uEkB = calculateuEffOverkBGE(backgroundAcVec, m_ctx, ctuentIdx);
     if (std::abs(uEkB - targetuEkB) <= NR_PREC)
       return cActual;
 
-    double cLow = cActual > (2.0 * NR_DELTA) ? cActual - NR_DELTA : cActual;
+    const double cLow = cActual > (2.0 * NR_DELTA) ? cActual - NR_DELTA : cActual;
     (*backgroundAcVec)[ctuentIdx] = cLow;
-    double uEkBLow = calculateuEffOverkBGE(backgroundAcVec, m_ctx, ctuentIdx);
+    const double uEkBLow = calculateuEffOverkBGE(backgroundAcVec, m_ctx, ctuentIdx);
 
-    double cHigh = cLow + 2.0 * NR_DELTA;
+    const double cHigh = cLow + 2.0 * NR_DELTA;
     (*backgroundAcVec)[ctuentIdx] = cHigh;
-    double uEkBHigh = calculateuEffOverkBGE(backgroundAcVec, m_ctx, ctuentIdx);
+    const double uEkBHigh = calculateuEffOverkBGE(backgroundAcVec, m_ctx, ctuentIdx);
 
-    double duEkBdC = (uEkBHigh - uEkBLow) / (cHigh - cLow);
-    double cNew = cActual - (uEkB - targetuEkB) / duEkBdC;
+    const double duEkBdC = (uEkBHigh - uEkBLow) / (cHigh - cLow);
+    double step = (uEkB - targetuEkB) / duEkBdC;
+		// Limit the size of the step to avoid overshoot to negative concentrations
+		if (step >= cActual)
+			step = cActual / 10.0;
+		const double cNew = cActual - step;
+
     cActual = cNew < NR_MINIMUM_C ? NR_MINIMUM_C : cNew;
 
     iters++;
