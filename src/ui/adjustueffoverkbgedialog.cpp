@@ -42,43 +42,14 @@ AdjustuEffOverkBGEDialog::AdjustuEffOverkBGEDialog(GDMProxy &backgroundGDMProxy,
     ui->qtbv_allConstituents->setColumnWidth(col, hdr->sizeHintForColumn(col));
   }
 
-  connect(ui->qpb_adjust, &QPushButton::clicked, this, [this]() {
-    const auto &v = ui->qle_targetuEkB->text();
-
-    bool ok;
-    const double uEbK = DoubleToStringConvertor::back(v, &ok);
-    if (!ok) {
-      QMessageBox::warning(this, tr("Invalid input"), QString{tr("Invalid target %1 value")}.arg(uEffOverkBGEText()));
+  connect(ui->qtbv_allConstituents, &QTableView::doubleClicked, this, [this](const QModelIndex &idx) {
+    if (!idx.isValid())
       return;
-    }
 
-    const auto selection = selectedConstituent();
-    const auto &constutuentName = selection.first.toStdString();
-    if (constutuentName.empty()) {
-      QMessageBox::warning(this, tr("Invalid input"), tr("No background component was selected"));
-      return;
-    }
-    if (selection.second) {
-      QMessageBox::warning(this, tr("Invalid input"), tr("Selected constituent must be a background component"));
-      return;
-    }
-
-    const double cOriginal = h_backgroundGDMProxy.concentrations(constutuentName).at(0);
-    const double cSample = h_backgroundGDMProxy.concentrations(constutuentName).at(1);
-    try {
-      uEffOverkBGECalculatorInterface iface{h_backgroundGDMProxy, m_debyeHuckel, m_onsagerFuoss};
-      double cAdjusted = iface.findConcentration(constutuentName, uEbK);
-
-      h_backgroundGDMProxy.setConcentrations(constutuentName, { cAdjusted, cSample });
-      fillModel(iface.currentuEkBs());
-
-    } catch (const uEffOverkBGECalculatorInterface::Exception &ex) {
-      // Make sure we reset concentrations to their original values
-      h_backgroundGDMProxy.setConcentrations(constutuentName, { cOriginal, cSample });
-
-      QMessageBox::warning(this, tr("Calculation failed"), ex.what());
-    }
+    adjust();
   });
+
+  connect(ui->qpb_adjust, &QPushButton::clicked, this, &AdjustuEffOverkBGEDialog::adjust);
 
   connect(ui->buttonBox, &QDialogButtonBox::accepted, this, [this]() {
     this->accept();
@@ -97,6 +68,45 @@ AdjustuEffOverkBGEDialog::AdjustuEffOverkBGEDialog(GDMProxy &backgroundGDMProxy,
 AdjustuEffOverkBGEDialog::~AdjustuEffOverkBGEDialog()
 {
   delete ui;
+}
+
+void AdjustuEffOverkBGEDialog::adjust()
+{
+  const auto &v = ui->qle_targetuEkB->text();
+
+  bool ok;
+  const double uEbK = DoubleToStringConvertor::back(v, &ok);
+  if (!ok) {
+    QMessageBox::warning(this, tr("Invalid input"), QString{tr("Invalid target %1 value")}.arg(uEffOverkBGEText()));
+    return;
+  }
+
+  const auto selection = selectedConstituent();
+  const auto &constutuentName = selection.first.toStdString();
+  if (constutuentName.empty()) {
+    QMessageBox::warning(this, tr("Invalid input"), tr("No background component was selected"));
+    return;
+  }
+  if (selection.second) {
+    QMessageBox::warning(this, tr("Invalid input"), tr("Selected constituent must be a background component"));
+    return;
+  }
+
+  const double cOriginal = h_backgroundGDMProxy.concentrations(constutuentName).at(0);
+  const double cSample = h_backgroundGDMProxy.concentrations(constutuentName).at(1);
+  try {
+    uEffOverkBGECalculatorInterface iface{h_backgroundGDMProxy, m_debyeHuckel, m_onsagerFuoss};
+    double cAdjusted = iface.findConcentration(constutuentName, uEbK);
+
+    h_backgroundGDMProxy.setConcentrations(constutuentName, { cAdjusted, cSample });
+    fillModel(iface.currentuEkBs());
+
+  } catch (const uEffOverkBGECalculatorInterface::Exception &ex) {
+    // Make sure we reset concentrations to their original values
+    h_backgroundGDMProxy.setConcentrations(constutuentName, { cOriginal, cSample });
+
+    QMessageBox::warning(this, tr("Calculation failed"), ex.what());
+  }
 }
 
 void AdjustuEffOverkBGEDialog::fillModel(const std::map<std::string, double> &uEkBs)

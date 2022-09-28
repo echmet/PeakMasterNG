@@ -35,6 +35,9 @@ private:
 
   const bool m_debyeHuckel;
   const bool m_onsagerFuoss;
+
+private slots:
+  void adjust();
 };
 
 #endif // ADJUSTUEFFOVERKBGEDIALOG_H
