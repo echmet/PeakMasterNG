@@ -5,7 +5,7 @@
 
 QString uEffOverkBGEText()
 {
-  return Globals::isZombieOS() ? QString::fromUtf8("uEff/kBGE") : QString::fromUtf8(u8"\xCE\xBC""Eff/\xCE\xBA""BGE");
+  return Globals::isZombieOS() ? QString::fromUtf8("uEff/kBGE") : QString::fromUtf8("\xCE\xBC""Eff/\xCE\xBA""BGE");
 }
 
 AdjustuEffOverkBGETableModel::AdjustuEffOverkBGETableModel(QObject *parent) :
