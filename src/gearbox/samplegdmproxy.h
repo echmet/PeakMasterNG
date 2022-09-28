@@ -16,7 +16,7 @@ public:
   virtual bool complexes(const std::string &name) const noexcept override;
   virtual bool contains(const std::string &name) const noexcept override;
   virtual void erase(const std::string &name) noexcept override;
-  virtual gdm::Constituent get(const std::string &name) override;
+  virtual gdm::Constituent get(const std::string &name) const override;
   virtual bool insert(const gdm::Constituent &ctuent) noexcept override;
   virtual bool isNucleus(const std::string &name) const noexcept override;
   virtual void setConcentrations(const std::string &name, const std::vector<double> &concentrations) noexcept override;

@@ -65,10 +65,10 @@ CONFIG(debug, debug|release) {
 
 SOURCES += \
     src/gearbox/phadjusterinterface.cpp \
-        src/main.cpp \
+    src/main.cpp \
     src/ui/adjustphdialog.cpp \
     src/ui/internal_models/adjustphtablemodel.cpp \
-        src/ui/pmngmainwindow.cpp \
+    src/ui/pmngmainwindow.cpp \
     src/gdm/conversion/conversion.cpp \
     src/gdm/core/common/chargeinterval.cpp \
     src/gdm/core/common/mobility.cpp \
@@ -165,13 +165,16 @@ SOURCES += \
     src/gearbox/additionalfloatingvalidator.cpp \
     src/ui/returnacceptabletableview.cpp \
     src/ui/refocuser.cpp \
-    src/persistence/swsettings.cpp
+    src/persistence/swsettings.cpp \
+    src/ui/adjustueffoverkbgedialog.cpp \
+    src/ui/internal_models/adjustueffoverkbgetablemodel.cpp \
+    src/gearbox/ueffoverkbgecalculatorinterface.cpp
 
 HEADERS += \
     src/gearbox/phadjusterinterface.h \
     src/ui/adjustphdialog.h \
     src/ui/internal_models/adjustphtablemodel.h \
-        src/ui/pmngmainwindow.h \
+    src/ui/pmngmainwindow.h \
     src/gdm/conversion/conversion.h \
     src/gdm/core/common/chargeinterval.h \
     src/gdm/core/common/chargenumber.h \
@@ -285,11 +288,14 @@ HEADERS += \
     src/msvc_hacks.h \
     src/ui/returnacceptabletableview.h \
     src/ui/refocuser.h \
-    src/persistence/swsettings.h
+    src/persistence/swsettings.h \
+    src/ui/adjustueffoverkbgedialog.h \
+    src/ui/internal_models/adjustueffoverkbgetablemodel.h \
+    src/gearbox/ueffoverkbgecalculatorinterface.h
 
 FORMS += \
     src/ui/adjustphdialog.ui \
-        src/ui/pmngmainwindow.ui \
+    src/ui/pmngmainwindow.ui \
     src/ui/editconstituentdialog.ui \
     src/ui/signalplotwidget.ui \
     src/ui/maincontrolwidget.ui \
@@ -309,7 +315,8 @@ FORMS += \
     src/ui/toggletracepointsdialog.ui \
     src/ui/checkforupdatedialog.ui \
     src/ui/softwareupdatewidget.ui \
-    src/ui/autoupdatecheckdialog.ui
+    src/ui/autoupdatecheckdialog.ui \
+    src/ui/adjustueffoverkbgedialog.ui
 
 unix {
     QMAKE_CXXFLAGS += "-Wall -Wextra -pedantic"

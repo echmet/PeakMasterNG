@@ -54,7 +54,7 @@ void SampleGDMProxy::erase(const std::string &name) noexcept
     h_sampleGDM.erase(sampleIt);
 }
 
-gdm::Constituent SampleGDMProxy::get(const std::string &name)
+gdm::Constituent SampleGDMProxy::get(const std::string &name) const
 {
   auto it = h_sampleGDM.find(name);
   if (it == h_sampleGDM.cend())

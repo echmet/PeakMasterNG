@@ -1,6 +1,7 @@
 #include "pmngmainwindow.h"
 #include "ui_pmngmainwindow.h"
 
+#include "adjustueffoverkbgedialog.h"
 #include "maincontrolwidget.h"
 #include "signalplotwidget.h"
 #include "../gearbox/results_models/resultsmodels.h"
@@ -155,7 +156,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
                                persistence::Persistence &persistence,
                                DatabaseProxy &dbProxy,
                                AnalytesExtraInfoModel * const analytesEXIModel, const QAbstractTableModel * const eigenzoneDetailsModel,
-                               GDMProxy &GDMProxy,
+                               GDMProxy &backgroundGDMProxy, GDMProxy &sampleGDMProxy,
                                QWidget *parent) :
   QMainWindow{parent},
   m_calcIface{calcIface},
@@ -182,7 +183,7 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   splitter->addWidget(h_scompWidget);
   splitter->addWidget(m_signalPlotWidget);
 
-  m_mainCtrlWidget = new MainControlWidget{GDMProxy, resultsModels, this};
+  m_mainCtrlWidget = new MainControlWidget{backgroundGDMProxy, resultsModels, this};
   ui->qvlay_leftPane->addWidget(m_mainCtrlWidget);
 
   m_checkForUpdateDlg = new CheckForUpdateDialog{this};
@@ -218,6 +219,18 @@ PMNGMainWindow::PMNGMainWindow(SystemCompositionWidget *scompWidget,
   connect(ui->actionCheck_for_update, &QAction::triggered, this, &PMNGMainWindow::onOpenUpdateDialog);
   connect(ui->actionSystem_from_clipboard, &QAction::triggered, this, [this]() { this->loadSystem("", true); });
   connect(ui->actionSystem_to_clipboard, &QAction::triggered, this, [this]() { this->saveSystem("", true); });
+  connect(ui->actionAdjust_composition_for_target_uEff_over_kBGE, &QAction::triggered, this, [this, &backgroundGDMProxy, &sampleGDMProxy]() {
+    const auto rs = m_mainCtrlWidget->runSetup();
+    AdjustuEffOverkBGEDialog dlg{
+      backgroundGDMProxy, sampleGDMProxy,
+      rs.correctForDebyeHuckel, rs.correctForOnsagerFuoss,
+      this
+    };
+
+    auto ret = dlg.exec();
+    if (ret == QDialog::Accepted)
+      onCompositionChanged();
+  });
 
 #ifdef PMNG_TEST_CRASHHANDLER
   auto crashAction = ui->menuAdvanced->addAction("Crash me!");

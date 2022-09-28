@@ -12,8 +12,9 @@ class BackgroundGDMProxy : public GDMProxy
 public:
   BackgroundGDMProxy(gdm::GDM &backgroudGDM, gdm::GDM &sampleGDM, const double minimumConcentration);
   virtual ~BackgroundGDMProxy() override;
-  virtual std::vector<std::string> allBackgroundNames() const noexcept;
-  virtual std::vector<std::string> allSampleNames() const noexcept;
+  std::vector<std::string> allAnalyteNames() const noexcept;
+  std::vector<std::string> allBackgroundNames() const noexcept;
+  std::vector<std::string> allSampleNames() const noexcept;
   virtual bool complexes(const std::string &name) const noexcept override;
   virtual std::vector<double> concentrations(const std::string &name) const noexcept override;
   virtual bool contains(const std::string &name) const noexcept override;
@@ -22,7 +23,7 @@ public:
   const gdm::GDM & gdmBackground() const;
   gdm::GDM & gdmSample();
   const gdm::GDM & gdmSample() const;
-  virtual gdm::Constituent get(const std::string &name) override;
+  virtual gdm::Constituent get(const std::string &name) const override;
   virtual bool insert(const gdm::Constituent &ctuent) noexcept override;
   virtual bool isNucleus(const std::string &name) const noexcept override;
   virtual void setConcentrations(const std::string &name, const std::vector<double> &concentrations) noexcept override;

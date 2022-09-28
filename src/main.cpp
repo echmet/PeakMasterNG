@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 
   PMNGMainWindow *w = new PMNGMainWindow{scompWidget, gbox.calculatorInterface(), gbox.resultsModels(), gbox.persistence(), gbox.databaseProxy(),
                                          gbox.resultsModels().analytesExtraInfoModel(), gbox.resultsModels().eigenzoneDetailsModel(),
-                                         gbox.backgroundGDMProxy()};
+                                         gbox.backgroundGDMProxy(), gbox.sampleGDMProxy()};
   QObject::connect(w, &PMNGMainWindow::clearAll, &gbox, &Gearbox::onClearAll);
   w->connectUpdater(&updater);
 

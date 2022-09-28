@@ -44,7 +44,7 @@ public:
                           persistence::Persistence &persistence,
                           DatabaseProxy &dbProxy,
                           AnalytesExtraInfoModel * const analytesEXIModel, const QAbstractTableModel * const eigenzoneDetailsModel,
-                          GDMProxy &GDMProxy,
+                          GDMProxy &backgroundGDMProxy, GDMProxy &sampleGDMProxy,
                           QWidget *parent = nullptr);
   ~PMNGMainWindow() override;
   void connectUpdater(SoftwareUpdater *updater);

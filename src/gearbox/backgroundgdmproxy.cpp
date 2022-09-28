@@ -1,3 +1,5 @@
+// vim: sw=2 ts=2 sts=2 expandtab
+
 #include "backgroundgdmproxy.h"
 
 #include "gdmproxy_p.h"
@@ -14,6 +16,18 @@ BackgroundGDMProxy::BackgroundGDMProxy(gdm::GDM &backgroundGDM, gdm::GDM &sample
 
 BackgroundGDMProxy::~BackgroundGDMProxy()
 {
+}
+
+std::vector<std::string> BackgroundGDMProxy::allAnalyteNames() const noexcept
+{
+  std::vector<std::string> names{};
+
+  for (auto it = h_sampleGDM.cbegin(); it != h_sampleGDM.cend(); it++) {
+    if (h_backgroundGDM.find(it->name()) == h_backgroundGDM.cend())
+      names.emplace_back(it->name());
+  }
+
+  return names;
 }
 
 std::vector<std::string> BackgroundGDMProxy::allBackgroundNames() const noexcept
@@ -109,7 +123,7 @@ const gdm::GDM & BackgroundGDMProxy::gdmSample() const
   return h_sampleGDM;
 }
 
-gdm::Constituent BackgroundGDMProxy::get(const std::string &name)
+gdm::Constituent BackgroundGDMProxy::get(const std::string &name) const
 {
   auto it = h_sampleGDM.find(name);
   if (it == h_sampleGDM.cend())

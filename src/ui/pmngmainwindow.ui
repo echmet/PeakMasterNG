@@ -33,7 +33,7 @@
      <x>0</x>
      <y>0</y>
      <width>1148</width>
-     <height>22</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -78,6 +78,7 @@
     <property name="title">
      <string>Ad&amp;vanced</string>
     </property>
+    <addaction name="actionAdjust_composition_for_target_uEff_over_kBGE"/>
     <addaction name="actionSet_debugging_output"/>
    </widget>
    <addaction name="menuFile"/>
@@ -164,6 +165,11 @@
   <action name="actionSystem_from_clipboard">
    <property name="text">
     <string>System from clipboard</string>
+   </property>
+  </action>
+  <action name="actionAdjust_composition_for_target_uEff_over_kBGE">
+   <property name="text">
+    <string>Adjust composition for target μEff/κBGE</string>
    </property>
   </action>
  </widget>
