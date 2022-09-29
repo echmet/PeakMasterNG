@@ -102,7 +102,11 @@ QSize IonicCompositionDialog::sizeHint() const
   auto fm = ui->qtbv_bgeIonicComposition->fontMetrics();
   const auto model = ui->qtbv_bgeIonicComposition->model();
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+  int width = qRound(fm.width(FILL_TO_STRING) * model->columnCount() * 1.2);
+#else
   int width = qRound(fm.horizontalAdvance(FILL_TO_STRING) * model->columnCount() * 1.2);
+#endif // QT_VERSION
 
   QString longestRow;
   for (int idx = 0; idx < model->rowCount(); idx++) {
@@ -110,7 +114,11 @@ QSize IonicCompositionDialog::sizeHint() const
     if (text.length() > longestRow.length())
       longestRow = text;
   }
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+  width += fm.width(longestRow) + WIDTH_SPACER;
+#else
   width += fm.horizontalAdvance(longestRow) + WIDTH_SPACER;
+#endif // QT_VERSION
 
   int height = fm.height() * (model->rowCount() + 1) * 2 + HEIGHT_SPACER;
 
