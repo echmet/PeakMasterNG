@@ -38,6 +38,15 @@ win32 {
     }
 }
 
+win32_i386 {
+    DEFINES += _WIN32_WINNT=0x0501
+
+    win32-msvc2015 {
+        QMAKE_LFLAGS_WINDOWS = /SUBSYSTEM:WINDOWS,5.01
+        DEFINES += _WIN32_WINNT=0x0501 _USING_V110_SDK71_
+    }
+}
+
 CONFIG(release, debug|release) {
     DEFINES += USE_CRASHHANDLER
 
