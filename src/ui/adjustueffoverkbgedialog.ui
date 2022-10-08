@@ -23,23 +23,6 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="ql_targetuEkB">
-       <property name="text">
-        <string>Target μEff/κBGE</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="FloatingValueLineEdit" name="qle_targetuEkB"/>
-     </item>
-     <item>
-      <widget class="QPushButton" name="qpb_adjust">
-       <property name="text">
-        <string>Adjust</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -63,13 +46,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>FloatingValueLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>src/ui/elementaries/floatingvaluelineedit.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

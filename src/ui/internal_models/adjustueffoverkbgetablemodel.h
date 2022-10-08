@@ -35,11 +35,17 @@ public:
   int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
   QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+  Qt::ItemFlags flags(const QModelIndex &index) const override;
+  bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
 
   void setUnderlyingData(std::vector<Item> data) noexcept;
 
 private:
   std::vector<Item> m_data;
+  int m_floatingPrecision;
+
+signals:
+  void uEffOverkBGEChanged(const QString &constituentName, const double uEffOverkBGE, const double olduEffOverkBGE);
 };
 
 QString uEffOverkBGEText();

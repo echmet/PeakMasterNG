@@ -23,7 +23,6 @@ public:
 
 private:
   void fillModel(const std::map<std::string, double> &uEkBs = {});
-  QPair<QString, bool> selectedConstituent();
 
   Ui::AdjustuEffOverkBGEDialog *ui;
 
@@ -37,7 +36,7 @@ private:
   const bool m_onsagerFuoss;
 
 private slots:
-  void adjust();
+  void adjust(const QString &constituentName, const double uEffOverkBGE, const double olduEffOverkBGE);
 };
 
 #endif // ADJUSTUEFFOVERKBGEDIALOG_H
