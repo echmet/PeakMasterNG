@@ -11,6 +11,7 @@
 
 #include <QMessageBox>
 
+#include <cassert>
 #include <string>
 #include <vector>
 
