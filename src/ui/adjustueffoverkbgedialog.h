@@ -20,6 +20,7 @@ public:
                                     const bool debyeHuckel, const bool onsagerFuoss,
                                     QWidget *parent = nullptr);
   ~AdjustuEffOverkBGEDialog();
+  void reject() override;
 
 private:
   void fillModel(const std::map<std::string, double> &uEkBs = {});

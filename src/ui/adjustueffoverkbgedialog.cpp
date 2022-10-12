@@ -49,19 +49,31 @@ AdjustuEffOverkBGEDialog::AdjustuEffOverkBGEDialog(GDMProxy &backgroundGDMProxy,
     ui->qtbv_allConstituents->setColumnWidth(col, hdr->sizeHintForColumn(col));
   }
 
-  ui->qtbv_allConstituents->setItemDelegateForColumn(3, new FloatingValueDelegate(this));
+  auto delegate = new FloatingValueDelegate{this};
+  ui->qtbv_allConstituents->setItemDelegateForColumn(2, delegate);
+  ui->qtbv_allConstituents->setItemDelegateForColumn(3, delegate);
 
+  connect(m_model, &AdjustuEffOverkBGETableModel::concentrationChanged, this, [this](const QString &constituentName, const double conc, const double oldConc) {
+    try {
+      const auto name = constituentName.toStdString();
+      assert(h_backgroundGDMProxy.contains(name));
+
+      const double cSample = h_backgroundGDMProxy.concentrations(name).at(1);
+      h_backgroundGDMProxy.setConcentrations(name, { conc, cSample });
+
+      uEffOverkBGECalculatorInterface iface{h_backgroundGDMProxy, m_debyeHuckel, m_onsagerFuoss};
+      auto uEkBs = iface.currentuEkBs();
+      fillModel(std::move(uEkBs));
+    } catch (const uEffOverkBGECalculatorInterface::Exception &) {
+      QMessageBox::warning(this, tr("Calculation error"), "Failed to calculate " + uEffOverkBGEText() + ". Is your background composition sensible?");
+      fillModel({});
+    }
+  });
   connect(m_model, &AdjustuEffOverkBGETableModel::uEffOverkBGEChanged, this, &AdjustuEffOverkBGEDialog::adjust);
   connect(ui->buttonBox, &QDialogButtonBox::accepted, this, [this]() {
     this->accept();
   });
   connect(ui->buttonBox, &QDialogButtonBox::rejected, this, [this]() {
-    // Restore original concentrations
-    for (const auto &it : m_originalConcentrations) {
-      const double cSample = h_backgroundGDMProxy.concentrations(it.first).at(1);
-      h_backgroundGDMProxy.setConcentrations(it.first, { it.second, cSample });
-    }
-
     this->reject();
   });
 }
@@ -114,4 +126,15 @@ void AdjustuEffOverkBGEDialog::fillModel(const std::map<std::string, double> &uE
   }
 
   m_model->setUnderlyingData(std::move(data));
+}
+
+void AdjustuEffOverkBGEDialog::reject()
+{
+    // Restore original concentrations
+    for (const auto &it : m_originalConcentrations) {
+      const double cSample = h_backgroundGDMProxy.concentrations(it.first).at(1);
+      h_backgroundGDMProxy.setConcentrations(it.first, { it.second, cSample });
+    }
+
+    QDialog::reject();
 }

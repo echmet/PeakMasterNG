@@ -78,7 +78,7 @@ Qt::ItemFlags AdjustuEffOverkBGETableModel::flags(const QModelIndex &index) cons
     return Qt::NoItemFlags;
 
   // Only uEkB column is editable
-  if (col != 3)
+  if (col < 2 || col > 3)
     return defaultFlags;
 
   return m_data[row].isAnalyte ? defaultFlags : defaultFlags | Qt::ItemIsEditable;
@@ -94,7 +94,7 @@ QVariant AdjustuEffOverkBGETableModel::headerData(int section, Qt::Orientation o
   if (orientation == Qt::Horizontal) {
     switch (section) {
       case 0:
-	return tr("Type");
+        return tr("Type");
       case 1:
         return tr("Name");
       case 2:
@@ -126,20 +126,32 @@ bool AdjustuEffOverkBGETableModel::setData(const QModelIndex &index, const QVari
   if (col < 0 || col >= columnCount() || row < 0 || row >= rowCount())
     return false;
 
-  if (role == Qt::EditRole && col == 3) {
+  if (role == Qt::EditRole) {
     const auto &item = m_data[row];
     if (item.isAnalyte)
       return false;
 
-    bool ok;
-    double uEkB = value.toDouble(&ok);
-    if (!ok)
-      return false;
+    if (col == 2) {
+      bool ok;
+      double conc = value.toDouble(&ok);
+      if (!ok)
+        return false;
 
-    const double olduKeB = item.uEffOverkBGE;
+      const double oldConc = item.concentration;
 
-    emit uEffOverkBGEChanged(item.constituentName, uEkB, olduKeB);
-    return false; // We did not actually change anything, uEffOverkBGEChanged() signal must be handled
+      emit concentrationChanged(item.constituentName, conc, oldConc);
+      return false; // We did not actually change anything, concentrationChanged() signal must be handled
+    } else if (col == 3) {
+      bool ok;
+      double uEkB = value.toDouble(&ok);
+      if (!ok)
+        return false;
+
+      const double olduKeB = item.uEffOverkBGE;
+
+      emit uEffOverkBGEChanged(item.constituentName, uEkB, olduKeB);
+      return false; // We did not actually change anything, uEffOverkBGEChanged() signal must be handled
+    }
   } else if (role == Qt::UserRole + 1) {
     bool ok;
     int prec = value.toInt(&ok);

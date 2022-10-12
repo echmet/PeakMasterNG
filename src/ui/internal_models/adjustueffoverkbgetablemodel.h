@@ -45,6 +45,7 @@ private:
   int m_floatingPrecision;
 
 signals:
+  void concentrationChanged(const QString &constituentName, const double conc, const double oldConc);
   void uEffOverkBGEChanged(const QString &constituentName, const double uEffOverkBGE, const double olduEffOverkBGE);
 };
 
