@@ -12,7 +12,7 @@ class AdjustpHTableModel : public QAbstractTableModel
   Q_OBJECT
 
 public:
-  explicit AdjustpHTableModel(std::vector<std::string> names, const GDMProxy &GDMProxy, QObject *parent = nullptr);
+  explicit AdjustpHTableModel(std::vector<std::string> names, GDMProxy &GDMProxy, QObject *parent = nullptr);
 
   // Header:
   QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
@@ -22,13 +22,15 @@ public:
   int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
   QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+  Qt::ItemFlags flags(const QModelIndex &index) const override;
+  bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
 
   void updateConcentration(const QString &name);
 
 private:
   std::vector<std::string> m_names;
 
-  const GDMProxy &h_GDMProxy;
+  GDMProxy &h_GDMProxy;
 };
 
 #endif // ADJUSTPHTABLEMODEL_H

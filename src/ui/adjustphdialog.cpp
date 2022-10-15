@@ -9,6 +9,7 @@
 #include "../gearbox/phadjusterinterface.h"
 
 #include <QMessageBox>
+#include <QPushButton>
 
 AdjustpHDialog::AdjustpHDialog(GDMProxy &GDMProxy, const bool debyeHuckel, const bool onsagerFuoss,
                                const double currentpH, QWidget *parent) :
@@ -19,6 +20,9 @@ AdjustpHDialog::AdjustpHDialog(GDMProxy &GDMProxy, const bool debyeHuckel, const
   m_onsagerFuoss{onsagerFuoss}
 {
   ui->setupUi(this);
+
+  for (const auto &name : h_GDMProxy.allBackgroundNames())
+    m_originalConcentrations[name] = h_GDMProxy.concentrations(name).at(0);
 
   m_model = new AdjustpHTableModel{h_GDMProxy.allBackgroundNames(), h_GDMProxy, this};
   ui->qtbv_bgeConstituents->setModel(m_model);
@@ -33,12 +37,12 @@ AdjustpHDialog::AdjustpHDialog(GDMProxy &GDMProxy, const bool debyeHuckel, const
 
   ui->qle_currentpH->setText(DoubleToStringConvertor::convert(currentpH));
 
-  connect(ui->qpb_adjust, &QPushButton::clicked, this, [this]() {
-    bool ok;
-    auto pH = getTargetpH(&ok);
-    auto ctuent = selectedConstituent();
-    if (ok)
-      adjustConcentration(ctuent, pH);
+  auto resetButton = ui->buttonBox->button(QDialogButtonBox::Reset);
+  connect(resetButton, &QPushButton::clicked, this, [this]() {
+    restoreConcentrations();
+    for (const auto &it : m_originalConcentrations) {
+      m_model->updateConcentration(QString::fromStdString(it.first));
+    }
   });
   connect(ui->qtbv_bgeConstituents, &QTableView::doubleClicked, this, [this](const QModelIndex &idx) {
     bool ok;
@@ -47,6 +51,11 @@ AdjustpHDialog::AdjustpHDialog(GDMProxy &GDMProxy, const bool debyeHuckel, const
     if (ctuent.isValid() && ok)
       adjustConcentration(ctuent.toString(), pH);
   });
+  connect(ui->qpb_calcpH, &QPushButton::clicked, this, [this]() {
+    calculatepH();
+  });
+
+  calculatepH();
 }
 
 AdjustpHDialog::~AdjustpHDialog()
@@ -62,8 +71,8 @@ void AdjustpHDialog::adjustConcentration(const QString &ctuent, const double tar
   }
 
   try {
-    pHAdjusterInterface iface{ctuent.toStdString(), h_GDMProxy, m_debyeHuckel, m_onsagerFuoss};
-    const double adjustedpH = iface.adjustpH(targetpH);
+    pHAdjusterInterface iface{h_GDMProxy, m_debyeHuckel, m_onsagerFuoss};
+    const double adjustedpH = iface.adjustpH(ctuent.toStdString(), targetpH);
     m_model->updateConcentration(ctuent);
 
     ui->qle_currentpH->setText(DoubleToStringConvertor::convert(adjustedpH));
@@ -76,17 +85,44 @@ void AdjustpHDialog::adjustConcentration(const QString &ctuent, const double tar
   }
 }
 
+void AdjustpHDialog::calculatepH()
+{
+  try {
+    pHAdjusterInterface iface{h_GDMProxy, m_debyeHuckel, m_onsagerFuoss};
+    double pH = iface.calculatepH();
+
+    ui->qle_currentpH->setText(DoubleToStringConvertor::convert(pH));
+  } catch (const pHAdjusterInterface::Exception &ex) {
+    QMessageBox::warning(
+      this,
+      tr("Failed to calculate pH"),
+      QString{tr("Error returned: %1")}.arg(ex.what())
+    );
+  }
+}
+
 double AdjustpHDialog::getTargetpH(bool *ok)
 {
   auto v = ui->qle_targetpH->text();
   const double pH = DoubleToStringConvertor::back(v, ok);
-  if (!ok) {
-    QMessageBox mbox{QMessageBox::Warning, tr("Invalid input"), tr("Invalid pH value")};
-
-    mbox.exec();
-  }
+  if (!ok)
+    QMessageBox::warning(this, tr("Invalid input"), tr("Invalid pH value"));
 
   return pH;
+}
+
+void AdjustpHDialog::reject()
+{
+  restoreConcentrations();
+  QDialog::reject();
+}
+
+void AdjustpHDialog::restoreConcentrations()
+{
+  for (const auto &it : m_originalConcentrations) {
+    const double cSample = h_GDMProxy.concentrations(it.first).at(1);
+    h_GDMProxy.setConcentrations(it.first, { it.second, cSample });
+  }
 }
 
 QString AdjustpHDialog::selectedConstituent()

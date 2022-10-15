@@ -103,33 +103,11 @@ public:
   ECHMET::NonidealityCorrections corrs;
 };
 
-inline
-double calculatepH(const BackgroundGDMProxy &GDMProxy, CalculationContext *ctx)
-{
-  auto backgroundAcVec = conversion::makeECHMETAnalyticalConcentrationsVec(GDMProxy.gdmBackground(), 0, ctx->chemSystem->constituents);
-
-  auto tRet = ctx->solver->estimateDistributionSafe(backgroundAcVec.get(), *ctx->calcProps);
-  if (tRet != ECHMET::RetCode::OK)
-    throw pHAdjusterInterface::Exception{"Estimator failure: " + std::string{ECHMET::errorToString(tRet)}};
-
-  tRet = ctx->solver->solve(backgroundAcVec.get(), *ctx->calcProps, 1000);
-  if (tRet != ECHMET::RetCode::OK)
-    throw pHAdjusterInterface::Exception{"Solver failure: " + std::string{ECHMET::errorToString(tRet)}};
-
-  return ECHMET::IonProps::calculatepH(ctx->ionPropsCtx.get(), ctx->corrs, *ctx->calcProps);
-}
-
-
-pHAdjusterInterface::pHAdjusterInterface(std::string constituentName, BackgroundGDMProxy &GDMProxy,
-                                         const bool debyeHuckel, const bool onsagerFuoss) :
-  m_constituentName{std::move(constituentName)},
+pHAdjusterInterface::pHAdjusterInterface(BackgroundGDMProxy &GDMProxy, const bool debyeHuckel, const bool onsagerFuoss) :
   h_GDMProxy{GDMProxy},
   m_debyeHuckel{debyeHuckel},
   m_onsagerFuoss{onsagerFuoss}
 {
-  if (!h_GDMProxy.contains(m_constituentName))
-    throw Exception{"Constituent " + m_constituentName + "is not present in BGE composition"};
-
   ECHMET::NonidealityCorrections corrs = ECHMET::defaultNonidealityCorrections();
 
   if (m_debyeHuckel)
@@ -145,12 +123,15 @@ pHAdjusterInterface::~pHAdjusterInterface()
   delete m_ctx;
 }
 
-double pHAdjusterInterface::adjustpH(const double targetpH)
+double pHAdjusterInterface::adjustpH(const std::string &manipulatedCtuent, const double targetpH)
 {
   static const size_t MAX_ITERS{300};
   static const double CCORR_PREC{1.0e-6};
 
-  const double cSample = h_GDMProxy.concentrations(m_constituentName).at(1);
+  if (!h_GDMProxy.contains(manipulatedCtuent))
+    throw Exception{"Constituent " + manipulatedCtuent + "is not present in BGE composition"};
+
+  const double cSample = h_GDMProxy.concentrations(manipulatedCtuent).at(1);
 
   double cLeft{CCORR_PREC};
   double cRight = [&]() {
@@ -171,7 +152,7 @@ double pHAdjusterInterface::adjustpH(const double targetpH)
     return max > 2000 ? 2000 : max;
   }();
 
-  const double cOriginal{h_GDMProxy.concentrations(m_constituentName).front()};
+  const double cOriginal{h_GDMProxy.concentrations(manipulatedCtuent).front()};
 
   if (cRight < 2.0 * CCORR_PREC)
     cRight = 2.0 * CCORR_PREC;
@@ -182,20 +163,20 @@ double pHAdjusterInterface::adjustpH(const double targetpH)
   std::vector<double> cVec{cLeft, cSample};
   auto restoreConc = [&]() {
     cVec[0] = cOriginal;
-    h_GDMProxy.setConcentrations(m_constituentName, cVec);
+    h_GDMProxy.setConcentrations(manipulatedCtuent, cVec);
   };
 
   const bool acidic = [&]() {
     try {
       cVec[0] = cLeft;
-      h_GDMProxy.setConcentrations(m_constituentName, cVec);
+      h_GDMProxy.setConcentrations(manipulatedCtuent, cVec);
 
-      const double pHLeft = calculatepH(h_GDMProxy, m_ctx);
+      const double pHLeft = calculatepH();
 
       cVec[0] = cRight;
-      h_GDMProxy.setConcentrations(m_constituentName, cVec);
+      h_GDMProxy.setConcentrations(manipulatedCtuent, cVec);
 
-      const double pHRight = calculatepH(h_GDMProxy, m_ctx);
+      const double pHRight = calculatepH();
 
       return pHRight < pHLeft;
     } catch (Exception &) {
@@ -229,16 +210,16 @@ double pHAdjusterInterface::adjustpH(const double targetpH)
   };
 
   try {
-    h_GDMProxy.setConcentrations(m_constituentName, cVec);
-    double pH = calculatepH(h_GDMProxy, m_ctx);
+    h_GDMProxy.setConcentrations(manipulatedCtuent, cVec);
+    double pH = calculatepH();
 
     while (!pHMatches(pH) && iters < MAX_ITERS) {
       adjustCNow(pH);
       cNow = (cRight - cLeft) / 2.0 + cLeft;
       cVec[0] = cNow;
-      h_GDMProxy.setConcentrations(m_constituentName, cVec);
+      h_GDMProxy.setConcentrations(manipulatedCtuent, cVec);
 
-      pH = calculatepH(h_GDMProxy, m_ctx);
+      pH = calculatepH();
 
       iters++;
     }
@@ -252,4 +233,19 @@ double pHAdjusterInterface::adjustpH(const double targetpH)
 
     throw;
   }
+}
+
+double pHAdjusterInterface::calculatepH()
+{
+  auto backgroundAcVec = conversion::makeECHMETAnalyticalConcentrationsVec(h_GDMProxy.gdmBackground(), 0, m_ctx->chemSystem->constituents);
+
+  auto tRet = m_ctx->solver->estimateDistributionSafe(backgroundAcVec.get(), *m_ctx->calcProps);
+  if (tRet != ECHMET::RetCode::OK)
+    throw pHAdjusterInterface::Exception{"Estimator failure: " + std::string{ECHMET::errorToString(tRet)}};
+
+  tRet = m_ctx->solver->solve(backgroundAcVec.get(), *m_ctx->calcProps, 1000);
+  if (tRet != ECHMET::RetCode::OK)
+    throw pHAdjusterInterface::Exception{"Solver failure: " + std::string{ECHMET::errorToString(tRet)}};
+
+  return ECHMET::IonProps::calculatepH(m_ctx->ionPropsCtx.get(), m_ctx->corrs, *m_ctx->calcProps);
 }

@@ -2,7 +2,7 @@
 
 #include "../../gearbox/gdmproxy.h"
 
-AdjustpHTableModel::AdjustpHTableModel(std::vector<std::string> names, const GDMProxy &GDMProxy, QObject *parent)
+AdjustpHTableModel::AdjustpHTableModel(std::vector<std::string> names, GDMProxy &GDMProxy, QObject *parent)
   : QAbstractTableModel{parent},
     m_names{std::move(names)},
     h_GDMProxy{GDMProxy}
@@ -67,6 +67,52 @@ QVariant AdjustpHTableModel::data(const QModelIndex &index, int role) const
     return h_GDMProxy.concentrations(name).at(0);
 
   return {};
+}
+
+Qt::ItemFlags AdjustpHTableModel::flags(const QModelIndex &index) const
+{
+  static const Qt::ItemFlags defaultFlags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+
+  if (!index.isValid())
+    return Qt::NoItemFlags;
+
+  const int col = index.column();
+  const int row = index.row();
+
+  if (row < 0 || row >= rowCount())
+    return Qt::NoItemFlags;
+
+  return col == 1 ? defaultFlags | Qt::ItemIsEditable : defaultFlags;
+}
+
+bool AdjustpHTableModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+  if (!index.isValid() || !value.isValid())
+    return false;
+
+  if (role != Qt::EditRole)
+    return false;
+
+  const int row = index.row();
+  const int col = index.column();
+
+  if (row < 0 || col >= rowCount())
+    return false;
+  if (col != 1)
+    return false;
+
+  bool ok;
+  double v = value.toDouble(&ok);
+  if (!ok)
+    return false;
+
+  const auto &name = m_names.at(row);
+  auto concs = h_GDMProxy.concentrations(name);
+  concs[0] = v;
+  h_GDMProxy.setConcentrations(name, concs);
+
+  emit dataChanged(index, index, { role });
+  return true;
 }
 
 void AdjustpHTableModel::updateConcentration(const QString &name)

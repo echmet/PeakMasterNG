@@ -56,12 +56,12 @@
     </widget>
    </item>
    <item>
-    <widget class="QTableView" name="qtbv_bgeConstituents"/>
+    <widget class="CopiableItemsTableView" name="qtbv_bgeConstituents"/>
    </item>
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Enter the desired target pH and select a BGE constituent whose concentration shall be adjusted to achieve the target pH.</string>
+      <string>Enter the desired target pH and double-click on the name of the constituent whose concentration you wish to adjust.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -71,9 +71,9 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="qpb_adjust">
+      <widget class="QPushButton" name="qpb_calcpH">
        <property name="text">
-        <string>Adjust</string>
+        <string>Calc pH</string>
        </property>
       </widget>
      </item>
@@ -83,7 +83,7 @@
         <enum>Qt::Horizontal</enum>
        </property>
        <property name="standardButtons">
-        <set>QDialogButtonBox::Close</set>
+        <set>QDialogButtonBox::Close|QDialogButtonBox::Ok|QDialogButtonBox::Reset</set>
        </property>
       </widget>
      </item>
@@ -96,6 +96,11 @@
    <class>FloatingValueLineEdit</class>
    <extends>QLineEdit</extends>
    <header>src/ui/elementaries/floatingvaluelineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CopiableItemsTableView</class>
+   <extends>QTableView</extends>
+   <header>src/ui/copiableitemstableview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

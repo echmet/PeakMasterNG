@@ -3,6 +3,9 @@
 
 #include <QDialog>
 
+#include <map>
+#include <string>
+
 namespace Ui {
   class AdjustpHDialog;
 }
@@ -20,16 +23,20 @@ public:
                           const double currentpH,
                           QWidget *parent = nullptr);
   ~AdjustpHDialog();
+  void reject() override;
 
 private:
   void adjustConcentration(const QString &ctuent, double targetpH);
+  void calculatepH();
   double getTargetpH(bool *ok);
+  void restoreConcentrations();
   QString selectedConstituent();
 
   Ui::AdjustpHDialog *ui;
 
   BackgroundGDMProxy &h_GDMProxy;
   AdjustpHTableModel *m_model;
+  std::map<std::string, double> m_originalConcentrations;
   const bool m_debyeHuckel;
   const bool m_onsagerFuoss;
 };

@@ -14,13 +14,13 @@ public:
     using std::runtime_error::runtime_error;
   };
 
-  pHAdjusterInterface(std::string constituentName, BackgroundGDMProxy &GDMProxy,
-                      const bool debyeHuckel, const bool onsagerFuoss);
+  pHAdjusterInterface(BackgroundGDMProxy &GDMProxy, const bool debyeHuckel, const bool onsagerFuoss);
   pHAdjusterInterface(const pHAdjusterInterface &) = delete;
   pHAdjusterInterface(pHAdjusterInterface &&) = delete;
   ~pHAdjusterInterface();
 
-  double adjustpH(const double targetpH);
+  double adjustpH(const std::string &manipulatedCtuent, const double targetpH);
+  double calculatepH();
 
   pHAdjusterInterface & operator=(const pHAdjusterInterface &) = delete;
   pHAdjusterInterface & operator=(pHAdjusterInterface &&) = delete;
@@ -28,7 +28,6 @@ public:
 private:
   CalculationContext *m_ctx;
 
-  const std::string m_constituentName;
   BackgroundGDMProxy &h_GDMProxy;
   const bool m_debyeHuckel;
   const bool m_onsagerFuoss;
