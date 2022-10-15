@@ -1,6 +1,7 @@
 // vim: sw=2 ts=2 sts=2 expandtab
 
 #include "adjustueffoverkbgetablemodel.h"
+#include "../../gearbox/doubletostringconvertor.h"
 #include "../../globals.h"
 
 QString uEffOverkBGEText()
@@ -42,9 +43,9 @@ QVariant AdjustuEffOverkBGETableModel::data(const QModelIndex &index, int role) 
       case 1:
         return item.constituentName;
       case 2:
-        return item.concentration;
+        return formattedFloat(item.concentration);
       case 3:
-        return item.uEffOverkBGE;
+        return formattedFloat(item.uEffOverkBGE);
     }
   } else if (role == Qt::EditRole) {
     switch (col) {
@@ -54,11 +55,6 @@ QVariant AdjustuEffOverkBGETableModel::data(const QModelIndex &index, int role) 
   } else if (role == Qt::UserRole + 1) {
     // Precision value for the FloatingValueDelegate
     return m_floatingPrecision;
-  } else if (role == Qt::UserRole + 2) {
-    switch (col) {
-      case 0:
-        return item.isAnalyte;
-     }
   }
 
   return {};
@@ -82,6 +78,11 @@ Qt::ItemFlags AdjustuEffOverkBGETableModel::flags(const QModelIndex &index) cons
     return defaultFlags;
 
   return m_data[row].isAnalyte ? defaultFlags : defaultFlags | Qt::ItemIsEditable;
+}
+
+QString AdjustuEffOverkBGETableModel::formattedFloat(double d) const
+{
+  return DoubleToStringConvertor::convert(d, 'd', m_floatingPrecision);
 }
 
 QVariant AdjustuEffOverkBGETableModel::headerData(int section, Qt::Orientation orientation, int role) const

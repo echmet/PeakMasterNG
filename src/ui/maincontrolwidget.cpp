@@ -4,11 +4,11 @@
 #include "eigenzonedetailsdialog.h"
 #include "ioniccompositiondialog.h"
 #include "nonidealitycorrectionsdialog.h"
-#include "elementaries/uihelpers.h"
 #include "adjustphdialog.h"
 
 #include "../globals.h"
 
+#include "../gearbox/floatingvaluedelegate.h"
 #include "../gearbox/results_models/eigenzonedetailsmodel.h"
 
 #include <cassert>
@@ -26,7 +26,9 @@ MainControlWidget::MainControlWidget(GDMProxy &GDMProxy, ResultsModels &resultsM
   m_bgeIonicCompositionModel{resultsModels.bgeIonicCompositionModel()},
   m_eigenzoneDetailsModel{resultsModels.eigenzoneDetailsModel()},
   m_bgePropsMapperModel{resultsModels.backgroundMapperModel()},
-  h_GDMProxy{GDMProxy}
+  h_GDMProxy{GDMProxy},
+  m_fltDelegateRunSetup{new FloatingValueDelegate{false, this}},
+  m_fltDelegateBackgroundProps{new FloatingValueDelegate{false, this}}
 {
   ui->setupUi(this);
 
@@ -132,7 +134,7 @@ void MainControlWidget::initBackgroundPropsModel(BackgroundPropertiesMapping::Ma
   m_backgroundPropsMapper = new QDataWidgetMapper{this};
   m_backgroundPropsMapper->setModel(model);
 
-  m_backgroundPropsMapper->setItemDelegate(&m_fltDelegateBackgroundProps);
+  m_backgroundPropsMapper->setItemDelegate(m_fltDelegateBackgroundProps);
 
   m_backgroundPropsMapper->addMapping(ui->qle_bufferCapacity, model->indexFromItem(BackgroundPropertiesMapping::Items::BUFFER_CAPACITY));
   m_backgroundPropsMapper->addMapping(ui->qle_conductivity, model->indexFromItem(BackgroundPropertiesMapping::Items::CONDUCTIVITY));
@@ -157,7 +159,7 @@ void MainControlWidget::initRunSetupModel()
   m_runSetupMapperModel.setUnderlyingData(&m_runSetupMappedData);
 
   m_runSetupMapper->setModel(&m_runSetupMapperModel);
-  m_runSetupMapper->setItemDelegate(&m_fltDelegateRunSetup);
+  m_runSetupMapper->setItemDelegate(m_fltDelegateRunSetup);
   m_runSetupMapper->addMapping(ui->qle_totalLength, m_runSetupMapperModel.indexFromItem(RunSetupItems::TOTAL_LENGTH));
   m_runSetupMapper->addMapping(ui->qle_detectorPosition, m_runSetupMapperModel.indexFromItem(RunSetupItems::DETECTOR_POSITION));
   m_runSetupMapper->addMapping(ui->qle_drivingVoltage, m_runSetupMapperModel.indexFromItem(RunSetupItems::DRIVING_VOLTAGE));

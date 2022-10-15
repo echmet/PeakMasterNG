@@ -2,7 +2,6 @@
 #define MAINCONTROLWIDGET_H
 
 #include "../mappers/floatmappermodel.h"
-#include "../gearbox/floatingvaluedelegate.h"
 #include "../gearbox/results_models/resultsmodels.h"
 #include "../gearbox/additionalfloatingvalidator.h"
 
@@ -14,6 +13,7 @@ namespace Ui {
 }
 
 class AnalytesDissociationModel;
+class FloatingValueDelegate;
 class GDMProxy;
 class EigenzoneDetailsDialog;
 class IonicCompositionDialog;
@@ -91,8 +91,8 @@ private:
   IonicCompositionDialog *m_bgeIonicCompDlg;
   NonidealityCorrectionsDialog *m_nonidealityCorrectionsDlg;
 
-  FloatingValueDelegate m_fltDelegateRunSetup;
-  FloatingValueDelegate m_fltDelegateBackgroundProps;
+  FloatingValueDelegate *m_fltDelegateRunSetup;
+  FloatingValueDelegate *m_fltDelegateBackgroundProps;
 
   std::shared_ptr<AdditionalFloatingValidator> m_mustBePositiveAV;
 

@@ -8,7 +8,7 @@
 #include "qwt_scale_map.h"
 #include "doubleclickableqwtplotzoomer.h"
 #include "ploteventfilter.h"
-#include "../gearbox/doubletostringconvertor.h"
+#include "../gearbox/floatingvaluedelegate.h"
 
 #include <QDataWidgetMapper>
 #include <QStandardItemModel>
@@ -45,7 +45,8 @@ size_t findClosestIdx(const std::vector<QPointF> &data, const double currentX)
 SignalPlotWidget::SignalPlotWidget(QWidget *parent) :
   QWidget(parent),
   ui(new Ui::SignalPlotWidget),
-  m_showingAnalyteSignal(false)
+  m_showingAnalyteSignal(false),
+  m_fltDelegate{new FloatingValueDelegate{false, this}}
 {
   ui->setupUi(this);
 
@@ -196,7 +197,7 @@ void SignalPlotWidget::setBrush(const SignalStyle style)
 void SignalPlotWidget::setPlotParamsMapper(FloatMapperModel<PlotParamsItems> *model)
 {
   m_plotParamsMapper->setModel(model);
-  m_plotParamsMapper->setItemDelegate(&m_fltDelegate);
+  m_plotParamsMapper->setItemDelegate(m_fltDelegate);
   m_plotParamsMapper->addMapping(ui->qle_plotCutoff, model->indexFromItem(PlotParamsItems::CUTOFF));
   m_plotParamsMapper->addMapping(ui->qle_injZoneLength, model->indexFromItem(PlotParamsItems::INJ_ZONE_LENGTH));
   m_plotParamsMapper->toFirst();

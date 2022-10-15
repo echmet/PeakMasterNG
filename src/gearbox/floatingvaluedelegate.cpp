@@ -6,7 +6,9 @@
 
 #include <QDebug>
 
-FloatingValueDelegate::FloatingValueDelegate(QObject *parent) : QItemDelegate(parent)
+FloatingValueDelegate::FloatingValueDelegate(bool fixedPrecision, QObject *parent) :
+  QItemDelegate{parent},
+  m_fixedPrecision{fixedPrecision}
 {
 }
 
@@ -73,7 +75,8 @@ void FloatingValueDelegate::setModelData(QWidget *editor, QAbstractItemModel *mo
 
   const int prec  = DoubleToStringConvertor::decimalDigits(s);
   /* Calling order matters. See FloatingMapperModel::setData() for details */
-  model->setData(index, prec, Qt::UserRole + 1);
+  if (!m_fixedPrecision)
+	model->setData(index, prec, Qt::UserRole + 1);
   model->setData(index, value, Qt::EditRole);
 }
 

@@ -45,13 +45,13 @@ SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMPro
   ui->qtbv_backgroudConstituents->setModel(m_backgroundConstituentsModel);
   enableDragDrop(ui->qtbv_backgroudConstituents);
   m_ccDelegateBGE = new ComplexationColorizerDelegate{m_backgroundConstituentsModel, this};
-  m_fltDelegateBGE = new FloatingValueDelegate{this};
+  m_fltDelegateBGE = new FloatingValueDelegate{false, this};
 
   m_analytesModel = new AnalytesConstituentsModel{analytesEXIModel, { "Sample" }, sampleGDM, cpxMgr, this};
   ui->qtbv_analytes->setModel(m_analytesModel);
   enableDragDrop(ui->qtbv_analytes);
   m_ccDelegateAnalytes = new ComplexationColorizerDelegate{m_analytesModel, this};
-  m_fltDelegateAnalytes = new FloatingValueDelegate{this};
+  m_fltDelegateAnalytes = new FloatingValueDelegate{false, this};
 
   connect(ui->qpb_addAnalyte, &QPushButton::clicked, this, &SystemCompositionWidget::onAddAnalyte);
   connect(ui->qpb_addBGE, &QPushButton::clicked, this, &SystemCompositionWidget::onAddBGE);

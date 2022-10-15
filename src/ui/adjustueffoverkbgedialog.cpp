@@ -49,7 +49,7 @@ AdjustuEffOverkBGEDialog::AdjustuEffOverkBGEDialog(GDMProxy &backgroundGDMProxy,
     ui->qtbv_allConstituents->setColumnWidth(col, hdr->sizeHintForColumn(col));
   }
 
-  auto delegate = new FloatingValueDelegate{this};
+  auto delegate = new FloatingValueDelegate{true, this};
   ui->qtbv_allConstituents->setItemDelegateForColumn(2, delegate);
   ui->qtbv_allConstituents->setItemDelegateForColumn(3, delegate);
 

@@ -7,7 +7,6 @@ class QwtPlotPicker;
 class QwtPlotZoomer;
 
 #include "../gearbox/calculatorinterface.h"
-#include "../gearbox/floatingvaluedelegate.h"
 
 #include <QPointF>
 #include <QVector>
@@ -17,6 +16,7 @@ namespace Ui {
   class SignalPlotWidget;
 }
 
+class FloatingValueDelegate;
 class QDataWidgetMapper;
 class QStandardItemModel;
 
@@ -63,7 +63,7 @@ private:
 
   std::vector<CalculatorInterface::TimeDependentZoneInformation> m_tdzi;
 
-  FloatingValueDelegate m_fltDelegate;
+  FloatingValueDelegate *m_fltDelegate;
   QDataWidgetMapper *m_plotParamsMapper;
 
 private slots:
