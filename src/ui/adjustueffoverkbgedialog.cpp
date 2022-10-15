@@ -54,6 +54,8 @@ AdjustuEffOverkBGEDialog::AdjustuEffOverkBGEDialog(GDMProxy &backgroundGDMProxy,
   ui->qtbv_allConstituents->setItemDelegateForColumn(3, delegate);
 
   connect(m_model, &AdjustuEffOverkBGETableModel::concentrationChanged, this, [this](const QString &constituentName, const double conc, const double oldConc) {
+    (void)oldConc;
+
     try {
       const auto name = constituentName.toStdString();
       assert(h_backgroundGDMProxy.contains(name));
