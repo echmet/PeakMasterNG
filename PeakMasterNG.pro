@@ -177,7 +177,10 @@ SOURCES += \
     src/persistence/swsettings.cpp \
     src/ui/adjustueffoverkbgedialog.cpp \
     src/ui/internal_models/adjustueffoverkbgetablemodel.cpp \
-    src/gearbox/ueffoverkbgecalculatorinterface.cpp
+    src/gearbox/ueffoverkbgecalculatorinterface.cpp \
+    src/ui/compositioneditorwidget.cpp \
+    src/ui/backgroundcompositionwidget.cpp \
+    src/ui/analytescompositionwidget.cpp
 
 HEADERS += \
     src/gearbox/phadjusterinterface.h \
@@ -300,7 +303,10 @@ HEADERS += \
     src/persistence/swsettings.h \
     src/ui/adjustueffoverkbgedialog.h \
     src/ui/internal_models/adjustueffoverkbgetablemodel.h \
-    src/gearbox/ueffoverkbgecalculatorinterface.h
+    src/gearbox/ueffoverkbgecalculatorinterface.h \
+    src/ui/compositioneditorwidget.h \
+    src/ui/backgroundcompositionwidget.h \
+    src/ui/analytescompositionwidget.h
 
 FORMS += \
     src/ui/adjustphdialog.ui \
@@ -325,7 +331,8 @@ FORMS += \
     src/ui/checkforupdatedialog.ui \
     src/ui/softwareupdatewidget.ui \
     src/ui/autoupdatecheckdialog.ui \
-    src/ui/adjustueffoverkbgedialog.ui
+    src/ui/adjustueffoverkbgedialog.ui \
+    src/ui/compositioneditorwidget.ui
 
 unix {
     QMAKE_CXXFLAGS += "-Wall -Wextra -pedantic"

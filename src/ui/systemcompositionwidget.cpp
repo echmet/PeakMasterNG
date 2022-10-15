@@ -7,25 +7,15 @@
 #include "editconstituentdialog.h"
 #include "../gearbox/constituentmanipulator.h"
 #include "../gearbox/complexationmanager.h"
-#include "complexationcolorizerdelegate.h"
-#include "../gearbox/floatingvaluedelegate.h"
 #include "../gearbox/databaseproxy.h"
-#include "analytesconstituentsheader.h"
-#include "backgroundconstituentsheader.h"
+#include "analytescompositionwidget.h"
+#include "backgroundcompositionwidget.h"
+#include "compositioneditorwidget.h"
 
 #include <QBoxLayout>
 #include <QHeaderView>
 #include <QMessageBox>
-
-static
-void enableDragDrop(QTableView *v)
-{
- v->setDragDropMode(QAbstractItemView::DragDrop);
- v->setDragDropOverwriteMode(false);
- v->setDropIndicatorShown(true);
- v->setDragEnabled(true);
- v->setAcceptDrops(true);
-}
+#include <QSplitter>
 
 SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMProxy &sampleGDM, ComplexationManager &cpxMgr, DatabaseProxy &dbProxy,
                                                  const AnalytesExtraInfoModel * const analytesEXIModel,
@@ -42,24 +32,18 @@ SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMPro
   ui->setupUi(this);
 
   m_backgroundConstituentsModel = new BackgroundConstituentsModel{BGEEffMobsModel, { "BGE", "Sample" }, backgroundGDM, cpxMgr, this};
-  ui->qtbv_backgroudConstituents->setModel(m_backgroundConstituentsModel);
-  enableDragDrop(ui->qtbv_backgroudConstituents);
-  m_ccDelegateBGE = new ComplexationColorizerDelegate{m_backgroundConstituentsModel, this};
-  m_fltDelegateBGE = new FloatingValueDelegate{false, this};
-
   m_analytesModel = new AnalytesConstituentsModel{analytesEXIModel, { "Sample" }, sampleGDM, cpxMgr, this};
-  ui->qtbv_analytes->setModel(m_analytesModel);
-  enableDragDrop(ui->qtbv_analytes);
-  m_ccDelegateAnalytes = new ComplexationColorizerDelegate{m_analytesModel, this};
-  m_fltDelegateAnalytes = new FloatingValueDelegate{false, this};
 
-  connect(ui->qpb_addAnalyte, &QPushButton::clicked, this, &SystemCompositionWidget::onAddAnalyte);
-  connect(ui->qpb_addBGE, &QPushButton::clicked, this, &SystemCompositionWidget::onAddBGE);
-  connect(ui->qpb_removeAnalyte, &QPushButton::clicked, this, &SystemCompositionWidget::onRemoveAnalyte);
-  connect(ui->qpb_removeBGE, &QPushButton::clicked, this, &SystemCompositionWidget::onRemoveBGE);
+  m_background = new BackgroundCompositionWidget{m_backgroundConstituentsModel, this};
+  m_analytes = new AnalytesCompositionWidget{m_analytesModel, this};
 
-  connect(ui->qtbv_analytes, &QTableView::doubleClicked, this, &SystemCompositionWidget::onAnalytesDoubleClicked);
-  connect(ui->qtbv_backgroudConstituents, &QTableView::doubleClicked, this, &SystemCompositionWidget::onBGEDoubleClicked);
+  connect(m_background, &CompositionEditorWidget::addConstituent, this, &SystemCompositionWidget::onAddBGE);
+  connect(m_background, &CompositionEditorWidget::removeConstituent, this, &SystemCompositionWidget::onRemoveBGE);
+  connect(m_background, &CompositionEditorWidget::editRequested, this, &SystemCompositionWidget::onBGEEditRequested);
+
+  connect(m_analytes, &CompositionEditorWidget::addConstituent, this, &SystemCompositionWidget::onAddAnalyte);
+  connect(m_analytes, &CompositionEditorWidget::removeConstituent, this, &SystemCompositionWidget::onRemoveAnalyte);
+  connect(m_analytes, &CompositionEditorWidget::editRequested, this, &SystemCompositionWidget::onAnalytesEditRequested);
 
   connect(&cpxMgr, &ComplexationManager::complexationStatusChanged, m_backgroundConstituentsModel, &AbstractConstituentsModelBase::onComplexationStatusUpdated);
   connect(&cpxMgr, &ComplexationManager::complexationStatusChanged, m_analytesModel, &AbstractConstituentsModelBase::onComplexationStatusUpdated);
@@ -73,38 +57,17 @@ SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMPro
   connect(m_analytesModel, &AbstractConstituentsModelBase::rowsInserted, this, &SystemCompositionWidget::onCompositionChanged);
   connect(m_analytesModel, &AbstractConstituentsModelBase::rowsRemoved, this, &SystemCompositionWidget::onCompositionChanged);
 
-  ui->qtbv_backgroudConstituents->setItemDelegateForColumn(0, m_ccDelegateBGE);
-  ui->qtbv_backgroudConstituents->setItemDelegateForColumn(3, m_fltDelegateBGE);
-  ui->qtbv_backgroudConstituents->setItemDelegateForColumn(4, m_fltDelegateBGE);
-  ui->qtbv_analytes->setItemDelegateForColumn(0, m_ccDelegateAnalytes);
-  ui->qtbv_analytes->setItemDelegateForColumn(3, m_fltDelegateAnalytes);
-
-  ui->qtbv_backgroudConstituents->setMinimumHeight(100);
-  ui->qtbv_analytes->setMinimumHeight(100);
-
-  auto bch = new BackgroundConstituentsHeader{Qt::Horizontal, ui->qtbv_backgroudConstituents};
-  ui->qtbv_backgroudConstituents->setHorizontalHeader(bch);
-  for (int col= 0; col < m_backgroundConstituentsModel->firstExtraInfoColumn(); col++)
-    ui->qtbv_backgroudConstituents->horizontalHeader()->setSectionResizeMode(col, QHeaderView::ResizeToContents);
-  for (int col = m_backgroundConstituentsModel->firstExtraInfoColumn(); col < m_backgroundConstituentsModel->columnCount(QModelIndex{}); col++)
-    ui->qtbv_backgroudConstituents->setColumnWidth(col, bch->sizeHintForColumn(col));
-
-  auto ach = new AnalytesConstituentsHeader{Qt::Horizontal, ui->qtbv_analytes};
-  ui->qtbv_analytes->setHorizontalHeader(ach);
-
-  for (int col = 0; col < m_analytesModel->firstExtraInfoColumn(); col++)
-    ui->qtbv_analytes->horizontalHeader()->setSectionResizeMode(col, QHeaderView::ResizeToContents);
-  for (int col = m_analytesModel->firstExtraInfoColumn(); col < m_analytesModel->columnCount(QModelIndex{}); col++)
-    ui->qtbv_analytes->setColumnWidth(col, ach->sizeHintForColumn(col));
-
   auto layout = qobject_cast<QBoxLayout *>(this->layout());
   if (layout == nullptr)
     throw std::runtime_error{"Layout of SystemCompositionWidget is expected to be a QBoxLayout"};
 
-  layout->setStretch(0, 4);
-  layout->setStretch(1, 5);
+  auto splitter = new QSplitter{Qt::Horizontal, this};
+  layout->addWidget(splitter);
+  splitter->addWidget(m_background);
+  splitter->addWidget(m_analytes);
 
-  setControlsIcons();
+  splitter->setStretchFactor(0, 2);
+  splitter->setStretchFactor(1, 3);
 }
 
 SystemCompositionWidget::~SystemCompositionWidget()
@@ -151,8 +114,8 @@ AbstractConstituentsModelBase * SystemCompositionWidget::backgroundModel() noexc
 
 void SystemCompositionWidget::commit()
 {
-  m_fltDelegateBGE->forceCommit();
-  m_fltDelegateAnalytes->forceCommit();
+  m_background->forceCommit();
+  m_analytes->forceCommit();
 }
 
 void SystemCompositionWidget::editComplexation(const QString &name)
@@ -229,13 +192,13 @@ void SystemCompositionWidget::removeConstituent(const QModelIndexList &indexes, 
 void SystemCompositionWidget::onAddAnalyte()
 {
   if (addConstituent(h_sampleGDM, m_analytesModel))
-    ui->qtbv_analytes->resizeColumnToContents(2);
+    m_analytes->resizeHeader();
 }
 
 void SystemCompositionWidget::onAddBGE()
 {
   if (addConstituent(h_backgroundGDM, m_backgroundConstituentsModel))
-    ui->qtbv_backgroudConstituents->resizeColumnToContents(2);
+    m_background->resizeHeader();
 }
 
 void SystemCompositionWidget::onAddToDatabase(const EditConstituentDialog *dlg)
@@ -258,14 +221,14 @@ void SystemCompositionWidget::onAnalytesDataChanged(const QModelIndex &topLeft, 
     onCompositionChanged();
 }
 
-void SystemCompositionWidget::onAnalytesDoubleClicked(const QModelIndex &idx)
+void SystemCompositionWidget::onAnalytesEditRequested(const QModelIndex &idx)
 {
   if (!idx.isValid())
     return;
 
   const QVariant v = m_analytesModel->data(m_analytesModel->index(idx.row(), 0), Qt::UserRole);
   handleDoubleClick(idx.column(), v, h_sampleGDM, m_analytesModel);
-  ui->qtbv_analytes->resizeColumnToContents(2);
+  m_analytes->resizeHeader();
 }
 
 void  SystemCompositionWidget::onBackgroundChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
@@ -277,14 +240,14 @@ void  SystemCompositionWidget::onBackgroundChanged(const QModelIndex &topLeft, c
     onCompositionChanged();
 }
 
-void SystemCompositionWidget::onBGEDoubleClicked(const QModelIndex &idx)
+void SystemCompositionWidget::onBGEEditRequested(const QModelIndex &idx)
 {
   if (!idx.isValid())
     return;
 
   const QVariant v = m_backgroundConstituentsModel->data(m_backgroundConstituentsModel->index(idx.row(), 0), Qt::UserRole);
   handleDoubleClick(idx.column(), v, h_backgroundGDM, m_backgroundConstituentsModel);
-  ui->qtbv_backgroudConstituents->resizeColumnToContents(2);
+  m_background->resizeHeader();
 }
 
 void SystemCompositionWidget::onCompositionChanged()
@@ -292,35 +255,14 @@ void SystemCompositionWidget::onCompositionChanged()
   emit compositionChanged();
 }
 
-void SystemCompositionWidget::onRemoveAnalyte()
+void SystemCompositionWidget::onRemoveAnalyte(const QModelIndexList &indices)
 {
-  const auto indexes = ui->qtbv_analytes->selectionModel()->selectedIndexes();
-
-  removeConstituent(indexes, h_sampleGDM, m_analytesModel);
+  removeConstituent(indices, h_sampleGDM, m_analytesModel);
 }
 
-void SystemCompositionWidget::onRemoveBGE()
+void SystemCompositionWidget::onRemoveBGE(const QModelIndexList &indices)
 {
-  const auto indexes = ui->qtbv_backgroudConstituents->selectionModel()->selectedIndexes();
-
-  removeConstituent(indexes, h_backgroundGDM, m_backgroundConstituentsModel);
-}
-
-void SystemCompositionWidget::setControlsIcons()
-{
-#ifdef Q_OS_LINUX
-  ui->qpb_addAnalyte->setIcon(QIcon::fromTheme("list-add"));
-  ui->qpb_addBGE->setIcon(QIcon::fromTheme("list-add"));
-
-  ui->qpb_removeAnalyte->setIcon(QIcon::fromTheme("list-remove"));
-  ui->qpb_removeBGE->setIcon(QIcon::fromTheme("list-remove"));
-#else
-  ui->qpb_addAnalyte->setIcon(style()->standardIcon(QStyle::SP_DialogOkButton));
-  ui->qpb_addBGE->setIcon(style()->standardIcon(QStyle::SP_DialogOkButton));
-
-  ui->qpb_removeAnalyte->setIcon(style()->standardIcon(QStyle::SP_DialogCancelButton));
-  ui->qpb_removeBGE->setIcon(style()->standardIcon(QStyle::SP_DialogCancelButton));
-#endif // Q_OS_
+  removeConstituent(indices, h_backgroundGDM, m_backgroundConstituentsModel);
 }
 
 void SystemCompositionWidget::setViscosityCorrectionEnabled(const bool enabled)

@@ -6,87 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>405</width>
     <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
-   <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QLabel" name="ql_backgroundComposition">
-       <property name="text">
-        <string>Background composition:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="CopiableItemsTableView" name="qtbv_backgroudConstituents"/>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QPushButton" name="qpb_addBGE">
-         <property name="text">
-          <string>Add BGE</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="qpb_removeBGE">
-         <property name="text">
-          <string>Remove BGE</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
-     <item>
-      <widget class="QLabel" name="ql_analytes">
-       <property name="text">
-        <string>Analytes:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="CopiableItemsTableView" name="qtbv_analytes"/>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
-       <item>
-        <widget class="QPushButton" name="qpb_addAnalyte">
-         <property name="text">
-          <string>Add analyte</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="qpb_removeAnalyte">
-         <property name="text">
-          <string>Remove analyte</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </item>
-  </layout>
+  <layout class="QHBoxLayout" name="horizontalLayout"/>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>CopiableItemsTableView</class>
-   <extends>QTableView</extends>
-   <header>src/ui/copiableitemstableview.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -15,6 +15,7 @@ class BackgroundConstituentsModel;
 class BackgroundEffectiveMobilitiesModel;
 class ComplexationColorizerDelegate;
 class ComplexationManager;
+class CompositionEditorWidget;
 class EditConstituentDialog;
 class DatabaseProxy;
 class GDMProxy;
@@ -52,10 +53,8 @@ private:
 
   AnalytesConstituentsModel *m_analytesModel;
   BackgroundConstituentsModel *m_backgroundConstituentsModel;
-  ComplexationColorizerDelegate *m_ccDelegateAnalytes;
-  ComplexationColorizerDelegate *m_ccDelegateBGE;
-  FloatingValueDelegate *m_fltDelegateAnalytes;
-  FloatingValueDelegate *m_fltDelegateBGE;
+  CompositionEditorWidget *m_background;
+  CompositionEditorWidget *m_analytes;
 
   bool m_viscosityCorrectionEnabled;
 
@@ -65,11 +64,11 @@ private slots:
   void onAddToDatabase(const EditConstituentDialog *dlg);
   void onAnalytesDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles);
   void onBackgroundChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles);
-  void onAnalytesDoubleClicked(const QModelIndex &idx);
-  void onBGEDoubleClicked(const QModelIndex &idx);
+  void onAnalytesEditRequested(const QModelIndex &idx);
+  void onBGEEditRequested(const QModelIndex &idx);
   void onCompositionChanged();
-  void onRemoveAnalyte();
-  void onRemoveBGE();
+  void onRemoveAnalyte(const QModelIndexList &indices);
+  void onRemoveBGE(const QModelIndexList &indices);
 
 signals:
   void compositionChanged();
