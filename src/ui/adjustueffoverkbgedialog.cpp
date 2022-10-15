@@ -10,6 +10,7 @@
 #include "../gearbox/samplegdmproxy.h"
 
 #include <QMessageBox>
+#include <QPushButton>
 
 #include <cassert>
 #include <string>
@@ -53,6 +54,18 @@ AdjustuEffOverkBGEDialog::AdjustuEffOverkBGEDialog(GDMProxy &backgroundGDMProxy,
   ui->qtbv_allConstituents->setItemDelegateForColumn(2, delegate);
   ui->qtbv_allConstituents->setItemDelegateForColumn(3, delegate);
 
+  auto resetButton = ui->buttonBox->button(QDialogButtonBox::Reset);
+  connect(resetButton, &QPushButton::clicked, [this]() {
+    restoreConcentrations();
+
+    try {
+      uEffOverkBGECalculatorInterface iface{h_backgroundGDMProxy, m_debyeHuckel, m_onsagerFuoss};
+      auto uEkBs = iface.currentuEkBs();
+      fillModel(std::move(uEkBs));
+    } catch (const uEffOverkBGECalculatorInterface::Exception &) {
+      fillModel({});
+    }
+  });
   connect(m_model, &AdjustuEffOverkBGETableModel::concentrationChanged, this, [this](const QString &constituentName, const double conc, const double oldConc) {
     (void)oldConc;
 
@@ -100,7 +113,6 @@ void AdjustuEffOverkBGEDialog::adjust(const QString &constituentName, const doub
 
     h_backgroundGDMProxy.setConcentrations(name, { cAdjusted, cSample });
     fillModel(iface.currentuEkBs());
-
   } catch (const uEffOverkBGECalculatorInterface::Exception &ex) {
     // Make sure we reset concentrations to their original values
     h_backgroundGDMProxy.setConcentrations(name, { cOriginal, cSample });
@@ -132,11 +144,14 @@ void AdjustuEffOverkBGEDialog::fillModel(const std::map<std::string, double> &uE
 
 void AdjustuEffOverkBGEDialog::reject()
 {
-    // Restore original concentrations
-    for (const auto &it : m_originalConcentrations) {
-      const double cSample = h_backgroundGDMProxy.concentrations(it.first).at(1);
-      h_backgroundGDMProxy.setConcentrations(it.first, { it.second, cSample });
-    }
+  restoreConcentrations();
+  QDialog::reject();
+}
 
-    QDialog::reject();
+void AdjustuEffOverkBGEDialog::restoreConcentrations()
+{
+  for (const auto &it : m_originalConcentrations) {
+    const double cSample = h_backgroundGDMProxy.concentrations(it.first).at(1);
+    h_backgroundGDMProxy.setConcentrations(it.first, { it.second, cSample });
+  }
 }

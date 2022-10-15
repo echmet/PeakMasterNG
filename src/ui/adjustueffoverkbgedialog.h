@@ -24,6 +24,7 @@ public:
 
 private:
   void fillModel(const std::map<std::string, double> &uEkBs = {});
+  void restoreConcentrations();
 
   Ui::AdjustuEffOverkBGEDialog *ui;
 
