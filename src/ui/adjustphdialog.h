@@ -22,7 +22,8 @@ public:
   ~AdjustpHDialog();
 
 private:
-  void onAdjustClicked();
+  void adjustConcentration(const QString &ctuent, double targetpH);
+  double getTargetpH(bool *ok);
   QString selectedConstituent();
 
   Ui::AdjustpHDialog *ui;

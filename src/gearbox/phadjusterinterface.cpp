@@ -127,6 +127,9 @@ pHAdjusterInterface::pHAdjusterInterface(std::string constituentName, Background
   m_debyeHuckel{debyeHuckel},
   m_onsagerFuoss{onsagerFuoss}
 {
+  if (!h_GDMProxy.contains(m_constituentName))
+    throw Exception{"Constituent " + m_constituentName + "is not present in BGE composition"};
+
   ECHMET::NonidealityCorrections corrs = ECHMET::defaultNonidealityCorrections();
 
   if (m_debyeHuckel)

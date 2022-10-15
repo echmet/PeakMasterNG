@@ -1,3 +1,5 @@
+// vim: sw=2 ts=2 sts=2 expandtab
+
 #include "adjustphdialog.h"
 #include "ui_adjustphdialog.h"
 
@@ -31,7 +33,20 @@ AdjustpHDialog::AdjustpHDialog(GDMProxy &GDMProxy, const bool debyeHuckel, const
 
   ui->qle_currentpH->setText(DoubleToStringConvertor::convert(currentpH));
 
-  connect(ui->qpb_adjust, &QPushButton::clicked, this, &AdjustpHDialog::onAdjustClicked);
+  connect(ui->qpb_adjust, &QPushButton::clicked, this, [this]() {
+    bool ok;
+    auto pH = getTargetpH(&ok);
+    auto ctuent = selectedConstituent();
+    if (ok)
+      adjustConcentration(ctuent, pH);
+  });
+  connect(ui->qtbv_bgeConstituents, &QTableView::doubleClicked, this, [this](const QModelIndex &idx) {
+    bool ok;
+    auto pH = getTargetpH(&ok);
+    auto ctuent = idx.model()->data(idx.model()->index(idx.row(), 0));
+    if (ctuent.isValid() && ok)
+      adjustConcentration(ctuent.toString(), pH);
+  });
 }
 
 AdjustpHDialog::~AdjustpHDialog()
@@ -39,31 +54,16 @@ AdjustpHDialog::~AdjustpHDialog()
   delete ui;
 }
 
-void AdjustpHDialog::onAdjustClicked()
+void AdjustpHDialog::adjustConcentration(const QString &ctuent, const double targetpH)
 {
-  const auto &v = ui->qle_targetpH->text();
-
-  bool ok;
-  const double pH = DoubleToStringConvertor::back(v, &ok);
-  if (!ok) {
-    QMessageBox mbox{QMessageBox::Warning, tr("Invalid input"), tr("Invalid pH value")};
-
-    mbox.exec();
-    return;
-  }
-
-  auto ctuent = selectedConstituent();
   if (ctuent.isEmpty()) {
-    QMessageBox mbox{QMessageBox::Warning, tr("Invalid input"), tr("No constituent selected")};
-
-    mbox.exec();
+    QMessageBox::warning(this, tr("Invalid input"), tr("No constituent selected"));
     return;
   }
-
-  pHAdjusterInterface iface{ctuent.toStdString(), h_GDMProxy, m_debyeHuckel, m_onsagerFuoss};
 
   try {
-    const double adjustedpH = iface.adjustpH(pH);
+    pHAdjusterInterface iface{ctuent.toStdString(), h_GDMProxy, m_debyeHuckel, m_onsagerFuoss};
+    const double adjustedpH = iface.adjustpH(targetpH);
     m_model->updateConcentration(ctuent);
 
     ui->qle_currentpH->setText(DoubleToStringConvertor::convert(adjustedpH));
@@ -74,6 +74,19 @@ void AdjustpHDialog::onAdjustClicked()
 
     mbox.exec();
   }
+}
+
+double AdjustpHDialog::getTargetpH(bool *ok)
+{
+  auto v = ui->qle_targetpH->text();
+  const double pH = DoubleToStringConvertor::back(v, ok);
+  if (!ok) {
+    QMessageBox mbox{QMessageBox::Warning, tr("Invalid input"), tr("Invalid pH value")};
+
+    mbox.exec();
+  }
+
+  return pH;
 }
 
 QString AdjustpHDialog::selectedConstituent()
