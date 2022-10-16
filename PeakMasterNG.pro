@@ -314,7 +314,6 @@ FORMS += \
     src/ui/editconstituentdialog.ui \
     src/ui/signalplotwidget.ui \
     src/ui/maincontrolwidget.ui \
-    src/ui/systemcompositionwidget.ui \
     src/ui/editcomplexationdialog.ui \
     src/ui/crashhandlerdialog.ui \
     src/ui/aboutdialog.ui \

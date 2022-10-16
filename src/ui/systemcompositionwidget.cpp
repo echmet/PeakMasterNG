@@ -12,7 +12,7 @@
 #include "backgroundcompositionwidget.h"
 #include "compositioneditorwidget.h"
 
-#include <QBoxLayout>
+#include <QVBoxLayout>
 #include <QHeaderView>
 #include <QMessageBox>
 #include <QSplitter>
@@ -22,15 +22,12 @@ SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMPro
                                                  const BackgroundEffectiveMobilitiesModel * const BGEEffMobsModel,
                                                  QWidget *parent) :
   QWidget{parent},
-  ui{new Ui::SystemCompositionWidget},
   h_backgroundGDM{backgroundGDM},
   h_sampleGDM{sampleGDM},
   h_cpxMgr{cpxMgr},
   h_dbProxy{dbProxy},
   m_viscosityCorrectionEnabled{false}
 {
-  ui->setupUi(this);
-
   m_backgroundConstituentsModel = new BackgroundConstituentsModel{BGEEffMobsModel, { "BGE", "Sample" }, backgroundGDM, cpxMgr, this};
   m_analytesModel = new AnalytesConstituentsModel{analytesEXIModel, { "Sample" }, sampleGDM, cpxMgr, this};
 
@@ -57,10 +54,7 @@ SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMPro
   connect(m_analytesModel, &AbstractConstituentsModelBase::rowsInserted, this, &SystemCompositionWidget::onCompositionChanged);
   connect(m_analytesModel, &AbstractConstituentsModelBase::rowsRemoved, this, &SystemCompositionWidget::onCompositionChanged);
 
-  auto layout = qobject_cast<QBoxLayout *>(this->layout());
-  if (layout == nullptr)
-    throw std::runtime_error{"Layout of SystemCompositionWidget is expected to be a QBoxLayout"};
-
+  auto layout = new QVBoxLayout{this};
   auto splitter = new QSplitter{Qt::Horizontal, this};
   layout->addWidget(splitter);
   splitter->addWidget(m_background);
@@ -68,11 +62,12 @@ SystemCompositionWidget::SystemCompositionWidget(GDMProxy &backgroundGDM, GDMPro
 
   splitter->setStretchFactor(0, 2);
   splitter->setStretchFactor(1, 3);
+
+  setLayout(layout);
 }
 
 SystemCompositionWidget::~SystemCompositionWidget()
 {
-  delete ui;
 }
 
 bool SystemCompositionWidget::addConstituent(GDMProxy &proxy, AbstractConstituentsModelBase *model)

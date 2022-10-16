@@ -4,10 +4,6 @@
 #include <QModelIndexList>
 #include <QWidget>
 
-namespace Ui {
-  class SystemCompositionWidget;
-}
-
 class AbstractConstituentsModelBase;
 class AnalytesConstituentsModel;
 class AnalytesExtraInfoModel;
@@ -43,8 +39,6 @@ private:
   void handleDoubleClick(const int column, const QVariant &v, GDMProxy &GDM, AbstractConstituentsModelBase *model);
   void removeConstituent(const QModelIndexList &indexes, GDMProxy &proxy, AbstractConstituentsModelBase *model);
   void setControlsIcons();
-
-  Ui::SystemCompositionWidget *ui;
 
   GDMProxy &h_backgroundGDM;
   GDMProxy &h_sampleGDM;
