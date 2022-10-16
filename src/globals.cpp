@@ -11,7 +11,7 @@ const std::string Globals::_SOFTWARE_NAME{"PeakMaster"};
 const std::string Globals::_SOFTWARE_NAME_INTERNAL{SOFTWARE_NAME_INTERNAL_S};
 const int Globals::VERSION_MAJ = 6;
 const int Globals::VERSION_MIN = 0;
-const std::string Globals::_VERSION_REV{"f8"};
+const std::string Globals::_VERSION_REV{"g1"};
 
 const QVector<Globals::DeveloperID> Globals::DEVELOPERS = {
                                                             Globals::DeveloperID{"Michal Jaro\xC5\xA1", "michal.jaros@gmail.com", false},
@@ -21,6 +21,7 @@ const QVector<Globals::DeveloperID> Globals::DEVELOPERS = {
                                                             Globals::DeveloperID{"Bob Ga\xC5\xA1", "gas@natur.cuni.cz", false},
                                                             Globals::DeveloperID{"Pavel Dubsk\xC3\xBD", "pavel.dubsky@natur.cuni.cz", true},
                                                             Globals::DeveloperID{"Gabriel Gerlero", "gabrielgerlero@gmail.com", false},
+                                                            Globals::DeveloperID{"Michal Mal\xC3\xBD", "pinksardine@organicunicornbeef.org", false}
                                                           };
 
 
