@@ -1,5 +1,4 @@
 #include "systemcompositionwidget.h"
-#include "ui_systemcompositionwidget.h"
 
 #include "../gearbox/gdmproxy.h"
 #include "internal_models/analytesconstituentsmodel.h"

@@ -41,6 +41,10 @@
 #include <QTimer>
 #include <QWindow>
 
+#ifndef Q_OS_LINUX
+#include <QStyle>
+#endif // Q_OS_LINUX
+
 #define THEY_LIVE
 
 class Inhibitor {

@@ -139,8 +139,13 @@ EditComplexationDialog * makeComplexationDialog(const gdm::GDM::const_iterator n
         if (complexFormIt != _cpxn.cend()) {
           rel.addComplexForm(
             nucleusCharge, _ligandCharge,
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+            QVector<double>::fromStdVector(complexFormIt->mobilities()),
+            QVector<double>::fromStdVector(complexFormIt->pBs())
+#else
             QVector<double>{complexFormIt->mobilities().cbegin(), complexFormIt->mobilities().cend()},
             QVector<double>{complexFormIt->pBs().cbegin(), complexFormIt->pBs().cend()}
+#endif // QT_VERSION
           );
         }
       }
