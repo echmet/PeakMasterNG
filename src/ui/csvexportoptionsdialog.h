@@ -34,6 +34,8 @@ public:
       fieldDelimiter{fieldDelimiter},
       exportTarget{exportTarget}
     {}
+    Options(const Options &other) = default;
+    Options(Options &&other) noexcept = default;
 
     Options & operator=(const Options &other)
     {
