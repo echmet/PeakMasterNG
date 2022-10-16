@@ -117,19 +117,25 @@ void DatabaseConstituentsPhysPropsTableModel::refreshData(std::vector<DatabaseCo
 {
   beginResetModel();
 
-  int min = std::numeric_limits<int>::max();
-  int max = std::numeric_limits<int>::min();
+  if (!constituents.empty()) {
+    int min = std::numeric_limits<int>::max();
+    int max = std::numeric_limits<int>::min();
 
-  for (const auto &item : constituents) {
-    if (item.chargeLow < min)
-      min = item.chargeLow;
-    if (item.chargeHigh > max)
-      max = item.chargeHigh;
+    for (const auto &item : constituents) {
+      if (item.chargeLow < min)
+        min = item.chargeLow;
+      if (item.chargeHigh > max)
+        max = item.chargeHigh;
+    }
+
+    m_maximumCharge = max;
+    m_minimumCharge = min;
+    m_span = m_maximumCharge - m_minimumCharge + 1;
+  } else {
+    m_maximumCharge = 0;
+    m_minimumCharge = 0;
+    m_span = 0;
   }
-
-  m_maximumCharge = max;
-  m_minimumCharge = min;
-  m_span = m_maximumCharge - m_minimumCharge + 1;
 
   m_constituents = std::move(constituents);
 

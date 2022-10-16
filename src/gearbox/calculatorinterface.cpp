@@ -360,6 +360,13 @@ void CalculatorInterface::mapResultsAnalytesDissociation()
 void CalculatorInterface::mapResultsBGE(const double totalLength, const double detectorPosition, const double drivingVoltage,
                                         const double EOFMobility)
 {
+  assert(drivingVoltage != 0.0);
+  assert(totalLength > 0.0);
+
+  const double eofMarkerTime = EOFMobility == 0.0
+    ? std::numeric_limits<double>::infinity()
+    : detectorPosition / (EOFMobility * 1.0e-9 * drivingVoltage / totalLength) / 60.0;
+
   auto &data = m_resultsData.backgroundPropsData();
 
   data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::BUFFER_CAPACITY)] = m_ctx.results->BGEProperties.bufferCapacity;
@@ -368,7 +375,7 @@ void CalculatorInterface::mapResultsBGE(const double totalLength, const double d
   data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::IONIC_STRENGTH)] = m_ctx.results->BGEProperties.ionicStrength * 1000.0;
   data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::PH)] = m_ctx.results->BGEProperties.pH;
   data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::EOF_MOBILITY)] = EOFMobility;
-  data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::EOF_MARKER_TIME)] = detectorPosition / (EOFMobility * 1.0e-9 * drivingVoltage / totalLength) / 60.0;
+  data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::EOF_MARKER_TIME)] = eofMarkerTime;
   m_resultsData.backgroundPropsRefresh();
 
   /* Fill background ionic composition */
