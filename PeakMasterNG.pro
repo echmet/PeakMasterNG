@@ -334,7 +334,7 @@ FORMS += \
     src/ui/compositioneditorwidget.ui
 
 unix {
-    QMAKE_CXXFLAGS += "-Wall -Wextra -pedantic -Werror"
+    QMAKE_CXXFLAGS += "-Wall -Wextra -pedantic"
 }
 
 LIBS += -lsqlite3
