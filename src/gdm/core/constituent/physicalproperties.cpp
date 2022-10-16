@@ -188,7 +188,7 @@ std::vector<gdm::Mobility>::size_type gdm::PhysicalProperties::mobilityIndex(Cha
 
     auto index = static_cast<std::vector<double>::size_type>(charge - _charges.low());
 
-    assert(index >= 0); assert(index < _mobilities.size());
+    assert(index < _mobilities.size());
 
     return index;
 }
@@ -203,7 +203,7 @@ std::vector<double>::size_type gdm::PhysicalProperties::pKaIndex(ChargeNumber ta
 
     if(targetCharge > 0) --index; //Adjust index iff target is positive
 
-    assert(index >= 0); assert(index < _pKas.size());
+    assert(index < _pKas.size());
 
     return index;
 }
