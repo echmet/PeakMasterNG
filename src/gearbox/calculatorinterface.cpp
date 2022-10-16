@@ -364,7 +364,9 @@ void CalculatorInterface::mapResultsBGE(const double totalLength, const double d
   assert(totalLength > 0.0);
 
   const double eofMarkerTime = EOFMobility == 0.0
-    ? std::numeric_limits<double>::infinity()
+    ? drivingVoltage >= 0
+      ? std::numeric_limits<double>::infinity()
+      : -std::numeric_limits<double>::infinity()
     : detectorPosition / (EOFMobility * 1.0e-9 * drivingVoltage / totalLength) / 60.0;
 
   auto &data = m_resultsData.backgroundPropsData();
@@ -674,10 +676,15 @@ void CalculatorInterface::recalculateTimes(double totalLength, double detectorPo
   detectorPosition /= 100.0;
 
   const double EOFMobility = EOFMobilityFromInput(EOFValue, EOFvt, totalLength, detectorPosition, drivingVoltage);
+  const double eofMarkerTime = EOFMobility == 0.0
+    ? drivingVoltage >= 0
+      ? std::numeric_limits<double>::infinity()
+      : -std::numeric_limits<double>::infinity()
+    : detectorPosition / (EOFMobility * 1.0e-9 * drivingVoltage / totalLength) / 60.0;
 
   auto &data = m_resultsData.backgroundPropsData();
   data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::EOF_MOBILITY)] = EOFMobility;
-  data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::EOF_MARKER_TIME)] = detectorPosition / (EOFMobility * 1.0e-9 * drivingVoltage / totalLength) / 60.0;
+  data[m_resultsData.backgroundPropsIndex(BackgroundPropertiesMapping::Items::EOF_MARKER_TIME)] = eofMarkerTime;
   m_resultsData.backgroundPropsRefresh();
 
   recalculateTimesInternal(totalLength, detectorPosition, drivingVoltage, EOFMobility);
