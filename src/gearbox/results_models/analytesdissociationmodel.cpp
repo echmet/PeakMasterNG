@@ -40,8 +40,8 @@ QVariant AnalytesDissociationModel::data(const QModelIndex &index, int role) con
 
   const int col = index.column();
 
-  if (col < 0 || col >= it->second.ratios.size())
-    return QVariant{};
+  if (col < 0) return {};
+  if (size_t(col) >= it->second.ratios.size()) return {};
 
   return it->second.ratios.at(col).fraction;
 }
@@ -58,8 +58,8 @@ QVariant AnalytesDissociationModel::headerData(int section, Qt::Orientation orie
   if (it == m_analytes.cend())
     return QVariant{};
 
-  if (section < 0 || section >= it->second.ratios.size())
-    return QVariant{};
+  if (section < 0) return {};
+  if (size_t(section) >= it->second.ratios.size()) return {};
 
   return QString::fromStdString(it->second.ratios.at(section).name);
 }

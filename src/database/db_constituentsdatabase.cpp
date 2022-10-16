@@ -120,7 +120,7 @@ ConstituentsDatabase::RetCode ConstituentsDatabase::addConstituent(const char *n
   int64_t constituentId;
   RetCode tRet;
 
-  if (properties.size() != chargeHigh - chargeLow + 1)
+  if (properties.size() != size_t(chargeHigh - chargeLow + 1))
     return RetCode::E_DB_INV_ARG;
 
   if (m_dbh == nullptr)
