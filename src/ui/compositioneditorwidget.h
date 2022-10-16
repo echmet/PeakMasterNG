@@ -15,6 +15,7 @@ class CompositionEditorWidget : public QWidget {
   Q_OBJECT
 public:
   CompositionEditorWidget(const QString &title, const QString &constituentType, AbstractConstituentsModelBase *model, QWidget *parent = nullptr);
+  ~CompositionEditorWidget();
   void forceCommit();
   void resizeHeader();
 

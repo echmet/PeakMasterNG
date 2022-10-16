@@ -45,6 +45,11 @@ CompositionEditorWidget::CompositionEditorWidget(const QString &title, const QSt
   setupIcons();
 }
 
+CompositionEditorWidget::~CompositionEditorWidget()
+{
+  delete ui;
+}
+
 void CompositionEditorWidget::forceCommit()
 {
   m_fltDelegate->forceCommit();
