@@ -136,8 +136,13 @@ EditComplexationDialog * makeComplexationDialog(const gdm::GDM::const_iterator n
         gdm::ChargeCombination chargesCombo{nucleusCharge, _ligandCharge};
 
         auto complexFormIt = _cpxn.find(chargesCombo);
-        if (complexFormIt != _cpxn.cend())
-          rel.addComplexForm(nucleusCharge, _ligandCharge, QVector<double>::fromStdVector(complexFormIt->mobilities()), QVector<double>::fromStdVector(complexFormIt->pBs()));
+        if (complexFormIt != _cpxn.cend()) {
+          rel.addComplexForm(
+            nucleusCharge, _ligandCharge,
+            QVector<double>{complexFormIt->mobilities().cbegin(), complexFormIt->mobilities().cend()},
+            QVector<double>{complexFormIt->pBs().cbegin(), complexFormIt->pBs().cend()}
+          );
+        }
       }
     }
 
@@ -197,8 +202,8 @@ bool processComplexationsForGDM(const std::string &nucleus, gdm::GDM &GDM,
           continue;
 
         const auto &cpxnProps = ncBlock[ligandCharge];
-        const auto mobilities = std::get<0>(cpxnProps).toStdVector();
-        const auto pBs = std::get<1>(cpxnProps).toStdVector();
+        const auto mobilities = std::vector<double>{std::get<0>(cpxnProps).cbegin(), std::get<0>(cpxnProps).cend()};
+        const auto pBs = std::vector<double>{std::get<1>(cpxnProps).cbegin(), std::get<1>(cpxnProps).cend()};
 
         if (mobilities.size() != pBs.size()) {
           QMessageBox mbox{QMessageBox::Warning, QObject::tr("Invalid complexation parameters"), QObject::tr("Mismatching number of mobilities and pBs")};
