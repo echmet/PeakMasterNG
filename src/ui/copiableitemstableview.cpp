@@ -22,7 +22,7 @@ void CopiableItemsTableView::editItem(const QModelIndex &idx)
   if (state() == EditingState)
     return;
 
-  if (idx.isValid()) {
+  if (idx.isValid() && (idx.flags() & Qt::ItemIsEditable)) {
     selectionModel()->clearSelection();
     setCurrentIndex(idx);
     edit(idx);
@@ -73,9 +73,12 @@ void CopiableItemsTableView::keyPressEvent(QKeyEvent *evt)
     }
   } else if (key == Qt::Key_Return || key == Qt::Key_Enter) {
     auto selIdxs = selectedIndexes();
-    if (!selIdxs.empty() && selIdxs.first().isValid()) {
-      if (state() != EditingState)
-        edit(selIdxs.first());
+    if (!selIdxs.empty() && selIdxs.constFirst().isValid()) {
+      if (state() != EditingState) {
+        const auto &fIdx = selIdxs.constFirst();
+	if (fIdx.flags() & Qt::ItemIsEditable)
+          edit(fIdx);
+      }
     }
   }
 

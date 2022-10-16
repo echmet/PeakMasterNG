@@ -14,7 +14,12 @@ int AnalytesConstituentsHeader::sizeHintForColumn(int column) const
 
   const QString text = model()->headerData(column, Qt::Horizontal).toString();
   const QFontMetrics qfm = this->fontMetrics();
-  const int spacers = qfm.width("_") * 4;
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+  const int spacers = qfm.width("_") * 4;
   return qfm.width(text) + spacers;
+#else
+  const int spacers = qfm.horizontalAdvance("_") * 4;
+  return qfm.horizontalAdvance(text) + spacers;
+#endif // QT_VERSION
 }

@@ -74,7 +74,7 @@ Qt::ItemFlags AdjustuEffOverkBGETableModel::flags(const QModelIndex &index) cons
     return Qt::NoItemFlags;
 
   // Only uEkB column is editable
-  if (col < 2 || col > 3)
+  if (col != 3)
     return defaultFlags;
 
   return m_data[row].isAnalyte ? defaultFlags : defaultFlags | Qt::ItemIsEditable;
