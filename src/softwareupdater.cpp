@@ -7,9 +7,26 @@
 #include <QThread>
 #include <echmetupdatecheck.h>
 
+#include <cstring>
+
 const QStringList SoftwareUpdater::UPDATE_LINKS{"https://echmet.natur.cuni.cz/echmet/download/public/eupd_manifest.json",
                                                 "https://devoid-pointer.net/echmet/eupd_manifest.json"};
 const QString SoftwareUpdater::CHECK_AUTOMATICALLY_SETTINGS_TAG("CheckAutomatically");
+
+template <size_t N>
+static
+void cpyrev(char dst[N], const char *src)
+{
+  // Some very strict compilers will not like the use of strncpy so we just provide this function
+  std::memset(dst, 0, N);
+
+  const size_t srclen = std::strlen(src);
+  size_t idx = 0;
+  while (idx < srclen && idx < N) {
+    dst[idx] = src[idx];
+    idx++;
+  }
+}
 
 void SoftwareUpdateWorker::process()
 {
@@ -19,7 +36,7 @@ void SoftwareUpdateWorker::process()
   strncpy(inSw.name, SOFTWARE_NAME_INTERNAL_S, sizeof(EUPDInSoftware::name));
   inSw.version.major = Globals::VERSION_MAJ;
   inSw.version.minor = Globals::VERSION_MIN;
-  strncpy(inSw.version.revision, Globals::VERSION_REV().toLatin1(), sizeof(EUPDVersion::revision));
+  cpyrev<sizeof(EUPDVersion::revision)>(inSw.version.revision, Globals::VERSION_REV().toLatin1().data());
 
   int linkIdx = 0;
   EUPDRetCode ret;
