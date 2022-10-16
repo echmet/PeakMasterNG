@@ -21,7 +21,7 @@ int baseCharge(const int chargeLow, const int chargeHigh)
 EditChargesWidget::EditChargesWidget(QWidget *parent) :
   QWidget{parent},
   ui{new Ui::EditChargesWidget},
-  m_fltDelegate{new FloatingValueDelegate{this}}
+  m_fltDelegate{new FloatingValueDelegate{false, this}}
 {
   ui->setupUi(this);
 
@@ -31,7 +31,7 @@ EditChargesWidget::EditChargesWidget(QWidget *parent) :
 EditChargesWidget::EditChargesWidget(const gdm::PhysicalProperties &props, QWidget *parent) :
   QWidget{parent},
   ui{new Ui::EditChargesWidget},
-  m_fltDelegate{new FloatingValueDelegate{this}}
+  m_fltDelegate{new FloatingValueDelegate{false, this}}
 {
   ui->setupUi(this);
 
@@ -57,7 +57,7 @@ EditChargesWidget::EditChargesWidget(const std::vector<double> &pKas, const std:
                                      QWidget *parent) :
   QWidget{parent},
   ui{new Ui::EditChargesWidget},
-  m_fltDelegate{new FloatingValueDelegate{this}}
+  m_fltDelegate{new FloatingValueDelegate{false, this}}
 {
   assert(pKas.size() == mobilities.size() + 1);
 
@@ -83,7 +83,7 @@ EditChargesWidget::EditChargesWidget(std::map<int, double> pKas, const std::map<
                                      QWidget *parent) :
   QWidget{parent},
   ui{new Ui::EditChargesWidget},
-  m_fltDelegate{new FloatingValueDelegate{this}}
+  m_fltDelegate{new FloatingValueDelegate{false, this}}
 {
   ui->setupUi(this);
 
