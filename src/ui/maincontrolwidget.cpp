@@ -84,24 +84,23 @@ MainControlWidget::MainControlWidget(GDMProxy &GDMProxy, ResultsModels &resultsM
   connect(ui->qpb_details, &QPushButton::clicked, this, &MainControlWidget::onShowEigenzoneDetailsClicked);
   connect(ui->qpb_bgeIonicComposition, &QPushButton::clicked, this, &MainControlWidget::onBGEIonicCompositionClicked);
   connect(ui->qpb_adjustpH, &QPushButton::clicked,
-          [this]() {
-            try {
-              const auto corrections = m_nonidealityCorrectionsDlg->state();
+    [this]() {
+      try {
+        const auto corrections = m_nonidealityCorrectionsDlg->state();
 
-              const int idx = m_bgePropsMapperModel->indexFromItem(BackgroundPropertiesMapping::Items::PH);
-              double pH = m_bgePropsMapperModel->data(m_bgePropsMapperModel->index(idx, 0), Qt::EditRole).toDouble();
+        const int idx = m_bgePropsMapperModel->indexFromItem(BackgroundPropertiesMapping::Items::PH);
+        double pH = m_bgePropsMapperModel->data(m_bgePropsMapperModel->index(idx, 0), Qt::EditRole).toDouble();
 
-              AdjustpHDialog dlg{h_GDMProxy,
-                                 corrections.debyeHuckel, corrections.onsagerFuoss,
-                                 pH,
-                                 this};
-              dlg.exec();
-
-              emit pHAdjusted();
-            } catch (const std::bad_cast &) {
-              assert(false);
-            }
-         });
+        AdjustpHDialog dlg{h_GDMProxy,
+                           corrections.debyeHuckel, corrections.onsagerFuoss,
+                           pH,
+                           this};
+        if (dlg.exec() == QDialog::Accepted)
+          emit pHAdjusted();
+      } catch (const std::bad_cast &) {
+        assert(false);
+      }
+  });
 
   EigenzoneDetailsModel *ezdModel = qobject_cast<EigenzoneDetailsModel *>(m_eigenzoneDetailsModel);
   if (ezdModel == nullptr)
