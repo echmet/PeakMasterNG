@@ -11,19 +11,19 @@ win32_x86_64 {
 BACKEND_BUILT_BY_MSVC=0
 
 # Path to location where the ECHMETCoreLibs are installed
-ECHMET_CORE_LIBS_DIR = "/home/madcat/Devel/ECHMET/ECHMETCoreLibs-bin/"
+ECHMET_CORE_LIBS_DIR = "C:/Building/ECHMET/ECHMETCoreLibs-bin-w$$WINARCH"
 
 # Path to location where the LEMNG library is insalled
-LEMNG_DIR = "/home/madcat/Devel/ECHMET/LEMNG-bin"
+LEMNG_DIR = "C:/Building/ECHMET/LEMNG-bin-w$$WINARCH"
 
 # Path to where the Qwt toolkit is installed
-QWT_DIR = "/home/madcat/Devel/qwt-6.2.0-dev/"
+QWT_DIR = "C:/Building/Qwt-6.2.0-msvc-bin-w$$WINARCH"
 
 # Path to ECHMETUpdateCheck library installation
-EUPD_DIR = "/home/madcat/Devel/ECHMET/ECHMETUpdateCheck-bin-dbg"
+EUPD_DIR = "C:/Building/ECHMET/ECHMETUpdateCheck-bin-w$$WINARCH"
 
 # Path to Sqlite installation
-SQLITE_DIR = ""
+SQLITE_DIR = "C:/Building/sqlite3-w$$WINARCH"
 
 include("$$QWT_DIR/features/qwt.prf")
 
@@ -31,10 +31,10 @@ include("$$QWT_DIR/features/qwt.prf")
 INCLUDEPATH += "$$ECHMET_CORE_LIBS_DIR/include/ECHMET/CoreLibs"
 INCLUDEPATH += "$$LEMNG_DIR/include/ECHMET/LEMNG"
 
-win-msvc* {
+win32-msvc* {
     equals(BACKEND_BUILT_BY_MSVC, 1) {
       LIBS += -L"$$ECHMET_CORE_LIBS_DIR/lib" -lSysComp -lECHMETShared -lCAES -lIonProps
-      LIBS += -L"$$LEMNG_DIR/lib" -llibLEMNG
+      LIBS += -L"$$LEMNG_DIR/lib" -lLEMNG
     } else {
       LIBS += -L"$$ECHMET_CORE_LIBS_DIR/lib" -llibSysComp -llibECHMETShared -llibCAES -llibIonProps
       LIBS += -L"$$LEMNG_DIR/lib" -llibLEMNG
@@ -57,7 +57,7 @@ isEmpty(SQLITE_DIR) {
 
 INCLUDEPATH += "$$EUPD_DIR/include"
 
-win-msvc* {
+win32-msvc* {
     equals(BACKEND_BUILT_BY_MSVC, 1) {
         LIBS += -L"$$EUPD_DIR/lib" -lECHMETUpdateCheck
     } else {
