@@ -82,9 +82,11 @@ std::map<std::string, gdm::Complexation> deserializeNucleusComplexForms(const QJ
       ligandCharge = lig[Persistence::CPX_CHARGE].toInt();
 
       /* Read maxCount */
-      size_t maxCount;
+      int maxCount;
       checkIfContainsInt(Persistence::CPX_MAX_COUNT, lig);
       maxCount = lig[Persistence::CPX_MAX_COUNT].toInt();
+
+      assert(maxCount >= 0);
 
       /* Read pBs */
       std::vector<double> pBs{};
@@ -113,7 +115,7 @@ std::map<std::string, gdm::Complexation> deserializeNucleusComplexForms(const QJ
       gdm::ChargeCombination charges{charge, ligandCharge};
 
       bool inserted;
-      std::tie(std::ignore, inserted) = ret[name].insert({charges, maxCount, pBs, mobilities});
+      std::tie(std::ignore, inserted) = ret[name].insert({charges, size_t(maxCount), pBs, mobilities});
       if (!inserted)
         throw MalformedJSONException{"Duplicit charge combinations"};
     }
