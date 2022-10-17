@@ -73,8 +73,8 @@ Qt::ItemFlags AdjustuEffOverkBGETableModel::flags(const QModelIndex &index) cons
   if (col < 0 || col >= columnCount() || row < 0 || row >= rowCount())
     return Qt::NoItemFlags;
 
-  // Only uEkB column is editable
-  if (col != 3)
+  // Only concentration and uEkB columns are editable
+  if (!(col == 2 || col == 3))
     return defaultFlags;
 
   return m_data[row].isAnalyte ? defaultFlags : defaultFlags | Qt::ItemIsEditable;
@@ -82,7 +82,7 @@ Qt::ItemFlags AdjustuEffOverkBGETableModel::flags(const QModelIndex &index) cons
 
 QString AdjustuEffOverkBGETableModel::formattedFloat(double d) const
 {
-  return DoubleToStringConvertor::convert(d, 'd', m_floatingPrecision);
+  return DoubleToStringConvertor::convert(d, 'g', m_floatingPrecision);
 }
 
 QVariant AdjustuEffOverkBGETableModel::headerData(int section, Qt::Orientation orientation, int role) const
