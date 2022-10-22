@@ -9,6 +9,7 @@
 #include "../gearbox/floatingvaluedelegate.h"
 #include "../gearbox/phadjusterinterface.h"
 
+#include <QAbstractItemModel>
 #include <QMessageBox>
 #include <QPushButton>
 
@@ -54,6 +55,13 @@ AdjustpHDialog::AdjustpHDialog(GDMProxy &GDMProxy, const bool debyeHuckel, const
     auto ctuent = idx.model()->data(idx.model()->index(idx.row(), 0));
     if (ctuent.isValid() && ok)
       adjustConcentration(ctuent.toString(), pH);
+  });
+  connect(m_model, &QAbstractItemModel::dataChanged, this, [this](const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles) {
+    if (!roles.contains(Qt::EditRole))
+      return;
+
+    if (topLeft.column() <= 1 && bottomRight.column() >= 1)
+      calculatepH();
   });
   connect(ui->qpb_calcpH, &QPushButton::clicked, this, [this]() {
     calculatepH();
