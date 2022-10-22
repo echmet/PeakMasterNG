@@ -6,6 +6,7 @@
 #include "internal_models/adjustphtablemodel.h"
 #include "../gearbox/backgroundgdmproxy.h"
 #include "../gearbox/doubletostringconvertor.h"
+#include "../gearbox/floatingvaluedelegate.h"
 #include "../gearbox/phadjusterinterface.h"
 
 #include <QMessageBox>
@@ -26,6 +27,9 @@ AdjustpHDialog::AdjustpHDialog(GDMProxy &GDMProxy, const bool debyeHuckel, const
 
   m_model = new AdjustpHTableModel{h_GDMProxy.allBackgroundNames(), h_GDMProxy, this};
   ui->qtbv_bgeConstituents->setModel(m_model);
+
+  auto fltDelegate = new FloatingValueDelegate{false, this};
+  ui->qtbv_bgeConstituents->setItemDelegateForColumn(1, fltDelegate);
 
   auto hdr = ui->qtbv_bgeConstituents->horizontalHeader();
   for (int col = 0; col < m_model->columnCount(); col++) {
