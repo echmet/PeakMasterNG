@@ -8,7 +8,7 @@ class FloatingValueDelegate : public QItemDelegate
 {
   Q_OBJECT
 public:
-  FloatingValueDelegate(bool fixedPrecision, QObject *parent = nullptr);
+  explicit FloatingValueDelegate(bool fixedPrecision, QObject *parent = nullptr);
 
   virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
   void forceCommit();
