@@ -43,9 +43,9 @@ QVariant AdjustuEffOverkBGETableModel::data(const QModelIndex &index, int role) 
       case 1:
         return item.constituentName;
       case 2:
-        return formattedFloat(item.concentration);
+        return item.concentration;
       case 3:
-        return formattedFloat(item.uEffOverkBGE);
+        return item.uEffOverkBGE;
     }
   } else if (role == Qt::EditRole) {
     switch (col) {
@@ -78,11 +78,6 @@ Qt::ItemFlags AdjustuEffOverkBGETableModel::flags(const QModelIndex &index) cons
     return defaultFlags;
 
   return m_data[row].isAnalyte ? defaultFlags : defaultFlags | Qt::ItemIsEditable;
-}
-
-QString AdjustuEffOverkBGETableModel::formattedFloat(double d) const
-{
-  return DoubleToStringConvertor::convert(d, 'g', m_floatingPrecision);
 }
 
 QVariant AdjustuEffOverkBGETableModel::headerData(int section, Qt::Orientation orientation, int role) const

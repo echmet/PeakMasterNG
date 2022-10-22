@@ -41,8 +41,6 @@ public:
   void setUnderlyingData(std::vector<Item> data) noexcept;
 
 private:
-  QString formattedFloat(double d) const;
-
   std::vector<Item> m_data;
   int m_floatingPrecision;
 
