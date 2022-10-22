@@ -79,7 +79,7 @@ Qt::ItemFlags AdjustpHTableModel::flags(const QModelIndex &index) const
   const int col = index.column();
   const int row = index.row();
 
-  if (row < 0 || row >= rowCount())
+  if (row < 0 || row >= rowCount() || col < 0 || col >= columnCount())
     return Qt::NoItemFlags;
 
   return col == 1 ? defaultFlags | Qt::ItemIsEditable : defaultFlags;
@@ -96,13 +96,13 @@ bool AdjustpHTableModel::setData(const QModelIndex &index, const QVariant &value
   const int row = index.row();
   const int col = index.column();
 
-  if (row < 0 || col >= rowCount())
+  if (row < 0 || col >= columnCount())
     return false;
   if (col != 1)
     return false;
 
   bool ok;
-  double v = value.toDouble(&ok);
+  double v = value.toReal(&ok);
   if (!ok)
     return false;
 
