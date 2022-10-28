@@ -1,5 +1,7 @@
 #include "complexationcolorizerdelegate.h"
 
+#include "../gearbox/pmngdataroles.h"
+
 #include <cassert>
 #include <cmath>
 #include <QPainter>
@@ -41,7 +43,7 @@ ComplexationColorizerDelegate::ComplexationColorizerDelegate(AbstractConstituent
 
 void ComplexationColorizerDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-  QVariant vList = h_model->data(h_model->index(index.row(), 0), Qt::UserRole + 1);
+  QVariant vList = h_model->data(h_model->index(index.row(), 0), ComplexationStatusRole);
   if (!vList.canConvert<QList<QColor>>())
     return;
 

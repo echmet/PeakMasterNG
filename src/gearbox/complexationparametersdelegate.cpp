@@ -1,5 +1,6 @@
 #include "complexationparametersdelegate.h"
 #include "doubletostringconvertor.h"
+#include "pmngdataroles.h"
 #include "../ui/complexation_models/complexationrelationshipsmodel.h"
 
 #include <QLineEdit>
@@ -12,7 +13,7 @@ QWidget *ComplexationParametersDelegate::createEditor(QWidget *parent, const QSt
 {
   Q_UNUSED(option);
 
-  const QVariant itemType = index.model()->data(index, Qt::UserRole + 1);
+  const QVariant itemType = index.model()->data(index, ComplexationParameterTypeRole);
   switch (itemType.value<ComplexationRelationshipsModel::ItemType>()) {
   case ComplexationRelationshipsModel::ItemType::PARAMETER_LIST:
     break;

@@ -306,7 +306,8 @@ HEADERS += \
     src/gearbox/ueffoverkbgecalculatorinterface.h \
     src/ui/compositioneditorwidget.h \
     src/ui/backgroundcompositionwidget.h \
-    src/ui/analytescompositionwidget.h
+    src/ui/analytescompositionwidget.h \
+    src/gearbox/pmngdataroles.h
 
 FORMS += \
     src/ui/adjustphdialog.ui \

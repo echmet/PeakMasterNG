@@ -4,6 +4,7 @@
 #include "adjustueffoverkbgedialog.h"
 #include "maincontrolwidget.h"
 #include "signalplotwidget.h"
+#include "../gearbox/pmngdataroles.h"
 #include "../gearbox/results_models/resultsmodels.h"
 #include "../gearbox/results_models/analytesextrainfomodel.h"
 #include "../gearbox/results_models/eigenzonedetailsmodel.h"
@@ -293,7 +294,10 @@ void PMNGMainWindow::addConstituentsSignals(const CalculatorInterface::Constitue
     auto &ctuentName = std::get<0>(a);
     auto si = new QStandardItem{QString{tr("c (%1)")}.arg(ctuentName)};
     auto signalName = QString{"c %1 (mM)"}.arg(ctuentName);
-    si->setData(QVariant::fromValue<CalculatorInterface::Signal>({ CalculatorInterface::SignalTypes::CONCENTRATION, ctuentName, signalName, std::get<1>(a) }));
+    si->setData(
+        QVariant::fromValue<CalculatorInterface::Signal>({ CalculatorInterface::SignalTypes::CONCENTRATION, ctuentName, signalName, std::get<1>(a) }),
+	SignalTypeRole
+    );
     m_signalTypesModel->appendRow(si);
   }
 }
@@ -817,9 +821,9 @@ void PMNGMainWindow::plotElectrophoregram(const EFGDisplayer &displayer, const s
   const QStandardItem *sigItem = m_signalTypesModel->item(m_signalPlotWidget->selectedSignalIndex(), 0);
   if (sigItem == nullptr)
     return;
-  if (!sigItem->data().canConvert<CalculatorInterface::Signal>())
+  if (!sigItem->data(SignalTypeRole).canConvert<CalculatorInterface::Signal>())
     return;
-  const auto &signal = sigItem->data().value<CalculatorInterface::Signal>();
+  const auto &signal = sigItem->data(SignalTypeRole).value<CalculatorInterface::Signal>();
 
   const auto signalTrace = m_calcIface.plotElectrophoregram(rs.totalLength, rs.detectorPosition,
                                                             rs.drivingVoltage, rs.positiveVoltage,
@@ -833,13 +837,12 @@ void PMNGMainWindow::plotElectrophoregram(const EFGDisplayer &displayer, const s
 
 QVariant PMNGMainWindow::resetSignalItems()
 {
-  //const QVariant current = ui->qcbox_signal->currentData(Qt::UserRole + 1);
-  const QVariant current = m_signalTypesModel->data(m_signalTypesModel->index(m_signalPlotWidget->selectedSignalIndex(), 0), Qt::UserRole + 1);
+  const QVariant current = m_signalTypesModel->data(m_signalTypesModel->index(m_signalPlotWidget->selectedSignalIndex(), 0), SignalTypeRole);
   m_signalTypesModel->clear();
 
   for (const auto &item : s_defaultSignalItems) {
     auto si = new QStandardItem{item.name};
-    si->setData(QVariant::fromValue<CalculatorInterface::Signal>(item.signal));
+    si->setData(QVariant::fromValue<CalculatorInterface::Signal>(item.signal), SignalTypeRole);
     m_signalTypesModel->appendRow(si);
   }
 
@@ -895,7 +898,7 @@ void PMNGMainWindow::selectSignalIfAvailable(const QVariant &sig)
   const auto _sig = sig.value<CalculatorInterface::Signal>();
 
   for (int idx = 0; idx < m_signalTypesModel->rowCount(); idx++) {
-    const auto _csig = m_signalTypesModel->data(m_signalTypesModel->index(idx, 0), Qt::UserRole + 1).value<CalculatorInterface::Signal>();
+    const auto _csig = m_signalTypesModel->data(m_signalTypesModel->index(idx, 0), SignalTypeRole).value<CalculatorInterface::Signal>();
     if (_sig == _csig) {
       m_signalPlotWidget->setSignalIndex(idx);
       return;

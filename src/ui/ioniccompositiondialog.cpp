@@ -2,6 +2,7 @@
 #include "ui_ioniccompositiondialog.h"
 #include "../gearbox/results_models/analytesdissociationmodel.h"
 #include "../gearbox/doubletostringconvertor.h"
+#include "../gearbox/pmngdataroles.h"
 #include "elementaries/uihelpers.h"
 
 #include <QAbstractTableModel>
@@ -14,7 +15,7 @@ static
 int isContained(const QStandardItemModel *model, const QString &s)
 {
   for (int idx = 0; idx < model->rowCount(); idx++) {
-    const auto &item = model->data(model->index(idx, 0), Qt::UserRole + 1);
+    const auto &item = model->data(model->index(idx, 0), AnalyteNameRole);
     if (item == s)
       return idx;
   }
@@ -55,7 +56,7 @@ void IonicCompositionDialog::onAnalyteSelectionChanged(int idx)
   if (idx < 0)
     return;
 
-  const QString s = m_analytesNamesModel->data(m_analytesNamesModel->index(idx, 0), Qt::UserRole + 1).toString();
+  const QString s = m_analytesNamesModel->data(m_analytesNamesModel->index(idx, 0), AnalyteNameRole).toString();
   m_analytesModel->selectAnalyte(s.toStdString());
 
   ui->ql_miscalculation->setVisible(m_analytesModel->isMiscalculated()); /* This must be called after selectAnalyte() */
@@ -68,12 +69,12 @@ void IonicCompositionDialog::onAnalytesDissociationDataUpdated()
 
   const auto &analytes = m_analytesModel->analytes();
   if (m_analytesNamesModel->rowCount() > 0)
-    m_lastSelectedAnalyte = ui->qcbox_analyte->currentData(Qt::UserRole + 1).toString();
+    m_lastSelectedAnalyte = ui->qcbox_analyte->currentData(AnalyteNameRole).toString();
   m_analytesNamesModel->clear();
 
   for (const auto &a : analytes) {
     QStandardItem *item = new QStandardItem{QString::fromStdString(a)};
-    item->setData(QString::fromStdString(a));
+    item->setData(QString::fromStdString(a), AnalyteNameRole);
 
     m_analytesNamesModel->appendRow(item);
   }

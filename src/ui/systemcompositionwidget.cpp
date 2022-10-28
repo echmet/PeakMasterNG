@@ -220,7 +220,7 @@ void SystemCompositionWidget::onAnalytesEditRequested(const QModelIndex &idx)
   if (!idx.isValid())
     return;
 
-  const QVariant v = m_analytesModel->data(m_analytesModel->index(idx.row(), 0), Qt::UserRole);
+  const QVariant v = m_analytesModel->data(m_analytesModel->index(idx.row(), 0), ConstituentNameRole);
   handleDoubleClick(idx.column(), v, h_sampleGDM, m_analytesModel);
   m_analytes->resizeHeader();
 }
@@ -239,7 +239,7 @@ void SystemCompositionWidget::onBGEEditRequested(const QModelIndex &idx)
   if (!idx.isValid())
     return;
 
-  const QVariant v = m_backgroundConstituentsModel->data(m_backgroundConstituentsModel->index(idx.row(), 0), Qt::UserRole);
+  const QVariant v = m_backgroundConstituentsModel->data(m_backgroundConstituentsModel->index(idx.row(), 0), ConstituentNameRole);
   handleDoubleClick(idx.column(), v, h_backgroundGDM, m_backgroundConstituentsModel);
   m_background->resizeHeader();
 }

@@ -1,6 +1,7 @@
 #include "floatingvaluedelegate.h"
 #include "doubletostringconvertor.h"
 #include "additionalfloatingvalidator.h"
+#include "pmngdataroles.h"
 #include <QLineEdit>
 #include <QEvent>
 
@@ -52,7 +53,7 @@ void FloatingValueDelegate::setEditorData(QWidget *editor, const QModelIndex &in
   if (lineEdit == nullptr)
     return;
 
-  const int prec = index.model()->data(index, Qt::UserRole + 1).toInt();
+  const int prec = index.model()->data(index, DecimalDigitsRole).toInt();
 
   lineEdit->setText(DoubleToStringConvertor::convert(value, 'f', prec));
 }
@@ -76,7 +77,7 @@ void FloatingValueDelegate::setModelData(QWidget *editor, QAbstractItemModel *mo
   const int prec  = DoubleToStringConvertor::decimalDigits(s);
   /* Calling order matters. See FloatingMapperModel::setData() for details */
   if (!m_fixedPrecision)
-	model->setData(index, prec, Qt::UserRole + 1);
+	model->setData(index, prec, DecimalDigitsRole);
   model->setData(index, value, Qt::EditRole);
 }
 

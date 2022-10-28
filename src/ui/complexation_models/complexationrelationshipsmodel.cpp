@@ -1,5 +1,6 @@
 #include "complexationrelationshipsmodel.h"
 #include "../../gearbox/doubletostringconvertor.h"
+#include "../../gearbox/pmngdataroles.h"
 
 #include <cmath>
 #include <QMessageBox>
@@ -201,7 +202,7 @@ QVariant ComplexationRelationshipsModel::data(const QModelIndex &index, int role
   if (!index.isValid())
     return QVariant();
 
-  if (role == Qt::UserRole + 1) {
+  if (role == ComplexationParameterTypeRole) {
     if (index.column() == 2 || index.column() == 3)
       return QVariant::fromValue<ItemType>(ItemType::PARAMETER_LIST);
     return QVariant::fromValue<ItemType>(ItemType::DEFAULT);

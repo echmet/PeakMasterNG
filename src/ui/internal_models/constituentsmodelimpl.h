@@ -3,6 +3,7 @@
 
 #include "abstractconstituentsmodel.h"
 #include "../../gearbox/gdmproxy.h"
+#include "../../gearbox/pmngdataroles.h"
 
 #include <cassert>
 
@@ -22,7 +23,7 @@ public:
   // Basic functionality:
   virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override
   {
-    if (!(role == Qt::DisplayRole || role == Qt::UserRole || role == Qt::UserRole + 1))
+    if (!(role == Qt::DisplayRole || role == ConstituentNameRole || role == ComplexationStatusRole))
       return {};
 
     const int row = index.row();
@@ -39,12 +40,12 @@ public:
     const auto concentrations = this->h_GDMProxy.concentrations(constituentName);
     assert(concentrations.size() == static_cast<size_t>(this->NConcs()));
 
-    if (role == Qt::UserRole)
+    if (role == ConstituentNameRole)
       return QString::fromStdString(constituentName);
 
     switch (col) {
     case 0:
-      if (role == Qt::UserRole + 1)
+      if (role == ComplexationStatusRole)
         return QVariant::fromValue(this->complexationStatus(constituentName));
       return {};
     case 1:

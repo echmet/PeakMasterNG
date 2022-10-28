@@ -1,6 +1,7 @@
 #include "abstractconstituentsmodelbase.h"
 
 #include "../../gearbox/complexationmanager.h"
+#include "../../gearbox/pmngdataroles.h"
 
 #include <cassert>
 #include <QDataStream>
@@ -57,7 +58,7 @@ bool AbstractConstituentsModelBase::dropMimeData(const QMimeData *mdata, Qt::Dro
   QByteArray encodedData = mdata->data(MIME_FORMAT);
   QDataStream stream(&encodedData, QIODevice::ReadOnly);
 
-  QString targetName = data(parent, Qt::UserRole).toString();
+  QString targetName = data(parent, ConstituentNameRole).toString();
   QString sourceName{};
   qint64 pid;
 
@@ -102,7 +103,7 @@ QMimeData * AbstractConstituentsModelBase::mimeData(const QModelIndexList &index
     const QModelIndex &midx = indexes.at(idx);
 
     if (midx.isValid()) {
-      const QString name = data(midx, Qt::UserRole).toString();
+      const QString name = data(midx, ConstituentNameRole).toString();
       stream << QCoreApplication::applicationPid();
       stream << name;
     }

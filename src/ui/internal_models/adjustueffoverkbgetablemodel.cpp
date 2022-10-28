@@ -2,6 +2,7 @@
 
 #include "adjustueffoverkbgetablemodel.h"
 #include "../../gearbox/doubletostringconvertor.h"
+#include "../../gearbox/pmngdataroles.h"
 #include "../../globals.h"
 
 QString uEffOverkBGEText()
@@ -52,7 +53,7 @@ QVariant AdjustuEffOverkBGETableModel::data(const QModelIndex &index, int role) 
       case 3:
         return item.uEffOverkBGE;
     }
-  } else if (role == Qt::UserRole + 1) {
+  } else if (role == DecimalDigitsRole) {
     // Precision value for the FloatingValueDelegate
     return m_floatingPrecision;
   }
@@ -148,7 +149,7 @@ bool AdjustuEffOverkBGETableModel::setData(const QModelIndex &index, const QVari
       emit uEffOverkBGEChanged(item.constituentName, uEkB, olduKeB);
       return false; // We did not actually change anything, uEffOverkBGEChanged() signal must be handled
     }
-  } else if (role == Qt::UserRole + 1) {
+  } else if (role == DecimalDigitsRole) {
     bool ok;
     int prec = value.toInt(&ok);
     if (!ok || prec < 0)
